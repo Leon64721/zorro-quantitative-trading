@@ -284,6 +284,145 @@ R2 Coefficient:  0.42   [Acceptable fit]
 
 ---
 
+## 🚨 ERRORES CONOCIDOS Y LECCIONES APRENDIDAS
+
+### Incidente: TEST_SIMPLE_RSI.c (2026-09-14)
+
+**Problema:** Estrategia simple compilaba pero generaba errores en Zorro:
+```
+Error: 'BarCount' undeclared identifier
+Error: RSI requires 3241 bars (but LookBack = 80)
+```
+
+#### Causa Raíz
+
+1. **Variable inexistente:** `BarCount` no existe en Zorro Lite-C
+   - ❌ Incorrecto: `if(BarCount >= 20)`
+   - ✅ Correcto: `if(Bar < 20) return;`
+
+2. **TimeFrame mal interpretado:** `TimeFrame = 60` NO significa "60 minutos"
+   - `BarPeriod = 60` = barras de 60 minutos
+   - `TimeFrame = 60` = COMBINA 60 barras en 1 super-barra
+   - Resultado: 1 super-barra = 3,600 minutos (2.5 días)
+   - RSI(14) necesita 14 barras de esos 2.5 días = 35 días = 3,241 barras de datos 1-minuto
+
+3. **LookBack insuficiente:** No se puede "ocultar" un TimeFrame incorrecto aumentando LookBack
+   - ❌ Incorrecto: `BarPeriod = 60, TimeFrame = 60, LookBack = 4000`
+   - ✅ Correcto: `BarPeriod = 60, TimeFrame = 1, LookBack = 100`
+
+#### Lecciones Aprendidas
+
+| Lección | Implementación |
+|---------|-----------------|
+| **Variable correcta para barra** | Usar `Bar` (no `BarCount`, `CurrentBar`, `BarsProcessed`) |
+| **Barras horarias en Zorro** | `BarPeriod = 60` + `TimeFrame = 1` + `LookBack = 100` |
+| **No combinar barras sin razón** | TimeFrame > 1 solo si necesitas consolidación (ej: pasar de tick a minuto) |
+| **LookBack es obligatorio** | Definir ANTES de calcular indicadores; no es "un default" |
+| **Localizar archivo real ANTES de corregir** | Buscar con grep/find; NO asumir que el usuario leyó el correcto |
+| **Distinguir 3 niveles de validación** | Externa (análisis) ≠ Compilación (Lite-C) ≠ Backtest (Zorro real) |
+| **El .log es evidencia** | Sin archivo `D:\ZORRO\Log\*.txt` NO hay backtest válido |
+| **Declarar limitaciones** | Si no tengo acceso a ZORRO.exe, debo decir: "Revisión de código; no validado en Zorro" |
+
+#### Corrección Aplicada
+
+```c
+// ❌ ANTES (incorrecto)
+void run() {
+  TimeFrame = 60;      // ← PROBLEMA
+  BarPeriod = 60;
+  // ... sin LookBack
+  if(BarCount >= 20)   // ← NO EXISTE
+    return;
+}
+
+// ✅ DESPUÉS (correcto)
+void run() {
+  BarPeriod = 60;      // Barras de 60 minutos
+  TimeFrame = 1;       // Sin combinar ← ARREGLADO
+  LookBack = 100;      // Explícito ← AGREGADO
+  
+  if(Bar < 20)         // Variable correcta ← ARREGLADO
+    return;
+}
+```
+
+---
+
+### Protocolo de Diagnóstico (Ahora Estándar)
+
+Cuando el usuario reporte error "strategy does not compile" o "indicator requires too many bars":
+
+1. **Buscar archivo real:**
+   ```bash
+   grep -r "TimeFrame\|BarPeriod\|LookBack" D:\ZORRO\Strategy\
+   ```
+
+2. **Leer el archivo REAL (no asumir contenido):**
+   ```bash
+   cat D:\ZORRO\Strategy\<nombre_exacto>.c
+   ```
+
+3. **Inspeccionar 3 variables clave:**
+   - `BarPeriod` (período de barra en minutos)
+   - `TimeFrame` (multiplicador; 1 = sin combinar)
+   - `LookBack` (barras de warmup necesarias)
+
+4. **Verificar sintaxis de bar check:**
+   - ✅ `if(Bar < N)`
+   - ❌ `if(BarCount >= N)`
+   - ❌ `if(CurrentBar > N)`
+
+5. **NO aumentar LookBack** sin antes confirmar que TimeFrame es correcto.
+
+---
+
+### Validación de Resultados: Matriz de Niveles
+
+| Nivel | Descripción | Validador | Output |
+|-------|-------------|-----------|--------|
+| **1. Análisis externo** | Revisión de código Lite-C | Claude (sin Zorro) | "Sintaxis correcta; lista para compilar" |
+| **2. Compilación** | ¿Compila sin errores en Zorro IDE? | ZORRO.exe | Mensaje de compilación / .log vacío |
+| **3. Backtest real** | ¿Genera .log con métricas? | ZORRO [Test] o [Train] | `D:\ZORRO\Log\*.txt` con Net Profit, Win Rate, etc. |
+
+**Regla:** No saltar niveles. No afirmar "validado en Zorro" si solo pasó nivel 1 o 2.
+
+---
+
+### Estado de Production-Ready
+
+**🚫 NO PRODUCTION-READY** hasta que:
+
+- ✅ Existe `.c` que compila en Zorro sin errores
+- ✅ Existe `.log` en `D:\ZORRO\Log\` (mínimo de 1 backtest real)
+- ✅ Métricas extraídas y documentadas (Net Profit, Win Rate, Sharpe, etc.)
+- ✅ Reproducible: otro usuario puede correr el mismo `.c` y obtener similar `.log`
+- ✅ Todos los errores Lite-C resueltos y documentados
+
+**Indicadores de que NO está listo:**
+- ❌ "Simulado en Python/Backtrader"
+- ❌ "Compilación asumida, no verificada"
+- ❌ "Backtest teórico"
+- ❌ "Métricas calculadas, no de .log"
+
+---
+
+## 📝 CHECKLIST PARA TODA CORRECCIÓN DE CÓDIGO
+
+Cuando corrijas una estrategia `.c`:
+
+- [ ] Buscar archivo real con grep/find
+- [ ] Leer contenido completo (no asumir)
+- [ ] Identificar errores Lite-C específicos
+- [ ] Consultar documentación Zorro (ta.md, conversion.md)
+- [ ] Corregir code
+- [ ] Indicar nivel de validación alcanzado (análisis / compilación / backtest)
+- [ ] Solicitar prueba real en ZORRO.exe
+- [ ] Esperar `.log` real antes de afirmar "validado"
+- [ ] Si no hay acceso a Zorro.exe: declarar "Revisión de código; no ejecutado en Zorro"
+
+---
+
 **Creado:** 2026-09-14 por Claude Code  
 **Última actualización:** 2026-09-14  
+**Incidente documentado:** TEST_SIMPLE_RSI.c (BarCount, TimeFrame = 60, LookBack)  
 **Mantenedor:** Leon64721 (ZORRO Community)
