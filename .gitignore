@@ -1,0 +1,74 @@
+# ZORRO Data & Logs (Large Files)
+History/
+Log/
+Data/
+*.t6
+*.t8
+*.dbl
+*.par
+*.bin
+*.fac
+*.csv
+
+# ZORRO Cache
+Cache/
+*.bak
+*.tmp
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.env
+venv/
+env/
+
+# Node (if using)
+node_modules/
+package-lock.json
+yarn.lock
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Sensitive
+*.key
+*.pem
+secrets/
+.env.local
+credentials.json
+
+# Backup files
+*.backup
+*.old
+*.bak
+
+# Compiled binaries
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Specific ZORRO directories to exclude (too large)
+/History/*
+/Data/*
+/Log/*
+/Cache/*
+
+# But keep important documentation in these dirs
+!/docs/
+!/scripts/
+!/strategies/
+!/agents/
