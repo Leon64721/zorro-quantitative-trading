@@ -7,6 +7,8 @@ const fs = require('fs');
 const path = require('path');
 const StrategyGenerator = require('./src/generator');
 const StrategyValidator = require('./src/validator');
+const BacktestRunner = require('./src/backtest-runner');
+const AssetManager = require('./src/asset-manager');
 const utils = require('./src/utils');
 
 class ZORROStrategySkill {
@@ -36,10 +38,12 @@ class ZORROStrategySkill {
     );
 
     this.validator = new StrategyValidator();
+    this.backtestRunner = new BacktestRunner();
+    this.assetManager = new AssetManager();
   }
 
   /**
-   * Main method: Process user request and generate strategy
+   * Main method: Process user request - Generate, Validate, Backtest
    */
   async execute(userInput) {
     console.log(`\n🤖 ZORRO Strategy Generator Skill`);
@@ -51,7 +55,11 @@ class ZORROStrategySkill {
       const request = this.parseRequest(userInput);
       console.log(`📊 Parsed Request:`, request);
 
-      // Generate strategy
+      // ===== PHASE 1: GENERATE =====
+      console.log(`\n${'='.repeat(50)}`);
+      console.log(`PHASE 1: STRATEGY GENERATION`);
+      console.log(`${'='.repeat(50)}`);
+
       const generationResult = this.generator.generateStrategy(
         request.description,
         request.options
@@ -63,7 +71,11 @@ class ZORROStrategySkill {
 
       console.log(`✅ Strategy Generated: ${generationResult.filename}`);
 
-      // Validate strategy
+      // ===== PHASE 2: VALIDATE =====
+      console.log(`\n${'='.repeat(50)}`);
+      console.log(`PHASE 2: VALIDATION`);
+      console.log(`${'='.repeat(50)}`);
+
       const validationResult = this.validator.validate(generationResult.code);
       const validationReport = this.validator.generateReport(validationResult);
 
@@ -71,11 +83,17 @@ class ZORROStrategySkill {
 
       if (!validationResult.valid) {
         console.log(`\n⚠️  Strategy has validation issues. Fix before backtesting.`);
-      } else {
-        console.log(`\n✅ Strategy is 100% ZORRO compatible!`);
+        return {
+          success: false,
+          phase: 'validation',
+          error: 'Strategy validation failed',
+          validation: validationResult
+        };
       }
 
-      // Save strategy file
+      console.log(`\n✅ Strategy is 100% ZORRO compatible!`);
+
+      // Save files
       const strategyPath = path.join(
         this.config.strategiesPath,
         generationResult.filename
@@ -84,25 +102,78 @@ class ZORROStrategySkill {
       fs.writeFileSync(strategyPath, generationResult.code);
       console.log(`💾 Saved to: ${strategyPath}`);
 
-      // Save validation report
       const reportPath = path.join(
         this.config.outputPath,
         generationResult.filename.replace('.c', '_VALIDATION.md')
       );
 
       fs.writeFileSync(reportPath, validationReport);
-      console.log(`📄 Report saved to: ${reportPath}`);
+
+      // ===== PHASE 3: BACKTEST PREP =====
+      console.log(`\n${'='.repeat(50)}`);
+      console.log(`PHASE 3: BACKTEST PREPARATION`);
+      console.log(`${'='.repeat(50)}`);
+
+      // Pre-backtest validation
+      const preBacktestReport = this.backtestRunner.generateValidationReport(
+        generationResult.code,
+        {
+          filename: generationResult.filename,
+          asset: request.options.asset || 'SPX500',
+          startDate: request.options.startDate || 20200101,
+          endDate: request.options.endDate || 20261231
+        }
+      );
+
+      console.log(`\n📋 Pre-Backtest Checks:`);
+      preBacktestReport.checks.forEach(check => {
+        console.log(`   ${check.status} ${check.name}: ${check.details}`);
+      });
+
+      if (!preBacktestReport.ready) {
+        console.log(`\n⚠️  Cannot run backtest - issues found:`);
+        preBacktestReport.checks.forEach(check => {
+          if (check.status !== '✅') {
+            console.log(`   - ${check.details}`);
+          }
+        });
+
+        return {
+          success: false,
+          phase: 'backtest_prep',
+          error: 'Pre-backtest validation failed',
+          preBacktestReport,
+          filename: generationResult.filename,
+          strategyPath
+        };
+      }
+
+      console.log(`\n✅ All checks passed - Ready for backtesting!`);
+
+      // ===== PHASE 4: BACKTEST =====
+      console.log(`\n${'='.repeat(50)}`);
+      console.log(`PHASE 4: BACKTEST EXECUTION`);
+      console.log(`${'='.repeat(50)}`);
+
+      const backTestResult = await this.backtestRunner.runBacktest(
+        generationResult.code,
+        generationResult.filename,
+        request.options
+      );
 
       // Return complete result
       return {
-        success: true,
+        success: backTestResult.success,
+        phase: 'complete',
         filename: generationResult.filename,
         strategyPath,
         reportPath,
-        code: generationResult.code,
         validation: validationResult,
+        preBacktest: preBacktestReport,
+        backtest: backTestResult,
         specification: generationResult.specification
       };
+
     } catch (error) {
       console.error(`\n❌ Error: ${error.message}`);
       return {
