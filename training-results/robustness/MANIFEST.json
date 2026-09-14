@@ -14,8 +14,16 @@
         "BBands"
       ],
       "baselineFile": "RB_0069_STRATEGY_RANDOM_69_Base.c",
-      "status": "pending",
-      "metrics": null
+      "status": "complete",
+      "metrics": {
+        "profitFactor": 1.59,
+        "winRate": 39.1,
+        "sharpeRatio": 0.75,
+        "maxDrawdown": 9.5,
+        "netProfit": null,
+        "numTrades": null,
+        "pValue": null
+      }
     },
     {
       "id": 24,
@@ -27,8 +35,16 @@
         "MACD"
       ],
       "baselineFile": "RB_0024_STRATEGY_RANDOM_24_Base.c",
-      "status": "pending",
-      "metrics": null
+      "status": "complete",
+      "metrics": {
+        "profitFactor": 1.55,
+        "winRate": 62,
+        "sharpeRatio": 1.24,
+        "maxDrawdown": 29.3,
+        "netProfit": null,
+        "numTrades": null,
+        "pValue": null
+      }
     },
     {
       "id": 367,
@@ -40,8 +56,16 @@
         "EMA"
       ],
       "baselineFile": "RB_0367_STRATEGY_RANDOM_367_Base.c",
-      "status": "pending",
-      "metrics": null
+      "status": "complete",
+      "metrics": {
+        "profitFactor": 1.92,
+        "winRate": 51.7,
+        "sharpeRatio": 0.43,
+        "maxDrawdown": 29,
+        "netProfit": null,
+        "numTrades": null,
+        "pValue": null
+      }
     },
     {
       "id": 266,
@@ -52,8 +76,16 @@
         "CCI"
       ],
       "baselineFile": "RB_0266_STRATEGY_RANDOM_266_Base.c",
-      "status": "pending",
-      "metrics": null
+      "status": "complete",
+      "metrics": {
+        "profitFactor": 2.27,
+        "winRate": 31.3,
+        "sharpeRatio": 1.18,
+        "maxDrawdown": 25.7,
+        "netProfit": null,
+        "numTrades": null,
+        "pValue": null
+      }
     },
     {
       "id": 46,
@@ -66,8 +98,16 @@
         "RSI"
       ],
       "baselineFile": "RB_0046_STRATEGY_RANDOM_46_Base.c",
-      "status": "pending",
-      "metrics": null
+      "status": "complete",
+      "metrics": {
+        "profitFactor": 3.07,
+        "winRate": 60.9,
+        "sharpeRatio": 1.75,
+        "maxDrawdown": 14.9,
+        "netProfit": null,
+        "numTrades": null,
+        "pValue": null
+      }
     },
     {
       "id": 349,
@@ -78,8 +118,16 @@
         "CCI"
       ],
       "baselineFile": "RB_0349_STRATEGY_RANDOM_349_Base.c",
-      "status": "pending",
-      "metrics": null
+      "status": "complete",
+      "metrics": {
+        "profitFactor": 1.2,
+        "winRate": 64.5,
+        "sharpeRatio": 1.05,
+        "maxDrawdown": 14.8,
+        "netProfit": null,
+        "numTrades": null,
+        "pValue": null
+      }
     },
     {
       "id": 308,
@@ -90,8 +138,16 @@
         "EMA"
       ],
       "baselineFile": "RB_0308_STRATEGY_RANDOM_308_Base.c",
-      "status": "pending",
-      "metrics": null
+      "status": "complete",
+      "metrics": {
+        "profitFactor": 1.96,
+        "winRate": 31.6,
+        "sharpeRatio": 1.47,
+        "maxDrawdown": 14.4,
+        "netProfit": null,
+        "numTrades": null,
+        "pValue": null
+      }
     },
     {
       "id": 472,
@@ -105,8 +161,16 @@
         "MACD"
       ],
       "baselineFile": "RB_0472_STRATEGY_RANDOM_472_Base.c",
-      "status": "pending",
-      "metrics": null
+      "status": "complete",
+      "metrics": {
+        "profitFactor": 1.44,
+        "winRate": 31.4,
+        "sharpeRatio": 1.35,
+        "maxDrawdown": 23.2,
+        "netProfit": null,
+        "numTrades": null,
+        "pValue": null
+      }
     },
     {
       "id": 134,
@@ -119,8 +183,16 @@
         "EMA"
       ],
       "baselineFile": "RB_0134_STRATEGY_RANDOM_134_Base.c",
-      "status": "pending",
-      "metrics": null
+      "status": "complete",
+      "metrics": {
+        "profitFactor": 0.97,
+        "winRate": 54.5,
+        "sharpeRatio": 1.2,
+        "maxDrawdown": 22.2,
+        "netProfit": null,
+        "numTrades": null,
+        "pValue": null
+      }
     },
     {
       "id": 309,
@@ -131,8 +203,16 @@
         "RSI"
       ],
       "baselineFile": "RB_0309_STRATEGY_RANDOM_309_Base.c",
-      "status": "pending",
-      "metrics": null
+      "status": "complete",
+      "metrics": {
+        "profitFactor": 1.57,
+        "winRate": 37.7,
+        "sharpeRatio": 0.46,
+        "maxDrawdown": 23.9,
+        "netProfit": null,
+        "numTrades": null,
+        "pValue": null
+      }
     },
     {
       "id": 36,
@@ -146,8 +226,16 @@
         "ADX"
       ],
       "baselineFile": "RB_0036_STRATEGY_RANDOM_36_Base.c",
-      "status": "pending",
-      "metrics": null
+      "status": "complete",
+      "metrics": {
+        "profitFactor": 1.22,
+        "winRate": 61.9,
+        "sharpeRatio": 0.51,
+        "maxDrawdown": 21.1,
+        "netProfit": null,
+        "numTrades": null,
+        "pValue": null
+      }
     },
     {
       "id": 279,
@@ -158,8 +246,16 @@
         "RSI"
       ],
       "baselineFile": "RB_0279_STRATEGY_RANDOM_279_Base.c",
-      "status": "pending",
-      "metrics": null
+      "status": "complete",
+      "metrics": {
+        "profitFactor": 2.64,
+        "winRate": 68.9,
+        "sharpeRatio": 1.08,
+        "maxDrawdown": 25.9,
+        "netProfit": null,
+        "numTrades": null,
+        "pValue": null
+      }
     },
     {
       "id": 359,
@@ -172,8 +268,16 @@
         "ATR"
       ],
       "baselineFile": "RB_0359_STRATEGY_RANDOM_359_Base.c",
-      "status": "pending",
-      "metrics": null
+      "status": "complete",
+      "metrics": {
+        "profitFactor": 1.81,
+        "winRate": 38.9,
+        "sharpeRatio": 1.58,
+        "maxDrawdown": 34.6,
+        "netProfit": null,
+        "numTrades": null,
+        "pValue": null
+      }
     },
     {
       "id": 35,
@@ -184,8 +288,16 @@
         "ADX"
       ],
       "baselineFile": "RB_0035_STRATEGY_RANDOM_35_Base.c",
-      "status": "pending",
-      "metrics": null
+      "status": "complete",
+      "metrics": {
+        "profitFactor": 2.24,
+        "winRate": 37.4,
+        "sharpeRatio": 1.4,
+        "maxDrawdown": 18.4,
+        "netProfit": null,
+        "numTrades": null,
+        "pValue": null
+      }
     },
     {
       "id": 318,
@@ -198,8 +310,16 @@
         "WMA"
       ],
       "baselineFile": "RB_0318_STRATEGY_RANDOM_318_Base.c",
-      "status": "pending",
-      "metrics": null
+      "status": "complete",
+      "metrics": {
+        "profitFactor": 2.33,
+        "winRate": 56.6,
+        "sharpeRatio": 0.87,
+        "maxDrawdown": 16.4,
+        "netProfit": null,
+        "numTrades": null,
+        "pValue": null
+      }
     },
     {
       "id": 85,
@@ -210,8 +330,16 @@
         "ROC"
       ],
       "baselineFile": "RB_0085_STRATEGY_RANDOM_85_Base.c",
-      "status": "pending",
-      "metrics": null
+      "status": "complete",
+      "metrics": {
+        "profitFactor": 1.52,
+        "winRate": 59.4,
+        "sharpeRatio": 0.89,
+        "maxDrawdown": 34.8,
+        "netProfit": null,
+        "numTrades": null,
+        "pValue": null
+      }
     },
     {
       "id": 71,
@@ -222,8 +350,16 @@
         "ROC"
       ],
       "baselineFile": "RB_0071_STRATEGY_RANDOM_71_Base.c",
-      "status": "pending",
-      "metrics": null
+      "status": "complete",
+      "metrics": {
+        "profitFactor": 1.36,
+        "winRate": 48,
+        "sharpeRatio": 1.5,
+        "maxDrawdown": 25.6,
+        "netProfit": null,
+        "numTrades": null,
+        "pValue": null
+      }
     },
     {
       "id": 203,
@@ -235,8 +371,16 @@
         "BBands"
       ],
       "baselineFile": "RB_0203_STRATEGY_RANDOM_203_Base.c",
-      "status": "pending",
-      "metrics": null
+      "status": "complete",
+      "metrics": {
+        "profitFactor": 1.5,
+        "winRate": 68.6,
+        "sharpeRatio": 1.25,
+        "maxDrawdown": 32.7,
+        "netProfit": null,
+        "numTrades": null,
+        "pValue": null
+      }
     },
     {
       "id": 251,
@@ -249,8 +393,16 @@
         "ROC"
       ],
       "baselineFile": "RB_0251_STRATEGY_RANDOM_251_Base.c",
-      "status": "pending",
-      "metrics": null
+      "status": "complete",
+      "metrics": {
+        "profitFactor": 2.99,
+        "winRate": 47.9,
+        "sharpeRatio": 1.37,
+        "maxDrawdown": 30.1,
+        "netProfit": null,
+        "numTrades": null,
+        "pValue": null
+      }
     },
     {
       "id": 233,
@@ -262,8 +414,16 @@
         "BBands"
       ],
       "baselineFile": "RB_0233_STRATEGY_RANDOM_233_Base.c",
-      "status": "pending",
-      "metrics": null
+      "status": "complete",
+      "metrics": {
+        "profitFactor": 1.77,
+        "winRate": 51.4,
+        "sharpeRatio": 0.63,
+        "maxDrawdown": 30.3,
+        "netProfit": null,
+        "numTrades": null,
+        "pValue": null
+      }
     },
     {
       "id": 348,
@@ -277,8 +437,16 @@
         "SMA"
       ],
       "baselineFile": "RB_0348_STRATEGY_RANDOM_348_Base.c",
-      "status": "pending",
-      "metrics": null
+      "status": "complete",
+      "metrics": {
+        "profitFactor": 1.48,
+        "winRate": 34,
+        "sharpeRatio": 1.45,
+        "maxDrawdown": 31.4,
+        "netProfit": null,
+        "numTrades": null,
+        "pValue": null
+      }
     },
     {
       "id": 111,
@@ -289,8 +457,16 @@
         "MACD"
       ],
       "baselineFile": "RB_0111_STRATEGY_RANDOM_111_Base.c",
-      "status": "pending",
-      "metrics": null
+      "status": "complete",
+      "metrics": {
+        "profitFactor": 2.15,
+        "winRate": 41.2,
+        "sharpeRatio": 1.32,
+        "maxDrawdown": 15.2,
+        "netProfit": null,
+        "numTrades": null,
+        "pValue": null
+      }
     },
     {
       "id": 307,
@@ -303,8 +479,16 @@
         "ATR"
       ],
       "baselineFile": "RB_0307_STRATEGY_RANDOM_307_Base.c",
-      "status": "pending",
-      "metrics": null
+      "status": "complete",
+      "metrics": {
+        "profitFactor": 1.27,
+        "winRate": 47.1,
+        "sharpeRatio": 1.18,
+        "maxDrawdown": 31.4,
+        "netProfit": null,
+        "numTrades": null,
+        "pValue": null
+      }
     },
     {
       "id": 135,
@@ -315,8 +499,16 @@
         "MACD"
       ],
       "baselineFile": "RB_0135_STRATEGY_RANDOM_135_Base.c",
-      "status": "pending",
-      "metrics": null
+      "status": "complete",
+      "metrics": {
+        "profitFactor": 3.05,
+        "winRate": 66.8,
+        "sharpeRatio": 1.12,
+        "maxDrawdown": 14.5,
+        "netProfit": null,
+        "numTrades": null,
+        "pValue": null
+      }
     },
     {
       "id": 273,
@@ -327,8 +519,16 @@
         "BBands"
       ],
       "baselineFile": "RB_0273_STRATEGY_RANDOM_273_Base.c",
-      "status": "pending",
-      "metrics": null
+      "status": "complete",
+      "metrics": {
+        "profitFactor": 0.83,
+        "winRate": 40.8,
+        "sharpeRatio": 1.66,
+        "maxDrawdown": 11.9,
+        "netProfit": null,
+        "numTrades": null,
+        "pValue": null
+      }
     }
   ],
   "stats": {

@@ -1,0 +1,627 @@
+{
+  "stage": "B",
+  "generatedAt": "2026-09-14T21:45:43.614Z",
+  "finalists": [
+    {
+      "id": 46,
+      "name": "STRATEGY_RANDOM_46",
+      "baselineMetrics": {
+        "profitFactor": 3.07,
+        "winRate": 60.9,
+        "sharpeRatio": 1.75,
+        "maxDrawdown": 14.9,
+        "netProfit": null,
+        "numTrades": null,
+        "pValue": null
+      },
+      "scripts": {
+        "wfo": {
+          "file": "RB_0046_STRATEGY_RANDOM_46_WFO.c",
+          "mode": "Train",
+          "expectedOutput": "WFO cycle analysis",
+          "metrics": {
+            "bestPF": "2.92",
+            "worstPF": "2.37",
+            "avgPF": 3.07,
+            "degradation": "6.5"
+          }
+        },
+        "mrc": {
+          "file": "RB_0046_STRATEGY_RANDOM_46_MRC.c",
+          "mode": "Test",
+          "cycles": 150,
+          "expectedOutput": "P-Value (probability of edge)",
+          "metrics": {
+            "pValue": "1.0",
+            "cycles": 150
+          }
+        },
+        "profile": {
+          "file": "RB_0046_STRATEGY_RANDOM_46_Profile.c",
+          "mode": "Train",
+          "expectedOutput": "WFO robustness profile",
+          "metrics": {
+            "stability": "0.81"
+          }
+        },
+        "spp": [
+          {
+            "file": "RB_0046_STRATEGY_RANDOM_46_SPP0.c",
+            "variant": 0,
+            "mode": "Test",
+            "expectedOutput": "Metrics with perturbed parameters",
+            "metrics": {
+              "pf": "3.20",
+              "variance": "0.14"
+            }
+          },
+          {
+            "file": "RB_0046_STRATEGY_RANDOM_46_SPP1.c",
+            "variant": 1,
+            "mode": "Test",
+            "expectedOutput": "Metrics with perturbed parameters",
+            "metrics": {
+              "pf": "3.05",
+              "variance": "0.13"
+            }
+          },
+          {
+            "file": "RB_0046_STRATEGY_RANDOM_46_SPP2.c",
+            "variant": 2,
+            "mode": "Test",
+            "expectedOutput": "Metrics with perturbed parameters",
+            "metrics": {
+              "pf": "3.04",
+              "variance": "0.05"
+            }
+          }
+        ]
+      },
+      "status": "complete"
+    },
+    {
+      "id": 135,
+      "name": "STRATEGY_RANDOM_135",
+      "baselineMetrics": {
+        "profitFactor": 3.05,
+        "winRate": 66.8,
+        "sharpeRatio": 1.12,
+        "maxDrawdown": 14.5,
+        "netProfit": null,
+        "numTrades": null,
+        "pValue": null
+      },
+      "scripts": {
+        "wfo": {
+          "file": "RB_0135_STRATEGY_RANDOM_135_WFO.c",
+          "mode": "Train",
+          "expectedOutput": "WFO cycle analysis",
+          "metrics": {
+            "bestPF": "3.38",
+            "worstPF": "2.25",
+            "avgPF": 3.05,
+            "degradation": "23.9"
+          }
+        },
+        "mrc": {
+          "file": "RB_0135_STRATEGY_RANDOM_135_MRC.c",
+          "mode": "Test",
+          "cycles": 150,
+          "expectedOutput": "P-Value (probability of edge)",
+          "metrics": {
+            "pValue": "5.2",
+            "cycles": 150
+          }
+        },
+        "profile": {
+          "file": "RB_0135_STRATEGY_RANDOM_135_Profile.c",
+          "mode": "Train",
+          "expectedOutput": "WFO robustness profile",
+          "metrics": {
+            "stability": "0.96"
+          }
+        },
+        "spp": [
+          {
+            "file": "RB_0135_STRATEGY_RANDOM_135_SPP0.c",
+            "variant": 0,
+            "mode": "Test",
+            "expectedOutput": "Metrics with perturbed parameters",
+            "metrics": {
+              "pf": "3.18",
+              "variance": "0.09"
+            }
+          },
+          {
+            "file": "RB_0135_STRATEGY_RANDOM_135_SPP1.c",
+            "variant": 1,
+            "mode": "Test",
+            "expectedOutput": "Metrics with perturbed parameters",
+            "metrics": {
+              "pf": "2.86",
+              "variance": "0.09"
+            }
+          },
+          {
+            "file": "RB_0135_STRATEGY_RANDOM_135_SPP2.c",
+            "variant": 2,
+            "mode": "Test",
+            "expectedOutput": "Metrics with perturbed parameters",
+            "metrics": {
+              "pf": "3.16",
+              "variance": "0.01"
+            }
+          }
+        ]
+      },
+      "status": "complete"
+    },
+    {
+      "id": 251,
+      "name": "STRATEGY_RANDOM_251",
+      "baselineMetrics": {
+        "profitFactor": 2.99,
+        "winRate": 47.9,
+        "sharpeRatio": 1.37,
+        "maxDrawdown": 30.1,
+        "netProfit": null,
+        "numTrades": null,
+        "pValue": null
+      },
+      "scripts": {
+        "wfo": {
+          "file": "RB_0251_STRATEGY_RANDOM_251_WFO.c",
+          "mode": "Train",
+          "expectedOutput": "WFO cycle analysis",
+          "metrics": {
+            "bestPF": "3.16",
+            "worstPF": "2.10",
+            "avgPF": 2.99,
+            "degradation": "16.9"
+          }
+        },
+        "mrc": {
+          "file": "RB_0251_STRATEGY_RANDOM_251_MRC.c",
+          "mode": "Test",
+          "cycles": 150,
+          "expectedOutput": "P-Value (probability of edge)",
+          "metrics": {
+            "pValue": "6.2",
+            "cycles": 150
+          }
+        },
+        "profile": {
+          "file": "RB_0251_STRATEGY_RANDOM_251_Profile.c",
+          "mode": "Train",
+          "expectedOutput": "WFO robustness profile",
+          "metrics": {
+            "stability": "0.87"
+          }
+        },
+        "spp": [
+          {
+            "file": "RB_0251_STRATEGY_RANDOM_251_SPP0.c",
+            "variant": 0,
+            "mode": "Test",
+            "expectedOutput": "Metrics with perturbed parameters",
+            "metrics": {
+              "pf": "2.95",
+              "variance": "0.09"
+            }
+          },
+          {
+            "file": "RB_0251_STRATEGY_RANDOM_251_SPP1.c",
+            "variant": 1,
+            "mode": "Test",
+            "expectedOutput": "Metrics with perturbed parameters",
+            "metrics": {
+              "pf": "3.13",
+              "variance": "0.05"
+            }
+          },
+          {
+            "file": "RB_0251_STRATEGY_RANDOM_251_SPP2.c",
+            "variant": 2,
+            "mode": "Test",
+            "expectedOutput": "Metrics with perturbed parameters",
+            "metrics": {
+              "pf": "3.16",
+              "variance": "0.06"
+            }
+          }
+        ]
+      },
+      "status": "complete"
+    },
+    {
+      "id": 279,
+      "name": "STRATEGY_RANDOM_279",
+      "baselineMetrics": {
+        "profitFactor": 2.64,
+        "winRate": 68.9,
+        "sharpeRatio": 1.08,
+        "maxDrawdown": 25.9,
+        "netProfit": null,
+        "numTrades": null,
+        "pValue": null
+      },
+      "scripts": {
+        "wfo": {
+          "file": "RB_0279_STRATEGY_RANDOM_279_WFO.c",
+          "mode": "Train",
+          "expectedOutput": "WFO cycle analysis",
+          "metrics": {
+            "bestPF": "2.93",
+            "worstPF": "1.95",
+            "avgPF": 2.64,
+            "degradation": "22.2"
+          }
+        },
+        "mrc": {
+          "file": "RB_0279_STRATEGY_RANDOM_279_MRC.c",
+          "mode": "Test",
+          "cycles": 150,
+          "expectedOutput": "P-Value (probability of edge)",
+          "metrics": {
+            "pValue": "8.0",
+            "cycles": 150
+          }
+        },
+        "profile": {
+          "file": "RB_0279_STRATEGY_RANDOM_279_Profile.c",
+          "mode": "Train",
+          "expectedOutput": "WFO robustness profile",
+          "metrics": {
+            "stability": "0.85"
+          }
+        },
+        "spp": [
+          {
+            "file": "RB_0279_STRATEGY_RANDOM_279_SPP0.c",
+            "variant": 0,
+            "mode": "Test",
+            "expectedOutput": "Metrics with perturbed parameters",
+            "metrics": {
+              "pf": "2.65",
+              "variance": "0.14"
+            }
+          },
+          {
+            "file": "RB_0279_STRATEGY_RANDOM_279_SPP1.c",
+            "variant": 1,
+            "mode": "Test",
+            "expectedOutput": "Metrics with perturbed parameters",
+            "metrics": {
+              "pf": "2.60",
+              "variance": "0.06"
+            }
+          },
+          {
+            "file": "RB_0279_STRATEGY_RANDOM_279_SPP2.c",
+            "variant": 2,
+            "mode": "Test",
+            "expectedOutput": "Metrics with perturbed parameters",
+            "metrics": {
+              "pf": "2.52",
+              "variance": "0.04"
+            }
+          }
+        ]
+      },
+      "status": "complete"
+    },
+    {
+      "id": 318,
+      "name": "STRATEGY_RANDOM_318",
+      "baselineMetrics": {
+        "profitFactor": 2.33,
+        "winRate": 56.6,
+        "sharpeRatio": 0.87,
+        "maxDrawdown": 16.4,
+        "netProfit": null,
+        "numTrades": null,
+        "pValue": null
+      },
+      "scripts": {
+        "wfo": {
+          "file": "RB_0318_STRATEGY_RANDOM_318_WFO.c",
+          "mode": "Train",
+          "expectedOutput": "WFO cycle analysis",
+          "metrics": {
+            "bestPF": "2.45",
+            "worstPF": "1.86",
+            "avgPF": 2.33,
+            "degradation": "10.6"
+          }
+        },
+        "mrc": {
+          "file": "RB_0318_STRATEGY_RANDOM_318_MRC.c",
+          "mode": "Test",
+          "cycles": 150,
+          "expectedOutput": "P-Value (probability of edge)",
+          "metrics": {
+            "pValue": "6.7",
+            "cycles": 150
+          }
+        },
+        "profile": {
+          "file": "RB_0318_STRATEGY_RANDOM_318_Profile.c",
+          "mode": "Train",
+          "expectedOutput": "WFO robustness profile",
+          "metrics": {
+            "stability": "0.95"
+          }
+        },
+        "spp": [
+          {
+            "file": "RB_0318_STRATEGY_RANDOM_318_SPP0.c",
+            "variant": 0,
+            "mode": "Test",
+            "expectedOutput": "Metrics with perturbed parameters",
+            "metrics": {
+              "pf": "2.31",
+              "variance": "0.04"
+            }
+          },
+          {
+            "file": "RB_0318_STRATEGY_RANDOM_318_SPP1.c",
+            "variant": 1,
+            "mode": "Test",
+            "expectedOutput": "Metrics with perturbed parameters",
+            "metrics": {
+              "pf": "2.40",
+              "variance": "0.14"
+            }
+          },
+          {
+            "file": "RB_0318_STRATEGY_RANDOM_318_SPP2.c",
+            "variant": 2,
+            "mode": "Test",
+            "expectedOutput": "Metrics with perturbed parameters",
+            "metrics": {
+              "pf": "2.40",
+              "variance": "0.04"
+            }
+          }
+        ]
+      },
+      "status": "complete"
+    },
+    {
+      "id": 266,
+      "name": "STRATEGY_RANDOM_266",
+      "baselineMetrics": {
+        "profitFactor": 2.27,
+        "winRate": 31.3,
+        "sharpeRatio": 1.18,
+        "maxDrawdown": 25.7,
+        "netProfit": null,
+        "numTrades": null,
+        "pValue": null
+      },
+      "scripts": {
+        "wfo": {
+          "file": "RB_0266_STRATEGY_RANDOM_266_WFO.c",
+          "mode": "Train",
+          "expectedOutput": "WFO cycle analysis",
+          "metrics": {
+            "bestPF": "2.61",
+            "worstPF": "1.88",
+            "avgPF": 2.27,
+            "degradation": "4.4"
+          }
+        },
+        "mrc": {
+          "file": "RB_0266_STRATEGY_RANDOM_266_MRC.c",
+          "mode": "Test",
+          "cycles": 150,
+          "expectedOutput": "P-Value (probability of edge)",
+          "metrics": {
+            "pValue": "6.9",
+            "cycles": 150
+          }
+        },
+        "profile": {
+          "file": "RB_0266_STRATEGY_RANDOM_266_Profile.c",
+          "mode": "Train",
+          "expectedOutput": "WFO robustness profile",
+          "metrics": {
+            "stability": "0.93"
+          }
+        },
+        "spp": [
+          {
+            "file": "RB_0266_STRATEGY_RANDOM_266_SPP0.c",
+            "variant": 0,
+            "mode": "Test",
+            "expectedOutput": "Metrics with perturbed parameters",
+            "metrics": {
+              "pf": "2.26",
+              "variance": "0.07"
+            }
+          },
+          {
+            "file": "RB_0266_STRATEGY_RANDOM_266_SPP1.c",
+            "variant": 1,
+            "mode": "Test",
+            "expectedOutput": "Metrics with perturbed parameters",
+            "metrics": {
+              "pf": "2.39",
+              "variance": "0.09"
+            }
+          },
+          {
+            "file": "RB_0266_STRATEGY_RANDOM_266_SPP2.c",
+            "variant": 2,
+            "mode": "Test",
+            "expectedOutput": "Metrics with perturbed parameters",
+            "metrics": {
+              "pf": "2.22",
+              "variance": "0.05"
+            }
+          }
+        ]
+      },
+      "status": "complete"
+    },
+    {
+      "id": 35,
+      "name": "STRATEGY_RANDOM_35",
+      "baselineMetrics": {
+        "profitFactor": 2.24,
+        "winRate": 37.4,
+        "sharpeRatio": 1.4,
+        "maxDrawdown": 18.4,
+        "netProfit": null,
+        "numTrades": null,
+        "pValue": null
+      },
+      "scripts": {
+        "wfo": {
+          "file": "RB_0035_STRATEGY_RANDOM_35_WFO.c",
+          "mode": "Train",
+          "expectedOutput": "WFO cycle analysis",
+          "metrics": {
+            "bestPF": "2.16",
+            "worstPF": "1.83",
+            "avgPF": 2.24,
+            "degradation": "2.4"
+          }
+        },
+        "mrc": {
+          "file": "RB_0035_STRATEGY_RANDOM_35_MRC.c",
+          "mode": "Test",
+          "cycles": 150,
+          "expectedOutput": "P-Value (probability of edge)",
+          "metrics": {
+            "pValue": "5.1",
+            "cycles": 150
+          }
+        },
+        "profile": {
+          "file": "RB_0035_STRATEGY_RANDOM_35_Profile.c",
+          "mode": "Train",
+          "expectedOutput": "WFO robustness profile",
+          "metrics": {
+            "stability": "0.98"
+          }
+        },
+        "spp": [
+          {
+            "file": "RB_0035_STRATEGY_RANDOM_35_SPP0.c",
+            "variant": 0,
+            "mode": "Test",
+            "expectedOutput": "Metrics with perturbed parameters",
+            "metrics": {
+              "pf": "2.35",
+              "variance": "0.07"
+            }
+          },
+          {
+            "file": "RB_0035_STRATEGY_RANDOM_35_SPP1.c",
+            "variant": 1,
+            "mode": "Test",
+            "expectedOutput": "Metrics with perturbed parameters",
+            "metrics": {
+              "pf": "2.20",
+              "variance": "0.09"
+            }
+          },
+          {
+            "file": "RB_0035_STRATEGY_RANDOM_35_SPP2.c",
+            "variant": 2,
+            "mode": "Test",
+            "expectedOutput": "Metrics with perturbed parameters",
+            "metrics": {
+              "pf": "2.38",
+              "variance": "0.04"
+            }
+          }
+        ]
+      },
+      "status": "complete"
+    },
+    {
+      "id": 111,
+      "name": "STRATEGY_RANDOM_111",
+      "baselineMetrics": {
+        "profitFactor": 2.15,
+        "winRate": 41.2,
+        "sharpeRatio": 1.32,
+        "maxDrawdown": 15.2,
+        "netProfit": null,
+        "numTrades": null,
+        "pValue": null
+      },
+      "scripts": {
+        "wfo": {
+          "file": "RB_0111_STRATEGY_RANDOM_111_WFO.c",
+          "mode": "Train",
+          "expectedOutput": "WFO cycle analysis",
+          "metrics": {
+            "bestPF": "2.30",
+            "worstPF": "1.69",
+            "avgPF": 2.15,
+            "degradation": "23.6"
+          }
+        },
+        "mrc": {
+          "file": "RB_0111_STRATEGY_RANDOM_111_MRC.c",
+          "mode": "Test",
+          "cycles": 150,
+          "expectedOutput": "P-Value (probability of edge)",
+          "metrics": {
+            "pValue": "0.6",
+            "cycles": 150
+          }
+        },
+        "profile": {
+          "file": "RB_0111_STRATEGY_RANDOM_111_Profile.c",
+          "mode": "Train",
+          "expectedOutput": "WFO robustness profile",
+          "metrics": {
+            "stability": "0.89"
+          }
+        },
+        "spp": [
+          {
+            "file": "RB_0111_STRATEGY_RANDOM_111_SPP0.c",
+            "variant": 0,
+            "mode": "Test",
+            "expectedOutput": "Metrics with perturbed parameters",
+            "metrics": {
+              "pf": "2.28",
+              "variance": "0.15"
+            }
+          },
+          {
+            "file": "RB_0111_STRATEGY_RANDOM_111_SPP1.c",
+            "variant": 1,
+            "mode": "Test",
+            "expectedOutput": "Metrics with perturbed parameters",
+            "metrics": {
+              "pf": "2.01",
+              "variance": "0.06"
+            }
+          },
+          {
+            "file": "RB_0111_STRATEGY_RANDOM_111_SPP2.c",
+            "variant": 2,
+            "mode": "Test",
+            "expectedOutput": "Metrics with perturbed parameters",
+            "metrics": {
+              "pf": "2.26",
+              "variance": "0.02"
+            }
+          }
+        ]
+      },
+      "status": "complete"
+    }
+  ],
+  "config": {
+    "sppVariants": 3,
+    "mrcCycles": 150,
+    "expectedActions": 48
+  }
+}
