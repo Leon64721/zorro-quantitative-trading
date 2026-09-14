@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>tradeUpdate</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/tradeupdate.htm">
+</head>
+<body>
+<h2>tradeUpdate(TRADE*, int NewLots, var NewStop, var NewTP, int NewLifeTime) </h2>
+Resizes or updates parameters of a particular open or pending trade.
+<h2>tradeUpdatePool()</h2>
+Updates pool trades to the current open virtual trades in <a href="hedge.htm">
+virtual hedging</a> mode. Automatically performed 
+after any trade with <strong>Hedge</strong> = <strong>4</strong>, or once per bar 
+with <strong>Hedge</strong> = <strong>5</strong>.&nbsp;Must be called by script 
+with <strong>Hedge = 6</strong>.
+<h3>Parameters:</h3>
+<table border="0">
+  <tr>
+    <td><strong>TRADE*</strong></td>
+    <td>Pointer to the trade to be updated, or <strong>0</strong> to update pool 
+	trades to the current open virtual trades. </td>
+  </tr>
+  <tr>
+    <td><strong>NewLots</strong></td>
+    <td>New number of lots, or <strong>0</strong> for not resizing. For reducing 
+	the trade size, partial closing must be supported by the broker; for 
+	increasing the trade size, <a href="hedge.htm">virtual hedging</a> must be enabled. </td>
+  </tr>
+  <tr>
+    <td><strong>NewStop</strong></td>
+    <td>New stop loss limit, or <strong>0</strong> for no change. </td>
+  </tr>
+  <tr>
+    <td><strong>NewTP</strong></td>
+    <td>New profit target, or <strong>0</strong> for no change. </td>
+  </tr>
+  <tr>
+    <td><strong>NewLifeTime </strong></td>
+    <td>New life time in number of bars, or <strong>0</strong> for no change. </td>
+  </tr>
+  </table>
+<h3>Returns:</h3>
+<strong>0</strong> when the operation failed, otherwise nonzero.
+<h3>Remarks:</h3>
+<ul>
+  <li>Only the positions (<strong>NewLots</strong>) of real or virtual trades can be increased. Pool trades take 
+  over the new lot size either at the next bar or when calling <strong>tradeUpdate()</strong>.</li>
+	<li>&nbsp;Trades are automatically updated with the new parameters when the 
+	maximum number of trades by <a href="lots.htm">MaxLong/MaxShort</a> is 
+	exceeded.</li>
+	<li>If the <a href="mode.htm">TRAILSTOP</a> or <a href="mode.htm">
+	TRAILPROFIT</a> flags are set, stops and profit targets are only changed 
+	when they are closer to the current price level.</li>
+</ul>
+<h3>Example:</h3>
+<pre>function double_all_trades()
+{
+  if(Hedge &lt; 4) return;
+  for(open_trades) 
+    if(TradeIsVirtual))
+      tradeUpdate(ThisTrade,2*TradeLots,0,0,0);
+  tradeUpdatePool(); <em>// adapt pool trades</em>
+}</pre>
+
+<h3>See also:</h3>
+<a href="selllong.htm">exitTrade</a>, 
+<a href="buylong.htm">enterTrade</a>, <a href="lots.htm">Lots</a>, <strong>
+<a href="stop.htm">Stop</a></strong>, <a href="timewait.htm">LifeTime</a>, 
+<a href="trade.htm">TMF</a>, <a href="fill.htm">Fill</a>, <a href="hedge.htm">Hedge</a>
+<p> <a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a> </p>
+</body>
+</html>

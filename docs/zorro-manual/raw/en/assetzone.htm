@@ -1,0 +1,127 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>BarZone,AssetMarket,AssetFrame</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+.auto-style1 {
+	margin-bottom: 0px;
+}
+</style>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/assetzone.htm">
+</head>
+
+<body>
+<h1>Time zone handling</h1>
+Zorro's standard time zone is UTC (Greenwich mean time), which is also the time 
+zone of historical data, logs, and charts. <a href="month.htm">Time and date functions</a> and variables are normally 
+also based 
+on UTC 
+time. Alternatively, local time zones can be used either on the bar or on the 
+asset level. For handling or converting time zones, the following variables 
+are available: <br>
+<h2>BarZone</h2>
+Time zone of bars (default: <strong>UTC</strong>). Affects bar generation: daily bars will start and end 
+at <strong>BarZone</strong> midnight plus <a href="barperiod.htm">BarOffset</a>. 
+For this, set <strong>BarZone</strong> before the first <a href="asset.htm">asset</a> 
+call. <strong>BarZone</strong> is also used by several date/time functions that 
+use local time. For 
+using specific asset-dependent time zones with intraday bars, see <strong>AssetFrameZone</strong> and <strong>AssetMarketZone</strong>.&nbsp;
+<h2>HistoryZone</h2>
+Time zone of the historical data files, for converting them to <strong>UTC</strong>. 
+This variable is rarely needed since timestamps in historical data files 
+should be already in UTC. If not, set <strong>HistoryZone</strong> to the time zone 
+in the data. The time stamps 
+in historical data files and <a href="data.htm">dataset</a> files are 
+then automatically converted to UTC on <strong>dataLoad</strong> or <strong>
+dataParse</strong>.&nbsp;
+<h2>BrokerZone</h2>
+Time zone of the broker plugin. This variable is rarely needed since broker plugins 
+normally return 
+timestamps in UTC. Otherwise the broker plugin is supposed to set <strong>
+BrokerZone</strong> with the <a href="brokercommand.htm">GET_BROKERZONE</a> command. The 
+broker API time 
+stamps are 
+then converted to UTC on import.
+<h2>LogZone</h2>
+Time zone of the log and chart. If not set, all dates and times in the log and 
+chart are in UTC.<br>&nbsp;&nbsp;
+<h2>AssetMarketZone</h2>
+Time zone of the current <a href="asset.htm">asset</a>; initally read from the <strong>Market</strong> field of the
+<a href="account.htm">asset list</a>, otherwise copied from <strong>BarZone</strong> 
+or set by script. 
+<h2>AssetFrameZone</h2>
+Time zone of the current  <a href="asset.htm">asset</a> for daily trading; used 
+to set <strong>AssetFrame</strong> to a daily <strong>
+<a href="barperiod.htm">TimeFrame</a></strong> that begins at <strong><a href="barperiod.htm">FrameOffset</a></strong> 
+in local time.&nbsp;
+<!--h2>AssetMarket</h2>
+Time zone of the current <a href="asset.htm">asset</a>, used for setting <strong>AssetFrame</strong> to a non-daily <strong><a href="barperiod.htm"> TimeFrame</a> </strong>that skips all bars outside market hours in local time, but follows the <a href="barperiod.htm">BarPeriod</a> inside market hours. 
+Market hours are determined by <a href="date.htm">StartMarket</a> and <a href="date.htm">EndMarket</a> 
+in the <strong>AssetMarket</strong> time zone. <strong>AssetMarket</strong> is mutually exclusive to <strong>AssetZone</strong>, 
+and is used for intraday trading.&nbsp;-->
+<h3>Type:</h3>
+<strong>int</strong>, <strong>UTC</strong> for UTC time (default), <strong>EST</strong> for New York, 
+<strong>CST</strong> for Chikago, <strong>WET</strong> for London, <strong>CET</strong> for Frankfurt, <strong>AEST</strong> for Sydney, <strong>JST</strong> 
+for Tokyo, or any number from <strong>-23..+23</strong> that gives the time zone 
+offset in hours to UTC. Daylight saving time is used, except for UTC and for 
+time zones at or beyond JST.<br>&nbsp;
+<h2>AssetFrame</h2>
+Asset specific time frame, automatically set by <strong>AssetFrameZone</strong>.
+<strong>0</strong> when the current <a href="asset.htm">asset</a> had no price quotes 
+in the current bar or when its market is closed; negative number of skipped bars 
+when the market opens; <strong>1</strong> otherwise. Normally used to set <a href="barperiod.htm">TimeFrame</a> <strong> = 
+  AssetFrame </strong>for skipping bars 
+outside market hours, or for trading on different time zones (see example).&nbsp;
+<h3>Type:</h3>
+<strong>int</strong>, read/only<br>&nbsp;
+<h3>Remarks:</h3>
+<ul>
+  <li class="auto-style1"> <strong>BarZone, HistoryZone</strong>, and <strong>BrokerZone</strong> affect the sampling of 
+  bars and thus must be set before loading history with the first
+  <a href="asset.htm">asset</a>() call. The asset-specific
+  <strong>AssetZone</strong> and <strong>AssetMarket</strong> must be set after selecting the <a href="asset.htm">asset</a> 
+  and can be changed at runtime.</li>
+	<li> If backtests use price history in local time and no time zone is set, all time/date functions 
+	and variables are then also in local time instead of UTC.&nbsp; </li>
+	<li> Setting a non-UTC <strong>BarZone</strong> generates a daily bar of 23 
+	or 25 hours when the daylight saving period begins or ends. The
+	<a href="run.htm">run</a> function can run twice or be skipped when the 
+	clock is set backwards or forwards. This does normally not matter, but should be 
+	taken into account in strategies that strongly rely on a 24-hour bar period or 
+	on bars ending or starting at a certain time.</li>
+  <li>For emulating day bars of different assets with different time zones, use 1-hour bars with <strong>AssetFrameZone</strong> and <strong>AssetFrame</strong> (see example). Use <a href="barperiod.htm">FrameOffset</a> for starting the emulated bar at a certain local hour.</li>
+  <!--li>For skipping bars outside market hours, set <strong>AssetMarket</strong> 
+  to the time zone and set <a href="barperiod.htm">TimeFrame</a><strong> = 
+  AssetFrame</strong>. For only preventing trades outside market hours without 
+  skipping bars, set the <a href="barmode.htm">BR_LEISURE</a> flag or check the trade time by script.</li-->
+</ul>
+<h3>Examples:</h3>
+<pre><em>// trade daily at 15:30 New York time
+</em>BarPeriod = 1440;
+BarOffset = 15*60+30;
+BarZone = EST;
+...
+
+<em>// trade two assets on different time zones</em>
+BarPeriod = 60;
+FrameOffset = 10; <em>// trade both assets at 10:00 am local time</em>
+while(asset(loop(&quot;EUR/USD&quot;,&quot;USD/JPY&quot;)))
+{
+  if(strstr(Asset,&quot;EUR&quot;))
+    AssetFrameZone = WET;
+  else if(strstr(Asset,&quot;JPY&quot;))
+    AssetFrameZone = JST;
+  TimeFrame = AssetFrame; <em>// use a daily time frame changing at 10:00 local time</em>
+  ...
+}</pre>
+<h3>See also:</h3>
+<a href="barperiod.htm">TimeFrame</a>, <a href="date.htm">StartMarket</a>, 
+<a href="barperiod.htm">BarOffset</a>, 
+<a href="barmode.htm">BarMode</a>, <a href="ticktime.htm">TickFix</a>, <a href="month.htm">Time/Date functions</a>,. <a href="asset.htm">asset</a>
+<p>&nbsp;</p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

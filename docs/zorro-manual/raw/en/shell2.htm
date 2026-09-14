@@ -1,0 +1,201 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Evaluation Sherll</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/shell.htm">
+</head>
+<body>
+<h1>Evaluation Shell: Adapting a Strategy</h1>
+<p>This tutorial section deals with the modifications of a strategy for integrating the
+<a href="shell.htm">evaluatien shell</a>. Depending on what you want to do and 
+which tests you want to apply, there are several steps of integration. We'll use
+<a href="tutorial_kelly.htm">workshop6</a> as an example.</p>
+<h3>Step 1: Attaching the shell</h3>
+<p>For adding cluster analysis, Montecarlo analysis, oversampling, various 
+walk-forward optimization methods, and different training objectives, you only 
+need to insert two lines to an existing stragey. Include <strong>
+eval.h</strong> at the begin of the script:</p>
+<pre>#include &lt;eval.h&gt;</pre>
+<p>... and <strong>eval.c</strong> at the end:</p>
+<pre>#include &lt;eval.c&gt;</pre>
+<p>You can find a script with attached shell in <strong>Workshop6a</strong>. When you start it, the [<span class="tast">Result</span>] button 
+will change to [<span class="tast">Start</span>], 
+a new menu will be available under [<span class="tast">Action</span>], and the
+<a href="shell.htm">variables panel</a> with the system section will pop up: </p>
+<p><img height="274" src="../images/shelldefault.png" width="653"></p>
+	<p>The settings have only effect when your script does not set those parameters itself. If it does, the script 
+	will override all 
+	settings in the panel, except for the 
+	<strong>_WFO_Cycles</strong> and <strong>_WFO_OOS</strong> values. They override 
+	the script, since they are used for the cluster analysis. </p>
+<p>The default values of some variables can be set up in the strategy script by
+<strong>#define</strong> statements. Example:</p>
+<pre>#define _ASSETLIST	&quot;AssetsFix&quot;
+#define _BAR_PERIOD     240
+#define _LOOKBACK_BARS  4000
+#define _WFO_CYCLES     16
+#define _BACKTEST_START 20150101
+#define _BACKTEST_END   20251231
+#define _INVESTMENT 	4
+</pre>
+<p>The <span class="tast">Action</span> menu contains only a subset of the shell 
+functions. You can <span class="tast">Reset</span> the variables, run
+<span class="tast">Cluster Analysis</span> and <span class="tast">Montecarlo 
+analysis</span>, and open the download page to <span class="tast">Download 
+History</span>.<br>&nbsp;</p>
+<h3>Step 2: Creating jobs</h3>
+<p>The next step of evalution is letting the shell control your script variables. 
+This allows you to experiment with many different parameter settings and optimization 
+ranges, 
+and testing them all in an automated process. Any such variant is a 'job'. As a side benefit, putting script variables in a panel also allows you to 
+observe their bar-to-bar behavior with the <a href="chart.htm">Visual Debugger</a>.</p>
+<p>Instead of <strong>eval.h</strong>, now include <strong>
+evars.h</strong> at the begin of the script:</p>
+<pre>#include &lt;evars.h&gt;</pre>
+<p>Below the <strong>#include</strong> statement, put all relevant script 
+variables that you want to observe, optimize, or experiment with in a list. Add comments 
+and put an
+<strong>END_OF_VARS</strong> statement at the end of the list. Example (from
+<strong>Workshop6b</strong>):</p>
+<pre>var CNTR_BPPeriod; <em>//= 30, 20..40, 5; Bandpass period in bars
+</em>var CNTR_BPWidth; <em>//= 0.5, 0.2..1; Bandpass width
+</em>var CNTR_FisherPeriod; <em>//=500, 300..700; Fisher transform period
+</em>var CNTR_Threshold; <em>//= 1,0.5..1.5,0.1; Bandpass threshold</em>
+var CNTR_Fisher; <em>//= 500,300..500; Time frame of Fisher transform</em>
+var CNTR_TrailDist; <em>//=4, 0..10; Distance factor for trailing</em>
+var TRND_Mode; <em>//= 0, 0..1; 0 - Lowpass, 1 - Butterworth filter</em>
+var TRND_Detect; <em>//= 0, 0..1; 0 - MMI, 1 - Hurst</em>
+var TRND_LPPeriod; <em>//= 300,100..700,50; Lowpass/Butterworth period in bars</em>
+var TRND_MMIPeriod; <em>//= 300,100..500; MMI/Hurst Filter time period</em>
+var StopDist; <em>//= 10,5..30,5; Stop distance in ATR units</em>
+var ATRPeriod; <em>//=100, 30..150; ATR period for stop/trail distances
+</em>END_OF_VARS</pre>
+<p>This encapsulates the variables in a <a href="structs.htm">C struct</a> 
+named <strong>V</strong>. Thus, in the script the variables are accessed with a preceding <strong>V.</strong>, 
+for instance <strong>V.ATRPeriod</strong>. They all must be of type <strong>var</strong>. It you need an integer variable, 
+as in a switch/case statement, use an <strong>(int)</strong> typecast. Replace
+all your
+<a href="optimize.htm">optimize</a> calls with <strong>_optimize</strong> and 
+pass the variable as sole parameter. Example:</p>
+<pre>Stop = _optimize(V.StopDist) * ATR(V.ATRPeriod);</pre>
+<p>The added script variables appear at the end with a blue background. For 
+illustrating the process, we have added two new variables to workshop 6 for 
+selecting between two market regime detectors (<strong>Hurst</strong> and
+<strong>MMI</strong>) and two filters (<strong>Lowpass</strong> and
+<strong>Butterworth</strong>). The variable names and the comments matter. 
+Observe the following rules:</p>
+<ul>
+	<li>If the variable belongs exclusively to a certain algo, let its name 
+	begin with the algo name (f.i. <strong>TRND_Mode</strong>). Otherwise it is 
+	assumed that the variable is common for all algos.</li>
+	<li>The default value is given with <strong>'= value'</strong> in the 
+	comment. If omitted, the variable is set to <strong>0</strong>.</li>
+	<li>If the variable is to be limited by a range, enter it with <strong>'min..max'</strong> 
+	following a comma after the default value.</li>
+	<li>If the variable is to be optimized, enter the <strong>step width</strong> 
+	following a comma after the range. If the step width is <strong>0</strong>, 
+	the variable is not optimized, even if it appears in an <strong>_optimize</strong> 
+	call in the script. In this way, different jobs can optimize different 
+	variables. </li>
+	<li>After the default value or range, enter a semicolon <strong>';'</strong> 
+	and then a short description of the variable. </li>
+</ul>
+<p>The startup panel will now look like this (<strong>Workshop6b</strong>):</p>
+<p><img height="381" src="../images/shellvars0.png" width="646"></p>
+<p>The <span class="tast">Action</span> menu allows now to save and load jobs, 
+browse among jobs, and rearrange the <a href="shell.htm">summary report</a>. Experiment with different variable settings and save them to the <strong>Jobs</strong> 
+folder (or any other folder). Load all of them with <span class="tast">Load 
+Multiple Jobs</span>. Four example jobs from workshop 6 are included, but you 
+normally have a lot more jobs for thorougly testing a strategy, </p>
+<p>When you click [<span class="tast">Start</span>] after loading one or 
+multiple jobs, they are all trained. At the end of the process, a bell will 
+ring, and the
+summary report will open in the editor. If an entry of a particular job already existed 
+in the summary, it is updated with 
+the new results. The jobs with the best performances are sorted at the top of the 
+summary. <br>&nbsp;</p>
+<h3>Step 3: Creating multiple variants</h3>
+<p>For finding out which asset, algo, and time frame combinations work best with 
+which job, test it with any combination. Since this interferes with your 
+asset/algo loops (if any) in the script, it has to be modified further:</p>
+<p>First, put all assets, algos, and timeframes you want to test in <strong>
+#define</strong> <strong>_ASSETS</strong>, <strong>_ALGOS</strong>, <strong>
+_TIMEFRAMES</strong> statements:</p>
+<pre> #define _ASSETS &quot;EUR/USD&quot;,&quot;USD/JPY&quot;
+#define _ALGOS &quot;TRND&quot;,&quot;CNTR&quot;
+#define _TIMEFRAMES 60,240  <em>// in minutes</em></pre>
+<p>The syntax is the same as in a <a href="loop.htm">loop</a> statement, so you 
+can also use the <strong>Assets</strong> keyword to include all assets from the 
+current asset list. Next, replace your main asset and algo loops with a single <strong>assetLoop()</strong> 
+call. Assume your <strong>run</strong> function previously looked like this:</p>
+<pre>function rum()
+{
+  BarPeriod = 60; 
+  LookBack = 2000; 
+
+  while(asset(loop(&quot;EUR/USD&quot;,&quot;USD/JPY&quot;)))
+  while(algo(loop(&quot;TRND&quot;,&quot;CNTR&quot;)))
+  {
+    if(strstr(Algo,&quot;TRND&quot;)) {
+      TimeFrame = 1;
+      tradeTrend();
+    } else if(strstr(Algo,&quot;CNTR&quot;)) {
+      TimeFrame = 4;
+      tradeCounterTrend();
+    }
+  }
+}</pre>
+<p>It now becomes this (see <strong>workshop6c.c</strong>):</p>
+<pre> #define _ASSETS &quot;EUR/USD&quot;,&quot;USD/JPY&quot;
+#define _ALGOS &quot;TRND&quot;,&quot;CNTR&quot;
+#define _TIMEFRAMES 60,240
+
+function run()
+{
+  BarPeriod = 60; 
+  LookBack = 2000; 
+
+  assetLoop();
+
+  if(strstr(Algo,&quot;TRND&quot;)) 
+    tradeTrend();
+  else if(strstr(Algo,&quot;CNTR&quot;)) 
+    tradeCounterTrend();
+}</pre>
+<p>If your script has no asset/algo loops, replace your first <strong>asset()</strong> 
+call with <strong>assetLoop()</strong>. Mind the <strong>Algo</strong> comparison with <strong>strstr</strong>. Using
+<strong>strcmp</strong> or <strong>'='</strong> for algo selection would not 
+work 
+anymore, since algo names now get a number appended. If you start the system now, it assigns different colors to the variables 
+since it recognizes from their name to which algo they belong.</p>
+<p>If you now run the system without loading a job, or if you select only a 
+single job , it will use the first asset, algo, and time frame from the 
+definitions. If multiple jobs are loaded, they will be trained and tested with 
+all their asset, algo, and time frame combinations.</p>
+<p>&nbsp;The <span class="tast">Action</span> menu now got the final item to
+<span class="tast">Create Algos from Summary</span>. All profitable and robust 
+jobs from that summary with a CA result of 75% or better are selected for the 
+final portfolio. They are automatically loaded at start. <br>&nbsp;</p>
+<h3>Remarks
+</h3>
+<ul>
+	<li><span class="Highlight">Compare</span> algo names not with <strong>'='</strong>, but with <strong>
+	strstr()</strong>, as in the above example. First, it is needed because the 
+	algos generated by the shell get a number appended. Second, it is needed 
+	when you want to run your strategy with VC++. VC++ will give no error 
+	message when comparing strings with <strong>'='</strong>, but will just skip 
+	the clause.</li>
+	<li>In a multi-algo portfolio, your <span class="Highlight">run function</span> 
+	is called multiple times at any bar. If you want something to be only 
+	executed once, like a start message, put it in a <strong>main</strong> 
+	function.</li>
+</ul>
+<h3>See also:</h3>
+<strong> <a href="started.htm">Get Started with Zorro</a>, <a href="account.htm">
+Portfolio Lists</a>, <a href="numwfocycles.htm">Walk Forward Optimization</a>,
+<a href="performance.htm">Performance Reports</a></strong><p><a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a> </p>
+</body>
+</html>

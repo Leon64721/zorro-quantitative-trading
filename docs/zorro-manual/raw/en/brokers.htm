@@ -1,0 +1,163 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Brokers, VPS</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/brokers.htm">
+</head>
+<body>
+<h1>Zorro and the Brokers </h1>
+<p>Any algorithmic trading strategy needs a connection from the Zorro platform to a broker or exchange for buying or selling assets. Normally the broker also 
+provides live prices, price history, and other data such as order book content 
+or option chains. Most brokers offer free demo accounts (also called practice, paper, or game accounts) where trading can be tested without risking real money. A demo account with a broker can usually be opened in 5 minutes on their website. In most cases you'll get an MT4 account, and can start trading with Zorro's MT4 bridge. 
+Opening a real account for trading with real money takes longer, as the broker has to confirm your identity through some ID 
+and address verification process. With serious brokers, be prepared to fill in 
+lengthy forms about your risk preferences and prior trading experiences.</p>
+<h3>Finding a broker </h3>
+<p>Every broker uses a different trade model, offers a different universe of 
+assets, and has different values for spread, commission, and other asset and 
+account parameters. Here are some simple criteria for selecting the best broker for 
+small-budget algo trading:</p>
+<ul>
+  <li><strong>Market Maker / No Dealing Desk (NDD).</strong> If a broker is a 
+  'market maker', they take the other side of your trades. So you're trading 
+  against the broker, not against the market. Obviously, those broker do not 
+  want you to win, even though they claim otherwise. Market maker brokers are quite common for 
+  Forex, CFD, or 
+  binary options. Brokers with 'no dealing desk' (also referring to 
+  themselves as <strong>ECN</strong> &quot;<strong>E</strong>lectronic
+  <strong>C</strong>ommunication <strong>N</strong>etwork&quot; or <strong>STP</strong> 
+  &quot;<strong>S</strong>traight <strong>T</strong>hrough <strong>P</strong>rocessing&quot; 
+  brokers) claim to have no such conflict of interest, since they transfer your orders to
+  <strong>exchanges</strong> or <strong>liquidity providers</strong>. 
+  Therefore NDD/ECN/STP brokers are preferable to Market Makers. At least in 
+  theory*.&nbsp;&nbsp; </li>
+	<li><strong>Initial capital.</strong> Some brokers require a minimum initial 
+	deposit, such as $10000. Theoretically you can immediately withdraw 90% of your 
+	deposit when the account is opened. 
+  Still, it is preferable to select a broker with small initial capital requirement.
+	</li>
+	<li><strong>Lot size.</strong> Determines you minimum forex order volume. The 
+	smaller, the better. Many brokers offer micro lot accounts, where 1 lot is 
+	equivalent to 1000 forex units. Some offer nano lot accounts (1 lot = 
+	100 contracts), and some, such as Oanda, have no minimum lot size at all.</li>
+	<li><strong>Leverage.</strong> The higher, the better, because you can 
+	always reduce your leverage, but not increase it. Accounts in the US have 
+	often lower leverage than in the rest of the world. Most brokers offer about 
+	30:1 .. 100:1 for Forex and CFDs, and 2:1 for stocks 
+	and ETFs.</li>
+	<li><strong>Spread and Commission.</strong> Naturally, the smaller the 
+	trading costs, the better. Especially short-term strategies only work below 
+	a certain trading cost level. For comparing costs, a formula for commission -&gt; spread conversion can be found under
+	<a href="spread.htm">Commission</a>. </li>
+	<li><strong>Customer service.</strong> It is incredible what sorts of request and 
+	complaints come in daily on a broker's service desk. Still, the service must 
+	react promptly and solve problems professionally. You should be able to 
+	contact the service anytime via email or chat.</li>
+	<li><strong>Payment.</strong> In case you need to remargin quickly, the 
+	broker should offer a fast way to deposit money. Bank wire transfers can 
+	take days, money transfer via Paypal or credit card only minutes until the 
+	balance appears on your account. Of course, the broker should also offer a 
+	fast way to withdraw profits.</li>
+	<li><strong>Free subscription.</strong> Some brokers provide a free Zorro S 
+	subscription with a new account; look under <a href="restrictions.htm">Zorro 
+	S</a> for details.</li>
+</ul>
+<p>All brokers listed under '<strong>Affiliate</strong>' on the
+<a href="https://zorro-project.com/download.php" target="_blank">Zorro download 
+page</a> fulfill the above criteria. If the broker offers the choice between several account types, select the account with the <strong>smallest lot size</strong> and the <strong>highest leverage</strong>. Maybe you've read in a trading book to avoid high leverage as it implies &quot;high risk&quot;. 
+Not so: A high leverage account just means that you're free to determine your own leverage. 
+Risk comes from trading a too big volume, not from a high leverage account. Small 
+minimum lot sizes are preferable as you can trade with less capital and can better adjust the trade volume. For low-budget 
+forex trading strategies, a micro lot or nano lot account is mandatory. </p>
+<p>* In reality, NDD forex brokers have been found to be in 
+	control of their main liquidity provider and in this way indirectly hold 
+  positions against their clients. Some NDD brokers are rumored to classify 
+their clients in categories A and B, depending on their trade success. Trades 
+from A-clients - usually, algorithmic traders - are transferred to liquidity providers since they tend to win. 
+Trades from B-clients - the vast majority - are not. You should aim for being an 
+A-client.</p>
+<h3>Connecting to a broker </h3>
+<p>Zorro can trade with all brokers that offer at least one of the following 
+ways connecting to them:</p>
+<ul>
+  <li>A trading API. That's a software library with direct access to the 
+  broker's price and trading servers. The free Zorro version comes with trading 
+  API modules for several major brokers, such as <strong><a href="fxcm.htm">FXCM</a></strong>, <a href="oanda.htm">Oanda</a>, 
+  <a href="ig.htm">IG</a>, or <a href="dukascopy.htm">Dukascopy</a> (more broker API modules are available with <a href="restrictions.htm">Zorro S</a>). 
+  Just enter your user ID and password on the Zorro panel and you'll be 
+  automatically connected. Any broker API can be relatively easily implemented with some programming knowledge through a <a href="brokerplugin.htm">Broker Plugin DLL</a>. <br>
+&nbsp;  </li>
+  <li><strong>&quot;Meta&quot;-Trader 4/5</strong> trading platform. Install the <a href="mt4plugin.htm">MT4/5 Bridge</a>, 
+  enter your account number in the Zorro user ID field and you'll be 
+  automatically connected. Zorro runs in this mode as an 
+  "Expert Advisor" (EA) on the platform and can thus trade with any broker that supports 
+  that popular platform. This way you have thousands of brokers to choose from. If you have 
+  the choice, MT4 is normally preferable over MT5.<br>
+&nbsp;  </li>
+  <li>A web based trading platform, or a trading program where trades can be 
+  simply placed with key strokes or mouse clicks. Zorro can control other programs  by sending key or mouse commands to their user interface. In this mode, Zorro 
+  can retrieve the current price data 
+  from a free demo account with a supported broker A, and uses the <strong><a href="order.htm">order</a></strong> function to hit buttons on the web based trading platform 
+  from your real broker B.<br>&nbsp;</li>
+	<li>
+<p>If your broker does not support any of those methods, you can trade manually by using Zorro as a signal provider. For this, run your strategy on a 
+free demo account 
+of a supported broker A, and enter or exit a trade with your real broker B when you see or hear that Zorro opens or closes a trade. If your strategy has not a too-short time frame, it won't matter 
+much when a short delay lies between Zorro's and your trade entry. Zorro plays the sound file <strong>trade.wav</strong> each time when it enters a trade, and <strong>win.wav</strong> / <strong>loss.wav</strong> each time when it closes it. Those files are located in the <strong>Zorro</strong> main folder, and you can replace them with an alarm sound if you want to get alerted every time for entering a trade. 
+Alternatively, Zorro can write trade signals to a spreadsheat or other file for 
+externally triggering trades.</p>
+	</li>
+</ul>
+<h3>Backtesting a broker</h3>
+<p>In backtests, Zorro can simulate any broker and account through <a href="spread.htm">asset specific parameter sets</a>. 
+The broker and account specific parameters, such as rollover fee, spread, lot size, pip cost, etc. are 
+taken from a spreadsheet file in the <strong>History</strong> 
+folder. This file can be either downloaded from the broker API, or edited with Excel or with the script editor for simulating different accounts and assets. For details see <a href="account.htm">Asset List</a>. </p>
+<h3>Taking advantage of a broker</h3>
+<p>Market maker brokers can not only play tricks on you, you can also play 
+tricks on them. One of the most favored is <a href="brokerarb.htm">broker arbitrage</a>. 
+Since Zorro S can trade with several brokers at the same time, you can compare 
+asset prices from broker A with the same asset from broker B, and enter a long 
+position with the cheap broker and a short position with the other. You can 
+this way collect risk-free profits when the price difference must temporarily 
+exceeds the spread and transaction costs. Of course, brokers get upset when they learn 
+about those practices. So you should not actually brag about them on trader 
+forums.</p>
+<h3>Trading cryptocurrencies at a digital exchange</h3>
+<p>The <a href="zsystems.htm">Z10 strategy</a> is a passive portfolio management 
+system for cryptocurrencies. Trading with Ethereum, Ripple, or other digital 
+currencies is a bit different to trading with normal assets, since you normally need bitcoin 
+for this. Some 
+	digital exchanges accept funding in Bitcoin only; you'll then need to 
+purchase bitcoin first for opening an account with them. Here are the steps:</p>
+<ul>
+	<li>Register with a <strong>bitcoin exchange service</strong> where you can buy or 
+	sell bitcoin for dollars or Euro; examples: Coinbase&trade;
+	or Bity&trade;. Register there, enter your credit card or bank account data, 
+	and buy bitcoin. Credit card transfers are usually more or less instant, 
+	bank transfers can take some days.</li>
+	<li>Exchanges can host your money, but if you don't trust 
+	them, get a 	<strong>wallet</strong> for storing your bitcoin treasure on your PC<strong>.
+	</strong>Example: Copay&trade;. To transfer coin from your exchange 
+	account into your wallet, it displays a receiver address that you enter at 
+	the service's website.</li>
+	<li>Register an account with a <strong>digital exchange</strong>, like Bittrex&trade;
+	or Binance&trade;. For depositing bitcoin, the exchange shows you a 
+	receiver address to which you send coin from your wallet, or that you can use as 
+	withdrawal address for the bitcoin exchange service.</li>
+	<li>As soon as the bitcoins appear in your account at the exchange, 
+	you can fire up Z10 and start trading.</li>
+	<li>For withdrawing your bitcoin profits, take the above steps in opposite 
+	direction. Needless to say that any step usually requires a small bitcoin 
+	transaction fee.</li>
+</ul>
+<h3>See also:</h3>
+<a href="started.htm">Zorro</a>,
+<a href="strategy.htm">Strategy</a>, <a href="account.htm">account list</a>, <a href="brokerplugin.htm">broker plugin</a>,
+<a href="mt4plugin.htm">MT4 plugin</a>, <a href="brokerarb.htm">broker arbitrage</a>
+<p><a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a> </p>
+</body>
+</html>

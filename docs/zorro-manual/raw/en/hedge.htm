@@ -1,0 +1,238 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+<title>Hedge</title>
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link href="css.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+<!--
+.Stil1 {
+	font-size: smaller;
+}
+.Stil2 {
+	color: #FFFFFF;
+	font-weight: bold;
+}
+.Stil3 {
+	font-weight: bold;
+}
+.Stil4 {
+	color: #FFFFFF;
+}
+.auto-style2 {
+	color: #FFFFFF;
+	text-align: justify;
+}
+.auto-style3 {
+	color: #FFFFFF;
+	font-weight: bold;
+	text-align: justify;
+}
+-->
+</style>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/hedge.htm">
+</head>
+
+<body>
+
+<h1>Hedging, Virtual Hedging, FIFO Compliance </h1>
+Many strategies, such as grid traders or systems with multiple algorithms, often 
+hold opposite positions of the same asset. This would normally violate the 
+<span class="Highlight">NFA and FIFO compliance</span> 
+required by international brokers and cause rejection of orders. Even if orders 
+are accepted, holding long and short positions simultaneously increases risk, margin, 
+and trading costs. It is always preferable to close an open position, rather than 
+opening a new position in opposite direction. <br>&nbsp;<br>Therefore scripts 
+must 
+take care of NFA and FIFO compliant trading, i.e. close first opened positions first, 
+and avoid concurrent long and short positions. This can require lengthy and awkward 
+coding when several algorithms trade with the same assets. The 
+<span class="Highlight">virtual hedging mechanism</span> 
+of Zorro S guarantees FIFO compliant closing of trades and prevents positions in 
+opposite directions, even with complex portfolio systems. This happens in a completely 
+transparent way; the script needs no special code and can arbitrarily open and close 
+positions. <br><br>The virtual hedging mechanism uses two layers of trades,
+<strong class="Highlight">phantom trades</strong> and <strong class="Highlight">pool trades</strong>. The pool trades 
+hold the net amount of the phantom trades. The strategy script only handles the 
+phantom trades, while the broker only receives orders for the pool trades. Pool 
+trades are opened or closed when phantom trades open or close, but not necessarily 
+in that order. Phantom trades can be open in both directions at the same time, but 
+the resulting pool trades are only open in one direction per asset, either short 
+or long. <br>&nbsp;
+<table align="center" border="0">
+	<tr valign="middle">
+		<td bgcolor="#0000FF" class="Stil2" valign="middle">
+		<p><br>Strategy<br>Script</p>
+		</td>
+		<td>&nbsp;<br>
+		<img class="Stil3" height="36" src="../images/arrow.gif" width="30"><br>&nbsp;</td>
+		<td bgcolor="#0000FF" class="auto-style3"><br>Phantom<br>Trades</td>
+		<td class="Stil4"><br>
+		<img class="Stil3" height="36" src="../images/arrow.gif" width="30"><br>&nbsp;</td>
+		<td bgcolor="#0000FF" class="auto-style3"><br>Pool<br>Trades</td>
+		<td class="Stil4"><br>
+		<img class="Stil3" height="36" src="../images/arrow.gif" width="30"><br>&nbsp;</td>
+		<td bgcolor="#0000FF" class="auto-style3"><br>Market<br>Orders</td>
+		<td class="Stil4"><br>
+		<img class="Stil3" height="36" src="../images/arrow.gif" width="30"><br>&nbsp;</td>
+		<td bgcolor="#0000FF" class="auto-style2"><strong><br>Broker<br>API</strong></td>
+	</tr>
+</table>
+<p>Systems with virtual hedging are almost always* <span class="Highlight">superior to 
+'real hedging' systems</span> that hold opposite positions. Aside from NFA and FIFO compliance, virtual 
+hedging systems achieve higher profit due to reduced transaction costs, need less 
+capital due to lower margin requirements, and have lower risk because trades are 
+closed earlier and less exposed to the market. Some brokers, such as
+<a href="oanda.htm">Oanda</a>, apply virtual hedging automatically to all trades. 
+For brokers that don't, Zorro can activate virtual hedging with the <strong>Hedge</strong> 
+variable (see below). All trades are then entered in phantom 
+mode. When the net amount - the difference of long and short open lots - changes, 
+Zorro automatically opens or closes pool trades in a way that FIFO order is observed 
+and market exposure is minimized. </p>
+<p>Example: several long positions are open with a total amount of 100 lots. Now 
+a short trade of 40 lots is entered. The net amount is now 60 lots (100 long lots 
+minus 40 short lots). Zorro closes the oldest long pool trades fully or partially 
+until the sum of open positions is at 60 lots. If partial closing is not supported, 
+the oldest long pool trades are fully closed until the remaining position is at 
+or below 60 lots. If it's less than 60 lots, a new long pool trade is opened at 
+the difference. In both cases the net amount ends up at exactly 60 lots.</p>
+<p>Virtual hedging affects <a href="performance.htm">performance parameters</a>. 
+The equity curves of a system with<strong> </strong>or without virtual hedging are 
+rather similar, but the number of trades, the profit factor, the win rate, and the 
+average trade duration can be very different. Here's an example of the same grid trading 
+system without and with virtual hedging: </p>
+<p align="center"><img height="321" src="../images/z5perf102.png" width="779"><br>
+EUR/CHF grid trader, real hedging, <strong>402</strong> trades, avg duration
+<strong>14 weeks</strong>, win rate <strong>95%</strong>, profit factor <strong>
+10</strong>, total profit <strong>$15900</strong> </p>
+<p align="center"><img height="321" src="../images/z5perf112.png" width="779"><br>
+EUR/CHF grid trader, virtual hedging, <strong>261</strong> trades, avg duration
+<strong>2 weeks</strong>, win rate <strong>65%</strong>, profit factor <strong>3</strong>, 
+total profit <strong>$16300</strong> </p>
+<p>* Exception: Systems that exploit rollover / swap arbitrage or use special 
+order types cannot use virtual hedging.</p>
+<hr>
+<h2>Hedge</h2>
+Hedging behavior; determines how simultaneous long and short positions with the 
+same asset are handled.
+<h3>Range:</h3>
+<table style="width: 100%">
+	<tr>
+		<td><strong>0&nbsp;</strong></td>
+		<td>No hedging; automatically closes opposite positions with the same
+		<a href="asset.htm">asset</a> when a new position is opened (NFA compliant; 
+		default for NFA accounts).</td>
+	</tr>
+	<tr>
+		<td><strong>1</strong></td>
+		<td>Hedging across algos; automatically closes opposite positions with the 
+		same <a href="algo.htm">algo</a> when a new position is opened (not NFA 
+		compliant; default for non-NFA accounts). </td>
+	</tr>
+	<tr>
+		<td><strong>2</strong></td>
+		<td>Full hedging; long and short positions even with the same
+		<a href="algo.htm">algo</a> can be open at the same time (not NFA compliant). 
+		Entering a trade will not automatically close opposite positions.</td>
+	</tr>
+	<tr>
+		<td><strong>4</strong></td>
+		<td>Virtual hedging without partial closing (NFA compliant). Long and 
+		short positions can be open simultaneously, but only the net position is 
+		open in the broker account. Phantom trades immediately trigger the 
+		opening or closing of corresponding pool positions.</td>
+	</tr>
+	<tr>
+		<td><strong>5</strong></td>
+		<td>Virtual hedging with partial closing and pooling (NFA and FIFO 
+		compliant). Phantom trades in 
+		the <a href="run.htem">run</a> function are collected and result in a 
+		single pool trade. Intrabar phantom trades trigger pool trades 
+		immediately. Open pool positions are partially closed to match the net 
+		amount. </td>
+	</tr>
+	<tr>
+		<td><strong>6</strong></td>
+		<td>Script-synchronized virtual hedging with partial closing and pooling (NFA and FIFO 
+		compliant). Like Hedge mode <strong>5</strong>, but pool trades are not 
+		automatically snychronized at any bar, but only when the <a href="tradeupdate.htm">tradeUpdate</a> function 
+		is called.</td>
+	</tr>
+</table>
+<h3>Type:</h3>
+<strong>int</strong>
+<h3>Remarks:</h3>
+<ul>
+	<li>Virtual hedging requires <a href="restrictions.htm">Zorro S</a>. The <a href="performance.htm">performance report</a> and the
+	<a href="winloss.htm">Total</a> statistics reflect the pool trades, the
+	<a href="winloss.htm">Long/Short</a> statistics reflect the virtual and phantom trades. 
+	Only exception is <strong>NumPendingTotal</strong>, which is always the number of pending 
+	virtual and phantom trades since pool trades are never pending. 'Real' 
+	phantom trades for the purpose of <a href="trademode.htm">equity curve trading</a> also contribute to the Long/Short statistics, 
+	but won't trigger pool trades. Virtual hedging is not used for optimization 
+	or training.</li>
+	<li><strong>Hedge = 5</strong> is preferable to <strong>Hedge = 4</strong> since 
+	it opens fewer trades and causes less transaction costs. <strong>Hedge 
+	= 4</strong>&nbsp; is required when partial closing is not supported by the 
+	broker or account. This is often not documented, but you can find out with the
+	<strong><a href="scripts.htm">TradeTest</a></strong> script. Start a session, 
+	set Lots to 10, open a position, then set Lots to 5 and close the position. 
+	If this fails, your account does not support partial closing.</li>
+	<li><strong>Hedge &gt;= 2</strong> enables full hedging and won't automatically close opposite positions. If this is required, do it by 
+	script.</li>
+	<li>The number of open net lots of pool and phantom trades can be evaluated 
+	with the <a href="winloss.htm">LotsPool</a> and <a href="winloss.htm">LotsPhantom</a> 
+	variables. They can temporarily be out of sync when pool trades are externally 
+	or manually closed. They will then automatically get in sync again at the next 
+	virtual trade with the same asset.</li>
+	<li>Opening pool trades can be prevented by setting <a href="lots.htm">Lots</a> 
+	= <strong>0</strong>. As long as no phantom trades are 
+	opened or closed, pool trades won't then be opened even when
+	<a href="winloss.htm">LotsPool</a> and <a href="winloss.htm">LotsPhantom</a> 
+	are different. </li>
+	<li>Pool trades have no profit target and no <a href="trade.htm">TMF</a>, but 
+	- for protection against large price shocks - a very far stop loss at 25% distance to the current price. They are normally only controlled by opening 
+	and closing phantom trades. </li>
+	<li>Pool trades appear in <a href="fortrades.htm">trade enumeration loops</a> and 
+	can be identified by <strong><a href="trade.htm">TradeIsPool</a></strong>. 
+	When enumerating trades, make sure to separate them from virtual trades (<strong>if(!TradeIsPool)...</strong> 
+	)<strong>.</strong></li>
+	<li>Pool trades that were rejected by the broker will be re-entered at every 
+	bar until <a href="winloss.htm">LotsPool</a> and <a href="winloss.htm">LotsPhantom</a> 
+	are in sync again. Synchronizing can be enforced with
+	<a href="tradeupdate.htm">tradeUpdate</a>.</li>
+	<li>Dependent on open trades, closing a phantom trade can cause closing of several 
+	pool trades and/or opening of a new pool trade, especially in <strong>Hedge 
+	= 4</strong> mode. A phantom trade can close with a loss and the subsequent 
+	pool trade with a win, or vice versa. This is a perfectly normal consequence 
+	of virtual hedging and not a bug. </li>
+	<li>In virtual hedging mode, the <a href="trading.htm">result window</a> displays 
+	only open pool trades and pending phantom trades. When <a href="algo.htm">algo 
+	identifiers</a> are used, pool trades are displayed either with the identifier 
+	of the triggering trade, or with a <strong>&quot;NET&quot;</strong> identifier.
+	</li>
+	<li>Hedging is prohibited for US based accounts due to NFA Compliance Rule 2-43(b). 
+	Such accounts normally require the <strong><a href="mode.htm#nfa">NFA</a></strong> 
+	flag and either virtual or no hedging. The <strong>NFA</strong> flag does not 
+	affect phantom trades, which can be simultaneously open in both directions.
+	</li>
+</ul>
+<h3>Example:</h3>
+<pre>if(Live)
+  Hedge = 5;  <em>// virtual hedging in trade mode</em>
+else
+  Hedge = 2;  <em>// full hedging in test mode</em>
+</pre>
+<h3>See also:</h3>
+<a href="mode.htm">NFA</a>, <a href="buylong.htm">enterLong/Short</a>,
+<a href="winloss.htm">LotsPool</a>, <a href="trademode.htm">Phantom trades</a>,
+<a href="tradeupdate.htm">tradeUpdate</a>
+<p>&nbsp;</p>
+<a class="button" href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))">&#9658; 
+latest version online</a>
+
+</body>
+
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<!-- saved from url=(0066)http://www.rfortraders.com/lecture-5-applied-statistical-concepts/ -->
+<html lang="en-US"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="UTF-8">
+<title>Lecture 5: Applied Statistical Concepts</title>
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/Lecture 5.htm">
+</head><body>
+<h1 class="title">Lecture 5 – Applied Statistical Concepts</h1>
+      <p><span class="post-meta"><span class="small">In</span> <span class="categories"><a href="http://www.rfortraders.com/code/beginner-r-tutorial/">Beginner R Tutorial</a>, <a href="http://www.rfortraders.com/code/finc-621/">FINC 621</a>, <a href="http://www.rfortraders.com/code/r-programming/">R Programming</a></span> </span></p>
+      <p>In this lecture we will discuss statistical estimators, investigate the law of large numbers, the central limit 
+  theorem and look at implementing all these concepts within R.</p>
+<h4>Population vs. Sample Statistics</h4>
+<p>Consider the set of numbers: 102, 103.2, 102, 101.2, 499, 103.2 101.23, 99.2.<br>
+Here are some questions we might want to ask about these numbers:</p>
+<ol>
+  <li>Where do these numbers come from?
+  </li><li>Are these all the numbers, or should I expect more to arrive?
+  </li><li>Is there a sequence (pattern) present or are these random?
+  </li>
+</ol>
+<p>We notice something right off the bat. We need to make assumptions. If these are the only numbers in 
+  our set, then we call this set a <b>population</b>. If the numbers are a sample from a larger set, then we call this a 
+  <b>sample.</b><br>
+<img src="../images/sample_vs_population_statistics.png" alt="R sample vs polulation" width="479" height="224" class="aligncenter size-full wp-image-281"></p>
+<h5>Motivation</h5>
+<p>We want to write down the height of every Loyola student and we want to ask the following questions:</p>
+<ol>
+  <li>What is the average height of all the Loyola students?
+  </li><li>What is the variance from that average height?
+  </li>
+</ol>
+<p>What is the sample and what is the population in this example?</p>
+<h4>Law of Large Numbers</h4>
+<p>Use R to generate 100000 random numbers. This is our population. Compute the mean and the standard deviation of these numbers.</p>
+<div class="wp_codebox"><table><tbody><tr id="p2791"><td class="code" id="p279code1"><pre class="rsplus" style="font-family:monospace;"> <span style="color: #0000FF; font-weight: bold;">set.<span style="">seed</span></span><span style="color: #080;">(</span><span style="color: #ff0000;">100</span><span style="color: #080;">)</span>
+ X <span style="color: #080;">&lt;-</span> <span style="color: #0000FF; font-weight: bold;">rnorm</span><span style="color: #080;">(</span><span style="color: #ff0000;">1000000</span>, <span style="color: #ff0000;">2.33</span>, <span style="color: #ff0000;">0.5</span><span style="color: #080;">)</span>
+ mu <span style="color: #080;">&lt;-</span> <span style="color: #0000FF; font-weight: bold;">mean</span><span style="color: #080;">(</span>X<span style="color: #080;">)</span>
+ <span style="color: #0000FF; font-weight: bold;">sd</span> <span style="color: #080;">&lt;-</span> <span style="color: #0000FF; font-weight: bold;">sd</span><span style="color: #080;">(</span>X<span style="color: #080;">)</span>
+ <span style="color: #0000FF; font-weight: bold;">hist</span><span style="color: #080;">(</span>X, <span style="color: #0000FF; font-weight: bold;">col</span> <span style="color: #080;">=</span> <span style="color: #ff0000;">"blue"</span>, breaks <span style="color: #080;">=</span> <span style="color: #ff0000;">100</span><span style="color: #080;">)</span>
+ <span style="color: #0000FF; font-weight: bold;">abline</span><span style="color: #080;">(</span>v <span style="color: #080;">=</span> mu, <span style="color: #0000FF; font-weight: bold;">col</span> <span style="color: #080;">=</span> <span style="color: #ff0000;">"red"</span>, lwd <span style="color: #080;">=</span> <span style="color: #ff0000;">3</span><span style="color: #080;">)</span></pre></td></tr></tbody></table>
+</div>
+<p><img src="../images/law-of-large-numbers-in-R.png" alt="law of large numbers in R" width="496" height="484" class="aligncenter size-full wp-image-284"></p>
+<p>Next, let’s take samples from this population and compute the average of these samples for different sample sizes.</p>
+<div class="wp_codebox"><table><tbody><tr id="p2792" class="alt-table-row"><td class="code" id="p279code2"><pre class="rsplus" style="font-family:monospace;"> sample5 <span style="color: #080;">&lt;-</span> <span style="color: #0000FF; font-weight: bold;">sample</span><span style="color: #080;">(</span>X, <span style="color: #ff0000;">5</span>, <span style="color: #0000FF; font-weight: bold;">replace</span> <span style="color: #080;">=</span> TRUE<span style="color: #080;">)</span>
+ sample10 <span style="color: #080;">&lt;-</span> <span style="color: #0000FF; font-weight: bold;">sample</span><span style="color: #080;">(</span>X, <span style="color: #ff0000;">10</span>, <span style="color: #0000FF; font-weight: bold;">replace</span> <span style="color: #080;">=</span> TRUE<span style="color: #080;">)</span>
+ sample50 <span style="color: #080;">&lt;-</span> <span style="color: #0000FF; font-weight: bold;">sample</span><span style="color: #080;">(</span>X, <span style="color: #ff0000;">50</span>, <span style="color: #0000FF; font-weight: bold;">replace</span> <span style="color: #080;">=</span> TRUE<span style="color: #080;">)</span>
+&nbsp;
+ <span style="color: #0000FF; font-weight: bold;">mean</span><span style="color: #080;">(</span>sample5<span style="color: #080;">)</span>
+ <span style="color: #0000FF; font-weight: bold;">mean</span><span style="color: #080;">(</span>sample10<span style="color: #080;">)</span>
+ <span style="color: #0000FF; font-weight: bold;">mean</span><span style="color: #080;">(</span>sample50<span style="color: #080;">)</span>
+ <span style="color: #0000FF; font-weight: bold;">mean</span><span style="color: #080;">(</span><span style="color: #0000FF; font-weight: bold;">sample</span><span style="color: #080;">(</span>X,<span style="color: #ff0000;">1000</span>,<span style="color: #0000FF; font-weight: bold;">replace</span><span style="color: #080;">=</span>TRUE<span style="color: #080;">)</span><span style="color: #080;">)</span>
+ <span style="color: #0000FF; font-weight: bold;">mean</span><span style="color: #080;">(</span><span style="color: #0000FF; font-weight: bold;">sample</span><span style="color: #080;">(</span>X,<span style="color: #ff0000;">10000</span>,<span style="color: #0000FF; font-weight: bold;">replace</span><span style="color: #080;">=</span>TRUE<span style="color: #080;">)</span><span style="color: #080;">)</span></pre></td></tr></tbody></table>
+</div>
+<p>Notice how the mean of the samples converges to the population mean as the number of samples increases. This is referred to as the <b>Law of Large Numbers.</b></p>
+<h4>Central Limit Theorem</h4>
+<p>This example will build on the previous example. This time, we will take repeated measurements from X, but we will keep the sample size the same.</p>
+<div class="wp_codebox"><table><tbody><tr id="p2793"><td class="code" id="p279code3"><pre class="rsplus" style="font-family:monospace;"> meanList <span style="color: #080;">&lt;-</span> <span style="color: #0000FF; font-weight: bold;">list</span><span style="color: #080;">(</span><span style="color: #080;">)</span>
+ <span style="color: #0000FF; font-weight: bold;">for</span><span style="color: #080;">(</span>i <span style="color: #0000FF; font-weight: bold;">in</span> <span style="color: #ff0000;">1</span><span style="color: #080;">:</span><span style="color: #ff0000;">10000</span><span style="color: #080;">)</span> <span style="color: #080;">{</span>
+   meanList<span style="color: #080;">[</span><span style="color: #080;">[</span>i<span style="color: #080;">]</span><span style="color: #080;">]</span> <span style="color: #080;">&lt;-</span> <span style="color: #0000FF; font-weight: bold;">mean</span><span style="color: #080;">(</span><span style="color: #0000FF; font-weight: bold;">sample</span><span style="color: #080;">(</span>X, <span style="color: #ff0000;">10</span>, <span style="color: #0000FF; font-weight: bold;">replace</span><span style="color: #080;">=</span>TRUE<span style="color: #080;">)</span><span style="color: #080;">)</span>
+ <span style="color: #080;">}</span>
+ <span style="color: #0000FF; font-weight: bold;">hist</span><span style="color: #080;">(</span><span style="color: #0000FF; font-weight: bold;">unlist</span><span style="color: #080;">(</span>meanList<span style="color: #080;">)</span>, breaks <span style="color: #080;">=</span> <span style="color: #ff0000;">500</span>, main <span style="color: #080;">=</span> <span style="color: #ff0000;">"Repeated measurements of the
+      average for n = 10"</span>, <span style="color: #0000FF; font-weight: bold;">col</span> <span style="color: #080;">=</span> <span style="color: #ff0000;">"cadetblue"</span>, xlab <span style="color: #080;">=</span> <span style="color: #ff0000;">"average of 10 samples from X"</span><span style="color: #080;">)</span>
+ <span style="color: #0000FF; font-weight: bold;">abline</span><span style="color: #080;">(</span>v<span style="color: #080;">=</span>mu,<span style="color: #0000FF; font-weight: bold;">col</span><span style="color: #080;">=</span><span style="color: #ff0000;">"red"</span>,lwd<span style="color: #080;">=</span><span style="color: #ff0000;">3</span><span style="color: #080;">)</span></pre></td></tr></tbody></table>
+</div>
+<p>The distribution of the sample average converges to a normal looking distribution! This property is referred to as the <b>Central Limit Theorem.</b><br>
+<img src="../images/central-limit-theorem-in-R.png" alt="central limit theorem in R" width="485" height="496" class="aligncenter size-full wp-image-287"></p>
+<p>To see how powerful the Central Limit Theorem is, consider a population that is highly non-normal. We only draw a zero or a one repeatedly and look at the<br>
+distribution.</p>
+<div class="wp_codebox"><table><tbody><tr id="p2794" class="alt-table-row"><td class="code" id="p279code4"><pre class="rsplus" style="font-family:monospace;"> population <span style="color: #080;">&lt;-</span> <span style="color: #0000FF; font-weight: bold;">sample</span><span style="color: #080;">(</span><span style="color: #0000FF; font-weight: bold;">c</span><span style="color: #080;">(</span><span style="color: #ff0000;">0</span>,<span style="color: #ff0000;">1</span><span style="color: #080;">)</span>, <span style="color: #ff0000;">100000</span>, <span style="color: #0000FF; font-weight: bold;">replace</span><span style="color: #080;">=</span>TRUE<span style="color: #080;">)</span>
+ <span style="color: #0000FF; font-weight: bold;">hist</span><span style="color: #080;">(</span>population, <span style="color: #0000FF; font-weight: bold;">col</span><span style="color: #080;">=</span><span style="color: #ff0000;">"blue"</span>, main<span style="color: #080;">=</span><span style="color: #ff0000;">"Non-normal"</span><span style="color: #080;">)</span>
+ <span style="color: #0000FF; font-weight: bold;">abline</span><span style="color: #080;">(</span>v<span style="color: #080;">=</span><span style="color: #0000FF; font-weight: bold;">mean</span><span style="color: #080;">(</span>population<span style="color: #080;">)</span>, lwd<span style="color: #080;">=</span><span style="color: #ff0000;">3</span>, <span style="color: #0000FF; font-weight: bold;">col</span><span style="color: #080;">=</span><span style="color: #ff0000;">"red"</span><span style="color: #080;">)</span></pre></td></tr></tbody></table>
+</div>
+<p><img src="../images/non-normal-distribution-in-R1.png" alt="non normal distribution in R" width="456" height="502" class="aligncenter size-full wp-image-289"></p>
+<p>By taking repeated samples of size 10 from this highly non-normal distribution, we still obtain a normal looking distribution for the sample mean!</p>
+<div class="wp_codebox"><table><tbody><tr id="p2795"><td class="code" id="p279code5"><pre class="rsplus" style="font-family:monospace;"> meanList <span style="color: #080;">&lt;-</span> <span style="color: #0000FF; font-weight: bold;">list</span><span style="color: #080;">(</span><span style="color: #080;">)</span>
+ <span style="color: #0000FF; font-weight: bold;">for</span><span style="color: #080;">(</span>i <span style="color: #0000FF; font-weight: bold;">in</span> <span style="color: #ff0000;">1</span><span style="color: #080;">:</span><span style="color: #ff0000;">10000</span><span style="color: #080;">)</span> <span style="color: #080;">{</span>
+   meanList<span style="color: #080;">[</span><span style="color: #080;">[</span>i<span style="color: #080;">]</span><span style="color: #080;">]</span> <span style="color: #080;">&lt;-</span> <span style="color: #0000FF; font-weight: bold;">mean</span><span style="color: #080;">(</span><span style="color: #0000FF; font-weight: bold;">sample</span><span style="color: #080;">(</span>population, <span style="color: #ff0000;">10</span>, <span style="color: #0000FF; font-weight: bold;">replace</span> <span style="color: #080;">=</span> TRUE<span style="color: #080;">)</span><span style="color: #080;">)</span>
+ <span style="color: #080;">}</span>
+ <span style="color: #0000FF; font-weight: bold;">hist</span><span style="color: #080;">(</span><span style="color: #0000FF; font-weight: bold;">unlist</span><span style="color: #080;">(</span>meanList<span style="color: #080;">)</span>, main <span style="color: #080;">=</span> <span style="color: #ff0000;">"Repeated measurements of the average for n=10"</span>,
+      <span style="color: #0000FF; font-weight: bold;">col</span> <span style="color: #080;">=</span> <span style="color: #ff0000;">"cadetblue"</span>, xlab <span style="color: #080;">=</span> <span style="color: #ff0000;">"average of 10 samples"</span><span style="color: #080;">)</span>
+ <span style="color: #0000FF; font-weight: bold;">abline</span><span style="color: #080;">(</span>v <span style="color: #080;">=</span> <span style="color: #ff0000;">0.5</span>, <span style="color: #0000FF; font-weight: bold;">col</span> <span style="color: #080;">=</span> <span style="color: #ff0000;">"red"</span>, lwd <span style="color: #080;">=</span> <span style="color: #ff0000;">3</span><span style="color: #080;">)</span></pre></td></tr></tbody></table>
+</div>
+<p><img src="../images/central-limit-theorem-non-normal-in-R.png" alt="non normal central limit theorem in R" width="444" height="503" class="aligncenter size-full wp-image-291"></p>
+<h4>Unbiasedness and Efﬁciency</h4>
+<p>In a nutshell, unbiasedness means that the expected value of the estimator equals the true value of the parameter. Efficiency means that the variance of the 
+  estimator is as small as possible.<br>
+<img src="../images/bias-and-efficiency-of-estimator-in-R.png" alt="bias and efficiency in R" width="442" height="490" class="aligncenter size-full wp-image-292"></p>
+<h4>Covariance Matrix</h4>
+<p>Before we can start talking about what a covariance matrix is, we need to address the concepts of volatility and portfolio risk. This discussion will only focus on equities. Similar arguments can be applied to other instrument classes (bonds, options, futures, etc).</p>
+<h5>Volatility</h5>
+<p>Volatility is a proxy for risk. The Greek letter sigma <b>σ</b> is used to denote volatility. Inherently, when a stock 
+has more risk, we can say that the <b>σ</b> of the stock is higher. Volatility is closely related to the second moment of the return distribution of a particular stock. Volatility is also the square root of the variance.</p>
+<h5>Mathematical Properties of Volatility</h5>
+<p>The following mathematical operations apply to the variances of random variables <b>X</b> and <b>Y</b></p>
+<ul>
+  <li><img src="../images/gif.latex" title="Var(aX) = a^2Var(X)">
+  </li><li><img src="../images/gif(1).latex" title="Var(aX + bY) = a^2 Var(X) + b^2 Var(Y) + 2abCov(X,Y)">
+  </li><li><img src="../images/gif(2).latex" title="Cov(X,Y) = \rho \sigma_X\sigma_Y">
+  </li>
+</ul>
+<p>The <b>ρ</b> variable is the correlation between instruments X and Y. Think of X as the percentage returns of a particular stock named X. Similarly, think of Y 
+  as the percentage returns of stock Y. The correlation between X and Y signiﬁes the strength of linear relationship between the two return series. The following graphic depicts the relationship between the two random variables X and Y. The ﬁrst one is a linear relationship, whereas the second one is a non-linear relationship. Even though there exists a strong dependence between the random variables in the second graph, the correlation is very low.<br>
+<img src="../images/linear-and-non-linear-relationship-in-R.png" alt="linear and non-linear in R" width="473" height="500" class="aligncenter size-full wp-image-304"></p>
+<h4>Portfolio Risk</h4>
+<p>The idea of portfolio diversiﬁcation has been known for quite some time. Diversiﬁcation implies that one can create a portfolio of risky instruments where the aggregate risk is smaller than the sum of the individual risks. We can use formula 2 from above to understand this idea. The diversiﬁcation (risk reduction) actually comes from the covariance term of equation 2. As the number of instruments in a particular portfolio increases, so does the beneﬁt of diversiﬁcation via the mutual covariance. Formula 2 becomes cumbersome to write as the number of instruments increases. The formula below represents the variance of a portfolio of 3 instruments.</p>
+<p><img src="../images/gif(3).latex" title="Var(aX + bY + cZ) = a^ 2 Var(X) + b^ 2 Var(Y) + c^ 2 Var(Z) + 2abCov(X,Y) + 2acCov(X,Z) + 2bcCov(Y,Z)"></p>
+<p>The risk of the portfolio <b>σ</b> is the square root of this formula. For many assets, writing down such a formula becomes a nightmare. Luckily, there is an easier way to express the portfolio risk.</p>
+<h4>Matrix Notation</h4>
+<p>The portfolio variance for three assets can be written in a quadratic form as follows:</p>
+<ol>
+  <li><img src="../images/gif(4).latex" title="Var(\Pi) = w\Sigma w^ t">
+  </li><li><img src="../images/gif(5).latex" title="\Sigma = \begin{pmatrix} Var(X)&amp;Cov(X,Y) &amp;Cov(X,Z) \\ Cov(Y,X)&amp;Var(Y) &amp;Cov(Y,Z) \\ Cov(Z,X)&amp;Cov(Z,Y) &amp;Var(Z) \end{pmatrix}">
+  </li><li><img src="../images/gif(6).latex" title="w = (w_X,w_Y ,w_Z) ">
+  </li>
+</ol>
+<p>The covariance matrix <b>Σ</b> plays a pivotal role in modern portfolio theory. All the important volatility and correlation information between instruments can be encapsulated within this matrix. One of the important properties of a covariance matrix is the notion of positive definiteness. Intuitively, we would<br>
+never expect the risk of a portfolio to be a negative number. Positive definiteness is exactly the property of the matrix that guarantees this fact. A covariance matrix is positive deﬁnite if the following holds:</p>
+<ol>
+  <li>wΣw^t &gt; 0
+  </li>
+</ol>
+<p>A covariance matrix can be produced within R by using the <b>cov()</b> command.</p>
+<p align="right"><a href="Lecture 6.htm">Next: R Lecture 6</a></p>
+</body></html>

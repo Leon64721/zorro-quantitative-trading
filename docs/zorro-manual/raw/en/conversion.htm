@@ -1,0 +1,490 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"> 
+<html>
+<head>
+<title>Migrating Algorithmic Trading Code | Zorro Project</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+		<link href="css.css" rel="stylesheet" type="text/css">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/conversion.htm">
+</head>
+	<body>
+		
+<h1> Converting vom EasyLanguage, MQL4/5, C#, AFL, PineScript...</h1>
+	<p>Professional trading firms use normally C or C++ for their trading 
+	systems, due to their backtest and execution 
+	speed. But before starting serious algotrading with C/C++ and
+<a href="https://zorro-project.com" target="_blank">Zorro</a>, you have 
+	maybe used a retail
+	<a href="https://zorro-project.com/algotradingtools.php" target="_blank">
+	trading 
+platform</a>. So you want to migrate your trading strategies, 
+&quot;Expert Advisors&quot;, algorithms, or indicators to C or C++. Although the Zorro 
+	C/C++platform can directly run <a href="rbridge.htm">R</a> and <a href="python.htm">
+Python</a> functions or Windows DLLs, it won't understand scripts from other platforms 
+	without adaption. Even when 
+the syntax is also C or C# based, their trading functions are normally too different for an automated 
+conversion. It's still a programmer's task. You can either hire our
+	<a href="https://zorro-project.com/development.php" target="_blank">algo conversion service</a> or do it yourself. Below you'll find some useful hints 
+	and examples.</p>
+	<p>Generally, Zorro can replicate any indicator and any strategy or trading 
+	algorithm from any platform. The conversion will normally result in shorter, 
+	much faster, better readable, and more robust code. Here are some examples of
+<a href="https://zorro-project.com/code.php" target="_blank">algorithmic trading 
+scripts in C/C++</a>.
+	Many more examples for code conversion from Amibroker, TradeStation, 
+	MetaStock, or other platforms can be found in Petra Volkova's articles on
+	<a href="https://financial-hacker.com/" target="_blank">Financial Hacker</a>. </p>
+	<h3>Comparing backtests and charts between different platforms</h3>
+	<p>Even perfectly converted
+	<a href="https://zorro-project.com/algotrading.php">algo trading strategies</a> can produce very different backtests 
+	and charts on 
+	different platforms. Especially MT4/MT5 backtests are often not reproducible with other platforms. 
+	When platform A produces a positve and platform B a negative backtest result 
+	of the same strategy - which one should you trust? Here's what to 
+	check for determining the reason of backtest and chart differences:<o:p></o:p></p>
+	<ul>
+		<li><strong>Compare the price data.</strong> Print out 
+several candles with the same time stamps and check. Have they the same OHLC 
+prices? Are they from <span class="Highlight">ask, bid, or trade</span> prices? Is the 
+		<span class="Highlight">timestamp</span> from the open, the center, or 
+		the close of the bar? UTC or a local <span class="Highlight">time zone</span>? 
+		Unadjusted or split and dividend <span class="Highlight">adjusted</span>? 
+		When using tick data, does it contain the same quotes? Forex, CFD, and 
+		cryptocurrency prices from different sources are often
+		<span class="Highlight">very different</span> on the minute or tick 
+		level. Even data from the same source can look very different dependent on price type (ask/bid/last) and time zone. 
+		Some platforms, such as Tradingview, do not synchronize bars to full hours 
+		or days, but to the start time of the script. It is therefore perfectly normal that 
+		even charts of the same date, asset, 
+		and price source, but from two different platforms, contain different candles.</li>
+		<li><strong>Compare the indicators.</strong> Are they based on the same algorithm, 
+		and return the same value? Some platforms, such as MT4 or TradeStation, use
+		<span class="Highlight">different 
+		algorithms</span> for some indicators and thus get different results. 
+		For instance, the average true range is normally calculated with an EMA, 
+		bur some platforms use an SMA, so you need to replace ATR with ATRS for 
+		reprodcing the results. Even with an identical algorithm, <span class="Highlight">cumulative indicators</span> 
+		such as EMA or MACD can return different results especially at the begin 
+		of the simulation when the platform has a different
+		<a href="lookback.htm">unstable 
+		period</a> or does not use lookback or unstable periods at all.</li>
+		<li>Check the <strong>script structure</strong> and <strong>bar creation</strong>. 
+		<o:p>Does it run on any tick or on any bar? Are the bars aligned on the 
+		same time? Does it trade with the same <a href="barmode.htm">market hours and weekend</a> settings?<o:p> </o:p>
+		</o:p>
+		</li>
+		<li><strong>Compare the account simulation</strong>. Are lot size, 
+		leverage, margin, rollover fees, and commission considered, and are they identical? Does the platform simulate 
+		realistic order filling, or a <span class="Highlight">'naive' <a href="fill.htm">fill mode</a></span> 
+		that enters and exits trades 
+		at the current price or at the pre-set stop or entry levels?
+		<o:p>Some platforms, even high priced options tools, do not consider 
+		ask-bid spreads, transaction costs, or slippage 
+		in their results. </o:p>
+		</li>
+		<li><strong>Compare <a href="opt.htm">optimization</a> and 
+		<a href="testing.htm">backtest</a> methods</strong>. Is the test 
+		<span class="Highlight">in-sample, 
+		out-of-sample</span>, or walk-forward? Are parameters optimized with 
+		genetic, brute force, or platform specific algorithms? In-sample backtests, 
+		as with MT4, produce normally meaningless results.</li>
+		<li><b>Compare the </b><a href="performance.htm">performance metrics</a>. Win rate and profit factor are normally unsuspicious, but 
+		other figures such as drawdown, annual return, Sharpe ratio, or volatility are often 
+		calculated with very different methods. Do not compare apples with 
+		oranges. <br>&nbsp;</li>
+	</ul>
+<h3>TradeStation&#8482;, MultiCharts&#8482;, TradeSignal&#8482;</h3>
+<p><strong>TradeStation</strong> was the first platform that supported automated trading. Its <strong>EasyLanguage</strong>&#8482;, 
+also used by <strong>MultiCharts</strong> and in a variant named 'Equilla' by <strong>
+TradeSignal</strong>, has a  similar design philosophy as Zorro's lite-C.   Although 
+the EasyLanguage syntax is a mix of C and Pascal, conversion to 
+C is relatively straightforward. EasyLanguage variables are equivalent to 
+C <a href="series.htm">data series</a>. 
+The first element of a series has no index, thus <strong>MyData</strong> in EasyLanguage is the same as <strong>
+MyData[0]</strong> in C. Keywords are case insensitive. Local variables are 
+preserved between function calls, do declare them with as <strong>static</strong> 
+for replicating that. Array indices start with <strong>0</strong> as 
+in C, but in many EasyLanguage code examples you find them starting with <strong>1</strong>. 
+So the arrays are probably allocated with 1 extra element. Trigonometric functions (<strong>Sine</strong>, <strong>Cosine</strong> 
+	etc) expect angles in degrees (<strong>0..360</strong>), while in C and 
+in most other languages angles are in radians (<strong>..2*PI</strong>).
+	<strong>Log</strong> is the logarithm base <strong><em>e</em></strong> as in 
+	C.</p>
+<p>At the time of this writing, EasyLanguage did not support functions like 
+other languages, but requires separate scripts for them. The execution of an EasyLanguage script is similar to a lite-C script, with a lookback period determined by the <strong>MaxBarsBack</strong> variable. Aside from the 
+missing functions, EasyLanguage strategies and lite-C strategies look very similar.</p>
+<pre><em>{ Easylanguage version }
+{ Choppy Market Index Function by George Pruitt }</em><br>Inputs: periodLength(Numeric);
+Vars: num(0),denom(1);
+<br>if(periodLength &lt;&gt; 0) then<br>begin<br>  denom = Highest(High,periodLength) &ndash; Lowest(Low,periodLength);<br>  num = Close[periodLength-1] &ndash; Close;<br>  ChoppyMarketIndex = 0.0;<br>  if(denom &lt;&gt; 0) then 
+    ChoppyMarketIndex = AbsValue(num/demon)*100;<br>end;</pre>
+<pre><em>// Zorro version (lite-C)
+// Choppy Market Index Function by George Pruitt</em><br>var ChoppyMarketIndex(int periodLength) 
+{
+  if(!periodLength) return 0;<br>  var Denom = HH(periodLength,0) &ndash; LL(periodLength,0);<br>  var Num = priceC(periodLength-1) &ndash; priceC(0);<br>  return abs(Num/fix0(Denom))*100;
+}</pre>
+
+<pre><em>{ Easylanguage version }</em>
+<em>{ enter a trade when the RSI12 crosses over 75 or under 25 }</em>
+Inputs:  
+    Price(Close),LengthLE(20),LengthSE(20),
+    OverSold(25),OverBought(75),StoplossPips(100),ProfitTargetPips(100);
+ 
+variables:  
+    var0(0),var1(0);
+ 
+<em>{ get the RSI series }</em>
+var0 = RSI( Price, LengthLE );
+var1 = RSI( Price, LengthSE );
+ 
+<em>{ if rsi crosses over buy level, exit short and enter long }</em>
+condition1 = Currentbar &gt; 1 and var0 crosses over OverBought ;
+if condition1 then                                                                    
+    Buy( "RsiLE" ) next bar at market;
+<em> 
+{ if rsi crosses below sell level, exit long and enter short }</em>
+condition2 = Currentbar &gt; 1 and var1 crosses under OverSold ;
+if condition2 then                                                                    
+    Sell Short( "RsiSE" ) next bar at market;
+ 
+<em>{ set up stop / profit levels }</em>
+SetStoploss(StoplossPips);
+SetProfitTarget(ProfitTargetPips);</pre>
+<pre><em>// Zorro version (lite-C)</em>
+<em>// enter a trade when the RSI12 crosses over 75 or under 25</em>
+function run()
+{
+  int LengthLE = 20,LengthSE = 20;
+  var OverSold = 25, OverBought = 75, 
+    StoplossPips = 100, ProfitTargetPips = 100;
+<em>
+// get the RSI series</em>
+  vars Var0s = series(RSI(seriesC(),LengthLE));
+  vars Var1s = series(RSI(seriesC(),LengthSE));
+ 
+<em>// set stop / profit levels</em>
+  Stop = StoplossPips*PIP;
+  TakeProfit = ProfitTargetPips*PIP;
+ 
+<em>// if rsi crosses over buy level, exit short and enter long</em><em>
+</em>  if(crossOver(Var0s,OverBought))
+    enterLong();
+<em>// if rsi crosses below sell level, exit long and enter short</em><em>
+  </em>if(crossUnder(Var1s,OverSold))
+    enterShort();
+}</pre>
+<pre><em>// calculate frequently used EasyLanguage parameters in lite-C</em>
+int MarketPosition = sign(NumOpenLong-NumOpenShort);
+var PriceScale = 100; <em>// always 100 for stocks and futures</em>
+var MinMove = PIP * PriceScale; <em>// Stock: 0.01 * 100, Emini: 0.25 * 100</em>
+var PointValue = LotAmount / PriceScale; <em>// Stock: 0.01, Emini: 0.50</em>
+var BigPointValue = LotAmount;
+var EntryPrice = 0;
+for(current_trades) if(TradeIsOpen) EntryPrice = TradeFill;</pre>
+
+<!--pre><em>{ Easylanguage version }
+{ King Keltner Strategy by George Pruitt, based on a system by Chester Keltner }</em><br>Inputs: avgLength(40), atrLength(40);<br>Vars: upBand(0), dnBand(0), movAvgVal(0);<br>
+movAvgVal = Average((High+Low)/2,avgLength);<br>upBand = movAvgVal + AvgTrueRange(atrLength);<br>dnBand = movAvgVal &ndash; AvgTrueRange(atrLength);<br>
+if(movAvgVal &gt; movAvgVal[1]) then <em>{ here you need a series! }</em>
+  Buy(&quot;KKBuy&quot;) tomorrow at upBand stop;<br>if(movAvgVal &lt; movAvgVal[1]) then 
+  Sell Short(&quot;KKSell&quot;) tomorrow at dnBand stop;<br>
+If(MarketPosition = 1) then 
+  Sell tomorrow at movAvgVal stop;<br>If(MarketPosition = &ndash;1) then 
+  Buy To Cover tomorrow at movAvgVal stop;</pre>
+<pre><em>// lite-C version
+// King Keltner Strategy by George Pruitt, based on system by Chester Keltner}</em><br>function run()
+{
+  var avgLength = 40, atrLength = 40;
+  vars movAvgVal = series(SMA(series((priceHigh()+priceLow())/2),avgLength));<br>  var upBand = movAvgVal[0] + ATR(atrLength);<br>  var dnBand = movAvgVal[0] &ndash; ATR(atrLength);<br>
+  if(movAvgVal[0] &gt; movAvgVal[1])
+    enterLong(0,upBand);<br>  if(movAvgVal[0] &lt; movAvgVal[1]) <br>    enterShort((0,dnBand); }
+
+  exitLong(0,movAvgVal[0]);
+  exitShort(0,movAvgVal[0]);
+}</pre-->
+	<a name="mt4"></a>
+	<br>
+<h3>&quot;Meta&quot;-Trader 4 and 5 </h3>
+<p>MT4&trade; and MT5&trade; are popular platform for retail traders and provided by many brokers. The <strong>MQL4</strong> 
+/ <strong>MQL5</strong> script language of their &quot;Expert Advisors&quot; (EAs) is based on C 
+or C++, which would theoretically  allow easy  conversion to Zorro. Unfortunately, MQL4 has 
+some issues that make &quot;Expert Advisors&quot;  more complex and difficult to 
+convert than scripts of other platforms. The successor MQL5 has even more issues, and 
+consequently has never managed to replace the older MQL4.<br>
+&nbsp;&nbsp;MQL4 
+and MQL5 trades require a lot of managing by script. Series are not natively supported, but 
+must be emulated with loops and functions. Some indicators  - for instance, ATR - produce different results in MQL4 than in other platforms because 
+they are not based on the standard algorithms, but on special MQL4 variants. 
+Candles are based on local server time, and account parameters are not normalized, so 
+any EA must be individually adapted to the country, broker, and account. To complicate matters further, MQL4 
+and MQL5 do not use common trade units such as lots and pips, but calculates with &quot;standard lots&quot; and &quot;points&quot; that need to be multiplied with account-dependent conversion factors. Most code in an EA is   therefore not used for  the trade 
+logic, but for patching all those issues. This results in the long and complex 'spaghetti code'  that is typical for 
+MT4 and MT4 EAs.<br>
+&nbsp;&nbsp;For conversion, first remove the MQL4/MQL5 specific code that is not needed in lite-C, such as trade management loops, broker dependent pip and trade size calculations, and array loops that emulate series. Then the rest can be converted by replacing the MQL4 indicators and trade commands by their lite-C equivalents. 
+Replace <strong>OnTick</strong> either with <a href="tick.htm">tick</a> or
+<a href="run.htm">run</a>, dependent on whether the code is bar or tick based. 
+Bar indexes are normally shifted by 1, since they refer to the new (incomplete) 
+bar, not to the last (complete) bar. Different indicator algorithms have to be 
+converted or replaced. </p>
+<pre><em>// MQL4 version of the RSI strategy (see above)
+// enter a trade when the RSI12 crosses over 75 or under 25
+</em>int start()
+{
+<em>// get the previous and current RSI values</em>
+   double current_rsi = iRSI(Symbol(), Period(), 12, 
+     PRICE_CLOSE, 1); <em>// mind the '1' - candle '0' is incomplete!!</em>
+   double previous_rsi = iRSI(Symbol(), Period(), 12, PRICE_CLOSE, 2);
+<em> 
+// set up stop / profit levels</em>
+   double stop = 200*Point;
+   double takeprofit = 200*Point;
+
+<em>// correction for prices with 3, 5, or 6 digits
+</em>   int digits = MarketInfo(Symbol(), MODE_DIGITS);<br>   if (digits == 5 || digits == 3) {<br>     stop *= 10;
+     takeprofit *= 10;
+   } else
+   if (digits == 6) {<br>     stop *= 100;
+     takeprofit *= 100;
+   }
+
+<em>// find the number of trades </em>
+   int num_long_trades = 0;
+   int num_short_trades = 0;
+   int magic_number = 12345;<br>
+<em>// exit all trades in opposite direction</em>
+   for(int i = 0; i &lt; OrdersTotal(); i++)
+   {
+<em>// use OrderSelect to get the info for each trade</em>
+     if(!OrderSelect(i, SELECT_BY_POS, MODE_TRADES)) 
+       continue;
+<em>// Trades not belonging to our EA are also found, so it's necessary to</em>
+<em>// compare the EA magic_number with the order's magic number</em>
+     if(magic_number != OrderMagicNumber()) 
+       continue;
+
+     if(OrderType() == OP_BUY) {
+<em>// if rsi crosses below sell level</em>, <em>exit long trades</em>
+       if((current_rsi &lt; 25.0) &amp;&amp; (previous_rsi &gt;= 25.0))
+         OrderClose(OrderTicket(),OrderLots(),Bid,3,Green);
+       else
+<em>// otherwise count the trades</em>
+         num_long_trades++;<em>
+</em>     }
+ 
+     if(OrderType() == OP_SELL) {
+<em>// if rsi crosses over buy level</em>, <em>exit short trades </em>
+       if((current_rsi &gt; 75.0) &amp;&amp; (previous_rsi &lt;= 75.0))
+         OrderClose(OrderTicket(),OrderLots(), Ask,3,Green);
+       else
+<em>// otherwise count the trades</em>
+         num_short_trades++;
+     }
+   }
+ 
+<em>// if rsi crosses over buy level, enter long </em>
+   if((current_rsi &gt; 75.0) &amp;&amp; (previous_rsi &lt;= 75.0) 
+     &amp;&amp; (num_long_trades == 0)) {
+       OrderSend(Symbol(),OP_BUY,1.0,Ask,3,Ask-stop,Bid+takeprofit,&quot;&quot;,magic_number,0,Green);
+   }
+<em>// if rsi crosses below sell level, enter short</em>
+   if((current_rsi &lt; 25.0) &amp;&amp; (previous_rsi &gt;= 25.0) 
+     &amp;&amp; (num_short_trades == 0)) {
+       OrderSend(Symbol(),OP_SELL,1.0,Bid,3,Bid+stop,Ask-takeprofit,&quot;&quot;, magic_number,0,Green);
+   }
+ 
+   return(0); 
+}</pre>
+Under <a href="tips.htm">Tips &amp; Tricks</a> you can find an example how to 
+	replicate MQ4-style indicator parameters with Zorro. The above mentioned 
+	issues also apply to <strong>MQL5</strong>, the &quot;Meta&quot;-Trader 5 script 
+	language. It has some similarities to MQL4, but offers C++ language elements 
+	and requires even more complex code for opening and managing trades.<br>
+&nbsp;<br> 
+<h3>NinjaTrader&#8482;</h3>
+    <p><strong>NinjaScript</strong>&trade; is based on C# and thus  similar in syntax to Zorro's lite-C. NinjaScript also supports data series in the same way as lite-C, and its basic function list is very similar; this makes script migration rather easy. One major difference is that all NinjaTrader indicator functions   return data series, while Zorro  indicators return single values. Use the <a href="series.htm">series</a> function (f.i.  <strong>series(indicator(..))</strong>) for making Zorro indicators also return series. </p>
+    <pre><em>// NinjaTrader version
+// Trade when a fast SMA crosses over a slow SMA</em><br>protected override void Initialize()<br>{
+<em>// Run OnBarUpdate on the close of each bar</em><br>  CalculateOnBarClose = true;
+
+<em>// Set stop loss and profit target at $5 and $10</em>
+  SetStopLoss(CalculationMode.Ticks,5);
+  SetProfitTarget(CalculationMode.Ticks,10);
+}
+
+protected override void OnBarUpdate()<br>{
+<em>// don't trade during the LookBack period</em>
+   if(CurrentBar &lt; 20) <br>     return;
+
+   double Fast = 10;
+   double Slow = 20;
+<em>
+// Exit short and go long if 10 SMA crosses over 20 SMA</em> <br>   if(CrossAbove(SMA(Close,Fast),SMA(Close,Slow),1)) {
+     ExitShort();<br>     EnterLong();
+   }  
+<em>// Exit long and go short if 10 SMA crosses under 20 SMA</em> <br>   else if(CrossBelow(SMA(Close,Fast),SMA(Close,Slow),1)) {
+     ExitLong();<br>     EnterShort();
+   }  
+}</pre>
+    <pre><em>// Zorro version
+</em><em>// Trade when a fast SMA crosses over a slow SMA</em><br>void run()<br>{
+<em>// Set stop loss and profit target at $5 and $10</em>
+  Stop = 5;
+  TakeProfit = 10;
+
+  vars SMAFast = series(SMA(seriesC(),10)); 
+  vars SMASlow = series(SMA(seriesC(),20)); 
+
+<em>// Exit short and go long if 10 SMA crosses over 20 SMA</em> <br>   if(crossOver(SMAFast,SMASlow))<br>     enterLong();
+<em>// Exit long and go short if 10 SMA crosses under 20 SMA</em> <br>   else if(crossUnder(SMAFast,SMASlow))
+     enterShort();
+}</pre>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         <br>
+    <h3>Amibroker&trade;</h3>
+    <p>Amibroker's <strong>AFL&#8482;</strong> language is a C dialect, with 
+	similar syntax as lite-C. But the script structure is different. Amibroker 
+	uses &quot;<strong>Buy</strong>&quot; and &quot;<strong>Sell</strong>&quot; variables for entering trades, instead of a function call. 
+	And Amibroker calls functions for setting system parameters, instead of using variables. 
+	So it's just the opposite of what you would expect. This 
+	unusual concept has its reason in a sort of vectorized approach to a trading system, where the code mainly initializes parameters and signal conditions. Variables 
+	need not be declared, and they are usually series, as in EasyLanguage. Functions are often very similar to lite-C - for instance, <strong>Plot()</strong> or <strong>Optimize()</strong>. Others can be easily converted, f.i. Amibroker's &quot;<strong>Explore</strong>&quot; feature is equivalent to Zorro's <strong>print(TO_CSV)</strong>. </p>
+    <pre><em>// Amibroker version of the SMA crossing system (see above)
+// Trade when a fast SMA crosses over a slow SMA</em><br>
+<em>// Set stop loss and profit target at $5 and $10</em>
+   ApplyStop(stopTypeLoss,stopModePoint,5,0,True,0,0,-1);
+   ApplyStop(stopTypeProfit,stopModePoint,10,0,True,0,0,-1);
+
+   SMAFast = MA(C,10);
+   SMASlow = MA(C,20);
+<em>
+// Buy if 10 SMA crosses over 20 SMA</em> <br>   Buy = Cross(SMAFast,SMASlow);
+<em>// Sell if 10 SMA crosses under 20 SMA</em> <br>      Sell = Cross(SMASlow,SMAFast);</pre>
+	&nbsp;<br> 
+<h3>TradingView&#8482;</h3>
+    <p><strong>TradingView</strong> is a charting tool with a proprietary language named <strong>PineScript&#8482;</strong> for 
+	defining indicators. Variables are declared by assigning a value to them, 
+	and language blocks are defined by indentation, as in Python. Functions are 
+	defined with '<strong>=&gt;</strong>'. Data series are in reverse order 
+	compared to other platforms: the <strong>[0]</strong> element is the oldest. 
+	Aside from that, conversion to 
+	C is normally pretty straightforward. Example for a Simple Moving Average: </p>
+    <pre><em>// PineScript version
+// SMA definition</em>
+study(&quot;My sma&quot;)
+my_sma(Prices, Length) =&gt;
+  Sum = Prices
+  for i = 1 to Length-1
+    Sum := Sum + Prices[i]
+  Sum / Length</pre>
+    <pre><em>// C version
+// SMA definition</em><br>var my_sma(vars Prices,int Length) {
+  var Sum = Prices[0];
+  for(i = 1; i &lt; Length; i++) 
+     Sum += Prices[i]; 
+  return Sum/Length;
+}</pre>
+ 
+    <h3>Neuroshell Trader&#8482;</h3>
+    <p><strong>Neuroshell Trader</strong> is a  platform specialized in employing a 
+	linear neural network for automated trading. Neuroshell indicators are functions added through DLLs. They take an input array, an output array, the array size, and additional parameters. Many  other trade platforms use similar DLL based indicators. Such indicators are often based on normal C, thus conversion to Zorro is very easy - especially when you don't have to convert it at all and can 
+	<a href="litec_api.htm">call the DLL function</a> directly. <br>
+&nbsp;&nbsp;    When using an indicator made for a different platform, the array order convention must be take care of. Neuroshell stores time series in ascending order (contrary to most other platforms that store them in reverse order) and passes the end of the array, not its begin, to the indicator function. Neuroshell indicators normally return an output series instead of a single value. Below both methods of indicator conversion are shown.</p>
+    <pre><em>// Neuroshell version - Entropy indicator
+// published by ForeTrade Technologies (www.foretrade.com/entropy.htm)</em>
+#include "math.h"
+#include "stdlib.h"
+
+__declspec(dllexport) void Entropy (double *price, double *entropy, long int size, long int numbars)
+{
+  double *in, *out, P, G;
+  long int i,j;
+  double sumx = 0.0;
+  double sumx2 = 0.0;
+  double avgx = 0.0;
+  double rmsx = 0.0;
+
+  in=price;
+  out=entropy;
+
+  for (i=0; i&lt;size; i++)
+  {
+    if (i &lt; numbars+1) *out = 3.4e38;
+    else 
+    {
+      sumx = sumx2 = avgx = rmsx = 0.0;
+      for (j=0;j&lt;numbars+1;j++)
+      {
+        sumx += log(*(in-j) / *(in-j-1)) ;
+        sumx2 += log(*(in-j) / *(in-j-1)) * log(*(in-j) / *(in-j-1));
+      }
+      if (numbars==0) 
+      {
+        avgx = *in;
+        rmsx = 0.0;
+      }
+      else 
+      {
+        avgx = sumx / numbars;
+        rmsx = sqrt(sumx2/numbars);
+      }
+      P = ((avgx/rmsx)+1)/2.0;
+      G = P * log(1+rmsx) + (1-P) * log(1-rmsx);
+      *out=G;
+    }
+    in++; out++;
+  }
+}</pre>
+    <pre><em>// Zorro version - Entropy indicator
+// Method 1 - calling the DLL function directly</em>
+<em>// Copy the Entropy DLL into the Zorro folder</em>
+int Entropy(double *price, double *entropy, long size, long numbars); <em>// function prototype</em>
+API(Entropy,entropy) <em>// use the Entropy function from entropy.dll</em>
+
+var EntropyZ(vars Data,int Period)
+{
+  Period = clamp(Period,1,LookBack-1); <em>// prevent exceeding the Data size</em> 
+  double E; <em>// single element &quot;array&quot; for receiving the output value</em> 
+  Entropy(
+    Data+Period+1, <em>// end of the array (element order does not matter here)</em>
+    &amp;E, 1, <em>        // pointer to the output &quot;array&quot; with size 1</em>
+    Period); 
+  return E;
+}
+</pre>
+    <pre><em>// Zorro version - Entropy indicator
+// Method 2 - converting the DLL code to lite-C</em>
+var EntropyZ(vars Data,int Period)
+{
+  Period = clamp(Period,1,LookBack-1); <em>// prevent exceeding the Data size</em> 
+  var sumx = 0., sumx2 = 0.;
+  int j;
+  for (j=0; j&lt;Period; j++) {
+    sumx += log(Data[j]/Data[j+1]);
+    sumx2 += log(Data[j]/Data[j+1]) * log(Data[j]/Data[j+1]);
+  }
+  var avgx = sumx/Period;
+  var rmsx = sqrt(sumx2/Period);
+  var P = ((avgx/rmsx)+1)/2.;
+  return P * log(1+rmsx) + (1-P) * log(1-rmsx);
+}</pre>
+	<p>&nbsp;<br>
+</p>
+    <h3>MatLab&#8482;</h3>
+    <p>MatLab is a commercial computing environment and interactive programming language by 
+	<strong>MathWorks, Inc</strong>. 
+	It has some similarity to <a href="rbridge.htm">R</a>, but is not specialized on data analysis and machine learning. 
+	It allows symbolic and numerical computing in all fields of mathematics. 
+	With interpreted code and accordingly slow execution, it is not suited for 
+	backtesting trading strategies (unless they are converted to a vectorized 
+	structure, which is however an awkward process). Converting MatLab code to C is 
+	also a lot of work due to the very different language syntax. Fortunately 
+	there is a better solution: MatLab has an integrated compiler that compiles a MatLab trading algorithm to a C/C++ DLL. 
+	The DLL function can then be directly <a href="litec_api.htm">called from a lite-C script</a>.<br>&nbsp;<br></p>
+    <h3>See also:</h3>
+    <a href="tutorial_var.htm">Introduction to lite-C</a>, <A href="apointer.htm">Pointers</A>, <a href="structs.htm">Structs</a>, <A href="function.htm">Functions</A>,	<a href="litec_api.htm">DLLs</a>,&nbsp; <a href="mt4plugin.htm">MT4 bridge</a>, <a href="rbridge.htm">R bridge</a>,
+	<a href="python.htm">Python bridge</a>, <a href="litec_c.htm">C++ to lite-C</a>, 
+	<a href="dlls.htm">lite-C to C++</a>    
+    <p>	  <a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+  version online</a>
+    </p>
+	</body>
+</html>

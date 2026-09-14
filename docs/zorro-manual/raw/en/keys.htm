@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>keys</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/keys.htm">
+</head>
+
+<body link="#000000" vlink="#333333" alink="#666666">
+<h2><strong>
+  
+</strong><strong>
+
+</strong>keys(string format, ...)</h2>
+Sends key strokes and mouse clicks to the active window or dialog. This way a script can 'remote control' other external programs, f.i. for placing orders in the 
+browser window of a trade web platform.
+<h3>Parameters:</h3>
+		
+<strong>format</strong> - <strong>string</strong> containing the key characters to be sent, in the same format as in <a href="printf.htm">printf</a>.
+Within the string, the following tokens in square barackets have a special meaning:<br> 
+<br>
+<strong>[Ctrl-]</strong> - the following character is sent together with the <strong>[Ctrl]</strong>-key.<br>
+<strong>[Alt-]</strong> &nbsp;- 
+  the following character is sent together with the <strong>[Alt]</strong>-key. <br>
+<strong>[Shift-]</strong> - the following character is sent together with the <strong>[Shift]</strong>-key.<br>
+<strong>[Win-]</strong> - the following character is sent together with the <strong>[Window]</strong>-key.<br>
+<strong>[Click x,y]</strong> - mouse click on the spot given by the <strong>x</strong>,<strong>y</strong> coordinates relative to the window's upper left corner. <br>
+<strong>[...]</strong> &nbsp;&nbsp;- special function keys, such as <strong>[enter]</strong>, <strong>[tab]</strong>,<strong> [del]</strong>, <strong>[f1]</strong> etc. are given in square brackets. Use <strong>[cur]</strong>, <strong>[cul]</strong>, <strong>[cuu]</strong>, <strong>[cud]</strong> for the cursor keys. <br>
+<strong>[]]</strong>, <strong>[[]</strong> - the right and left square bracket can be given in square brackets.
+<h3>Remarks:</h3>
+<ul>
+  <li>The keys are sent to the active window's message loop. This will work for all normal Windows applications, but not for special programs that don't use a message loop. </li>
+  <li>The function returns as soon as the key strokes are sent, but the reaction of the controlled program can take more time. If the key stroke opens a dialog window, use <a href="window.htm">window</a> to wait until the dialog is active before sending further keys. </li>
+  <li>This function should not be used to send keys to Zorro itself. Therefore, it should not be called when Zorro is the active window. However, it can be used to send keys to other instances of Zorro.</li>
+</ul>
+<h3>Example:</h3>
+			
+<pre><em>// Opens Notepad, writes something, saves it, and closes Notepad.</em>
+function main()
+{
+<em>// start Notepad before</em> 
+   while(!window("Editor")) wait(100);  <em>// wait until Notepad is open</em>
+   keys("Zorro is cool!"); <em>// write something</em>
+   keys("[Ctrl-]s");               <em>// open Save dialog (Ctrl-S)</em> 
+   while(!window(NULL)) wait(100);     <em> // wait until the dialog window is open</em>
+   keys("cool.txt[Enter][Alt-][F4]"); <em>// save as "cool.txt", and exit (Alt-F4)</em>
+}
+</pre>
+<h3>See also:</h3>
+<span class="links"><a href="exec.htm">exec</a></span>, <a href="window.htm">window</a>, <a href="mouse.htm">mouse</a>
+<p></p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+version online</a>
+</body>
+</html>

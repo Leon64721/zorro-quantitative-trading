@@ -1,0 +1,191 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>File functions</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/file_.htm">
+</head>
+
+<body>
+<h1>File functions</h1>
+<p>The following functions can be used to read, write, or otherwise handle files:</p>
+<h2>file_copy (string Dest, string Src)</h2>
+Copies the file with the name <strong>Src</strong> to the file with the name <strong>
+Dest</strong>. If the <strong>Dest</strong> file already exists, it is overwritten.
+If <strong>Dest</strong> is a folder ending with a backslash <strong>'\'</strong>, 
+the file is copied into the destination folder. This function can also be used 
+to rename files by storing them under a different name.
+<h3>Parameters:</h3>
+<strong>Dest</strong> - destination folder or file path (either absolute, or relative to the Zorro folder, e.g. <strong>&quot;Log\\MyStrategy.txt&quot;</strong>). <br>
+<strong>Src</strong> - source file path
+<h2>file_delete (string name)</h2>
+Deletes a file.
+<h3>Parameters:</h3>
+<strong>name</strong> - file path
+<br>&nbsp; <br>
+<h2>file_length (string name): size_t </h2>
+Checks if a file with the given name exists, and returns its length in bytes. If the file was not found, <STRONG>0</STRONG> is returned.
+<h3>Parameters:</h3>
+<strong>name</strong> - file path
+<h2>file_date (string name): long </h2>
+Checks if a file with the given name exists, and returns its last modification date 
+in UTC as the number of seconds since January 1, 1970. The <a href="month.htm">
+mtu</a> function can convert it to the <strong>DATE</strong> format. If the file was not found, <STRONG>0</STRONG> is returned.
+<h3>Parameters:</h3>
+<strong>name</strong> - file path<br>&nbsp;
+<h2>file_select (string path, string filter): string </h2>
+Opens a file dialog box at a given directory that lets the user select a file 
+name to open or save. Returns the selected file name including path. 
+The returned string keeps its content until the next <strong>file_select</strong> 
+call. 
+<h3>Parameters:</h3>
+<strong>path</strong> - initial directory to open, f.i. <strong>&quot;Data&quot;</strong>, or <strong>0</strong> for opening the Zorro directory.<br>
+<strong>filter</strong> -
+list of pairs of null-terminated filter strings /see below), or a 3-character 
+file extension, or <strong>0</strong> for 
+selecting all files. If the filter string has a <strong>'#'</strong> appended at 
+the begin, it generates a save dialog, otherwise an open dialog. <br>
+If a filter pair list, the last   string must be terminated by two null characters (<strong>&quot;\0\0&quot;</strong>). The first string in each pair describes the filter   (f.i. 
+<strong>"Parameter Files"</strong>), and the second string specifies the filter pattern   (f.i. <strong>"*.par"</strong>). 
+Example: <strong>&quot;CSV Files\0*.csv\0\0&quot;</strong>. Multiple filter patterns can be separated with a semicolon (f.i. <strong>"*.par;*.fac;*.c"</strong>). 
+The pattern must not contain spaces. Example of a filter list with three pairs: <strong>&quot;All files (*.*)\0*.*\0Par, Fac\0*.par;*.fac\0Text files\0*.txt\0\0&quot;</strong>.<br>&nbsp; 
+<h2>file_next (string path): string</h2>
+Enumerate files in a directory.
+Returns the first file name (without directory path) that matches the given <strong>path</strong>. 
+Returns the next match when <strong>path </strong>is 0 or an empty string. Returns <strong>0</strong> after the last 
+matching file.&nbsp;
+<h3>Parameters:</h3>
+<strong>path </strong>- file path with wildcards (<strong>&quot;Data\\MyStrategy*.par&quot;</strong>) 
+for the first file; <strong>0</strong> for subsequent files.<br>&nbsp;<br>
+<h2>file_content (string name): string  (temporary)</h2>
+Returns a null-terminated temporary string with the  content of the file, or <strong>0</strong> when the file was not found. 
+The predefined <strong>var rLength</strong> is set to the length of the file. The string  
+keeps its content only until the next <strong>file_content</strong> call.
+For multiple files to be read at the same time, allocate buffers and use <strong>
+file_read</strong>.
+<h3>Parameters:</h3>
+<strong>name</strong> - file path
+<h2>file_read (string name, string content, size_t length): size_t </h2>
+Reads the content of a file into a string or  array, and appends <strong>0</strong> 
+at the end. Returns the number of read bytes.
+<h3>Parameters:</h3>
+<strong>name</strong> - file path
+<br>
+<strong>content</strong> - <strong>string</strong> or array of any type to be filled with the content of the file; must have a size of at least <strong>length+1</strong>. <br>
+<strong>length</strong> - maximum number of characters or bytes to fill, or
+<strong>0</strong> for reading the whole file into a buffer of sufficient size.&nbsp;
+<h2>file_write (string name, string content, size_t length)</h2>
+Creates a file or folder, and stores the content of the given string or data 
+array.
+<h3>Parameters:</h3>
+<strong>name</strong> - file or folder path.<br>
+<strong>content</strong> - <strong>string</strong> or other data to be written, 
+or <strong>0</strong> for creating a folder.<br>
+<strong>length</strong> - number of bytes to be written, or <strong>0</strong> for writing the complete content of a <strong>string</strong>.
+<h2>file_append (string name, string content, size_t length)</h2>
+<h2>file_appendfront (string name, string content, size_t length)</h2>
+Opens a file and appends text or other data either at the end (<strong>file_append</strong>) 
+or at the begin (<strong>file_appendfront</strong>).
+If the file does not exist, it is created. 
+<h3>Parameters:</h3>
+		
+<strong>name</strong> - file name with path.<br>
+<strong>content</strong> - text or other data to be appended at the end or begin of the file. <br>
+<strong>length</strong> - number of bytes to be written, or <strong>0</strong> for writing the content of a <strong>string</strong>.<h2>file_appendCSV (string name, string 
+record, int field1, int field2)</h2>
+Opens a CSV file and appends the given CSV record to the end. If the fields
+<strong>field1</strong> up to <strong>field2</strong> of the record match the 
+corresponding fields in the file, the record is not appended, but 
+replaces the original line in the file. In this way a CSV file can be updated 
+with a new record. If the file does not exist, it is created. 
+<h3>Parameters:</h3>
+		
+<strong>name</strong> - file name with path.<br>
+<strong>record</strong> - a line with comma separated fields to be appended or 
+to replace a record in the file.<br><strong>field1, field2</strong> - range of 
+fields to compare.&nbsp;
+<h2>file_sortCSV (string name, int field, int mode)</h2>
+Opens a CSV file and sorts its records, except for the header line, by the numeric value in the given field.&nbsp; 
+<h3>Parameters:</h3>
+		
+<strong>name</strong> - file name with path.<br>
+<strong>field</strong> - number ot fhe field with the sort criteria.<br><strong>
+mode</strong> -&nbsp; <strong>0</strong> ascending, <strong>1</strong> descending sorting..<br>&nbsp;
+<h3>Remarks:</h3>
+<ul>
+  <li>If a file to be read from or written into is not found, an error message will be printed to the message window, and the function returns 0. The error message can be suppressed by adding <strong>'#'</strong> at the begin of the file name (f.i. <strong>file_content (&quot;#myfilename.txt&quot;)</strong>). </li>
+  <li>Standard C file  i/o functions - <strong>fopen</strong>, <strong>fclose</strong>, <strong>fread</strong>, <strong>fwrite</strong>, <strong>_findfirst</strong>, etc. - are also available through  <strong>#include &lt;stdio.h&gt;</strong>. <br>
+  </li>
+</ul>
+<h3>Examples:</h3>
+			
+<pre><em>//script for merging all WFO .par and .fac files
+//from two strategies to build a combined strategy</em>
+ 
+string src1 = "Z1";    <em>// first strategy, can be identical to dest</em>
+string src2 = "Z1add"; <em>// second strategy, must be different to dest</em>
+string dest = "Z1";    <em>// combined strategy</em>
+
+int file_merge(int n,string ext)
+{
+  char name1[40],name2[40],name3[40];
+  if(n) {
+    sprintf(name1,"Data\\%s_%i.%s",src1,n,ext);
+    sprintf(name2,"Data\\%s_%i.%s",src2,n,ext);
+    sprintf(name3,"Data\\%s_%i.%s",dest,n,ext);
+  } else {
+    sprintf(name1,"Data\\%s.%s",src1,ext);
+    sprintf(name2,"Data\\%s.%s",src2,ext);
+    sprintf(name3,"Data\\%s.%s",dest,ext);  
+  }
+  if(!file_date(name1)) 
+    return 0; <em>// file does not exist</em>
+  if(0 != strcmp(name3,name1))
+    if(!file_copy(name3,name1))
+      return 0;
+  if(!file_append(name3,file_content(name2))) 
+    return 0;
+  return 1;
+}
+
+function main()
+{
+  int cycles = 1;
+  for(; cycles &lt; 100; cycles++)
+    if(!file_merge(cycles,"par")) 
+      break;
+  
+  cycles += file_merge(0,"par");
+  cycles += file_merge(0,"fac");
+  
+  if(cycles &gt; 3) 
+    printf("%i files combined!",cycles);
+  else
+    printf("Error!");
+}</pre>
+
+<pre><em>// set up strategy parameters from a .ini file
+</em>function run()
+{
+  static var Parameter1 = 0, Parameter2 = 0;
+  if(is(INITRUN)) { <em>// read the parameters only in the first run</em>
+    string setup = file_content("Strategy\\mysetup.ini");
+    Parameter1 = strvar(setup,"Parameter1");
+    Parameter2 = strvar(setup,"Parameter2");
+  }
+}
+ 
+<em>// mysetup.ini is a plain text file that contains
+// the parameter values in a format like this:
+Parameter1 = 123
+Parameter2 = 456</em></pre>
+
+<h3>See also:</h3>
+<a href="keys.htm">keys</a>, <a href="str_.htm">sprintf</a>, <a href="str_.htm">string functions</a>, <a href="http.htm">http functions</a>, <a href="ftp.htm">ftp functions</a>, <a href="putvar.htm">putvar</a>
+<p></p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+version online</a>
+</body>
+</html>

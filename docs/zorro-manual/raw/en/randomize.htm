@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>randomize | Zorro Project</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/randomize.htm">
+</head>
+
+<body>
+<h2>randomize(int Method, var *Out, var *In, int Length): var </h2>
+Randomizes a data array by different methods.
+<h3>Returns:</h3>
+Last value of the resulting data array; usually the accumulated return. <br>
+<h3>Parameters:</h3>
+<table width="98%"  border="0" cellspacing="1" cellpadding="0">
+  <tr>
+    <td width="7%"><strong>Method</strong></td>
+    <td width="9%"><strong>BOOTSTRAP</strong></td>
+    <td width="84%">Randomize the data differences by bootstrap with replacement. </td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td><strong>SHUFFLE</strong></td>
+    <td>Randomize the  data differences by montecarlo permutation. </td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td><strong>DETREND</strong></td>
+    <td>Detrend the  data before randomizing, by subtracting the mean data difference. </td>
+  </tr>
+  <tr>
+    <td><strong>Out</strong></td>
+    <td colspan="2">Array to be filled with the randomized data, or <strong>In</strong> 
+	for modifying the original array. </td>
+  </tr>
+  <tr>
+    <td><strong>In</strong></td>
+    <td colspan="2">Array containing the original data. </td>
+  </tr>
+  <tr>
+    <td><strong>Length</strong></td>
+    <td colspan="2">Number of elements of the <strong>In</strong> and <strong>Out</strong> arrays. </td>
+  </tr>
+</table>
+<br>
+<h3>Remarks:</h3>
+<ul>
+  <li>This function can be used for generating randomized return distributions f.i. for White's Reality Check. 
+  The random number generator uses the
+  <a href="https://en.wikipedia.org/wiki/Lehmer_random_number_generator" target="_blank">Lehmer algorithm</a> with a period of 
+  2,147,483,646.</li>
+	<li>Randomized data curves can contain negative data. If this is not 
+	desired, test the minimum and randomize again until it is above zero.</li>
+</ul>
+<h3>Example:</h3>
+<pre>var OriginalReturn = EquityCurve[Length-1];
+var RandomizedReturn = randomize(BOOTSTRAP,0,EquityCurve,Length);
+</pre>
+<h3>See also:</h3>
+<a href="detrend.htm">Detrend</a>, <a href="random.htm">random</a>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

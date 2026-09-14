@@ -1,0 +1,771 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+<title>Futures and options</title>
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link href="css.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+.auto-style1 {
+	color: rgb(3, 47, 98);
+}
+.auto-style2 {
+	background-color: #FFFFFF;
+}
+</style>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/contract.htm">
+</head>
+
+<body>
+
+<h1>Contracts: Options, Futures, FOPs</h1>
+The following functions can be used for selecting, analyzing, and trading options, futures, and options on futures (FOPs). 
+Due to their additional parameters, such as type, strike, and expiration, 
+options trading is a bit more complex than trading the underlying. An introduction to options trading and options strategy development with 
+Zorro can be found in the <strong>
+<a href="https://www.amazon.de/Black-Book-Financial-Hacking-Algorithmic/dp/1546515216" target="_blank">Black Book</a></strong> 
+chapter 8.
+A very brief introduction is also found on Financial Hacker.
+<h2>contractUpdate (string Name, int Handle, int Mode): int </h2>
+Loads a new chain of contracts of type <strong>Mode</strong> (see below) for the 
+current underlying and the current day. The contract chain contains all options, 
+futures, or FOP contracts available at a certain date. It is required for all the subsequent 
+contract functions and for entering or exiting contract positions.<br>&nbsp; 
+In live trading, contract chains are only loaded in the initial run and after the
+	<a href="lookback.htm">LookBack</a> period. 
+They are loaded individually per asset and can be directly accessed with 
+	the <a href="contracts.htm">Contracts</a> pointer. Chains are automatically 
+	sorted at loading: first by expiration date, then by strike. This allows fast finding 
+	a certain option or combo. <a href="contracts.htm">NumContracts</a> is set to the number of contracts 
+in the chain, which is also returned. If no contract chain for the current or given time is 
+found, <strong>0</strong> is returned.<br>&nbsp; In [<span class="tast">Test</span>] 
+or [<span class="tast">Train</span>] mode the chain is either read out of a
+contract chain file
+named <strong>&quot;History\Name.t8&quot;</strong> at or before the 
+current time, or from a previously loaded
+<a href="data.htm">dataset</a> of contracts when its <strong>Handle</strong> is 
+nonzero. <strong>Name</strong> can contain month or day numbers for monthly or 
+daily historical contract files. If <strong>Name</strong> is <strong>0</strong>, the 
+current asset name is used.&nbsp; If the <a href="date.htm">Now</a> 
+variable is 
+nonzero in [<span class="tast">Test</span>] or [<span class="tast">Train</span>] 
+mode, it is used for filtering contracts instead of the current time. 
+<a href="contracts.htm">ContractRow</a> is set to the row of the first found 
+contract in the dataset. This allows to load extra data, such as greeks, from a 
+second parallel dataset.<br>&nbsp; In [<span class="tast">Trade</span>] 
+mode the chain for the symbol <strong>Name</strong> is either downloaded 
+from the broker API, or - when <strong>Handle</strong> is nonzero - filled from a previoulsy loaded <a href="data.htm">dataset</a> with no date/time filtering. If <strong>Name</strong> is
+<strong>0</strong>, the current asset name is used. For contracts 
+that are no US stocks or traded on multiple exchanges, <strong>Name</strong> 
+should be a <a href="symbol.htm">symbol</a> with exchange, currency, and for futures the expiration date (e.g. <strong>
+&quot;N225-FUT-20220609-225-OSE.JPN-JPY&quot;</strong>).&nbsp;For limiting the 
+chain to a particular trading class, use the <a href="brokercommand.htm">
+SET_CLASS</a> command.&nbsp; 
+<h2>contractChain (string Name, int* Parameters): int </h2>
+A fast alternative to <strong>contractUpdate</strong>; generates an artificial options chain 
+from a parameter list of expirations and strikes (see below).&nbsp;In [<span class="tast">Test</span>] 
+or [<span class="tast">Train</span>] mode the chain is generated for the current 
+asset, regardless of <strong>Name</strong>. When the <strong>Parameters</strong> pointer is
+<strong>0</strong> in [<span class="tast">Trade</span>] 
+mode, the lists of options expirations and strikes for the underlying symbol <strong>Name</strong> 
+are downloaded 
+from the broker API with the <a href="brokercommand.htm">GET_CHAIN</a> command. 
+If <strong>Name</strong> is <strong>0</strong>, the current asset name is used.&nbsp;For limiting the 
+chain to a particular trading class, use the <a href="brokercommand.htm">
+SET_CLASS</a> command. <br>&nbsp; Note 
+that a real options chain is a subset of this artificial chain, since it does not contain all combinations of expirations and 
+strikes. For trading an option from the artifical chain, fill in the class if it is different to the symbol, and call <strong>
+contractPrice</strong> to find out if the option is available for trading.
+<h2>contractRecord (string Name, var MinStrike, var MaxStrike, int MinDays, int MaxDays)</h2>
+Appends the current contract chain to the begin of the <strong>.t8</strong> contract 
+history file in [<span class="tast">Trade</span>] mode. This allows recording live contract 
+chains for <a href="retraining.htm">re-training</a> or other purposes. The prices 
+of all recorded contracts are loaded from the broker API. Because loading contract 
+prices can take a long time (up to 10 seconds per option contract with the IB API), 
+the strike range and life time can be limited with the <strong>MinStrike</strong>,
+<strong>MaxStrike</strong>, <strong>MinDays</strong>, <strong>MaxDays</strong> parameters. 
+Only contracts that fall into the limits and have a nonzero price are recorded. 
+If the limits are 0, prices for the whole chain are loaded.
+Example: <strong>contractRecord(0,priceClose()-50,priceClose()+50,1,70);</strong> 
+appends all contracts within a +/-50 strike range and up to 70 days expiration 
+at the begin of the <strong>.t8</strong> file of the current asset.
+<h2>contract (int Type, int Expiry, var Strike): CONTRACT*</h2>
+Selects the option or future contract from the current option chain that matches 
+exactly the given <strong>Type</strong> (including <strong>FUTURE</strong> or
+<strong>EUROPEAN</strong>), <strong>Expiry</strong> date, and
+<strong>Strike</strong> value. Returns a <strong>CONTRACT</strong> pointer to the 
+found contract, or <strong>0</strong> when no such contract was found. If a contract 
+is selected, <a href="buylong.htm">enterLong</a> and <a href="buylong.htm">enterShort</a> 
+will buy or write (sell short) the contract instead of the underlying asset. The 
+function sets up <a href="contracts.htm">ContractStrike</a>,
+<a href="contracts.htm">ContractExpiry</a> and other contract variables, and sets
+<a href="contracts.htm">ContractRow</a> to the row of the selected contract in the 
+historical dataset or in the options chain. Calling <a href="asset.htm">asset()</a>,
+<strong>contractUpdate()</strong>, or <strong>contract(0,0,0)</strong> deselects 
+the contract and allows again trading with the underlying.
+<h2>contract (int Type, int Days, var Strike): CONTRACT*</h2>
+As above, but selects the option or future contract that has an expiration 
+of at least the given minimum life time in <strong>Days</strong> and strike closest 
+to the given <strong>Strike</strong> value. Returns 
+the <strong>CONTRACT</strong> pointer, or <strong>0</strong> when no contract 
+with matching <strong>Type</strong>, at least <strong>Days</strong> life time, and a strike closer than 10% to <strong>
+Strike</strong> was 
+found.&nbsp;
+<h2>contract (int N): CONTRACT*</h2>
+As above, but selects the <strong>N</strong>th contract from the current contract 
+chain, where <strong>N</strong> = <strong>1..</strong><a href="contracts.htm">NumContracts</a>. 
+If <strong>N = 0</strong>, the currently selected contract is deselected in order 
+to allow trading with the underlying.
+<h2>contract (CONTRACT*): CONTRACT*</h2>
+As above, but selects directly the given option or future contract, and does not 
+alter <a href="contracts.htm">ContractRow</a>.
+<h2>contract (TRADE*): CONTRACT*</h2>
+As above, but selects the contract from a contract trade. Returns <strong>0</strong> if no contract for this trade was found, which can happen 
+at the expiration day or when the chain was not updated. Otherwise
+<a href="trade.htm">trade variables</a> and <a href="contracts.htm">contract variables</a> 
+are available for the trade and contract.&nbsp;
+<h2>contractNext (int Type, int Expiry, var Strike): CONTRACT*</h2>
+As above, but selects and returns the option or future contract with the <strong>
+Type</strong> and <strong>Expiry</strong>, but the next-higher strike than the given
+<strong>Strike</strong> value. If <strong>Strike</strong> is negative, selects and 
+returns the contract with the next-lower strike value.&nbsp;
+<h2>contractFind (int Type, int Days, var Find, int N): CONTRACT*</h2>
+<h2>contractFind (int Type, int Days, var Find, int N, var MinStrike, var MaxStrike): 
+CONTRACT*</h2>
+<h2>contractFind (int Type, int Expiry, var Find, int N): CONTRACT*</h2>
+<h2>contractFind (int Type, int Expiry, var Find, int N, var MinStrike, var MaxStrike): 
+CONTRACT*</h2>
+As above, but selects the option or future contract with the given <strong>Type</strong>, 
+closest to the given minimum life time in <strong>Days</strong>, and a parameter 
+closest to the given <strong>Find</strong> value. The parameter can be selected 
+with <strong>N</strong>: 1 = ask, 2 = bid, 3 = fVal, 4 = fVol, 5 = fUnl, 6 = strike, 
+7 = strike distance from the underlying. 
+The strike range can be optionally limited to <strong>MinStrike</strong> and
+<strong>MaxStrike</strong> for speeding up the function. Returns a <strong>CONTRACT</strong> pointer, or
+<strong>0</strong> when no contract was found.&nbsp;If a selected parameter is not yet available, such as ask, bid, or underlying price in 
+live trading, it is automatically retrieved from the broker API. Depending on 
+the number of contracts that match the expiration and strike range, this 
+function can then take a 
+long time (up to 10 seconds per contract) on the first call in live trading after loading a new contract chain. 
+Subsequent calls are faster.
+<h2>contractDays (CONTRACT*): var </h2>
+<h2>contractDays (TRADE*): var </h2>
+Returns the fractional number of calendar days until contract or trade 
+expiration (see <a href="contracts.htm">ExpiryTime</a>). Returns a negative number when the expiration time is in the past. 
+Note that the exact time to expiration depends on the time zone and market close time of the 
+exchange where the contract is traded, so adapt <a href="contracts.htm">
+ExpiryTime</a> to your exchange when the exact life time in hours and minutes is 
+needed. Note that many exchanges have restrictions to trading contracts at their 
+expiration day.
+<h2>contractPrice (CONTRACT*): var </h2>
+<h2>contractPrice (TRADE*): var</h2>
+Selects the contract and updates the current ask, bid, volume, and underlying price 
+of a contract, 
+as well as the fill amount and trade profit of a trade, 
+either 
+from the broker API, or from historical data by the last <strong>contractUpdate</strong> 
+call. Only valid as long as the contract is not expired. Returns the bid/ask mid price per 
+underlying unit. If volume is available from the broker, it is updated to the
+<strong>fVol</strong> element.&nbsp; <span class="auto-style2"><br>&nbsp; Updating</span> contract prices can be 
+slow, depending on broker. Some broker plugins, such as <a href="ib.htm">IB</a>, 
+support a 'fast mode' by <strong>brokerCommand(SET_PRICETYPE,8);</strong> this 
+can remarkably speed up the price update. For retrieving the underlying price in 
+live trading, the <a href="brokercommand.htm">GET_UNDERLYING</a> command is 
+used; for updating the fill amount, the <a href="brokerplugin.htm">BrokerTrade</a> 
+function is used and must be supported by the API. If the contract is not traded or the market data not 
+subscribed, the function returns <strong>0</strong>. Contract prices of open positions are automatically 
+updated at any bar. If the underlying price is not available, it is updated from 
+the current asset price. The underlying price is automatically copied to all contracts 
+of the current chain with the same expiration date.&nbsp;&nbsp;
+<h2>contractUnderlying (): var </h2>
+Returns the unadjusted underlying price, in [<span class="tast">Trade</span>] 
+mode from the current contract, otherwise from the <strong>fUnl</strong> element of the first contract of the chain. 
+If the underlying price is not available, returns the price of the currently 
+selected asset.Make sure with <strong>contractUpdate</strong> 
+and <strong>contractPrice</strong> that the contract is up to date. Note that FOPs have no common underlying price, but <strong>fUnl</strong> 
+	depends on the expiration and can be different for any contract. Source code in <strong>contract.c</strong>.
+<h2>contractPosition (TRADE*): int </h2>
+Returns the current number of open lots or open contracts of the given trade (negative 
+values for a short position). Can be used for determining if a certain contract 
+was expired or exercised by the broker. In live trading the
+<a href="brokercommand.htm">GET_POSITION</a> command must be supported by the broker 
+API, and no other trades with the same contract type, strike, and expiry must be 
+opened.
+<h2>contractCheck (TRADE*, int Mode): int</h2>
+Checks the option position on the broker account in live [<span class="tast">Trade</span>] 
+mode. If it is still open, returns the total number of open contracts (negative 
+for a short position). Otherwise it checks for an open position of the underlying, 
+and returns the position size. If <strong>Mode</strong> is at <strong>1</strong> 
+and no open contract was found, the trade is automatically closed with a &quot;<strong>Lapsed</strong>&quot; 
+message. If <strong>Mode</strong> is at <strong>3</strong> and an underlying position 
+was found, it is sold at market. <strong>Mode = 3</strong> thus replicates the backtest 
+behavior of expired options. The function can be called regularly in a
+<a href="for_trades.htm">for(open_trades)</a> loop for keeping the positions between 
+broker and strategy in sync. The <a href="brokercommand.htm">GET_POSITION</a> command 
+must be supported by the broker API, and no other trades with the same contract 
+type, strike, expiry, and underlying must be opened.
+<h2>contractRoll (TRADE*, int Days, var Strike, function TMF): TRADE* </h2>
+Rolls a closed option or future contract by opening a duplicate with the same type, 
+volume, stop loss and profit distances, the given number of <strong>Days</strong> 
+until expiration, the given <strong>Strike</strong> (<strong>0</strong> for using 
+the previous strike) and an optional <a href="trade.htm">trade management function</a>. 
+Returns a pointer to the new trade, or 0 if the contract could not be rolled. Source 
+code in <strong>contract.c</strong>.
+<h2>contractSellUnderlying (): int </h2>
+Checks in [<span class="tast">Trade</span>] mode if any underlying position of the 
+current asset is open, and if so, sells it at market. Returns the number of lots, 
+or 0 when no underlying position was found. Source code in <strong>contract.c</strong>.
+<h2>contractExercise (TRADE*)</h2>
+Exercises an option contract. In the backtest, the option is closed at its intrinsic 
+price (see remarks). In live trading, an order to exercise the option is sent to 
+the broker. It is normally not immediately executed, but pending. Use <strong>contractCheck()</strong> 
+for closing the trade and selling the underlying as soon as the order was executed. 
+Don't call this function for European options before expiration, or for options 
+that are not in the money.<br>&nbsp;<h2>
+contractVal (CONTRACT*, var Price, var HistVol, var Dividend, var RiskFree, <em>
+var* Delta, var* Gamma, var* Vega, var* Theta, var* Rho</em>): var</h2>
+Returns the theoretical value and optionally the greeks of the given option contract 
+at the given unadjusted <strong>Price</strong> of the underlying. <strong>Type</strong>,
+<strong>fStrike</strong>, and <strong>Expiry</strong> of the contract must be set; 
+the other parameters don't matter. <strong>Expiry</strong> can be either an expiration 
+date in the YYYYMMDD format, or alternatively the number of calendar days until 
+expiration. <strong>HistVol</strong> is the underlying annual volatility of the 
+log returns, f.i. by <a href="ta.htm">Volatility</a> or <a href="ta.htm">VolatilityOV</a> 
+(usually over 20 days). <strong>Dividend</strong> is the continuous annual dividend 
+yield per year of the underlying, as a fraction in the <strong>0..1</strong> range.
+<strong>RiskFree</strong> is the annual risk-free yield as a fraction in the
+<strong>0..1</strong> range, f.i. by <strong>yield()/100</strong>. <br><strong>&nbsp; Delta</strong> 
+is the impact of an underlying price change on the option value, in the <strong>
+0..1</strong> range for calls and <strong>0..-1</strong> for puts. <strong>Gamma</strong> 
+is the impact on <strong>Delta</strong>. <strong>Vega</strong> is the impact of 
+a change of the underlying volatility, <strong>Theta</strong> is the impact of a 
+change of the expiration time, and <strong>Rho</strong> is the impact of a change 
+of the risk-free yield. <br>&nbsp; The function uses <a href="rbridge.htm">R</a> and the
+<strong>RQuantLib</strong> package; both must be installed (see 
+remarks below). Source code in <strong>contract.c</strong>.<h2>contractVol (CONTRACT*, 
+var Price, var HistVol, var Value, var Dividend, var RiskFree): var</h2>
+Returns the implied volatility (IV) of the given option contract with the given
+<strong>Value</strong>. For the parameters, see <strong>contractVal</strong>. The 
+function uses <a href="rbridge.htm">R</a> and the <strong>RQuantLib</strong> package; 
+both must be installed on the trading PC (see remarks below). Source code in
+<strong>contract.c</strong>.&nbsp;The implied volatility is an estimate of the future 
+volatility of the underlying, based on the current option parameters. If the contract 
+has no value or if the strike price is too far or on the wrong side of the asset 
+price, the function returns <strong>0</strong>.&nbsp;
+<h2>contractDelta (int Type, int Days, var Price, 
+var HistVol, var RiskFree, var Strike): var</h2>
+Returns the theoretical delta of a contract of given <strong>Type</strong> with&nbsp;the 
+given <strong>Days</strong> until expiration, unadjusted underlying <strong>Price</strong>, 
+volatility <strong>HistVol</strong>, <strong>RiskFree</strong> yield rate, and
+<strong>Strike</strong>. Uses the formula <strong><em>Delta = cdf((ln(Price/Strike) 
++ (r + (sigma^2)/2) * T) /(sigma * sqrt(T)))</em></strong>. Source code in
+<strong>contract.c</strong>. Delta is the first derivative of the option value with 
+respect to the underlying price, and can be used as a proxy of the probability to 
+expire in the money. Note that some platforms and brokers use individual methods 
+for calculating <strong>HistVol</strong> and thus produce different Delta values 
+for the same contracts.<h2>contractStrike (int Type, int Days, var Price, var HistVol, var RiskFree, var 
+Delta): var</h2>
+Returns the theoretical strike value of a contract of given <strong>Type</strong> 
+with the given <strong>Days</strong> until expiration, unadjusted underlying
+<strong>Price</strong>, volatility <strong>HistVol</strong>, <strong>RiskFree</strong> 
+yield rate, and <strong>Delta</strong>. Uses the formula <strong><em>Strike = Price 
+* exp(-qnorm(Delta) * sigma * sqrt(T) + (r + (sigma^2)/2) * T)</em></strong>. If 
+a positive <strong>Delta</strong> is entered for a put, it is converted to the 
+equivalent negative delta, so the same <strong>Delta</strong> value can be used 
+for selecting put and call contracts. Source 
+code in <strong>contract.c</strong>.
+<h2>contractIntrinsic (CONTRACT*, var Price): var</h2>
+<h2>contractIntrinsic (TRADE*, var Price): var</h2>
+Returns the intrinsic value of the option contract per underlying unit at the given
+<strong>Price</strong> of the underlying. The intrinsic value of a call option is 
+the difference between price and strike; for put options it's the difference between 
+strike and price. A positive difference means that the option is in the money, a 
+negative difference means it's out of the money.
+<strong>Type</strong> and <strong>fStrike</strong> of the contract or trade must 
+be set; the other parameters don't matter. Source code in <strong>contract.c</strong>.<h2>
+contractProfit (CONTRACT*, var Price, var Premium): var</h2>
+Returns the profit per underlying unit of a contract sold or purchased at the given
+<strong>Premium</strong> when expiring at the given underlying <strong>Price</strong>.
+<strong>Premium</strong> is positive for sold, negative for bought contracts.
+<strong>Type</strong> and <strong>fStrike</strong> of the contract must be set; 
+the other parameters don't matter. Trading costs are not included. The 
+calculation of profit or loss is described in the remarks below. Source code in
+<strong>contract.c</strong>.
+<h2>contractMargin (CONTRACT*, int AssetType): var</h2>
+Calculates the margin cost of the given non-covered short put/call contract for the given
+<strong>AssetType </strong>(the margin of long contracts is simply their ask 
+price). Uses the margin formula on the Interactive Broker's
+<a href="https://www.interactivebrokers.com/en/index.php?f=26660&amp;hm=us&amp;ex=us&amp;rgt=1&amp;rsk=0&amp;pm=1" target="_blank">US Options Margin Requirements</a> page. Source code in
+<strong>contract.c</strong>.
+<h2>contractClass (CONTRACT*): string</h2>
+Returns a pointer of the class name of the given contract; only available in 
+live trading mode since historical contracts have no class. Source code in
+<strong>contract.c</strong>.
+<h2>contractLetter (int Month): string</h2>
+Returns the letter assigned to the given expiration month (F Jan, G Feb, H Mar, 
+J Apr, K May, M Jun, N Jul, Q Aug, U Sep, V Oct, X Nov, Z Dec). This function 
+can be used to generate a contract
+<a href="symbol.htm">symbol</a>. Source code in
+<strong>contract.c</strong>.
+<h2>contractSetSymbol (int Days, int N): int</h2>
+Sets <a href="script.htm">SymbolLive</a> and <a href="script.htm">SymbolTrade</a> 
+of the current selected underlying future to the next expiration date after the 
+given number of days. The expiration date is the third Friday of either any 
+month (<strong>N = 1</strong>) or any third month (<strong>N = 3</strong>). 
+Returns the expiration date in&nbsp; YYYYMMDD format. Source code in
+<strong>contract.c</strong>.
+<br>&nbsp;&nbsp;&nbsp;
+<h2>contractPrintChain ()</h2>
+Exports the current contract chain to a <strong>Data\*.csv</strong> file, for diagnostics purposes,
+<h2>contractPrint (CONTRACT*)</h2>
+Prints the given contract parameters to the log file for diagnostics purposes, in 
+the order Date, Type, Expiry, Strike, Underlying, Ask, Bid, fVal, fVol.&nbsp; 
+<h2>plotContract (int N, CONTRACT*, var HistVol, var Min, var Max, int Days, int 
+Modus)</h2>
+Plots the payoff diagram of <strong>N</strong> contracts (negative for selling) 
+with volatility <strong>HistVol</strong> from price <strong>Min</strong> to 
+price <strong>Max</strong>. <strong>Modus 0</strong> initializes the plot and 
+plots a zero line, <strong>Modus 1</strong> plots the diagram at expiration,
+<strong>Modus 2</strong> at the given <strong>Days</strong> into the lifetime (<strong>RQuantLib</strong> 
+required), and <strong>Modus 3</strong> plots the Delta. Type, strike, ask, bid, 
+and expiry in days must be set in the <strong>CONTRACT</strong> struct. Source 
+code in <strong>contract.c</strong>; usage example in <strong>PayOff.c</strong>. <br><br>&nbsp;
+<h2>yield(): var</h2>
+Helper function, returns the current yield rate of 3-months US treasury bills in 
+percent. Can be used as a proxy of the risk-free interest for calculating the values 
+of option contracts (divide it by <strong>100</strong> for using it in <strong>contractVal</strong> 
+or <strong>contractVol</strong>). Works in backtest as well as live trading. Uses 
+the <a href="data.htm">dataFromQuandl</a> function. <a href="restrictions.htm">Zorro 
+S</a> required for Quandl data access; enter your Quandl key in the <strong>QuandlKey</strong> 
+field in <strong>Zorro.ini</strong>. Source code in <strong>contract.c</strong>.
+<h2>yieldCSV(): var</h2>
+As above, but gets the current yield rate from an already-downloaded treasure 
+history in <strong>History\FRED-DTB3.csv</strong>. 
+<h2>initRQL(): int</h2>
+Helper function that initalizes <strong>RQuantLib</strong>. Call this in the <strong>INITRUN</strong> when
+<strong>contractVal</strong> or <strong>contractVol</strong> are used.
+<p>&nbsp;</p>
+<h3>Parameters:</h3>
+<table border="0">
+	<tr>
+		<td><strong>Name</strong></td>
+		<td>The name of the underlying, f.i. <strong>&quot;ES&quot;</strong> or
+		<strong>&quot;SPY&quot;,</strong> or an underlying symbol - if different to the 
+		name - in live trading, f.i. <strong>&quot;DAX-IND-EUREX-EUR&quot;</strong>. Give <strong>0</strong> for using the name or 
+		symbol of the current asset. For contract chains in backtest mode, use the name of the 
+		current
+		<strong>.t8</strong> file (f.i. <strong>&quot;SPY_202412.t8&quot;</strong>) for loading monthly or daily files.</td>
+	</tr>
+	<tr>
+		<td><strong>Handle</strong></td>
+		<td>A number from <strong>1...800</strong> that identifies a previously 
+		loaded <a href="data.htm">dataset</a> containing a <strong>CONTRACT</strong> 
+		list with historical options data; or <strong>0</strong> for automatically 
+		loading content from a historical file or from the broker API. </td>
+	</tr>
+	<tr>
+		<td><strong>Mode</strong></td>
+		<td><strong>PUT+CALL</strong> for options, <strong>FUTURE</strong> for futures,
+		<strong>PUT+CALL+FUTURE</strong> for options on futures. </td>
+	</tr>
+	<tr>
+		<td><strong>Parameters</strong></td>
+		<td>Pointer to an <strong>int</strong> array. The first element contains 
+		the number of expirations, second the number of strikes, followed by the 
+		list of expirations in the YYYYMMDD format, followed by the list of 
+		strikes cast to <strong>float</strong>.&nbsp;Give <strong>0</strong> for 
+		loading the array from the broker. </td>
+	</tr>
+	<tr>
+		<td><strong>Type</strong></td>
+		<td>The exact contract type to match, a combination of <strong> 
+		PUT</strong>, <strong>CALL</strong>, <strong>FUTURE</strong>,<strong> EUROPEAN</strong>,
+		<strong>BINARY</strong> (f.i. <strong>PUT+EUROPEAN</strong>), plus the following optional flags:<br><strong>+ONLYW3</strong> 
+		- select only contracts that expire at the 3rd Friday, i.e. between the 16th and the 21th of the 
+		month.<br><strong>+ONLYMATCH</strong> - select only contracts that 
+		exactly match the expiration date.<br></td>
+	</tr>
+	<tr>
+		<td><strong>AssetType</strong></td>
+		<td><strong>1</strong> for a currency, <strong>2</strong> for an index,
+		<strong>3</strong> for stocks and ETFs. The margin for futures must be 
+		individually calculated.</td>
+	</tr>
+	<tr>
+		<td><strong>Days</strong></td>
+		<td>The minimum number of calendar days until expiration. The closest expiration 
+		date will be selected. </td>
+	</tr>
+	<tr>
+		<td><strong>Expiry</strong></td>
+		<td>The expiration date in the <strong>YYYYMMDD</strong> format. </td>
+	</tr>
+	<tr>
+		<td><strong>Strike </strong></td>
+		<td>Option strike price, or <strong>0</strong> for futures. </td>
+	</tr>
+	<tr>
+		<td><strong>Delta </strong></td>
+		<td>First derivative of the option value with respect to the underlying 
+		price. Determines the impact of an underlying price change on the option 
+		value, and can serve as a proxy of the probability to expire in the 
+		money. <strong>
+0..1</strong> for calls and <strong>0..-1</strong> for puts.</td>
+	</tr>
+	<tr>
+		<td><strong>HistVol</strong></td>
+		<td>The historical annualized volatility of the underlying asset, as a fraction, 
+		f.i. 0.2 for 20%. Normally calculated with the <a href="ta.htm">Volatility</a> 
+		or <a href="ta.htm">VolatilityOV</a> indicators from the last 20 days.
+		For the calculation of greeks, implied volatility is often used instead 
+		of historical volatility.</td>
+	</tr>
+	<tr>
+		<td><strong>Dividend</strong></td>
+		<td>The annual dividend yield of the underlying, as a fraction, f.i. 0.02 
+		for 2% dividend yield. </td>
+	</tr>
+	<tr>
+		<td><strong>RiskFree</strong></td>
+		<td>The risk-free interest rate, as a fraction, f.i. <strong>yield()/100</strong>.
+		</td>
+	</tr>
+	<tr>
+		<td><strong>Value</strong></td>
+		<td>The value of the option for determining the implied volatility. </td>
+	</tr>
+	<tr>
+		<td><strong>CONTRACT*</strong></td>
+		<td>The pointer of an option or future contract. Use <strong>ThisContract</strong> 
+		for the currently selected contract. </td>
+	</tr>
+	<tr>
+		<td><strong>TRADE*</strong></td>
+		<td>The pointer of an option or future trade. Use <strong>ThisTrade</strong> 
+		for the current trade pointer in a <a href="trade.htm">TMF</a> or
+		<a href="fortrades.htm">trade enumeration loop</a>. </td>
+	</tr>
+</table>
+<h3>Remarks:</h3>
+<ul>
+	<li><strong>contract.c</strong> must be included for all <strong>contract</strong> functions. The underlying asset must be selected 
+	and a contract chain must be loaded before calling a <strong>contract</strong> 
+	function.</li>
+	<li>The
+	<strong>contractVal</strong> and <strong>contractVol</strong> functions require <a href="rbridge.htm">R</a> with the <strong>Rcpp</strong> and
+	<strong>RQuantLib</strong>&nbsp;packages that you can install from the Cran 
+	repository, either with the <strong>install.packages</strong> command or 
+	from the menu when using RStudio.
+	<!--  RQuantLib is not available through Cran, but you can get it from the <strong>ghrr</strong> 
+  repository:<br><br>
+  <pre style="box-sizing: border-box; font-family: SFMono-Regular, Consolas, Menlo, Courier, monospace; font-size: 13.6px; margin-top: 0px; margin-bottom: 0px; word-wrap: normal; padding: 16px; overflow: auto; line-height: 1.45; background-color: rgb(246, 248, 250); border-radius: 3px; word-break: normal; color: rgb(36, 41, 46); font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-style: initial; text-decoration-color: initial;">if(!require('drat')) install.packages('drat')
+drat::addRepo('ghrr')
+install.packages('RQuantLib', type='binary')</pre>
+  <br>This will also install the dependencies. At the time of printing this 
+  manual, RQuantlib was available for R 3.4, but not for R 3.5 or newer versions, so make sure that you have the right R version installed. 
+  If you have several R versions, adapt the path in <a href="ini.htm">Zorro.ini</a> 
+  to the version you need.-->For checking if everything is working, call a library 
+	function from the R console, like this:<br><br>
+	<pre style="box-sizing: border-box; font-family: SFMono-Regular, Consolas, Menlo, Courier, monospace; font-size: 13.6px; margin-top: 0px; margin-bottom: 0px; word-wrap: normal; padding: 16px; overflow: auto; line-height: 1.45; background-color: rgb(246, 248, 250); border-radius: 3px; word-break: normal; color: rgb(36, 41, 46); font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-style: initial; text-decoration-color: initial;"><span class="pl-e" style="box-sizing: border-box;">require('RQuantLib')
+</span><span class="auto-style1"><span class="pl-pds"><span style="box-sizing: border-box;">AmericanOption('put', underlying=100, strike=100, dividendYield=0.02, riskFreeRate=0.01, maturity=0.5, volatility=0.4, engine='CrankNicolson')</span></span></span>
+
+<em>Concise summary of valuation for AmericanOption
+  value  delta  gamma  vega theta rho divRho
+11.4122 -0.4463 0.0139  NA   NA   NA   NA</em></pre>
+	<br> <strong>RQuantLib</strong> must be initialized in the <strong>INITRUN</strong> 
+	by calling <strong>initRQL </strong>The current <strong>RQuantLib</strong>&nbsp;version tends to crash when 
+	a function is called with bad parameters, like negative volatility, 
+	or with a value that contradicts the strike and spot price, or with too long strike 
+	distances. After a crash, all <strong>RQuantLib</strong>&nbsp;functions return 
+	0.</li>
+	<li>Contract chains loaded from historical data normally contain prices, underlying, 
+	and optional data such as delta. Chains downloaded from the broker normally contain only 
+	strikes and expirations, but <span class="Highlight">no prices</span>. Since loading option chains can 
+	take a <span class="Highlight">long time</span> (~20 minutes for long 
+	chains with some brokers), and expirations and strikes don't change 
+	intraday, it is recommended to call <strong>contractUpdate</strong> 
+	in live trading only once per day, preferably 
+	outside market hours. If the broker API supports the <strong>GET_CHAIN</strong> 
+	command, use <strong>contractChain</strong> instead, which takes only a few 
+	seconds. Prices can be updated with <strong>contractPrice</strong>; 
+	prices of open trades are automatically updated<strong>.</strong> </li>
+	<li>In 
+	test and training, <strong>contractUpdate</strong> should be called
+	<span class="Highlight">once per bar</span> for updating the prices. If 
+	contracts are purchased or contract prices are evaluated in a
+	<a href="tick.htm">tick</a> function or a <a href="trade.htm">TMF</a>, make 
+	sure to call <strong>contractUpdate</strong> before for using recent prices.<strong> </strong> </li>
+	<li>Some brokers are reported to return <span class="Highlight">
+	already-expired contracts</span> in their contract chain. Make sure to check 
+	the expiration date when selectiung a contract.</li>
+	<li><span class="Highlight">High resolution options data</span> can be split 
+	in monthly or daily <strong>.t8</strong> files and loaded per script in a 
+	dataset that is then fed to the <strong>contractUpdate</strong> function (see example).</li>
+	<li><a href="stop.htm">Entry</a>, <a href="stop.htm">Stop</a>, and
+	<a href="stop.htm">TakeProfit</a> limits also work for trading options and 
+	futures. They must be given as an 
+	absolute <span class="Highlight">price limit</span> to the ask price of the 
+	contract, not as a distance. When an exit limit is hit, the contract 
+	is sold at market. Of course the usefulness of stop/profit limits for 
+	option values is arguable. </li>
+	<li><span class="Highlight">For entering a trade</span>, make sure that a contract is selected. Otherwise you would unwillingly open a position 
+	of the underlying. Check with <strong>contracePrice()</strong> that a 
+	nonzero ask or bid price, depending trade direction, is available for the 
+	contract or for all contracts of a combo. Set the <strong>
+	<a href="contracts.htm">Multiplier</a></strong> correctly, otherwise the backtest result will be wrong. 
+	Some brokers also require the <a href="contracts.htm">Exchange</a> to be 
+	set. The correct multiplier of an 
+	option or future contract can be found on the asset description on the website 
+	of the broker or the exchange. For stocks, the multiplier is normally 100.
+	</li>
+	<li>Underlying prices downloaded with the <a href="loadhistory.htm">assetHistory</a> 
+	function are normally <span class="Highlight">split and 
+	dividend adjusted</span> and therefore won't match strike prices. You can use the
+	<strong><a href="loadhistory.htm">UNADJUSTED</a></strong> flag for downloading 
+	<span class="Highlight">unadjusted</span> prices instead. But often you'll 
+	need both sorts of prices in an options trading system, unadjusted prices 
+	for calculating greeks or determining strikes, and adjusted prices for 
+	historical volatility and for indicators. The usual convention is having adjusted prices in
+	<strong>.t6</strong> history and using the <strong>contractUnderlying()</strong> 
+	function for the unadjusted prices. </li>
+	<li>When an option is closed, either by an <a href="selllong.htm">exit</a> command 
+	or by reaching a stop or profit target, it is automatically
+	<span class="Highlight">sold back or covered</span> at the current 
+	ask or bid price. If no market price is available, the option stays open until 
+	the next exit command or until it expires or is exercised. Options and futures 
+	can only be traded, and their prices can only be downloaded when the market 
+	is open. Do not send <a href="buylong.htm">enter</a>, <a href="selllong.htm">exit</a>, or 
+	<strong>exercise</strong> option positions outside market hours.</li>
+	<li>If an option expires or is exercised, a <span class="Highlight">position of the underlying</span> can appear. 
+	For live trading, the <strong>contractCheck</strong> command can check if an 
+	underlying position is open, and sell it automatically. In the backtest, 
+	underlying positions opened by expired or exercised options are immediately 
+	sold at market, and the profit or loss is booked on the account. </li>
+	<li>For <span class="Highlight">calculating profit/loss</span> of an option, the following algorithm 
+	is used:<br>- A call is assumed in the money when the strike is below the bid 
+	price (i.e. ask - spread); a put is assumed in the money when the strike is 
+	above the ask price. <br>- A long call or short put in the money buys the underlying 
+	at strike price, and sells it at bid price. The difference is added to or subtracted 
+	from the account.<br>- A long put or short call in the money sells the 
+	underlying at strike price, and buys it back at ask price. The difference is 
+	added to or subtracted from the account.<br>- For a long position the premium 
+	is subtracted from the account, for a short position the premium is added to the account.</li>
+	<li>An example for finding the parameters of 
+	<span class="Highlight">commodity FOPs</span>. Go to
+	<a href="https://www.cmegroup.com/trading">https://www.cmegroup.com/trading</a> 
+	and enter the name, for instance &quot;Natural Gas&quot;, in the search field.<o:p> 
+	A list of symbols will appear (otherwise you have to look it up at a different 
+	exhange). </o:p>
+	Select the symbol with the high trade volume, in the example &quot;NG&quot;. 
+	Click on the link under <span class="tast">Product Name</span>.<o:p> 
+	Then select </o:p>
+	<span class="tast">Contract Specs</span>. The multiplier (10,000 for NG) is 
+	the <span class="tast">Contract Unit</span>, the pip size of the underlying 
+	is the <span class="tast">Minimum Price Fluctuation</span> ($0.001). Pip cost 
+	are the $0.001 in your account currency. Under <span class="tast">Quotes</span> 
+	you can see the current price per underlying unit ($3.146). Check if the price 
+	is in cents or dollars (see below). Under <span class="tast">Margins</span> 
+	you can see that the most recent November 2018 contract has $1950 maintenance 
+	margin. That's $0.195 margin cost per underlying unit. Now look up the symbol 
+	in your broker platform and check its ticker name. Check also if your broker 
+	uses the same margin. That's all you need to add the underlying to your
+	<a href="account.htm">asset list</a>. The line will look like this (on an USD 
+	account): <strong>NG,3.146,0.001,0,0,0.001,0.001,0.195,0,1,0.002,NG</strong>.</li>
+	<li>Futures and options on futures (FOPs) sometimes have prices 
+	<span class="Highlight">sometimes in cents, sometimes 
+	in dollars</span>, sometimes mixed in any possible combination of historical 
+	and live 
+	data. For trading with FOPs, check historical data and broker data and determine 
+	which prices - ask/bid, strike, underlying - are in cents and which in dollars. 
+	This can be different with any future and any broker. Set the
+	<a href="contracts.htm">Centage</a> variable accordingly for using consistent 
+	dollar prices in the strategy, charts, and reports.</li>
+	<li>The <span class="Highlight">class or root symbol</span> of a contract can be retrieved 
+	in live trading from the first element of a <strong>CONTRACT</strong> 
+	struct: <strong>string RootSymbol = (string)MyContract;</strong>. Note 
+	that this only works in Live mode, as in the backtest the first CONTRACT 
+	element is the time.</li>
+	<li>Many broker APIs, for instance <a href="ib.htm">IB</a>, do not manage trades, 
+	but only positions. Those APIs can not distinguish between an underlying position 
+	opened by a normal trade, and a position opened by an exercised option. This 
+	must be considered in the script. Buying long and short the same contract with 
+	the same strike and expiry is treated as two different trades by Zorro, but 
+	as two positions that cancel each other by most brokers.</li>
+	<li>Some broker APIs, for instance <a href="ib.htm">IB</a>, need a certain &quot;recovery 
+	time&quot; after downloading an options chain before downloading the next chain. 
+	When downloading chains of multiple assets, <a href="sleep.htm">wait</a> some 
+	seconds between <strong>contractUpdate</strong> calls.</li>
+	<li>Use the <a href="selllong.htm">exit</a> command if you want to close a contract 
+	by selling it or buying it back. On NFA accounts, functions like <strong>contractPosition</strong> 
+	or <strong>contractCheck</strong> only check the net position of open option 
+	trades, and will return wrong results when several long and short positions 
+	of the same contract are open. For the same reason, multiple scripts can trade 
+	options on the same NFA account only when they don't open the same contracts.
+	</li>
+	<li><a href="spread.htm">Slippage</a> is not simulated for options. 
+	<span class="Highlight">Commission and margin</span> are set by default 
+	to the commission and margin of the underlying 
+	in the <a href="account.htm">asset list</a>, multiplied with the
+	<a href="contracts.htm">Multiplier</a>. Commission is reduced by 50% when an 
+	option expires worthless. Since most brokers have different and complex calculation methods 
+	for option margins, the default margin is just an approximation. For better 
+	accuracy, use the <strong>contractMargin</strong> or <a href="combo.htm">comboMargin</a> functions or calculate <a href="spread.htm">Commission</a> and
+	<a href="pip.htm">MarginCost</a> parameters explicitely in the script prior 
+	to entering a trade. For instance when trading vertical spreads, margin cost 
+	is often determined by the strike price difference, therefore set <strong>MarginCost 
+	= 0.5 * (Strike1-Strike2)</strong> before opening the two positions. The 
+	margin cost of covered contracts is usually 0. The margin 
+	requirements by IB can be found on
+	<a href="https://www.interactivebrokers.com/en/index.php?f=24176" target="_blank">https://www.interactivebrokers.com/en/index.php?f=24176</a>.</li>
+	<li>When <a href="optimize.htm">optimizing</a> option strategies, the default
+	<strong>objective</strong> function is not the ideal performance measure for 
+	options. Better is dividing the total profit by the required margin. Example:
+	<pre>var objective()
+{
+  if(!NumWinTotal &amp;&amp; !NumLossTotal) return 0;
+  return (WinTotal-LossTotal)/MarginMax;
+}</pre>
+	</li>
+	<li><span class="Highlight">Phantom trades</span> and 
+	<span class="Highlight">virtual hedging</span> are not used for contracts. Options can 
+	always be hedged regardless of the <a href="hedge.htm">Hedge</a> setting.
+	</li>
+	<li>Some historical options before 2014 expired on Saturday; afterwards 
+	they expired on Friday. Options with <span class="Highlight">Saturday 
+	expiration</span> are treated as if they expired on Friday. The
+	<span class="Highlight">expiration hour</span> can be set up with the
+	<a href="contracts.htm">ExpiryTime</a> variable.</li>
+	<li>The <strong>CONTRACT</strong> struct is defined in <strong>trading.h</strong>. 
+	For backtests the following struct elements must be filled in the data set; 
+	for futures: <strong>time, fAsk, fBid, Expiry, Type</strong>; for options:
+	<strong>time, fAsk, fBid, fStrike, Expiry, Type</strong>. The other <strong>CONTRACT</strong> elements are optional and for use in the script only. 
+	</li>
+	<li><strong>contract(Contracts)</strong> selects the first contract in the chain.</li>
+	<li>For <span class="Highlight">calculating the option value</span>, American options are approximated with the 
+	Crank-Nicolson method, while European options are calculated with the (much 
+	faster) Black-Scholes formula. For short-term options the results of both methods 
+	are not very different, so the <strong>EUROPEAN</strong> flag can be used in 
+	such cases even for Americon options in order to speed up the calculation.</li>
+	<li>The <strong>contractVol</strong> function is known to 
+	<span class="Highlight">terminate the R session</span> when called with unrealistic parameters, such as 
+	an unlikely small option value for a high strike-spot difference and short expiration 
+	date. This can be tested with the <a href="rbridge.htm">Rrun</a> function (
+	<strong>if(!Rrun()) quit(&quot;R terminated!&quot;); </strong>). When the R 
+	session is terminated by an exception in the backtest, Zorro must be restarted.
+	</li>
+	<li>For finding the contract with the lowest or highest strike, 
+	start the with strike price at the current price, then call <strong>contract(...)</strong> 
+	in a loop and modify the strike in steps until the condition is fulfilled.. </li>
+	<li>For converting <span class="Highlight">dates</span> from or to the <strong>YYYYMMDD</strong> format or 
+	for finding the 3rd Friday of a month, use the <a href="month.htm">dmy</a>,
+	<a href="month.htm">ymd</a>, and <a href="month.htm">nthDay</a> functions.
+	</li>
+	<li><span class="Highlight">Inverse contracts</span> have a nonlinear 
+	payoff, and bear higher risk and higher volatility than standard contracts. 
+	The profit/loss of such positions must be calculated by script (see
+	<a href="trade.htm">TradeCost</a>).</li>
+	<li>Several <span class="Highlight">option scripts</span> are included. The <strong><a href="scripts.htm">TradeOptions</a></strong> script can be 
+	used for testing the opening and closing of <strong>SPY</strong> options via 
+	broker API. It only runs at NY market hours and takes about 30 seconds 
+	for downloading the option chain at start. The <strong>
+	<a href="scripts.htm">Payoff</a></strong> script can interactively display payoff and delta 
+	diagrams of option combinations. The <a href="scripts.htm">OptionsCalculator</a> script calculates the price and 
+	delta of calls and puts, where underlying, strike, and expiration of options 
+	can be set up with sliders. Feel free to combine the scripts to your own 
+	specialized options tool.<br></li>
+</ul>
+<h3>Examples:</h3>
+<pre><em>// Sell call and put options at 1 stddev of the underlying</em><br><em>// Buy them back 2 days before expiration</em>
+#include &lt;contract.c&gt;
+
+void run() 
+{
+  BarPeriod = 1440;
+  BarZone = EST;
+  BarOffset = 15*60; <em>// trade at 3 pm Eastern time</em>
+  LookBack = 20;
+  if(Init) {
+    assetList("AssetsIB");
+    assetHistory("SPY",FROM_AV|UNADJUSTED);
+    brokerCommand(SET_CLASS,&quot;SPYW&quot;);
+  }
+  asset("SPY");
+  Multiplier = 100;
+ 
+  if(!NumOpenTotal &amp;&amp; !is(LOOKBACK)) {
+    contractUpdate(Asset,0,PUT|CALL);
+    vars Close = seriesC();  
+    int DTE = 6*7; <em>// look for 6-week contracts</em>
+    var Strangle = StdDev(Close,20);
+    CONTRACT* Call = contract(CALL,DTE,Close[0] + Strangle);
+    CONTRACT* Put = contract(PUT,DTE,Close[0] - Strangle);
+    if(Call &amp;&amp; Put) { <em>// open single positions, no combo</em>
+      contract(Call); enterShort();
+      contract(Put); enterShort();
+    }
+  }
+
+<em>// Check expiration and buy them back when in the money</em>  
+  for(open_trades) 
+  {
+    if(contractDays(ThisTrade) &lt;= 2
+      &amp;&amp; contractIntrinsic(ThisTrade,Close[0]) &gt; 0)
+         exitTrade(ThisTrade);
+  }
+}</pre>
+<pre><em>// Load high res contract chains from daily files like &quot;SPY_20210505.t8&quot;
+</em>if(!is(LOOKBACK) &amp;&amp; day(0) != day(1)) { <em>// new day?</em>
+  if(Live) { <em>// load a new contract chain
+</em>    if(!contractChain(0,0)) <em>// first try the fast way
+</em>	contractUpdate(0,0,CALL|PUT); <em>// then the slow way</em>
+  } else <em>// backtest: load every day a new t8 dataset with prices </em>
+    dataLoad(1,strf("History\\%s_%04d%02d%02d.t8",Asset,year(0),month(0),day(0)),9);
+}
+if(!Live) <em>// backtest: update prices at any bar
+</em>  contractUpdate(0,1,CALL|PUT);
+</pre>
+<pre><em>// Example script for converting EOD options data to .t8:
+// Format: underlying symbol, exchange, date MMDDYYYY, adj close, option symbol, expiry MMDDYYYY, strike, Call/Put, American/European, ask, bid, volume, open interest, close
+// Sample: &quot;TLT,NYSEArca,04/10/2015,129.62,TLT   150410C00112500,04/10/2015,112.5,C,A,17.3,16.2,0,0,129.62&quot;
+</em>string Format = ",,%m/%d/%Y,,,i,f,s,s,f,f,f,f,f";
+
+void main() 
+{
+<em>// first step: parse the CSV file into a dataset
+</em>  int Records = dataParse(1,Format,FILENAME);
+  printf(&quot;\n%d Records parsed&quot;,Records);
+<em>// second step: convert the raw data to the final CONTRACT format
+</em>  for(i=0; i&lt;Records; i++) 
+  {
+    CONTRACT* C = dataAppendRow(2,9);
+    C-&gt;time = dataVar(1,i,0);
+    string PC = dataStr(1,i,3);
+    string EA = dataStr(1,i,4);
+    C-&gt;Type = ifelse(*PC == 'P',PUT,CALL) + ifelse(*EA == 'E',EUROPEAN,0);
+    int Expiry = dataInt(1,i,1); 
+    C-&gt;Expiry = 10000*(Expiry%10000) + Expiry/10000; <em>// MMDDYYYY -&gt; YYYYMMDD</em>
+    C-&gt;fStrike = dataVar(1,i,2);
+    C-&gt;fAsk = dataVar(1,i,5);
+    C-&gt;fBid = dataVar(1,i,6);
+    C-&gt;fVol = dataVar(1,i,7);
+    C-&gt;fVal = dataVar(1,i,8); <em>// open interest</em>
+    C-&gt;fUnl = dataVar(1,i,9);
+    if(!progress(100*i/Records,0)) break; <em>// show a progress bar</em>
+  }
+  dataSort(2);
+  dataSave(2,&quot;History\\MyOptions.t8&quot;);
+}</pre>
+<h3>See also:</h3>
+<a href="buylong.htm">enterLong/</a><a href="buylong.htm">Short</a>,
+<a href="selllong.htm">exitLong/</a><a href="selllong.htm">Short</a>,
+<a href="data.htm">Quandl bridge</a>, <a href="month.htm">date functions</a>,
+<a href="contracts.htm">contract variables</a>, <a href="contractcpd.htm">contractCPD</a>,
+<a href="combo.htm">combo</a>, <a href="tutorial_options.htm">workshop 8</a>
+<p>&nbsp;</p>
+<a class="button" href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))">&#9658; 
+latest version online</a>
+
+</body>
+
+</html>

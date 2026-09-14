@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>lock</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/lock.htm">
+</head>
+
+<body link="#000000" vlink="#333333" alink="#666666">
+<h2>lock(): int </h2>
+Synchronizes the behavior of several Zorro instances, f.i. for preventing that they write into the same file at the same time (<a href="restrictions.htm">Zorro S</a> only). If another Zorro has called <strong>lock()</strong> before,  this function waits until it either calls <strong>unlock()</strong> or the [<span class="tast">Stop</span>] key was pressed. In the latter case <strong>lock()</strong> returns 0, otherwise nonzero.
+<h2>unlock() </h2>
+Cancels a previous <strong>lock</strong> call and let other waiting Zorros continue. 
+<h3>Example (see also <a href="putvar.htm">putvar/getvar</a>):</h3>
+  <pre>lock(); <em>// prevent that other Zorros write into same file</em>
+file_append(Name,Text1);
+file_append(Name,Text2);
+unlock();
+</pre>
+  <h3>See also:</h3>
+  
+  <a href="timer.htm">timer</a>, <a href="run.htm">run</a>, <a href="sleep.htm">wait</a>, 
+<a href="suspended.htm">suspended</a>, <a href="quit.htm">quit</a>, <a href="version.htm">version</a>
+<p>     <a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+  version online</a></p>
+</body>
+</html>

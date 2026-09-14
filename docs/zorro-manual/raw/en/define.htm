@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>#define</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/define.htm">
+</head>
+
+<body link="#000000" vlink="#333333" alink="#666666">
+<h2>#define name</h2>
+
+Defines the name as a condition for later including or excluding lines (see <span class="links"><a href="ifdef.htm">#ifdef</a></span>), 
+
+or for setting other special conditions during compilation.
+<h3>Example:</h3>
+<pre>#define TEST
+...
+#ifdef TEST
+printf(&quot;This is a test!&quot;);
+#endif</pre>
+<h2>#define name value</h2>
+Every time the <strong>name</strong> appears in the script below the <strong>#define</strong>,
+  it will be replaced by the <b>value</b>, which can be another name, a number,
+or a simple arithmetic expression.
+Replacing names makes functions
+more 'readable', for instance by giving <a href="algovar.htm">general purpose 
+variables</a> some meaningful names.
+<h3>Examples:</h3>
+<pre>#define PI 3.14159
+#define HEALTH skill17
+#define WINAPI __stdcall
+...
+x = 2.0*PI;
+my.HEALTH -= 50;
+
+long WINAPI MessageBox(HWND,char *,char *,long);</pre>
+<h3>Remarks</h3>
+<ul>
+  <li>
+    
+  <strong>#define</strong>s are valid within all subsequent code.</li>
+  <li>
+    
+  <strong>#define</strong>s are only evaluated during compilation, not in already-compiled scripts. </li>
+  <li>A <strong>#define</strong> can be given in the <a href="command.htm">command line</a> with a <strong>-d</strong> statement (Zorro S only).</li>
+  <li>As a convention, defined names are normally written in uppercase. </li>
+</ul>
+<h2>#undef name </h2>
+
+Undefines a previously defined name.
+<h2>#define macro(parameter,..)&nbsp; expression(parameter,..)</h2>
+Defines a <b>macro</b> as a replacement or abbreviation for a numerical expression.
+  Whenever the macro is encountered in the code, the expression is executed.
+  Macros work rather like functions, but with some minor differences. Since macros
+  are implemented as a textual substitution, there is no effect on program performance
+  (as with functions), however they produce larger code than functions. They
+  are normally only used for fairly small expressions. 
+<h3>Examples:</h3>
+<pre>#define set(obj,flag) obj.flags |= (flag)<br>#define reset(obj,flag) obj.flags &amp;= ~(flag)<br>#define toggle(obj,flag) obj.flags ^= (flag)<br>#define is(obj,flag) (obj.flags &amp; (flag))<br>#define zero(ptr) memset((void*)&amp;ptr,0,sizeof(ptr))</pre>
+<h2><strong>
+  
+</strong>#define macro(parameter,..)&nbsp; expression(parameter##token,..)</h2>
+The merging operator <strong>##</strong> adds the token to the parameter. Useful for redefining variable or functions names in a macro.
+<h3>Example:</h3>
+<pre>#define merge3(name) merge(name##1,name##2,name##3) <em>// merge3(test) is evaluated to merge(test1,test2,test3)</em> </pre>
+<h3>Remarks</h3>
+<ul>
+	<li>Check for already-defined names in <strong>include\trading.h</strong> 
+	and <strong>include\variables.h</strong> when using <strong>#define</strong> 
+	in the script. Re-defining or inadvertently using a system define can lead 
+	to unexpected script behavior.</li>
+</ul>
+<p>&nbsp;</p>
+<h1><strong>
+  
+</strong>Some special #defines:<strong>
+
+</strong></h1>
+<h2>#define PRAGMA_ZERO</h2>
+Initializes all <a href="aarray.htm">local variables</a> to 0. 
+<h2>#define PRAGMA_API &nbsp;FunctionName;ModuleName!ProcName</h2>
+			Loads the function prototype <b>FunctionName</b> from function <b>ProcName</b> in the
+			  DLL <b>ModuleName</b> (see <a href="litec_api.htm">Using DLLs</a>). Example: 
+		    <pre>#define PRAGMA_API MessageBox;user32!MessageBoxA</pre>
+			<h3>			  
+See also:</h3>
+<a href="ifdef.htm">#ifdef,
+#ifndef, #else, #endif</a>
+<p>
+            <a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+    version online</a>
+</p>
+</body>
+</html>

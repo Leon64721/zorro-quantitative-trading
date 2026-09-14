@@ -1,0 +1,353 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Installation, VPS</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/vps.htm">
+</head>
+<body>
+<h1>Installation and deployment. Cloud services. </h1>
+<p>Some tips for running Zorro on your home PC or on a web server:</p>
+<ul>
+	<li>While it is recommended to use a recent Windows version for trading, 
+	Zorro runs on any version from XP or Server 2012 on. The 64-bit 
+	version Zorro64 runs on 64-bit Windows 7 or above. Some broker APIs 
+	(f.i. <a href="fxcm.htm">FXCM</a>) also require Windows 7 or above. For installing Zorro under 
+	<span class="Highlight">Linux or OS X</span>, see below.</li>
+	<li>You can install Zorro in any folder with full read/write access. Don't 
+	use a path with blanks or special characters, such as cyrillic, chinese, accents, or diacriticals. Zorro itself has no problem with that, 
+	but external 
+	modules and some broker APIs have. By default, Zorro is installed in 
+	your user directory (<strong>C:\Users\YourName\Zorro</strong>). But if <strong>YourName</strong> 
+	contains non-letter characters, such as blanks, dots, or foreign language characters, install it 
+	elsewhere. <strong>C:\Zorro</strong> will always work.</li>
+	<li>It is <span class="Highlight">not recommended</span> to install Zorro in a restricted 
+	access directory, such as the <strong>Program Files</strong> or <strong>Programs(x86)</strong> 
+	directory. 
+	If you still want to do it, switch off the Windows <strong>UAC</strong> 
+	(User Access Control). Otherwise the <strong>UAC</strong> will create 'shadow copies' 
+	of your strategy scripts in the <strong>ProgramData</strong> folder, 
+	and redirects file access to the shadow copy. This can be confusing - not 
+	only for 
+	scripts, but also for users . </li>
+	<li>Zorro runs fine from a <span class="Highlight">USB stick</span>. You'll need about 40 MB for a plain 
+	installation with no historical data files.</li>
+	<li>Zorro is <span class="Highlight">portable</span> and needs no installer. You can directly copy a Zorro installation 
+	from your PC to a VPS or to a different folder.</li>
+	<li>For savng hard disk space, you can <span class="Highlight">compress</span> the <strong>History</strong> 
+	folder (<span class="tast">right click / Properties / Advanced / Compress 
+	content</span>). When you work on strategies, this folder will likely 
+	contain many huge historical data files. Compression saves disk space.</li>
+</ul>
+<h3>Zorro installation folders</h3>
+<ul>
+	<li><strong>Main folder:</strong> Zorro executables and DLLs.</li>
+	<li><strong>Strategy:</strong>&nbsp; Scripts (<strong>.c</strong>, <strong>
+	.cpp</strong>, <strong>.h</strong>) and compiled scripts (<strong>.x</strong>,
+	<strong>.dll</strong>).</li>
+	<li><strong>include:</strong> Common include files for the scripts.</li>
+	<li><strong>History:</strong> Historical data (.t1, .t2, .t6, .t8) and asset 
+	lists (.csv).</li>
+	<li><strong>Data:</strong> Parameters, rules, machine learning models</li>
+	<li><strong>Cache:</strong> Temporary files</li>
+	<li><strong>Log:</strong> Log files (.txt) and charts (.png).</li>
+	<li><strong>Source:</strong> Templates and plugin sources.</li>
+	<li><strong>Plugin:</strong> 32-bit Broker, exchange, and data plugins.</li>
+	<li><strong>Zorro64:</strong> Zorro 64-bit executable and DLLs.</li>
+	<li><strong>Plugin64:</strong> 64-bit Broker and data source plugins.</li>
+</ul>
+<h3>Zorro on old computers</h3>
+<p>For operating systems prior to Windows 8, or when you'll get a <strong>'Dll 
+not found'</strong> or similar error message on Zorro start, you may need to install the <strong>VC++ 
+2022 32-bit redistributable</strong> package from Microsoft. You can download it 
+either from Microsoft or from
+<a href="http://opserver.de/down/VC_redist.x86.exe" target="_blank">our server</a>. 
+It will unpack and install itself.</p>
+<h3>Zorro 64-bit and C++</h3>
+<p>The Zorro installation includes a 32 bit version (<strong>Zorro.exe</strong>) 
+and a 64 bit version (<strong>Zorro64\Zorro64.exe</strong>). The 32-bit Zorro is the 
+everyday version for all normal tasks, and runs even on old PCs with Windows 
+XP. <strong>Zorro64</strong> is about 15% faster and can access all physical memory 
+on the PC, which offers advantages for backtesting large asset portfolios with high resolution 
+historical data. Since most broker plugins are 32 bit, the 32 bit Zorro is 
+normally used for live trading. Unless you're high frequency trading, speed and memory footprint matter 
+only for 
+backtests and optimizations.</p>
+<p>The 32-bit Zorro version needs no further software, but for <strong>Zorro64</strong> you need 
+a 64-bit system with the <strong>VC++ 
+2022 64-bit redistributable</strong> package installed. You can download it either from 
+Microsoft or from
+<a href="http://opserver.de/down/VC_redist.x64.exe" target="_blank">our server</a>. 
+It will unpack and install itself.</p>
+<p>While the 32-bit Zorro has its own on-the-fly C compiler (<a href="tutorial_var.htm">lite-C</a>), 
+the 64-bit Zorro needs the free
+<a href="dlls.htm">Visual C++</a> community edition for running C++ scripts. If 
+you have Zorro S, enter the 
+path to the VC++ compiler in <a href="ini.htm">Zorro.ini</a>. C++ files will 
+then compile on the fly and start directly. You need not specifically learn C++, since it's (mostly) backwards 
+compatible to C. The free Zorro version supports C++ also, but then you'll need to 
+create a VC++ project for any .cpp script and manually compile it to a DLL.</p>
+<h3> Zorro on Linux or Mac</h3>
+<p> Although Zorro is a Windows program, it can also run under Linux 
+and OS X with <a href="https://www.winehq.org" target="_blank">Wine</a> or
+<a href="https://customerconnect.vmware.com/en/downloads/details?downloadGroup=WKST-PLAYER-1624&amp;productId=1039">
+VMWare</a>. You can find 
+threads on the
+<a href="https://opserver.de/ubb7/ubbthreads.php?ubb=cfrm&amp;c=1" target="_blank">
+Zorro forum</a> where Ubuntu and Mac installations are discussed. The basic 
+steps for Wine:</p>
+<ul>
+	<li>Install 32-bit Wine from
+	<a href="https://wiki.winehq.org/Download" target="_blank">
+	https://wiki.winehq.org/Download</a>. The installation steps for Ubuntu/Mint 
+	are described <a href="https://wiki.winehq.org/Ubuntu" target="_blank">
+	here</a>.</li>
+	<li>Install Zorro from <a href="https://zorro-project.com/download.php">
+	https://zorro-project.com/download.php</a>. By default it's installed in
+	the virtual Windows drive under <strong>\\users\\YourName\\Zorro</strong>. </li>
+	<li>Alternatively to installing, copy a Zorro installation from the Windows disk 
+	system or a USB drive directly into a suited Linux directory.</li>
+</ul>
+<p>For VMWare, install the
+<a href="https://customerconnect.vmware.com/en/downloads/details?downloadGroup=WKST-PLAYER-1624&amp;productId=1039&amp" target="_blank">
+VMWare Player</a> and the
+<a href="https://developer.microsoft.com/en-us/windows/downloads/virtual-machines/" target="_blank">
+Windows Virtual Machine</a>, then install Zorro within the VM. The Windows VM also contains 
+<a href="dlls.htm">Visual Studio</a> for supporting C++ scripts.</p>
+<h3>Zorro on 4k TVs</h3>
+<p>Windows programs appear 'zoomed' on some very hi-res displays, in order to 
+prevent a too small GUI. For disabling this, adjust the DPI (Dots Per Inch) 
+scaling settings on your operating system. This is a common issue when 
+applications do not scale properly on high-resolution displays. The general 
+steps:</p>
+<ul>
+	<li>&nbsp;Right-click on the Zorro Application Shortcut on your desktop or 
+	in the folder where it is installed.</li>
+	<li>&nbsp;Select 'Properties'. Go to the 'Compatibility' tab.</li>
+	<li>&nbsp;Click on 'Change high DPI settings'. Check the box that says 
+	'Override high DPI scaling behavior'.</li>
+	<li>Choose 'Application' from the drop-down menu under 'Scaling performed 
+	by'. This setting will instruct Windows to let Zorro handle its own DPI 
+	scaling, rather than the operating system scaling it up</li>
+	<li>&nbsp;Click 'Apply' and then 'OK'.</li>
+	<li>&nbsp;Restart Zorro to see if the changes take effect.</li>
+</ul>
+<h3>Zorro in the cloud</h3>
+<p>Zorro can run on a Windows Server and can be <a href="command.htm">controlled</a> 
+by PHP scripts. In this way it can be used for live trading, but also for web based 
+applications or for advisory services.</p>
+<p>Virtual private servers (VPS) are offered by many commercial providers for a 
+small fee, like $20 per month. You'll 
+normally get a fast and reliable online connection to the broker or exchange, and can access Zorro 
+via Internet from anywhere. It's recommended to 
+select a large and reliable company, like 1&amp;1, Google, Microsoft, or Amazon, for hosting a 
+live trading VPS. Amazon offers its EC2&#8482; servers even free during the first year. 
+Installation with a broker or MT4 connection on a VPS is not totally easy to a beginner, so we're offering a <strong>VPS installation service</strong> on the 
+<a href="https://zorro-project.com/docs.php" target="_blank">support page</a>. If you want to do it yourself, here are the basic steps for setting up an Amazon VPS:</p>
+<ul>
+  <li>Order a cloud server instance with Windows Server 2016 or above. You'll usually receive a server IP, a login name (normally &quot;Administrator&quot;), and a password from your provider. With Amazon you 
+  need a key pair for 
+  decrypting the password. It is stored in a <strong>.pem</strong> file.<br>&nbsp;<br>  </li>
+	<li>Launch the server instance from your provider's website. Wait a minute 
+	or so until it's up and running. On the Amazon console, select your instance 
+	and click [<span class="tast">Connect</span>]. Normally you connect with a 
+	RDP client. Amazon will displays the DNS and the user name (normally 
+	&quot;Administrator&quot;). For decrypting the password, navigate to the <strong>.pem</strong> 
+	file that you've stored in the previous step.<br>&nbsp;  </li>
+  <li>Under Windows, start use the Remote Desktop Connection (under <strong>Accessories</strong>). Enter 
+  DNS, user name, and password. A window will open where you can see the VPS desktop. It normally looks like a very empty Windows desktop. Alternatively to the Windows Remote Desktop Connection, you can install TeamViewer&#8482; on the VPS - it's free for private use and more convenient to handle, especially for uploading or downloading files. The Windows Remote Desktop, as well as TeamViewer are also available for iPhone and Android, so you can control your VPS from anywhere. <br>
+&nbsp;  </li>
+  <li>You can now install Zorro on the VPS. We recommend not to run the 
+  installation program, but to copy the Zorro folder directly - it's a lot 
+  faster. Start the Windows Explorer both on your PC and on the VPS. On your PC, right click on the <strong>Zorro</strong> folder, and select <strong>Copy</strong>. On the VPS, open a folder on 
+  which you have full access rights - we recommend <strong>Users\Administrator</strong> - and right click on an empty space. Select <strong>Paste</strong>. Your Zorro folder will now be copied over to the VPS. 
+  Make sure that the folder names are plain letters with no blanks, dots, or foreign language characters - see above. 
+  If you don't want to do backtests on the server and don't use the <strong>
+  PRELOAD</strong> flag, historical data files (*.t1, *.t6, *.t8) need not be 
+  copied, which makes the process a lot faster. You also need no source code on 
+  the server. If you have compiled your scripts to <strong>.x</strong> or
+  <strong>.dll</strong> files, copy only them.<br>
+&nbsp;</li>
+  <!--li>Often, Windows Servers are set up for Data Execution Prevention (<strong>DEP</strong>). This mechanism causes an artificial crash (BEX exception) for preventing that scripts are started - including strategy scripts. For checking, right click on <strong>Computer</strong> (on the desktop, the Start tile or in the Windows Explorer), then click <strong>Properties</strong> in the bar below. Under <strong>System Settings</strong>, click <strong>Advanced system settings</strong> in the left pane, go to the <strong>Advanced</strong> tab and click <strong>Settings</strong> in the <strong>Performance</strong> section. Next in the <strong>Performance Options</strong> window, go to the <strong>Data Execution Prevention</strong> tab. It should be set to <strong>For essential Windows programs and services only</strong>. If it has a different setting, set the correct option and reboot the server. <br>
+  &nbsp;</li-->
+  <li>You can now start Zorro on the VPS, select your broker, enter your user name and password, and 
+  click [<span class="tast">Trade</span>]. Dependent on  number of CPU cores and 
+  amount of RAM on your VPS, you can trade with several Zorro instances simultaneously. Note that 
+  backtesting large portfolio strategies - such as Z12 - will not work on a 
+  low-end VPS with little RAM. Live trading uses minimal memory and will 
+  normally always work. </li>
+</ul>
+<p> It is recommended to disable automatic Windows updates for preventing 
+reboots that interrupt the trading session. Make also sure that the time and the time zone of the VPS is set up correctly. It does not matter which time zone - you can either use your PC's time zone, or the VPS time zone, or any other time zone - but the VPS time must 
+match the zone. If it is wrong, Zorro will display a wrong UTC time in the server window, and strategies based on market open and close times - such as gap trading - won't work anymore. If in doubt, set the VPS to the  
+same time and time zone of your PC at home.</p>
+<h3> Additional software</h3>
+<p> Zorro can utilize functions and libraries from several other free software 
+packages: <a href="rbridge.htm">R</a>, <a href="python.htm">Python</a>, and
+<a href="dlls.htm">Visual Studio C++</a>. If you want to code in C++ or if you 
+need additional statistical or machine learning functions, install the packages 
+and enter their paths in <a href="ini.htm">ZorroFix.ini</a>. When your trading 
+algorithm uses R or Python, it must be also installed on the trading server. 
+Visual Studio is not needed for deployment, but you might need to install the 
+redistributable package, <strong>vc_redist.x86.exe</strong> or <strong>
+vc_redist.x64.exe</strong>. They are freely available from Microsoft.</p>
+<h3>Multiple Zorros</h3>
+<p>If one Zorro is good, many Zorros are even better. The free Zorro version can 
+trade with one instance, one broker, and one account only. <a href="restrictions.htm">Zorro S</a> allows to run many Zorro instances simultaneously with different scripts (for details about setting up 
+multiple broker connections, see <a href="account.htm">Account List</a>). How many Zorro instances can run at the same time depends on the broker 
+API, the Internet bandwidth, and the PC speed and memory resources. As an example, a Amazon EC2 Micro Instance can support 
+about 4 Zorro instances with a direct broker connection, or up to 2 
+instances with a MT4 connection. </p>
+<p>If the parallel trading Zorros use different broker APIs, set the <a href="mode.htm">NOLOCK</a> flag for speeding up API access. Otherwise a synchronization mechanism lets 
+any Zorro wait with accessing the broker API until other Zorros have finished their API access. </p>
+<p>When running multiple Zorros with the same script, make sure that they don't 
+write into the same logs or temporary files. The <a href="script.htm">Script</a> 
+string and/or the <a href="numtotalcycles.htm">LogNumber</a> variable can be 
+used to let any Zorro generate different file names. For communication between 
+different Zorro instances, see <a href="engine.htm">Interprocess Communication</a>.</p>
+<h3>Unlocking Zorro S </h3>
+<p><a href="restrictions.htm">Zorro S</a> licenses come either with a key file 
+(for permanent licenses) or with a 20-digit token (for subscriptions). If you 
+have a key, unzip it in the Zorro folder - that's all. If you have a token, 
+enter it in <a href="ini.htm">Zorro.ini</a>. Permanent licenses include 2 years 
+Zorro updates. For updating Zorro further after 2 years, the period can be
+<a href="https://zorro-project.com/download.php" target="_blank">extended</a>. 
+Private traders can install Zorro S on multiple PCs or servers that are under 
+their exclusive control. Corporations need one license per PC or server. </p>
+<h3>Disable live trading</h3>
+<p>If you let your apprentice develop trading strategies, you can cripple his Zorro so that live trading is disabled. For this, open the <strong>Plugin</strong> folder and remove 
+all <strong>.dll</strong> files 
+inside. Zorro can then still run scripts and backtests and has access to online 
+data sources, but cannot connect to a broker or exchange.</p>
+<h3>Surviving reboots</h3>
+<p>Rebooting a live trading server should be avoided. But if it still happens, the trading 
+session can be automatically resumed when the server restarts. Here's the 
+procedure - you'll need <a href="restrictions.htm">Zorro S</a> since the free 
+version does not fully support command lines:</p>
+<ul>
+	<li>Create a file <strong>startup.bat</strong> in the Zorro folder. Here's 
+	an example that starts Global Prime MT4, waits 25 seconds, then starts a Zorro 
+	trading session:</li>
+</ul>
+<pre>START /D &quot;C:\Program Files(x86)\Global Prime - MetaTrader 4\Terminal.exe&quot;
+TIMEOUT 25
+START Zorro.exe -trade MyStrategy -stay</pre>
+<ul>
+	<li>Right click on startup.bat and select <span class="tast">Create Shortcut</span>.</li>
+	<li>When the shortcut has been created, right-click it and select
+	<span class="tast">Cut</span>.</li>
+	<li>Hit <span class="tast">Windows-R</span> to open the Run window.</li>
+	<li>In the Run window, type <strong>shell:startup</strong> to open the 
+	Startup folder. </li>
+	<li>When the Startup folder has been opened, click the Home tab at the top 
+	of the folder and select <span class="tast">Paste</span> to paste the 
+	shortcut into the folder.</li>
+</ul>
+<p>The <strong>startup.bat</strong> file will then be executed at any reboot. Depending on the 
+Windows version, the Startup folder can be different - on older versions it's 
+named <strong>Autostart</strong> 
+	and you can edit it with <strong>msconfig</strong>. On Windows Server, open
+<span class="tast">Administrative Tools / Task Scheduler</span>  and enter the task 
+with the properties &quot;Start a program&quot; / &quot;When the computer 
+starts&quot;. Please note that some server configurations are reported to start 
+Zorro in minimized mode with no GUI when no user is logged in. In this case, use 
+&quot;At Log on&quot; rather than &quot;At startup&quot;, specify the user account in the task 
+properties, and use the Microsoft Sysinternals Autologon program to establish 
+automatic logon at start.</p>
+<h3>Fallback server</h3>
+<p>A server breakdown due to a hardware failure can be fatal for some trading 
+systems. In such a case, a fallback server should immediately take over the 
+trading when the original server becomes unresponsive. This is the suggested 
+setup of such a configuration:</p>
+<ul>
+	<li>The fallback server must contain a Zorro installation with a twin of the 
+	trading system and all necessary files. It should be accessible from the 
+	trading server either through an IP address or as a mapped network drive.</li>
+	<li>The trading system continuously counts up a 'heartbeat' variable and 
+	stores it on the fallback server with a 
+	<a href="https://zorro-project.com/manual/en/putvar.htm">putvar</a> 
+	call. This variable serves as signal that the trading server is still 
+	running.</li>
+	<li>At any relevant change of the trading status, i.e. opening or closing a 
+	position, or change of an essential trade or algo variable, the trading system saves its status on the fallback server with a
+	<a href="https://zorro-project.com/manual/en/loadstatus.htm">saveStatus</a> call.</li>
+	<li>The system on the fallback server checks the heartbeat variable 
+	continuously for detecting a problem with the original server. If the 
+	heartbeat variable stops counting, the fallback system loads the trading 
+	status with a <a href="https://zorro-project.com/manual/en/loadstatus.htm">loadStatus</a> call, sends an
+	<a href="https://zorro-project.com/manual/en/email.htm">email</a> to notify the user about the problem, and 
+	takes over the trading.</li>
+	<li>The fallback server can also send a similar heartbeat variable to the 
+	trading server. In this way the trading system can detect a breakdown of 
+	the fallback server, and notify the user by email about the problem.</li>
+	<li>When trading server and fallback server are not physically located on 
+	the same network, heartbeat and trading status can be exchanged via
+	<a href="https://zorro-project.com/manual/en/ftpx.htm">ftp_upload</a> or 
+	<a href="https://zorro-project.com/manual/en/http.htm">http_transfer</a> commands.</li>
+</ul>
+<h3>Time-triggered scripts</h3>
+<p>If you want to start a session at a specific time or date, such as every Monday at 15:30 pm, you can do that with 
+the Zorro command line and the Windows Task Scheduler. Here's the procedure - you'll need <a href="restrictions.htm">Zorro S</a> since the free 
+version does not fully support command lines:</p>
+<ul>
+	<li>Open the <span class="tast">Task Scheduler</span> (on German Windows 
+	versions: <span class="tast">Aufgabenplanung</span>).</li>
+	<li>Under <span class="tast">Action</span>, open a new task. Use a weekly 
+	(or daily, or monthly) trigger with the desired start time.</li>
+	<li>For the task, select <span class="tast">Start Program</span>. In the 
+	program window, enter the Zorro task, for instance:</li>
+	<pre>C:\Users\MyName\Zorro\Zorro.exe -trade MyScript</pre>
+	<li>Control the task's properties, then save and finish. It should now 
+	appear in the scheduler's task list.</li>
+</ul>
+<h3>Publishing the trading status</h3>
+<p>It is recommended that you regularly observe Zorro's trade list, profit status, and messages on your PC or smartphone. For this 
+purpose, Zorro displays the trade status and the message window permanently on a 
+website that's updated once per minute. The tricky part is to make that page 
+visible on the Internet. Here's the instruction for Amazon EC2 with Windows Server 2012 
+/ 2016 (similar for Google Cloud instances):</p>
+<ul>
+  <li>Open your VPS desktop with Windows Remote Desktop or TeamViewer, and use the Server Manager to add a new role. From the selection of roles, select &quot;<strong>Web Server (IIS)</strong>&quot;. Windows will walk you through the setup - the default settings will do - and install the server.<br>
+    &nbsp;<br>
+  </li>
+  <li> In the Amazon EC2 dashboard, select the &quot;<strong>security group</strong>&quot; of your instance and add a new inbound rule. Select &quot;HTTP&quot; 
+  (TCP protocol, port 80). This will make your website visible to the public. 
+  On a Google Cloud instance, make sure that HTTP and HTTPS traffic is enabled. 
+  When you now enter the public IP address of your server in a browser, you 
+  should see the IIS&nbsp; logo.<br>
+    &nbsp;<br>
+  </li>
+  <li>In the <strong>zorro.ini</strong> file, edit <strong>WebFolder</strong> and set it to the web folder of your server. The default web folder of a Windows server is normally <strong>C:\inetpub\wwwroot</strong>.<br>
+    &nbsp;<br>
+  </li>
+  <li>You can now visit Zorro's <a href="trading.htm#status">trade status page</a> through the public IP address of your server - for instance, by entering <strong>
+  http:\\123.456.78.90\Z12.htm</strong>  in your browser's address field. Note that anyone else who knows this address can observe your trade success! 
+  So you might want to add an authentication 
+  role to the IIS web server, or hide the status page in a cryptic 
+  subdirectory.</li>
+</ul>
+<h3>Providing trade signals</h3>
+<p>Some trade copy services such as <strong>ZuluTrade&#8482;</strong> offer a free VPS for their signal providers.&nbsp; The VPS is already configured, completely with MT4, but it's a little tricky to copy Zorro onto it. Here's the procedure for ZuluTrade 
+(<a href="restrictions.htm">Zorro S</a> required):</p>
+<ul>
+  <li>Open a MT4 demo account with a broker of your choice (f.i. AAAFx, Zulutrade's own broker). When starting MT4, you'll get a form for adding an account; write down the login number and the password that you'll see in the MTR4 welcome message. You can deinstall MT4 afterwards, as you only needed the login data. The MT4 demo account will not expire unless the broker goes broke or the account is inactive for 
+  30 days.<br>
+&nbsp;  </li>
+  <li>Register as a trader on ZuluTrade. On the MT4 link settings, give the login number and password from the previous step. Zulutrade will now link your trader account to the MT4 version. If that was successful, you'll get a button under your [<span class="tast">Settings</span>] tab for connecting to your VPS. Note that sometimes you have to wait a couple of weeks until a free VPS slot is available and the button appears.<br>
+&nbsp; </li>
+  <li>Click the [<span class="tast">Connect</span>] button to open the VPS. The VPS desktop will appear in your browser. Compress a copy of your Zorro folder to a single zip archive; strip it before from files not needed for trading, such as the content of the <strong>Log</strong> folder, or the price data files in the <strong>History</strong> folder. A stripped down Zorro archive has only a size of about 10 MB. Upload the zip file to the VPS. With Zulutrade, you can do this with the upload manager: click on the half-transparent round icon at the top of the VPS desktop, then click [<span class="tast">Select Files</span>] and navigate to the Zorro zip file on your PC.<br>
+&nbsp; </li>
+  <li>Once the archive is uploaded, open the folder on the VPS that receives uploaded files - on the ZuluTrade VPS it's the <strong>ZuluHDD</strong> folder. You can now open the archive and drag the Zorro folder inside over to the MTR4 Experts folder. Zorro can run from anywhere, so it's no problem to have it in a MTR4 subfolder. <br>
+&nbsp;</li>
+  <li>Now install the <a href="mt4plugin.htm">MT4 bridge</a> on the VPS. You can now start MT4 and Zorro on the VPS, select your strategy, click [<span class="tast">Trade</span>] and begin generating trade signals.</li>
+</ul>
+<p>When you provide signals, please play fair in the interest of your followers. Do not use martingale or similar methods, even though this might attract more followers at first. In the end, only the few signal providers that survive more than one or two 
+months will earn long-term trust and profits.</p>
+<h3>See also:</h3>
+&nbsp;<a href="brokers.htm">Brokers</a>, <a href="started.htm">Getting Started</a>,
+<a href="engine.htm">engine API</a>
+<p><a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a> </p>
+</body>
+</html>

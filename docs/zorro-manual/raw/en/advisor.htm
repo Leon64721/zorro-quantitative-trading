@@ -1,0 +1,478 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Machine Learning: adviseLong, adviseShort</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+.auto-style2 {
+	text-align: left;
+}
+.auto-style3 {
+	background-color: #C0C0C0;
+}
+.auto-style4 {
+	text-align: left;
+	background-color: #C0C0C0;
+}
+</style>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/advisor.htm">
+</head>
+<body>
+<h1>Machine learning</h1>
+Zorro can utilize native or external machine learning algorithms, for instance from <a href="rbridge.htm">R packages</a> 
+or <a href="python.htm">Python libraries</a>, 
+for applying 'artificial intelligence' to algorithmic trading. Three 
+native algorithms for price prediction are available: a decision tree, a simple neural 
+network, and a signal pattern learning system. They generate trading rules 
+separately for any WFO cycle, asset, algo, and long or short 
+trades. You can also provide your own function for training an individual model, 
+or use functions from R or Python packages. An introduction into various machine learning methods can be found on
+<a href="http://www.financial-hacker.com/build-better-strategies-part-4-machine-learning" target="_blank">
+Financial Hacker</a>.<br><br>The <strong>advise</strong> functions are used to implement 
+a machine learning 
+algorithm just like a standard indicator: 
+<h2>adviseLong (int Method, var Objective, var Signal0, var Signal1, var 
+Signal2,<em> ..., var Signal19</em>): var </h2>
+<h2>adviseShort (int Method, var  Objective, var Signal0, var Signal1, var 
+Signal2,<em> ... var Signal19</em>): var </h2>
+<h2>adviseLong (int Method, var Objective, var* Signals, int NumSignals): var </h2>
+<h2>adviseShort (int Method, var Objective, var* Signals, int NumSignals): var </h2>
+Call a machine learning algorithm for training or for prediction. In [<span class="tast">Train</span>] mode 
+the function trains the algorithm to predict either a subsequent trade return or a training target (<strong>Objective</strong>). In 
+[<span class="tast">Test</span>] or [<span class="tast">Trade</span>] mode the 
+function calls the algorithm and returns the predicted value. Depending on 
+algorithm, training can generate a binary model or a prediction function in C 
+code that is stored in the <strong>Data</strong> folder. The only difference of 
+the <strong>..Long</strong> 
+and <strong>..Short</strong> variants is that they can train on the returns of 
+long and short trades; otherwise they are identical. They can thus alternatively 
+be used for generating two different models per algo/asset component.<br>
+<h3>Parameters:</h3>
+<table border="0">
+  <tr>
+    <td><strong>Method</strong></td>
+    <td><p>
+          <strong>SIGNALS</strong> - don't train, but only export <strong>Signals</strong> and <strong>Objective</strong> in [<span class="tast">Train</span>] mode to a <strong>Data\*.csv</strong> file. <br>
+          <strong>NEURAL</strong> - train and predict with a user-supplied or external machine learning algorithm. 
+		  See below.<strong><br>
+  DTREE</strong> - train and predict with a decision tree (20 signals max).<br>      
+      <strong>PERCEPTRON</strong> - train and predict with logistic regression (20 signals max).<br>
+        <strong>PATTERN</strong> - train and predict with a signal pattern analyzer  (20 signals max). <br>
+        <strong>+FAST</strong> - 
+        fast pattern finding with large patterns (for <strong>PATTERN</strong>). <br>
+        <strong>+FUZZY</strong> - fuzzy pattern finding  for <strong>PATTERN</strong>; 
+		  analog output for <strong>PERCEPTRON</strong>. <br>
+        <strong>+2 .. +6</strong> - number of pattern groups  (for <strong>PATTERN</strong>). <br>
+        <strong>+BALANCED</strong> - enforce similar numbers of positive and negative target values by replication (for <strong>SIGNALS</strong>, <strong>NEURAL</strong>, <strong>DTREE</strong>, <strong>PERCEPTRON</strong>).<br>
+		  <strong>+RETURNS</strong> - use the subsequent long or short trade for the training target, 
+		  instead of the <strong>Objective</strong> parameter. The target is the profit or 
+		  loss including trading costs of the immediately following trade with 
+		  the same asset, algo, and matching long/short trade direction. <br><strong>0
+          </strong>or omitted - use the method and signals of the last <strong>advise</strong>  call. 
+		  Only when signal parameters and trade returns are used.</p>
+	  </td>
+  </tr>
+  <tr>
+    <td><strong>Objective</strong></td>
+    <td>The training target. For instance,.an indicator value at the next bar, 
+	or a binary value like +1 / -1 for the sign of the next price change. The 
+	value should be in the same range as the signals. The <strong>Objective</strong> parameter is only used in the training run and has no meaning in test or trade mode. 
+	Set the <a href="mode.htm">PEEK</a> 
+	flag for accessing future prices in training. </td>
+  </tr>
+  <tr>
+    <td><strong>Signal0, <br>
+    ... Signal19 </strong></td>
+    <td> 3..20 parameters that are used as features to the machine learning algorithm for training or prediction 
+	(less than 3 signals would be interpreted as a <strong>Signals</strong> 
+	array). Use signals that carry information about the current market situation, for instance candle patterns, price differences, indicators, filters, or statistics functions. All signal values should be in the same range, for instance <strong>0..1</strong>, <strong>-1..+1</strong>, or <strong>-100..+100</strong>, 
+	dependent on machine learning method (see remarks). Signals largely outside that range will generate a warning message. If the signals are omitted, the signals from the last <strong>advise</strong> call are used. </td>
+  </tr>
+  <tr>
+    <td><strong>Signals</strong></td>
+    <td>Alternative input method, a <strong>var</strong> array of arbitrary length containing the features to the machine learning algorithm. 
+	Use this for less than 3 or more than 20 signals.</td>
+  </tr>
+  <tr>
+    <td><strong>NumSignals</strong></td>
+    <td>Array length, the number of features in the <strong>Signals</strong> array. <br></td>
+  </tr>
+</table>
+  <h3>Returns:</h3>
+[<span class="tast">Train</span>] mode: <strong>100</strong> when trade results 
+are to be trained, i.e. the <strong>
+RETURNS</strong> flag is set or <strong>Objective</strong> is zero. Otherwise
+<strong>0</strong>.<br>
+[<span class="tast">Test</span>], [<span class="tast">Trade</span>] mode: 
+Prediction value returned from the trained algorithm. Can be used as a signal 
+for entering, exiting, or filtering trades. The <strong>DTREE</strong>, <strong>PERCEPTRON</strong>,
+<strong>PATTERN</strong> algorithms normally return a value in the <strong>-100 .. +100</strong> range.
+<br>&nbsp;
+<h3>DTREE (Decision Tree) </h3>
+A <strong>decision tree</strong> is a tree-like graph of decisions by comparing 
+signals with fixed values. The values and the tree structure are generated in the training run. For this the training process iterates through the sets of signals and finds the signal values with the lowest information entropy. These values are then used to split the data space in a profitable and a non profitable part, then the process continues with iterating through the parts. Details about the decision tree algorithm can be found in books about machine learning.<br>
+  <br> 
+The signals should be normalized roughly to the <strong>-100..100</strong> range for best precision. They should be carefully selected so that the displayed prediction accuracy is well above 60% in all WFO cycles. Decision trees work best with signals that are independent of each other. They do not work very well when the prediction depends on a linear combination of the signals. In order to reduce overfitting, the resulting trees are pruned by removing non-predictive signals. The output of the tree is a number between <strong>-100</strong> .. <strong>+100</strong> dependent on the predictive quality of the current signal combination. 
+<p>The  decision tree functions are stored in C source code in the <strong>\Data\*.c</strong> file. The functions are automatically included in the strategy script and used by the <strong>advise</strong> function in test and trade mode. They can also be exported for using  them in strategy scripts or expert advisors of other platforms.The example below is a typical Zorro-generated decision tree:</p>
+<pre>int EURUSD_S(var* sig)<br>{<br>  if(sig[1] &lt;= 12.938) {<br>    if(sig[3] &lt;= 0.953) return -70;<br>    else {<br>      if(sig[2] &lt;= 43) return 25;<br>      else {<br>        if(sig[3] &lt;= 0.962) return -67;<br>        else return 15;<br>      }<br>    }<br>  }<br>  else {<br>    if(sig[3] &lt;= 0.732) return -71;<br>    else {<br>      if(sig[1] &gt; 30.61) return 27;<br>      else {<br>          if(sig[2] &gt; 46) return 80;<br>          else return -62;<br>      }<br>    }<br>  }<br>}</pre>
+<p>The <strong>advise()</strong> call used 5 signals, of which the first and the last one - <strong>sig[0]</strong> and <strong>sig[4]</strong> - had no predictive power, and thus were pruned and do not appear in the tree. Unpredictive signals are displayed in the message window. </p>
+<p>Example of a script for generating a decision tree: </p>
+<pre>void run()
+{
+  BarPeriod = 60;
+  LookBack = 150;
+  TradesPerBar = 2;
+  if(Train) Hedge = 2;
+  set(RULES|TESTNOW);
+<em>// generate price series</em>
+  vars H = series(priceHigh()), 
+    L = series(priceLow()),
+    C = series(priceClose());
+<em>
+// generate some signals from H,L,C in the -100..100 range</em>
+  var Signals[2]; 
+  Signals[0] = (LowPass(H,1000)-LowPass(L,1000))/PIP;
+  Signals[1] = 100*FisherN(C,100);
+<em>
+// train and trade the signals</em> 
+  Stop = 4*ATR(100); 
+  TakeProfit = 4*ATR(100);
+  if(adviseLong(DTREE,0,Signals,2) &gt; 0)
+    enterLong();
+  if(adviseShort(DTREE,0,Signals,2) &gt; 0)
+    enterShort();
+}
+</pre>
+<br>
+<h3>PERCEPTRON </h3>
+A <strong>perceptron</strong>, also called a <strong>logistic regression</strong> 
+function, is a  simple neural net consisting of  one neuron with one output and up to 20 signal inputs. It calculates its predictions from a linear combination of weighted signals. 
+It has some similarity to the <a href="polyfit.htm">polyfit</a> algorithm, but 
+with arbitrary variables instead of powers of a single variable, and with a 
+binary output. A short preceptron algorithm description can be found on the
+<a href="http://www.financial-hacker.com/build-better-strategies-part-4-machine-learning" target="_blank">machine learning overview</a>. The signal weights are generated in the training run for producing the best possible prediction. 
+The signals should be in the single digit range, like <strong>-1...1</strong>. 
+<p>The perceptron algorithm works best when the weighted sum of the signals has predictive power. It does not work well when the prediction requires a nonlinear signal combination, i.e. when trade successes and failures are not separated by a straight plane in the signal space. A classical example of a function that a perceptron can not emulate is a logical XOR. Often a perceptron can be used where a decision tree fails, and vice versa. </p>
+<p>The perceptron learning algorithm generates prediction functions in C source code in the <strong>\Data\*.c</strong> file. The functions are automatically included in the strategy script and used by the <strong>advise</strong> 
+function in test and trade mode. They can also be exported for using them in 
+strategy scripts or expert advisors of other platforms. The output is <strong>&gt;0</strong> for a positive or <strong>&lt;0</strong> for a negative prediction. 
+The output magnitude is the probability associated with the prediction, in 
+percent, f.i. 70 for 70% estimated probability. A generated perceptron function with 3 signals and binary output looks like this: </p>
+<pre>int EURUSD_S(var* sig)<br>{<br>  if(-27.99*sig[0]+1.24*sig[1]-3.54*sig[2] &gt; -21.50)<br>    return 70;<br>  else<br>    return -70;<br>}</pre>
+<p>In <strong>FUZZY</strong> mode the output magnitude is equivalent to the 
+prediction strength, thus allowing to ignore signals below a threshold. The 
+scaling factor, <strong>2.50</strong> in the example below, is calculated so 
+that the average perceptron return value of the training set has a magnitude of 
+50. Example of a fuzzy perceptron:</p>
+<pre>int EURUSD_S(var* sig)<br>{<br>  return (-27.99*sig[0]+1.24*sig[1]-3.54*sig[2]-21.50)*2.50;<br>}</pre>
+Signals that do not contain predictive market information get a weight of <strong>0</strong>.
+<br>
+&nbsp;
+<h3>PATTERN (Pattern Analyzer)</h3>
+The <strong> pattern analyzer</strong> is an intelligent version of  classic 
+<a href="candle.htm">candle pattern indicators</a>. It does not use predefined patterns, but learns them from historical price data. It's normally fed 
+with up to 20 open, close, high or low prices of a number of candles. It 
+compares every signal with every other signal, and uses the comparison results - 
+greater, smaller, or equal - for classifying the pattern. <p>The signals can be divided into groups with the <strong>PATTERN+2</strong> .. <strong>PATTERN+6</strong> methods. They divide the signals into 
+up to six pattern groups and only compare  signals within the same group. This is useful when, for instance, only the first two candles and the last two candles of a 3-candle pattern should be compared with each other, but not the first candle with the third candle. <strong>PATTERN+2</strong> requires an even number of signals, of which the first half belongs to the first and and the second half to the second group. <strong>PATTERN+3</strong> likewise requires a number of signals that is divisible by 3, and so on. Pattern groups can share signals - for instance, the open, high, low, and close of the middle candle can appear in the first as well as in the second group - as long as the total number of signals does not exceed 20. </p>
+<p>Aside from the grouping, Zorro makes no assumptions of the signals and their relations. Therefore the pattern analyzer can be also used for other signals than candle prices. All signals within a pattern group should have the same unit for being comparable, but different groups can have different units. For candle patterns, usually the high, low, and close of the last 3 bars is used for the signals - the open is not needed as it's normally identical with the close of the previous candle. More signals, such as the  moving average of the price, can be added for  improving the prediction (but in most cases won't).</p>
+<p>For simple patterns with few signals, the pattern analyzer can generate 
+direct  pattern finding functions  in plain C source code in the <strong>\Data\*.c</strong> file.  These functions are automatically included in the strategy script and used by the <strong>advise</strong> function in test and trade mode. They can also be exported 
+to other platforms. They find all patterns that occurred 4 or more times  in the training  data set and had a positive profit expectancy. They return the pattern's information ratio - the ratio of  profit mean to standard deviation - multiplied with 100. The better the information ratio, the more predictive is the pattern. A typical pattern finding function with 12 signals looks like this:</p>
+<pre>int EURUSD_S(float* sig)
+{
+  if(sig[1]&lt;sig[2] &amp;&amp; eqF(sig[2]-sig[4]) &amp;&amp; sig[4]&lt;sig[0] &amp;&amp; sig[0]&lt;sig[5] &amp;&amp; sig[5]&lt;sig[3]
+    &amp;&amp; sig[10]&lt;sig[11] &amp;&amp; sig[11]&lt;sig[7] &amp;&amp; sig[7]&lt;sig[8] &amp;&amp; sig[8]&lt;sig[9] &amp;&amp; sig[9]&lt;sig[6])
+      return 19;
+  if(sig[4]&lt;sig[1] &amp;&amp; sig[1]&lt;sig[2] &amp;&amp; sig[2]&lt;sig[5] &amp;&amp; sig[5]&lt;sig[3] &amp;&amp; sig[3]&lt;sig[0] &amp;&amp; sig[7]&lt;sig[8]
+    &amp;&amp; eqF(sig[8]-sig[10]) &amp;&amp; sig[10]&lt;sig[6] &amp;&amp; sig[6]&lt;sig[11] &amp;&amp; sig[11]&lt;sig[9])
+      return 170;
+  if(sig[1]&lt;sig[4] &amp;&amp; eqF(sig[4]-sig[5]) &amp;&amp; sig[5]&lt;sig[2] &amp;&amp; sig[2]&lt;sig[3] &amp;&amp; sig[3]&lt;sig[0]
+    &amp;&amp; sig[10]&lt;sig[7] &amp;&amp; eqF(sig[7]-sig[8]) &amp;&amp; sig[8]&lt;sig[6] &amp;&amp; sig[6]&lt;sig[11] &amp;&amp; sig[11]&lt;sig[9])
+      return 74;
+  if(sig[1]&lt;sig[4] &amp;&amp; sig[4]&lt;sig[5] &amp;&amp; sig[5]&lt;sig[2] &amp;&amp; sig[2]&lt;sig[0] &amp;&amp; sig[0]&lt;sig[3] &amp;&amp; sig[7]&lt;sig[8]
+    &amp;&amp; eqF(sig[8]-sig[10]) &amp;&amp; sig[10]&lt;sig[11] &amp;&amp; sig[11]&lt;sig[9] &amp;&amp; sig[9]&lt;sig[6])
+      return 143;
+  if(sig[1]&lt;sig[2] &amp;&amp; eqF(sig[2]-sig[4]) &amp;&amp; sig[4]&lt;sig[5] &amp;&amp; sig[5]&lt;sig[3] &amp;&amp; sig[3]&lt;sig[0]
+    &amp;&amp; sig[10]&lt;sig[7] &amp;&amp; sig[7]&lt;sig[8] &amp;&amp; sig[8]&lt;sig[6] &amp;&amp; sig[6]&lt;sig[11] &amp;&amp; sig[11]&lt;sig[9])
+      return 168;
+  ....
+  return 0;
+}</pre>
+<p>The <strong>eqF</strong> function in the code above checks if two signals are 
+equal. Signals that differ less than the <a href="fuzzy.htm">FuzzyRange</a> are 
+considered equal. </p>
+<p>There are two additional special methods for the pattern analyzer. The <strong>FUZZY</strong> method generates a pattern finding function that also finds patterns that can slightly deviate from the profitable patterns in the training data set. It gives patterns a higher score when they 'match better'. The  deviation can be set up with <strong>FuzzyRange</strong>. A typical fuzzy pattern finding function looks like this:</p>
+<pre>int EURUSD_S(float* sig)
+{
+  double result = 0.;
+  result += belowF(sig[1],sig[4]) * belowF(sig[4],sig[2]) * belowF(sig[2],sig[5]) * belowF(sig[5],sig[3]) * belowF(sig[3],sig[0])
+    * equF(sig[10],sig[11]) * belowF(sig[11],sig[7]) * belowF(sig[7],sig[8]) * belowF(sig[8],sig[9]) * belowF(sig[9],sig[6]) * 19;
+  result += belowF(sig[4],sig[5]) * belowF(sig[5],sig[1]) * belowF(sig[1],sig[2]) * belowF(sig[2],sig[3]) * belowF(sig[3],sig[0])
+    * belowF(sig[10],sig[7]) * belowF(sig[7],sig[11]) * belowF(sig[11],sig[8]) * belowF(sig[8],sig[9]) * belowF(sig[9],sig[6]) * 66;
+  result += belowF(sig[4],sig[1]) * belowF(sig[1],sig[2]) * belowF(sig[2],sig[0]) * belowF(sig[0],sig[5]) * belowF(sig[5],sig[3])
+    * belowF(sig[10],sig[11]) * belowF(sig[11],sig[7]) * belowF(sig[7],sig[8]) * belowF(sig[8],sig[6]) * belowF(sig[6],sig[9]) * 30;
+  result += belowF(sig[1],sig[4]) * belowF(sig[4],sig[2]) * belowF(sig[2],sig[5]) * belowF(sig[5],sig[3]) * belowF(sig[3],sig[0])
+    * belowF(sig[7],sig[10]) * belowF(sig[10],sig[11]) * belowF(sig[11],sig[8]) * belowF(sig[8],sig[6]) * belowF(sig[6],sig[9]) * 70;
+  result += belowF(sig[4],sig[5]) * belowF(sig[5],sig[1]) * belowF(sig[1],sig[2]) * belowF(sig[2],sig[3]) * belowF(sig[3],sig[0])
+    * belowF(sig[7],sig[10]) * belowF(sig[10],sig[8]) * belowF(sig[8],sig[11]) * belowF(sig[11],sig[9]) * belowF(sig[9],sig[6]) * 108;
+  ...
+  return result;
+}</pre>
+<p>The <strong>belowF</strong> function is described on the <a href="fuzzy.htm">Fuzzy Logic</a> page. </p>
+<p>The <strong>FAST</strong> method does not generate C code; instead it generates a list of patterns that are classified with alphanumeric names. For finding a pattern, it is classified and its name compared with the pattern  list. This is about 4 times faster than the pattern finding function in C code, and can also handle bigger and more complex patterns 
+with up to 20 signals. It can make a remarkable difference in backtest time or when additional parameters have to be trained. A pattern name list looks like this (the numbers behind the name are the information ratios):</p>
+<pre>/* Pattern list for EURUSD_S<br>HIECBFGAD   61<br>BEFHCAIGD  152<br>EHBCIFGAD   73<br>BEFHCIGDA   69<br>BHFECAIGD   95<br>BHIFECGAD   86<br>HBEIFCADG   67<br>HEICBFGDA  108
+...*/</pre>
+<p>The <strong>FAST</strong> method can not be used in combination with <strong>FUZZY</strong> or with <strong>FuzzyRange. </strong>But the <strong>FAST</strong> as well as the <strong>FUZZY</strong> method can be combined with pattern groups (f.i. <strong>PATTERN+FAST+2</strong>). </p>
+<p>The find rate of the pattern analyzer can be adjusted with two variables:</p>
+<h2>PatternCount</h2>
+The minimum number of occurrences of the found patterns in the analyzed price curve; default = <strong>4</strong>.
+<h2>PatternRate</h2>
+The minimum win rate of the found patterns, in percent; default = <strong>50</strong>.
+<p>An example of a pattern trading script can be found in <a href="tutorial_pre.htm">Workshop 7</a>. <br>
+&nbsp;</p>
+<h3>NEURAL (General Machine Learning)</h3>
+<a name="neural"></a>The <strong>NEURAL</strong> method  uses an external 
+machine learning library, for instance a support vector machine, random forest, or 
+a deep learning <a href="deeplearning.htm">neural network</a> for predicting the 
+next price or next trade return in an algo trading system. Many machine learning 
+libraries are available in <a href="rbridge.htm">R packages</a> or
+<a href="python.htm">Python libraries</a>; therefore the <strong>NEURAL</strong> method will often call <strong>R</strong> 
+or <strong>Python</strong> functions for training and prediction. But any DLL-based machine learning library can be used 
+as long as the <strong>neural</strong> function - see below - is adapted to it.
+<p>&nbsp;</p>
+<h2>neural (int 
+Status, &iacute;nt Model, int 
+NumSignals, void* Data): var </h2>
+This function is automatically called several times during the training, test, or trade process. It has access to all global and predefined variables. Its behavior depends on 
+<strong>Status</strong>:
+<br>
+<br>
+<table  border="0" cellspacing="1" cellpadding="0">
+  <tr>
+    <td class="auto-style3"><strong>Status</strong></td>
+    <td class="auto-style4"><strong>Parameters</strong></td>
+    <td class="auto-style4"><strong>Called </strong> </td>
+    <td class="auto-style3"><strong>Description</strong></td>
+  </tr>
+  <tr>
+    <td><strong>NEURAL_INIT</strong></td>
+    <td><strong>---</strong></td>
+    <td class="auto-style2">After the <a href="is.htm">INITRUN</a></td>
+    <td>Initialize the machine learning library (f.i. by calling <a href="rbridge.htm">Rstart</a>); 
+	return <strong>0</strong> if the initialization failed, otherwise <strong>1</strong>. The script is aborted if the system can not be initialized. </td>
+  </tr>
+  <tr>
+    <td><strong>NEURAL_EXIT</strong></td>
+    <td><strong>---</strong></td>
+    <td class="auto-style2">After the <a href="is.htm">EXITRUN</a></td>
+    <td>Release the machine learning library if required. </td>
+  </tr>
+  <!--tr>
+    <td><strong>NEURAL_LEARN</strong></td>
+    <td><strong>model, NumSignals, Data</strong></td>
+    <td>Online training. Use a single sample of signals contained in the <strong>Data</strong> double array for training  the model identified by the  <strong>model</strong> index. The last element, <strong>Data[NumSignals]</strong>, is the <strong>Objective</strong> parameter or the trade result. The function is  triggered by any <strong>advise</strong> call in [<span class="tast">Train</span>] mode, either immediately (<strong>Objective != 0</strong>) or when the trade is closed (<strong>Objective == 0</strong>). </td>
+  </tr-->
+  <tr>
+    <td><strong>NEURAL_TRAIN</strong></td>
+    <td><strong>Model, NumSignals, Data </strong></td>
+    <td class="auto-style2">After any <a href="numwfocycles.htm">WFOCycle</a> 
+	in train mode
+    </td>
+    <td><p>Batch training. Train the model with the given <strong>Model</strong> index with all data samples 
+	collected in the previous training run or WFO training cycle. The
+	<strong>Model</strong> index is incremented for any asset, algo, and long/short combination. The 
+	list of samples is given in  CSV format in the <strong>Data</strong> string. The columns of the CSV table are the signals, the last column is the <strong>Objective</strong> parameter or the trade result. The accuracy 
+	or loss in percent can be optionally returned by the <strong>neural</strong> function; otherwise return <strong>1</strong> if no accuracy 
+	or loss is calculated, or <strong>0</strong> for aborting the script when the training failed. </p>
+    </td>
+  </tr>
+  <tr>
+    <td><strong>NEURAL_PREDICT</strong></td>
+    <td><strong>Model, NumSignals, Data</strong></td>
+    <td class="auto-style2">By any <strong>advise</strong> call in 
+	test/trade mode</td>
+    <td>Return the  value predicted by the model with the given <strong>Model</strong> index, using the  signals  contained in the <strong>Data</strong> 
+	double array.</td>
+  </tr>
+  <tr>
+    <td><strong>NEURAL_SAVE</strong></td>
+    <td><strong>Data</strong></td>
+    <td class="auto-style2">After any <a href="numwfocycles.htm">WFOCycle</a> in 
+	train mode </td>
+    <td>Save all  models trained in the previous training run or WFO training 
+	cycle to the file with the name given by the string <strong>Data</strong>.</td>
+  </tr>
+  <tr>
+    <td><strong>NEURAL_LOAD</strong></td>
+    <td><strong>Data</strong></td>
+    <td class="auto-style2">Before any <a href="numwfocycles.htm">WFOCycle</a> 
+	in test mode, at session begin in trade mode.&nbsp; </td>
+    <td>Prepare the prediction by loading  all trained models from the file with the name given <strong></strong>by the string <strong>Data</strong>. 
+	Also called in trade mode whenever the model file was updated by re-training. </td>
+  </tr>
+</table>
+<p><strong>Model</strong> is the number of the trained model, for instance a set of decision rules, or a set of weights of a neural network, starting with <strong>0</strong>. When several models are trained for long and short predictions and for different assets or algos, the index selects 
+the suited model. 
+The number of models is therefore normally equal to the number of <strong>advise</strong> 
+calls per <strong>run</strong> cycle. All trained models are saved to a <strong>
+*.ml</strong> file at the end of every WFO cycle. In R, the models are normally stored in a list of lists and accessed through their index (f.i. <strong>Models[[model+1]]</strong>). Any aditional parameter set generated in the training process - for instance, a set of normalization factors, or selection masks for the signals - 
+can be saved as part of the model. </p>
+<p>The <strong>NumSignals</strong> parameter is  the number of signals passed to the <strong>advise</strong> function. It is normally identical to the number of trained features. </p>
+<p>The <strong>Data</strong> parameter provides data to the function. The data can be of different type. For <strong>NEURAL_LEARN</strong>/<strong>NEURAL_PREDICT</strong> it's a pointer to a <strong>double</strong> array of length <strong>
+NumSignals+1</strong>, containing the signal values plus the prediction objective or trade result at the end. Note that a plain data array has no &quot;dim names&quot; or other R gimmicks - if they are needed in the R training or predicting function, add them there. For <strong>NEURAL_TRAIN</strong> the <strong>Data</strong> parameter is a text string  containing all samples in CSV format. The string can be stored in a temporary CSV file and then read by the machine learning algorithm for training the model. For <strong>NEURAL_SAVE</strong>/<strong>NEURAL_LOAD</strong> the <strong>Data</strong> parameter is the suggested file name for saving or loading 
+all trained models of the current WFO cycle in the <strong>Data</strong> folder. Use the <strong>slash(string)</strong> function for converting backslashes to slashes when required for R file paths.</p>
+<p>The code below is the default <strong>neural</strong> function in the <strong>r.h</strong> file for using a R machine learning algorithm. 
+A 64-bit variant for Python can be found in <strong>pynet.cpp</strong>. If required for special purposes, the default <strong>neural</strong> function can be replaced by a user-supplied<strong> </strong>function.</p>
+<pre>var neural(int Status, int model, int NumSignals, void* Data)<br>{<br>  if(!wait(0)) return 0;<br><em>// open an R script with the same name as the stratefy script  </em><br>  if(Status == NEURAL_INIT) {<br>    if(!Rstart(strf(&quot;%s.r&quot;,Script),2)) return 0;<br>    Rx(&quot;neural.init()&quot;);<br>    return 1;<br>  }<br><em>// export batch training samples and call the R training function</em><br>  if(Status == NEURAL_TRAIN) {<br>    string name = strf(&quot;Data\\signals%i.csv&quot;,Core);<br>    file_write(name,Data,0);<br>    Rx(strf(&quot;XY &lt;- read.csv('%s%s',header = F)&quot;,slash(ZorroFolder),slash(name)));<br>    Rset(&quot;AlgoVar&quot;,AlgoVar,8);<br>    if(!Rx(strf(&quot;neural.train(%i,XY)&quot;,model+1),2)) <br>      return 0;<br>    return 1;<br>  }<br><em>// predict the target with the R predict function</em><br>  if(Status == NEURAL_PREDICT) {<br>    Rset(&quot;AlgoVar&quot;,AlgoVar,8);<br>    Rset(&quot;X&quot;,(double*)Data,NumSignals);<br>    Rx(strf(&quot;Y &lt;- neural.predict(%i,X)&quot;,model+1));<br>    return Rd(&quot;Y[1]&quot;); <em>// this is returned by advise()</em><br>  }<br><em>// save all trained models  </em><br>  if(Status == NEURAL_SAVE) {<br>    print(TO_ANY,&quot;\nStore %s&quot;,strrchr(Data,'\\')+1);<br>    return Rx(strf(&quot;neural.save('%s')&quot;,slash(Data)),2);<br>  }<br><em>// load all trained models  </em><br>  if(Status == NEURAL_LOAD) {<br>    printf(&quot;\nLoad %s&quot;,strrchr(Data,'\\')+1);<br>    return Rx(strf(&quot;load('%s')&quot;,slash(Data)),2);<br>  }<br>  return 1;<br>}</pre>
+<p>The default <strong>neural</strong> function requires an R script with same name as the strategy script, but extension <strong>.r</strong> instead of <strong>.c</strong>. 
+There is also a Python version available. The R or Python script must contain the following functions:</p>
+<p><strong>neural.init()</strong>&nbsp; initializes the machine learning package, 
+defines a model list, sets the initial seed, number of cores, GPU/CPU context, 
+etc. </p>
+<p><strong>neural.train(Model, XY)</strong>&nbsp; trains the the algorithm and stores 
+the trained model in the model list. <strong>XY</strong> is a data frame with 
+signals in the first <strong>NumSignals</strong> columns and the objective in 
+the last (<strong>NumSignals+1</strong>) column. The samples are the rows of the 
+data frame. <strong>Model</strong> is the number in the model list where the trained 
+model is to be stored. The model can be any R object combined from the machine 
+learning model and any additional data, f.i. a set of normalization factors. In 
+the Python version, XY is the file name of a .csv file with the data.</p>
+<p><strong>neural.save(FileName)</strong>&nbsp; stores all models from the model 
+list to a file with the given name and path. This function is called once per 
+WFO cycle, so any cycle generates a file of all models of this cycle.</p>
+<p><strong>neural.load(FileName)</strong>&nbsp; loads back the previously stored 
+model list for the current WFO cycle. If this optional function is missing, the 
+model list is loaded with the R <strong>load()</strong> function. Otherwise make 
+sure to load the list into the global R environment so that it is accessible to
+<strong>neural.predict</strong>, f.i. with <strong>load(FileName, envir=.GlobalEnv)</strong>.</p>
+<p><strong>neural.predict(Model, X)</strong>&nbsp; predicts the objective from the 
+signals. <strong>X</strong> is a vector of size <strong>NumSignals</strong>, 
+containing the signal values for a single prediction. <strong>Model</strong> is the 
+number of the model in the model list. The <strong>neural.predict</strong> 
+return value is returned by the <strong>advise</strong> function. The 
+<strong>neural.predict </strong>function could also support batch predictions where<strong> X</strong> is a 
+data frame with several samples and a vector <strong>Y</strong> is returned. Batch predictions are 
+not used by Zorro, but useful for calibrating the algorithm with a training/test 
+data set generated in <strong>SIGNALS</strong> mode. </p>
+<p>&nbsp;An example of such a deep learning system can be found on <a href="http://www.financial-hacker.com/build-better-strategies-part-5-developing-a-machine-learning-system/" target="_blank">Financial Hacker</a>. 
+A simple machine learning strategy <strong>DeepLearn.c</strong> is included, 
+together with R scripts for running it with the <strong>Deepnet</strong>,
+<strong>H2O</strong>, <strong>MxNet</strong>, or <strong>Keras</strong> deep 
+learning packages. A .cpp version is available for <strong>PyTorch</strong>. The  <strong>neural</strong> function is compatible with all Zorro trading, test, and training methods, including walk forward analysis, multi-core parallel training, and multiple assets and algorithms. 
+A short description of installation and usage of popular deep learning 
+packages can be found <a href="deeplearning.htm">here</a>.</p>
+
+<h3>Remarks:</h3>
+<ul><li>The <a href="mode.htm">RULES</a> flag must be set for generating rules or training a machine learning algorithm. See the remarks under <a href="training.htm">Training</a> for special cases when <strong>RULES</strong> and <strong>PARAMETERS</strong> are generated at the same time. </li>
+	<li>All <strong>advise</strong> calls for a given asset/<a href="algo.htm">algo 
+	</a>combination must use the same <strong>Method</strong>,  the same signals, and the same training target type (either
+	<strong>Objective</strong> or the next trade return). However, different methods and signals can be used for different assets and algorithm identifiers, so call
+	<a href="algo.htm">algo()</a> for combining multiple <strong>advise</strong> methods in the same script. Ensemble or hybrid methods can also be implemented this way, using different
+	<a href="algo.htm">algo</a> identifiers.</li>
+	<li>The generated rules by <strong>DTREE</strong>, <strong>PERCEPTRON</strong>, 
+	<strong>PATTERN</strong> are stored in <span class="Highlight">plain C code</span> in
+	<strong>*.c </strong>files in the <strong>Data</strong> folder. This allows to 
+	export the rules to other platforms, and to examine the prediction process 
+	to some degree for checking if the rules makes sense. 
+	Models by external machine learning algorithms are stored in <strong>*.ml</strong> files in the
+	<strong>Data</strong> folder. If several models are trained, they are 
+	numbered in the order of advise calls and WFO cycles. F.i. for two advise 
+	calls, two assets, and 7 WFO cycles, 28 models are generated, 4 for any 
+	cycle.&nbsp;
+	</li>
+	<li>For considering the effects of <span class="Highlight">stops, profit 
+	targets, and transactions costs</span> in training, call the <strong>advise</strong> function with
+	<strong>Objective = 0</strong> before entering a trade. Zorro will then use the 
+	result of the next trade for training the rules. When training long and short trades at the same time, set
+	<a href="hedge.htm">Hedge</a> to make sure that they can be opened simultaneously in training mode; otherwise any trade would close an opposite trade just entered before. Define an exit condition for the trade, such as a timed exit after a number of bars, or a stop/trailing mechanism for predicting a positive or negative excursion. Do not train rules with hedging explicitly disabled or with special modes such as
+	<a href="mode.htm#nfa">NFA</a> or <a href="hedge.htm">Virtual Hedging</a>.</li>
+	<li>Predictions are normally better with fewer signals, so use as less 
+	signals as possible, or pre-process the signals with an algorithm to reduce 
+	dimensionality. For more than 20 signals, use a <strong>Signals</strong> array. The signals for the
+	<strong>DTREE, PATTERN,</strong> 
+  and <strong>PERCEPTRON</strong> methods are always limited to 20.</li>
+	<li>Most machine learning algorithms require <span class="Highlight">balanced
+	</span>training data. That means the trades used for training should result in about 50% wins and 50% losses, and negative and positive
+	<strong>Objective</strong> values should be equally distributed. The <strong>+BALANCED</strong> 
+	flag will duplicate samples until 50/50 balance is reached. 
+	The used algorithm balances the samples also locally, 
+	so arbitrary subsets ('batches') of the samples are still balanced.</li>
+	<li>The <strong>SIGNALS</strong> method exports data for testing and 
+	calibrating external machine learning algorithms. It is normally recommended 
+	to also use <strong>BALANCED</strong> data for that. The data is stored in a 
+	CSV file with the signals in the first columns and the objective in the last 
+	column.</li>
+	<li>During inactive time periods determined by <a href="lookback.htm">LookBack</a>,
+	<a href="barmode.htm">BarMode</a>, 
+	a
+	<strong><a href="mode.htm">SKIP</a></strong> flag, or
+	<a href="barperiod.htm">TimeFrame</a>, the <strong>advise</strong> functions won't train or predict and return
+	<strong>0</strong>. </li>
+	<li>Functions like <a href="norm.htm">scale</a> or <a href="ta.htm">Normalize</a> can be used to convert the signals to the 
+	<span class="Highlight">same range</span>. Some R machine learning algorithms require that signals and targets are in the
+	<strong>0..1</strong> range; in that case negative values or values greater than 1 lead to wrong results. If a signal value is outside the +/-1000 range, a warning is issued.
+	</li>
+	<li>When using a future value for prediction, such as the price change of the next bars (f.i.
+	<strong>Objective = priceClose(-5) - priceClose(0)</strong>), make sure to set the
+	<a href="mode.htm">PEEK</a> flag in train mode. Alternatively, use the price change of a past bar to the current bar, and pass past signals - f.i. from a
+	<a href="series.htm">series</a> - to the advise function in train mode, f.i.:<br>&nbsp;&nbsp;<strong>Objective = priceClose(0) - priceClose(5)</strong>;    
+	<br>&nbsp;&nbsp;<strong>int Offset = ifelse(Train,5,0);<br>&nbsp;&nbsp;var Prediction = adviseLong(Method,Objective,Signal0[Offset],Signal1[Offset],...);</strong></li>
+	<li>All machine learning functions have a tendency to
+	<span class="Highlight">overfit</span> the strategy. For this reason, strategies that use the
+	<strong>advise</strong> function should always be tested with unseen data, f.i. by using
+	<a href="testing.htm">Out-Of-Sample testing</a> or 
+	<a href="numwfocycles.htm">Walk Forward Optimization</a>. Use the
+	<a href="mode.htm">OPENEND</a> flag for preventing that trades prematurely 
+	close at the end of a WFO training period and thus reduce the training 
+	quality. When WFO training, make 
+	sure to set <a href="dataslope.htm">DataHorizon</a> accordingly to prevent 
+	<span class="Highlight">peeking bias</span> 
+	in the subsequent test cycle.</li>
+	<li>A message like <strong>&quot;NEURAL_INIT: failed&quot;</strong> hints that the 
+	required <span class="Highlight">R packages</span> are not installed. Make sure that you can source the R 
+	script and that the train/predict functions run with no error message.</li>
+	<li>When WFO training a machine learning algorithm with
+	<a href="numcores.htm">multiple cores</a>, 
+	check if the used R libraries are compatible with <span class="Highlight">multiple processes</span>. This 
+	is normally not the case when hardware resources, such as the GPU, or when 
+	multiple CPU cores are used. 
+	The R <strong>neural.init</strong> function is called at the 
+	begin of any process, which can lead to different results in single core and 
+	multi core when a random seed is set in the <strong>neural.init</strong> 
+	function.</li>
+	<li>For training <span class="Highlight">multiple objectives</span> with the 
+	<strong>NEURAL</strong> method, pass the further objectives as
+	<strong>Signal</strong> parameters to the <strong>advise</strong> 
+  function in training mode. In test and trade mode, use a separate prediction 
+	function that loads the current model and returns the predictions from R in 
+	a vector.</li>
+	<li>For <span class="Highlight">R debugging</span>, use the R <strong>sink</strong> function for printing 
+  R output to a file. Or use the <strong>save.image</strong> / <strong>load</strong> 
+	functions for storing the current variable and function state and examining 
+	it later.</li>
+	<li>For internal machine learning algorithms, the estimated
+	<span class="Highlight">prediction accuracy</span> or the number of found patterns 
+	is printed in the message window. The signals should be selected in a way that the prediction accuracy is   
+	well above 50% or that as many as possible profitable patterns are found. 
+	For external machine learning functions, use a confusion matrix or the 
+	built-in metrics for determining the prediction accuracy.
+		<li>When rules are stored in C code, the internal lite-C compiler compiles&nbsp; 
+		in 32-bit mode unless <strong>FAST</strong> is set. Since the compiler does not 
+		support 
+	to free parts of the code &#8211; only the complete code &#8211; the code is growing on any 
+		run cycle, thus increasing the <span class="Highlight">memory footprint</span>. The memory is only freed when 
+	the script is compiled again.</o:p></p>
+		</li>
+	</ul>
+	</li>
+</ul>
+<h3>See also:</h3>
+<a href="optimize.htm">optimize</a>, <a href="detect.htm">frechet</a>, <a href="polyfit.htm">polyfit</a>, <a href="crossover.htm"></a><a href="predict.htm">predict</a>, <a href="tutorial_pre.htm">Workshop 7</a>, <a href="rbridge.htm">R Bridge</a>,	
+<a href="deeplearning.htm">deep learning</a><p></p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

@@ -1,0 +1,365 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+<title>F.A.Q.</title>
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/afaq.htm">
+</head>
+
+<body>
+
+<h1>Support - Frequently Asked Questions</h1>
+<p>When you're a Zorro <a href="restrictions.htm">Sponsor</a>, you are entitled 
+to a time period of free technical support by email. Otherwise you can post your question on the 
+user forum, or subscribe a <span class="Highlight">support ticket</span> in the web store. For technical support 
+please email your question to<strong> support (at) opgroup.de</strong>,
+<span class="faq_answer"><span class="question"></span></span>and give your support 
+ticket number or your user name that is displayed in Zorro's startup message.
+</p>
+<p style="margin-bottom: 0cm">General questions about financial trading are answered 
+on the <a href="https://zorro-project.com/faq.php" target="_blank">Trading FAQ page</a>. 
+The most frequent technical questions are listed below. </p>
+<h3>General questions</h3>
+<p><span class="question">Q. I am 
+a C programmer and have read the Zorro tutorial. Does it still make sense for 
+me to get the <span class="Highlight">Black Book</span>
+or take the <span class="Highlight">Algo Bootcamp</span>?.</span><br>
+<span class="faq_answer">A. 
+Depends on your experience with strategy development. The <a href="links.htm">Black Book</a> 
+and especially the <a href="https://zorro-project.com/docs.php" target="_blank">Algo Bootcamp</a> cover 
+all details involved in writing a trading strategy.</span></P>
+<!--p class="faq_answer"><span class="faq_question"><span class="question">Q. I 
+have the idea of a trading strategy, but I now </span> </span>
+<span class="Highlight">don't know how to start</span><span class="faq_question"><span class="question">.</span><br>A. Start small. Make first a very simple 
+version and test it thorough and carefully. Afterwards add the more complex stuff, 
+such as filtering, trade management functions, or special indicators, and test again 
+at any step. For finding ideas and methods, read through the literature in the
+<a href="links.htm">book list</a>. </span></p-->
+<p class="faq_answer"><span class="faq_question"><span class="question">Q. How do 
+I <strong class="Highlight">search</strong> for a certain topic in the manual that pops up when I click on [Help]?</span><br>
+A. Click on [Search]</span>. </p>
+<p class="faq_answer"><span class="question">Q. Can I copy the Zorro folder on a
+<strong class="Highlight">USB drive</strong> and run Zorro from there? <br></span>
+<span class="headline"><b><span class="question"></span></b></span>A. Yes. Make 
+sure that you have full access rights to that drive. </p>
+<p class="faq_answer"><span class="faq_question"><span class="question">Q. How can 
+I </span> </span><span class="Highlight">add <strong>another asset</strong></span><span class="faq_question"><span class="question"> 
+to the 
+Asset scrollbox?</span><br>A. Open the <strong>History\AssetsFix.csv</strong> spreadsheet 
+with Excel or with the script editor, and add a new line with the parameters of 
+the new asset. The details are described in the manual under
+<a href="account.htm">Asset List</a>. </span>For backtesting that asset you'll 
+also need to download its price history.</p>
+<p class="faq_answer"><span class="faq_question"><span class="question">Q. Why 
+do I get </span> </span><span class="Highlight">different results</span><span class="faq_question"><span class="question"> 
+for the trading systems from the tutorial / the Black Book?</span><br>
+A. Because you're testing them probably with different <a href="account.htm">
+asset parameters</a>. Margin, leverage, and transaction cost change from 
+week 
+to week and from broker to broker. </span></p>
+<p class="faq_answer"><span class="question">Q. Why do I get </span>
+<span class="Highlight">different backtest results</span><span class="question"> 
+with Zorro than with my other trading platform?</span><br>
+<span class="faq_answer">A. 
+Read <a href="conversion.htm">here</a> why.</span></p>
+<p class="faq_answer"><span class="faq_question"><span class="question">Q. How 
+can I get </span> </span><span class="Highlight">historical data</span><span class="faq_question"><span class="question"> 
+for training and backtests?</span><br>
+A. Recent data for the Z systems is available on the
+<a href="https://zorro-project.com/download.php" target="_blank">Download page</a>. 
+Forex, index, or EOD data can be downloaded with the <a href="history.htm">
+Download script</a>. M1 data for US stocks and EOD options data can be 
+purchased from <a href="mailto:info@opgroup.de?subject=Historical data request">
+info@opgroup.de</a>. </span></p>
+<p class="faq_answer"><span class="faq_question"><span class="question">Q. How 
+can I use an MT4 <strong class="Highlight">expert advisor</strong> with Zorro?</span><br>
+A. Read <a href="conversion.htm">here</a> how to convert MT4 indicators or &quot;expert 
+advisors&quot; to Zorro scripts. </span></p>
+<p class="faq_answer"><span class="faq_question"><span class="question">Q. I 
+have the C source code of an </span>
+</span><span class="Highlight">indicator</span><span class="faq_question"><span class="question">. How can I 
+use it with Zorro?</span><br>
+A. Coding indicators is described in <a href="tutorial_lowpass.htm">workshop 4a</a> 
+and in Petra's articles on
+<a href="https://financial-hacker.com/" target="_blank">Financial Hacker</a>. The 
+plain C code can normally run unchanged, but you need to remove its framework, such 
+as main() functions, DLL export declarations, or C library headers. You can find 
+an example <a href="conversion.htm#c">here</a>. Read <a href="litec_c.htm">here</a> 
+about the differences between standard C code and Zorro's &quot;lite-C&quot; code.
+</span></p>
+<p class="faq_answer"><span class="question">Q. Sometimes I edit a strategy, but the changes I made are
+<strong class="Highlight">not reflected</strong> in the test. Sometimes I can't even 
+save my changes, and cannot find the
+<strong>.log</strong> file or the <strong>.csv</strong> trade history in the Log 
+folder. What happened to the changed files?<br></span>A. You have probably 
+installed Zorro not in the recommended folder, but in a folder with only limited 
+access (such as Program Files). </p>
+<p class="faq_answer"><span class="question">Q. How can I compile my script to an
+<strong class="Highlight">executable</strong> for avoiding to have its source code on a server?<br>
+</span>A. Select <strong>Compile to Exe</strong> in the [<span class="tast">Action</span>] 
+scrollbox. Your script will be compiled to a machine code <strong>.x</strong> file from which 
+the source code can not be retrieved anymore. You need 
+<a href="restrictions.htm">Zorro S</a> for this. </p>
+<!--p class="faq_answer"><span class="faq_question"><span class="question">Q. I use 
+my own price data and asset list, and get </span> </span>
+<span class="Highlight">results <strong>very different</strong></span><span class="faq_question"><span class="question"> 
+to the tests in the manual.</span><br>A. The manual results are generated with price 
+data and account parameters from a standard FXCM, Oanda, or IB account. Different 
+data and different brokers can produce very different results. Run first a test 
+with the included data and asset lists, then with your own data, and compare both
+<a href="performance.htm">performance reports</a>, especially the trading costs. 
+Look also into the logs and check where their trades differ. </span></p-->
+<p class="faq_answer"><span class="faq_question"><span class="question">Q. I have 
+my <strong class="Highlight">own set of signals</strong> in an Excel file with time stamps. How can 
+I test them with Zorro?</span><br>A. Export them from Excel to a <strong>.csv</strong> file. 
+In your Zorro script, import them in a dataset with the
+<a href="data.htm">dataParse</a> function. Then use the <a href="data.htm">dataFind</a> 
+function at any bar to find the record matching the current date/time, and retrieve 
+your signals from the record. </span></p>
+<p class="faq_answer"><span class="faq_question"><span class="question">Q. I 
+made a </span> </span><span class="Highlight">small change</span><span class="question"><span class="faq_question"> 
+to my script, but now get </span> </span><span class="Highlight">totally different results</span><span class="faq_question"><span class="question"> 
+in the backtest. Surely this must be a </span></span>Zorro bug<span class="faq_question"><span class="question">?</span><br>
+A. You can quickly find out by following the procedure under
+<a href="trouble.htm">Troubleshooting</a>. Generate logs from both script 
+versions and compare them. Especially, compare the first two trades from start 
+to end. You'll normally see then immediately the reason of the different 
+results. </span></p>
+<p class="faq_answer"><span class="faq_question"><span class="question">Q. </span> </span>
+<span class="Highlight">My script <strong>does not work</strong></span><span class="faq_question"><span class="question">. I 
+get: &quot;Error 111 - Crash in run()&quot;. I don't know what's wrong - how 
+can I fix it?</span><br>A. Finding and fixing bugs is also described </span>under
+<a href="trouble.htm">Troubleshooting</a>. </p>
+<p class="faq_answer"><span class="faq_question"><span class="question">Q. It does not still work. I have a support ticket - please </span> </span> <strong>
+<span class="Highlight">fix my script!</span></strong><span class="faq_question"><br>
+A. Zorro Support can answer technical questions, help with technical issues, and 
+suggest solutions. But we are </span><span class="Highlight">not permitted</span><span class="faq_question"> to write, modify, 
+analyze, debug, or fix user scripts. If you need someone to debug and fix your 
+code, 
+we can put you in contact with a programmer. </span></p>
+<p class="faq_answer"><span class="faq_question"><span class="question">Q. What's 
+the <strong class="Highlight">price for coding</strong> a strategy?<br></span>A. Depends on the strategy. 
+Development fees start at <strong>EUR 170</strong> for a simple indicator-based strategy. 
+Complex options trading strategies or machine learning systems can be in the
+<strong>EUR 1000</strong> or <strong>2000</strong> range. 
+Send a description of your system and you'll get a quote for the development. 
+The simpler the system, the smaller the cost. If you want, download our
+<a href="https://zorro-project.com/op_NDA.pdf" target="_blank">NDA</a> before.</span></p>
+<h3>Strategy development</h3>
+<p class="faq_answer"><span class="question">Q. I'm using global variables in my 
+script. When I run it the second time, it <strong class="Highlight">behaves differently</strong> than 
+the first time.<br></span>A. Static and global variables keep their content until 
+the script is modified or compiled. If necessary, set them to their initial values 
+on script start, like this: <strong>if(Init) MyStaticVar = 0;</strong>. Read more 
+about local, global, and static variables <a href="aarray.htm">here</a>. </p>
+<p class="faq_answer"><span class="question">Q. How can I find out </span>
+<span class="Highlight">if the last trade 
+was <strong>a winner or a loser</strong></span><span class="question">?<br></span>A. If <a href="winloss.htm">
+LossStreakTotal</a> is <strong>&gt; 0</strong>, the last trade was lost.</p>
+<p class="faq_answer"><span class="question">Q. How do I place two pending orders 
+so that the order that's opened first <strong class="Highlight">cancels the other</strong> one?<br>
+</span>A. Place the first pending order, and check in its <a href="trade.htm">TMF</a> 
+if the entry condition of the second order is fulfilled. In that case enter the 
+second order at market, and close the first while it's still pending. </p>
+<p class="faq_answer"><span class="question">Q. How can I count the 
+<strong class="Highlight">number 
+of winning trades</strong> within the last N trades?<br></span>A. Use a <strong>
+<a href="fortrades.htm">for(all_trades)</a></strong> loop, and count the number 
+of closed trades. As soon as the number is above the total number of closed trades 
+(<strong><a href="winloss.htm">NumWinTotal+NumLossTotal</a></strong>) minus
+<strong>N</strong>, start counting the number of winning trades.</p>
+<p class="faq_answer"><span class="question">Q. How can I place two different profit 
+targets so that <strong class="Highlight">half of the position</strong> closes when the first one 
+is hit, and the rest on the second?<br></span>A. The best and simplest solution 
+is opening two trades with two different profit targets, each with half the lot 
+volume. If your broker does not allow opening several trades at the same time, use
+<a href="timewait.htm">OrderDelay</a> for delaying the second trade a few seconds.
+</p>
+<p class="faq_answer"><span class="question">Q. How can I run a function 
+<strong class="Highlight">
+on every price tick</strong> of a certain asset?<br></span>A. Use a
+<a href="tick.htm">tick</a> function. It will be executed every time when a new 
+price quote arrives. Note that the tick execution frequency will be different in 
+real trading and in the backtest, due to the fewer price ticks in M1 price data. 
+If this is an issue for the particular strategy, use <a href="history.htm">t1</a> 
+price data. </p>
+<p class="faq_answer"><span class="question">Q. My candles appear </span>
+<span class="Highlight">time shifted</span><span class="question"> compared to 
+the same candles in another trading platform.<br></span>A. The other platform 
+probably uses a different time zone, and/or timestamps from the candle open 
+prices. Zorro uses UTC time and timestamps from the candle close prices. Read
+<a href="bars.htm">here</a> about bars and time stamps. </p>
+<p class="faq_answer"><span class="question">Q. How can I skip all bars that fall
+<strong class="Highlight">outside market hours</strong>?<br></span>A. Bars are normally added whenever price 
+quotes of the traded assets arrive from the broker API, regardless of the market 
+hour. For skipping them, either set the <a href="barmode.htm">BR_MARKET</a> 
+flag, or use the <a href="barperiod.htm">TimeFrame</a> mechanism with individual
+<a href="assetzone.htm">AssetMarket</a> time zones. If you only want to skip 
+bars for a certain indicator, you can use a <a href="series.htm">static series</a> 
+and <a href="shift.htm">shift</a> it during market hours.</p>
+<p class="faq_answer"><span class="question">Q. How can I 
+<strong class="Highlight">store variables</strong> 
+so that a new trading session automatically starts with their their last values?<br>
+</span>A. Use <a href="algovar.htm">AlgoVar</a> or <a href="trade.htm">TradeVar</a> 
+variables. They are preserved among sessions. If you have to store a lot more data, 
+save and load them with <a href="file_.htm">file</a> functions. </p>
+<!--p class="faq_answer"><span class="question">Q. How do I get the <strong>unadjusted 
+underlying price</strong> in an options trading script? My price history has adjusted 
+prices only.<br></span>A. Get it from the historical options data: <strong>if(contractUpdate(Asset, 
+0, CALL|PUT)) { contract(Contracts); var UnadjustedPrice = ifelse(Live, priceClose(0), 
+ContractUnl); &#8230; }</strong>.</p-->
+<p class="faq_answer"><span class="question">Q. How can I 
+<strong class="Highlight">evaluate online 
+data</strong> that is available on a website?<br></span>A. Use a
+<a href="http.htm">http</a> function (for accessing data directly from a website) 
+or the <a href="data.htm">dataDownload</a> or <a href="loadhistory.htm">assetHistory</a> 
+functions (for retrieving data from a web service). Google, Stooq, AlphaVantage, 
+Quandl, CryptoCompare, and many other services provide historical or current data 
+for most existing assets and indices, so you can use them for live trading as well 
+as in the backtest. </p>
+<h3 class="headline"><b>Live trading </b></h3>
+<p class="faq_answer"><span class="question">Q. How many </span>
+<span class="Highlight">Zorro S instances</span><span class="question"> can 
+simultaneously<strong> </strong> trade on a PC or VPS? <br></span>
+<span class="headline"><b><span class="question"></span></b></span>A.
+<span style="font-size: 11.0pt; font-family: &quot;Calibri&quot;,sans-serif; mso-ascii-theme-font: minor-latin; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-hansi-theme-font: minor-latin; mso-bidi-font-family: &quot;Times New Roman&quot;; mso-bidi-theme-font: minor-bidi; mso-ansi-language: EN-US; mso-fareast-language: DE; mso-bidi-language: AR-SA">
+T</span><span lang="EN-US" style="font-size: 11.0pt; font-family: &quot;Calibri&quot;,sans-serif; mso-ascii-theme-font: minor-latin; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-hansi-theme-font: minor-latin; mso-bidi-font-family: &quot;Times New Roman&quot;; mso-bidi-theme-font: minor-bidi; mso-ansi-language: EN-US; mso-fareast-language: DE; mso-bidi-language: AR-SA">he 
+number of </span>
+<span style="font-size: 11.0pt; font-family: &quot;Calibri&quot;,sans-serif; mso-ascii-theme-font: minor-latin; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-hansi-theme-font: minor-latin; mso-bidi-font-family: &quot;Times New Roman&quot;; mso-bidi-theme-font: minor-bidi; mso-ansi-language: EN-US; mso-fareast-language: DE; mso-bidi-language: AR-SA">
+parallel </span>
+<span lang="EN-US" style="font-size: 11.0pt; font-family: &quot;Calibri&quot;,sans-serif; mso-ascii-theme-font: minor-latin; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-hansi-theme-font: minor-latin; mso-bidi-font-family: &quot;Times New Roman&quot;; mso-bidi-theme-font: minor-bidi; mso-ansi-language: EN-US; mso-fareast-language: DE; mso-bidi-language: AR-SA">
+running programs on a PC is limited by the </span>
+<span style="font-size: 11.0pt; font-family: &quot;Calibri&quot;,sans-serif; mso-ascii-theme-font: minor-latin; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-hansi-theme-font: minor-latin; mso-bidi-font-family: &quot;Times New Roman&quot;; mso-bidi-theme-font: minor-bidi; mso-ansi-language: EN-US; mso-fareast-language: DE; mso-bidi-language: AR-SA">
+available </span>
+<span lang="EN-US" style="font-size: 11.0pt; font-family: &quot;Calibri&quot;,sans-serif; mso-ascii-theme-font: minor-latin; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-hansi-theme-font: minor-latin; mso-bidi-font-family: &quot;Times New Roman&quot;; mso-bidi-theme-font: minor-bidi; mso-ansi-language: EN-US; mso-fareast-language: DE; mso-bidi-language: AR-SA">
+memory, the internet bandwidth, and the CPU performance. In the case of Zorro, on 
+a</span><span style="font-size: 11.0pt; font-family: &quot;Calibri&quot;,sans-serif; mso-ascii-theme-font: minor-latin; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-hansi-theme-font: minor-latin; mso-bidi-font-family: &quot;Times New Roman&quot;; mso-bidi-theme-font: minor-bidi; mso-ansi-language: EN-US; mso-fareast-language: DE; mso-bidi-language: AR-SA">n 
+average </span>
+<span lang="EN-US" style="font-size: 11.0pt; font-family: &quot;Calibri&quot;,sans-serif; mso-ascii-theme-font: minor-latin; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-hansi-theme-font: minor-latin; mso-bidi-font-family: &quot;Times New Roman&quot;; mso-bidi-theme-font: minor-bidi; mso-ansi-language: EN-US; mso-fareast-language: DE; mso-bidi-language: AR-SA">
+PC the limit is about </span>
+<span style="font-size: 11.0pt; font-family: &quot;Calibri&quot;,sans-serif; mso-ascii-theme-font: minor-latin; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-hansi-theme-font: minor-latin; mso-bidi-font-family: &quot;Times New Roman&quot;; mso-bidi-theme-font: minor-bidi; mso-ansi-language: EN-US; mso-fareast-language: DE; mso-bidi-language: AR-SA">
+8..</span><span lang="EN-US" style="font-size: 11.0pt; font-family: &quot;Calibri&quot;,sans-serif; mso-ascii-theme-font: minor-latin; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-hansi-theme-font: minor-latin; mso-bidi-font-family: &quot;Times New Roman&quot;; mso-bidi-theme-font: minor-bidi; mso-ansi-language: EN-US; mso-fareast-language: DE; mso-bidi-language: AR-SA">10 
+instances</span><span lang="EN-US" style="font-size: 11.0pt; font-family: &quot;Calibri&quot;,sans-serif; mso-ascii-theme-font: minor-latin; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-hansi-theme-font: minor-latin; mso-bidi-font-family: &quot;Times New Roman&quot;; mso-bidi-theme-font: minor-bidi; mso-ansi-language: EN-US; mso-fareast-language: DE; mso-bidi-language: AR-SA">.
+</span></p>
+<p class="faq_answer"><span class="question">Q. I'm getting 
+<strong class="Highlight">error messages</strong> 
+when I try to connect to IB / Oanda / FXCM / MT4.<br></span>A. Read the manual about
+<a href="ib.htm">IB</a> / <a href="oanda.htm">Oanda</a> / <a href="fxcm.htm">FXCM</a> 
+/ <a href="mt4plugin.htm">MT4</a> etc for learning how to connect to your broker 
+and which assets are available. The 3 most frequent reasons for connection failure 
+are <span class="Highlight">wrong login data</span> (user / password), a 
+<span class="Highlight">wrong account type</span> (demo / real) or a 
+<span class="Highlight">server outage</span> (at 
+weekends or holidays). The reasons of the errors are printed in the Zorro log or 
+in the case of MT4 or MT5, in their &quot;Experts Log&quot;. </p>
+<p class="faq_answer"><span class="faq_question"><span class="question">Q. I want 
+to trade with the MT4 bridge, but my MT4 has <strong class="Highlight">no Zorro EA</strong>.</span><br>
+A. You must install the MT4 bridge as described <a href="mt4plugin.htm">here</a>.
+</span>Please also read the <span class="faq_question">
+<a href="mt4plugin.htm#remarks">remarks </a>that cover all known issues of MT4 
+or MT5</span>. </p>
+<p class="faq_answer"><span class="faq_question"><span class="question">Q. Ok, I 
+have now installed the </span>
+</span><span class="Highlight">MT4 bridge</span><span class="faq_question"><span class="question">, but 
+it doesn't work. I'm getting error messages.<br></span>A. 
+You made a mistake with the installation. <span class="faqquestion">
+<span style="font-size:10.0pt;
+font-family:&quot;Arial&quot;,sans-serif;mso-fareast-font-family:Calibri;mso-fareast-theme-font:
+minor-latin;mso-ansi-language:EN-US;mso-fareast-language:EN-US;mso-bidi-language:
+AR-SA">Just try again. You will succeed when you follow the instructions in the 
+manual &#8211; we guarantee that. </span></span>You can repeat the 
+MT4/MT5 bridge installation as often as you want. <br>&nbsp; Since installing the bridge involves 
+an unzip and copy operation on 
+your PC, some basic PC knowledge is required.
+</span>If you cannot do it, ask someone for assistance. Alternatively, oP group offers a
+<a href="https://zorro-project.com/docs.php" target="_blank">Zorro/MT4 installation</a> service 
+by remote access. This, also, has 100% success guarantee.</p><p class="faq_answer"><span class="faq_question"><span class="question">Q. I've 
+set the <strong class="Highlight">stop loss</strong> in my script, but it does 
+not appear in my broker's trading platform.</span><br>A. Zorro won't tell your 
+broker about your stop loss unless you set it up to do so. Read under
+<a href="stop.htm">StopFactor</a> how a stop loss differs in Zorro and in your 
+broker's platform.</span>&nbsp; </p>
+<!--P class="faq_answer"><span class="faq_question"><span class="question">Q. I want to trade with the MT4 bridge, but Zorro keeps telling me that </span></span><span class="faq_question"><span class="question">I should check the account number.</span><br>
+A. You must enter your correct MT4 account number in Zorro's <strong>User</strong> field, otherwise Zorro can not connect. </span>If you're using the 'demo only' bridge, make also sure that you really got a demo account (displayed as &quot;Demo Account&quot; in the MT4 title bar). <span class="faq_question">Some MT4 versions confuse demo and real accounts when they were directly opened with the broker - read  about solutions for this and other MT4 issues <a href="mt4plugin.htm#remarks">here</a>. </span></P>
+<P class="faq_answer"><span class="faq_question"><span class="question">Q. I want to trade with the MT4 bridge, but when I click [</span></span><span class="tast">Trade</span><span class="faq_question"><span class="question">], Zorro tells me that something is wrong with an asset.</span><br>
+A. </span><span class="faq_question">Some  MT4 servers need a long time for the first access to previously unused assets. If the asset data is not available at start of the strategy, it will stop with an <a href="errors.htm">Error 54</a> or <a href="errors.htm">Error 55</a> message. Just click [<span class="tast">Trade</span>] again - inbetween the server normally had enough time to upload the missing asset. If your system trades several assets, you may need to click [<span class="tast">Trade</span>] repeatedly until all assets have been loaded (you only need to do that once). Read more about MT4 issues <a href="mt4plugin.htm#remarks">here</a>. </span> </P-->
+<p class="faq_answer"><span class="question">Q. My system does 
+<strong class="Highlight">not close 
+trades</strong> in live trading. It worked in the backtest.<br></span>A. In the 
+US, NFA compliant brokers do not allow you to close Forex trades (no joke!); 
+instead you have to 
+open a position in opposite direction. Zorro handles this 
+automatically in <a href="mode.htm#nfa">NFA compliant mode</a>.</p>
+<p class="faq_answer"><span class="question">Q. My live system does often
+<strong class="Highlight">not open or close trades</strong> - - and I'm sure that I don't live in the 
+US.<br></span>A. There can be many reasons for rejecting orders, but unless 
+you're trading outside market hours or with a very illiquid asset, it won't happen often. You can see the reason of the rejection in the 
+error message from your broker (such as: &quot;No tradeable price&quot;). If an open order failed, 
+<a href="buylong.htm">enterLong</a> / <a href="buylong.htm">enterShort</a> return
+<strong>0</strong>. </p>
+<p class="faq_answer"><span class="question">Q. Where is the 
+<strong class="Highlight">live chart</strong>? 
+How can I visualize the price curve and the trade entries and exits in real time?
+<br></span><span class="headline"><b><span class="question"></span></b></span>A. 
+For live charts use your broker's trading platform. Zorro is purely for automated 
+trading and does not display live charts, aside from the profit curve on the 
+trade status page. </p>
+<p class="faq_answer"><span class="question">Q. The candles on the Zorro chart are
+<strong class="Highlight">different to the candles</strong> that I see on the 
+MT4 chart, and the 
+prices in the Zorro log are also different to the open/close prices in my platform 
+log.&nbsp; <br></span><span class="headline"><b><span class="question"></span>
+</b></span>A. Zorro displays generally ask prices in logs and on charts, while some 
+platforms, f.i. MT4, display bid prices on charts by default. And your live chart 
+is usually based on a different time zone and thus will display different candles. 
+Check the help file of your platform about switching it to ask prices and UTC time 
+zone.</p>
+<p class="faq_answer"><span class="question">Q. How can I 
+<strong class="Highlight">change the sounds</strong> 
+for entering, winning, or losing trades?<br></span><span class="headline"><b>
+<span class="question"></span></b></span>A. In your Zorro folder you'll find sound 
+files with names like &quot;<strong>win.wav</strong>&quot;, &quot;<strong>loss.wav</strong>&quot;, 
+or &quot;<strong>open.wav</strong>&quot;. Replace them with your own sounds in
+<strong>.wav</strong> format. Use <strong>Mute</strong> in <strong>Zorro.ini</strong> 
+for permanently disabling sounds.</p>
+<p class="faq_answer"><span class="question">Q. I run the same strategy with the 
+same broker on two different VPS. Both versions </span><span class="Highlight">open <strong>different trades</strong></span><span class="question"> 
+although they should be identical.<br></span><span class="headline"><b>
+<span class="question"></span></b></span>A. With the same broker and account you'll 
+normally get rather similar trades. But they are not necessarily identical, especially 
+not with Forex or CFDs since any trade entry and exit is based on a individual price 
+quote. Differences in latency can also contribute to different trade entries and 
+exits.</p>
+<p class="faq_answer"><span class="question">Q. I'm a Zorro S owner and use two 
+Zorros for trading two strategies on the same real money account. In the moment 
+when the second Zorro logs in to the account, the first one 
+<strong class="Highlight">logs off</strong> 
+and the server indicator gets red.<br></span><span class="headline"><b>
+<span class="question"></span></b></span>A. Your account is limited to a single 
+session by your broker. Contact your broker and ask for activation of multiple sessions 
+for your account.</p>
+<p class="faq_answer"><span class="question">Q. Sometimes my system opens </span>
+<span class="Highlight">trades 
+that <strong>do not appear</strong></span><span class="question"> in the broker platform.<br></span>A. Those are
+<a href="lots.htm">phantom trades</a>, used for equity curve trading or for
+<a href="hedge.htm">virtual hedging</a>. You can distinguish them in the log from 
+real trades by their winged brackets <strong>{..}</strong> as opposed to the rectangular 
+brackets <strong>[..]</strong> of real trades. </p>
+<!--p class="faq_answer"><span class="question">Q. I trade with FXCM, but the equity 
+displayed by Zorro <strong>differs from the equity</strong> displayed in the Trading 
+Station. <br></span>A. This is a known bug of the <a href="fxcm.htm">FXCM trading 
+API</a>. It does not matter for the strategy, but you can let Zorro calculate the 
+equity instead by using the <a href="zsystems.htm#ini">BrokerPatch</a> setting in 
+the <strong>Z.ini</strong> file. </p-->
+<!--P class="faq_answer"><span class="question">Q. Help! The cat hit the &quot;Stop&quot; slider of my Z5 system. This closed all my grid trades and heavily reduced my account balance. <br>
+</span> A. Grid trades have normally negative value, so accidentally closing trades can cause a substantial loss. You can compensate this by opening the same trades again immediately after closing. Open all trades in your trade platform at the same lot sizes, and give them profit targets 25 pips away from their original entry prices. These trades are then running in parallel and will cover the loss when their profit targets are hit.</P-->
+<h3 class="headline">&nbsp;</h3>
+<a class="button" href="javascript:window.location.href = 'https://manual.conitec.net' + window.location.href.slice(window.location.href.lastIndexOf('/'))">&#9658; 
+latest version online</a>
+
+</body>
+
+</html>

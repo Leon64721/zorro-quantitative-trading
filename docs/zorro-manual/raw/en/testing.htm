@@ -1,0 +1,447 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+<title>Test mode</title>
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link href="css.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+.ms-contemp-main {
+	border-style: none;
+}
+.ms-contemp-even {
+	font-weight: normal;
+	color: black;
+	border-left-style: none;
+	border-right: 2.25pt solid white;
+	border-top: 2.25pt solid white;
+	border-bottom-style: none;
+	background-color: #CCCCCC;
+}
+.ms-contemp-odd {
+	font-weight: normal;
+	color: black;
+	border-left-style: none;
+	border-right: 2.25pt solid white;
+	border-top: 2.25pt solid white;
+	border-bottom-style: none;
+	background-color: #F2F2F2;
+}
+.auto-style1 {
+	font-size: smaller;
+}
+.auto-style2 {
+	text-align: center;
+}
+</style>
+<meta content="width=device-width,initial-scale=1" name="viewport">
+<link rel="canonical" href="https://zorro-project.com/manual/en/testing.htm">
+</head>
+
+<body>
+
+<h1>Testing a Strategy. Reality Check </h1>
+<p><a href="https://zorro-project.com/backtest.php" target="_blank">Backtesting</a> has the purpose to determine an 
+algo trading strategy's profit expectancy in live trading. For this, the strategy 
+is usually simulated with a couple years of historical 
+price data. However, a simple backtest will often not produce a result that is 
+representative for live trading. Aside from overfitting and other sorts of bias, 
+backtest results can differ from live trading in various ways that should be taken into account. 
+Before going live, the final backtest should be verifies with a
+<span class="Highlight">Reality Check</span> (see below). Testing a strategy is not a trivial task.</p>
+<h3>Testing a script with Zorro </h3>
+<p>For quickly testing a strategy, select the script and click [<span class="tast">Test</span>]. 
+Depending on the strategy, a test can be finished in less than a second, or it can 
+run for several minutes on complex portfolio strategies. If the test requires strategy 
+parameters, capital allocation factors, or machine-learned trade rules, they must 
+be generated in a [<span class="tast">Train</span>] run before. Otherwise Zorro 
+will complain with an error message that the parameters or factors file or the rules 
+code was not found. </p>
+<p>If the script needs to be recompiled, or if it contains any global or static 
+variables that must be reset, click [<span class="tast">Edit</span>] before [<span class="tast">Test</span>]. 
+This also resets the sliders to their default values. Otherwise the static and global 
+variables and the sliders keep their settings from the previous test run. </p>
+<p>If the test needs historical price data that is not found, you'll get an error 
+message. Price data can be downloaded from your broker, from Internet price providers, 
+or from the Zorro download page. It is stored in the <strong>History</strong> folder 
+in the way described under <a href="history.htm">Price History</a>. If there is 
+no price data for all years in the test period, you can substitute the missing years 
+manually with files of length <strong>0</strong> to prevent the error message. No 
+trades take then place during those years. </p>
+<p>All test results - performance report, log file, trade list, chart - are stored 
+in the <strong>Log</strong> folder. If the folder is cluttered with too many old 
+log files and chart images, every 60 days a dialog will pop up and propose to automatically 
+delete files that are older than 30 days. The minimum number of days can be set 
+up in the <a href="ini.htm">Zorro.ini</a> configuration file. </p>
+<p>The test simulates a real broker account with a given leverage, spread, rollover, 
+commission, and other asset parameters. By default, a microlot account with 100:1 
+leverage is simulated. If your account is very different, get your actual account 
+data from the broker API as described under <a href="history.htm">Download</a>, 
+or enter it manually. Spread and rollover costs can have a large influence on backtest 
+results. Since spread changes from minute to minute and rollover from day to day, 
+make sure that they are up to date before backtesting. Look up the current values 
+from the broker and enter them in the <a href="account.htm">asset list</a>. Slippage, 
+spread, rollover, commission, or pip cost can alternatively be set up or calculated 
+in the <a href="spread.htm">script</a>. If the <a href="mode.htm#nfa">NFA</a> flag 
+is set, either directly in the script or through the <a href="account.htm">NFA parameter</a> 
+of the selected account, the simulation runs in NFA mode.</p>
+<p>The test is not a real historical simulation. It rather simulates trades as if 
+they were entered today, but with a historical price curve. For a real historical 
+simulation, the spread, pip costs, rollovers and other asset and account parameters 
+had to be changed during the simulation according to their historical values. This 
+can be done by script when the data is available, but it is normally not recommended 
+for strategy testing because it would add artifacts to the results. </p>
+<p>The test runs through one or many <a href="numsamplecycles.htm">sample cycles</a>, 
+either with the full historical price data set, or with out-of-sample subsets. It 
+generates a number of equity curves that are then used for a
+<a href="montecarlo.htm">Monte Carlo Analysis</a> of the strategy. The optional
+<a href="numwfocycles.htm">Walk Forward Analysis</a> applies different parameter 
+sets for staying always out-of-sample. Several switches (see <a href="mode.htm">
+Mode</a>) affect test and data selection. During the test, the progress bar indicates 
+the current position within the test period. The lengths of its green and red area 
+display the current gross win and gross loss of the strategy. The result window 
+below shows some information about the current profit situation, in the following 
+form:</p>
+<p><span class="taste">&nbsp;3:&nbsp;&nbsp;&nbsp;+8192 +256&nbsp;&nbsp;214/299&nbsp;&nbsp;</span></p>
+<table border="0">
+	<tr align="center" bgcolor="lightgrey">
+		<td><b><strong>3:</strong></b></td>
+		<td>Current oversampling cycle (if any).</td>
+	</tr>
+	<tr bgcolor="white">
+		<td><strong>+8192</strong></td>
+		<td>Current balance. </td>
+	</tr>
+	<tr bgcolor="lightgrey">
+		<td><strong>+256</strong></td>
+		<td>Current value of open trades. </td>
+	</tr>
+	<tr bgcolor="white">
+		<td><strong>214</strong></td>
+		<td>Number of winning trades so far. </td>
+	</tr>
+	<tr bgcolor="lightgrey">
+		<td><strong>/299</strong></td>
+		<td>Number of losing trades so far. </td>
+	</tr>
+</table>
+<p>After the test, a <a href="performance.htm">performance report</a> and - if the
+<a href="mode.htm">LOGFILE</a> flag was set - a log file is generated in the
+<strong>Log</strong> folder. If [<span class="tast">Result</span>] is clicked or 
+the <a href="mode.-htm">PLOTNOW</a> flag was set, the trades and equity chart is 
+displayed in the <a href="chart.htm">chart viewer</a>. are displayed. The message 
+window displays the annual return (if any) in percent of the required capital, and 
+the average profit/loss per trade in pips. Due to different pip costs of the assets, 
+a portfolio strategy can have a negative average pip return even when the annual 
+return is positive, or vice versa. </p>
+<p><img height="241" src="../images/testing1.png" width="315"> </p>
+<p>The content of the message window can be copied to the clipboard by double clicking 
+on it. The following performance figures are displayed (for details see
+<a href="performance.htm#ar">performance report</a>): </p>
+<table border="0" class="ms-contemp-main">
+	<!-- fpstyle: 34,011110000 -->
+	<tr bgcolor="lightgrey">
+		<td class="ms-contemp-even"><strong>Median AR</strong></td>
+		<td class="ms-contemp-even">Annual return by Monte Carlo analysis at 50% 
+		confidence level. </td>
+	</tr>
+	<tr bgcolor="white">
+		<td class="ms-contemp-odd"><strong>Profit</strong></td>
+		<td class="ms-contemp-odd">Total profit of the system in units of the account 
+		currency. </td>
+	</tr>
+	<tr bgcolor="lightgrey">
+		<td class="ms-contemp-even"><strong>MI</strong></td>
+		<td class="ms-contemp-even">Average monthly income of the system in units 
+		of the account currency. </td>
+	</tr>
+	<tr bgcolor="white">
+		<td class="ms-contemp-odd"><strong>DD</strong></td>
+		<td class="ms-contemp-odd">Maximum balance-equity drawdown in percent of 
+		the preceding peak.</td>
+	</tr>
+	<tr bgcolor="lightgrey">
+		<td class="ms-contemp-even"><strong>Capital</strong></td>
+		<td class="ms-contemp-even">Required initial capital.</td>
+	</tr>
+	<tr bgcolor="white">
+		<td class="ms-contemp-odd"><strong>Trades</strong></td>
+		<td class="ms-contemp-odd">Number of trades in the backtest period. </td>
+	</tr>
+	<tr bgcolor="lightgrey">
+		<td class="ms-contemp-even"><strong>Win</strong></td>
+		<td class="ms-contemp-even">Percentage of winning trades. </td>
+	</tr>
+	<tr bgcolor="white">
+		<td class="ms-contemp-odd"><strong>Avg</strong></td>
+		<td class="ms-contemp-odd">Average profit/loss of a trade in pips.</td>
+	</tr>
+	<tr bgcolor="lightgrey">
+		<td class="ms-contemp-even"><strong>Bars</strong></td>
+		<td class="ms-contemp-even">Average number of bars of a trade. Fewer bars 
+		mean less exposure to risk. </td>
+	</tr>
+	<tr bgcolor="white">
+		<td class="ms-contemp-odd"><strong>PF</strong></td>
+		<td class="ms-contemp-odd">Profit factor, gross win divided by gross loss.
+		</td>
+	</tr>
+	<tr bgcolor="lightgrey">
+		<td class="ms-contemp-even"><strong>SR</strong></td>
+		<td class="ms-contemp-even">Sharpe ratio. Should be &gt; 1 for good strategies.
+		</td>
+	</tr>
+	<tr bgcolor="white">
+		<td class="ms-contemp-odd"><strong>UI</strong></td>
+		<td class="ms-contemp-odd">Ulcer index, the average drawdown percentage. 
+		Should be &lt; 10% for ulcer prevention. </td>
+	</tr>
+	<tr bgcolor="lightgrey">
+		<td class="ms-contemp-even"><strong>R2</strong></td>
+		<td class="ms-contemp-even">Determination coefficient, the equity curve 
+		linearity. Should be ideally close to 1.</td>
+	</tr>
+	<tr bgcolor="white">
+		<td class="ms-contemp-odd"><strong>AR</strong></td>
+		<td class="ms-contemp-odd">Annual return per margin and drawdown, for non-reinvesting 
+		systems with leverage.</td>
+	</tr>
+	<tr>
+		<td class="ms-contemp-even"><strong>ROI</strong></td>
+		<td class="ms-contemp-even">Annual return on investment, for non-reinvesting 
+		systems without leverage.</td>
+	</tr>
+	<tr bgcolor="lightgrey">
+		<td class="ms-contemp-odd"><strong>CAGR</strong></td>
+		<td class="ms-contemp-odd">Compound annual growth rate, for reinvesting 
+		systems.</td>
+	</tr>
+</table>
+<p>For replaying or visually debugging a script bar by bar, click [<span class="tast">Replay</span>] 
+or [<span class="tast">Step</span>] on the chart window.&nbsp;</p>
+<h3>Backtest result files <a name="files"></a></h3>
+<p>When the <a href="mode.htm">LOGFILE</a> flag is set, a backtest generates the 
+following files for examining the trade behavior or for further evaluation:</p>
+<ul>
+	<li><strong>Log\[Scriptname]<em>[Asset]</em>_test.log </strong>- the main log 
+	file with all recorded trade events as described under <a href="trading.htm">
+	Trading</a>, and all <a href="printf.htm">print</a> output. Prices in the log 
+	are ask prices. The higher the <a href="verbose.htm">Verbose</a> setting, the 
+	more details are recorded. </li>
+	<li><strong>Log\[Scriptname]<em>[Asset]</em>_pnl.csv</strong> - a spreadsheet 
+	with the daily equity or balance curve, depending on the <a href="mode.htm">
+	BALANCE</a> flag. </li>
+	<li><strong>Log\[Scriptname]<em>[Asset]</em>_plot.csv</strong> - a spreadsheet 
+	with all curves generated with <a href="plot.htm">plot</a> commands. </li>
+	<li><strong>Data\[Scriptname]<em>[Asset]</em>_pnl.dbl</strong> - a file containing 
+	a <strong>double</strong> array with the daily balance or equity values in ascending 
+	date order. Used for calculating the <a href="ddscale.htm">Cold Blood Index</a> 
+	in live trading.</li>
+	<li><strong>Log\[Scriptname]<em>[Asset]</em>_trd.csv</strong> - a spreadsheet with a list of all trades 
+	during the simulation period, their details and their results. </li>
+	<li><strong>Log\[Scriptname]<em>[Asset]</em>.txt</strong> - the
+	<a href="performance.htm">performance report</a>. </li>
+	<li><strong>Log\[Scriptname]<em>[Asset]</em>.png</strong> - an image file with 
+	a histogram or chart, depending on <a href="plot.htm">plot</a> commands. Prices 
+	in the chart are ask prices.</li>
+	<li><strong>[Webfolder]\[Scriptname]<em>[Asset]</em>.htm</strong> - a web page 
+	displaying the trade status at the end of the simulation, as described under
+	<a href="trading.htm">Trading</a>.</li>
+</ul>
+<p>The messages in the log file are described under <a href="log.htm">Log</a>. 
+The other file formats are described under <a href="export.htm">Export</a>. The 
+optional asset name is appended when the script does not call
+<a href="asset.htm">asset</a>, but uses the asset selected with the scrollbox. When
+<a href="numtotalcycles.htm">LogNumber</a> is set, the number is appended to the 
+script name, which allows comparing logs from the current and previous backtests. 
+When [<span class="tast">Result</span>] is clicked, the chart image and the
+<strong>plot.csv</strong> are generated again for the asset selected from the scrollbox. 
+The chart is opened in the chart viewer and the log and performance report are opened 
+in the editor. </p>
+<a name="m1t1"></a>
+<h3>Backtest resolution - TICKS, M1, T1, HFT.. </h3>
+<p>The required price history resolution, and whether using <a href="mode.htm">TICKS</a> 
+mode or not, depends on the strategy to be tested. As a rule of thumb, the duration 
+of the shortest trade should cover at least 20 ticks in the historical data. For 
+long-term systems, such as options trading or portfolio rebalancing, 
+<a href="loadhistory.htm">daily data</a> 
+as provided from STOOQ&#8482; or Quandl&#8482; is normally sufficient. Day trading 
+strategies need historical data with 1-minute resolution (M1 data, <strong>.t6</strong> 
+files). If entry or exit limits are used and the trades have only a duration of 
+a few bars, <a href="mode.htm">TICKS</a> mode is mandatory. Scalping strategies 
+that open or close trades in minutes require high resolution price history - normally 
+T1 data in <strong>.t1</strong> or <strong>.t2</strong> files. For backtesting
+<a href="fill.htm">high frequency trading</a> systems that must react in microseconds, 
+you'll need order book or BBO (<strong>B</strong>est <strong>B</strong>id and
+<strong>O</strong>ffer) price quotes with exchange time stamps, available from data 
+vendors in CSV or <a href="nxcore.htm">NxCore</a> tape format. An example of how 
+to test a HFT system can be found on
+<a href="http://www.financial-hacker.com/hacking-hft-systems/" target="_blank">Financial 
+Hacker</a>. For testing with T1, BBO, or NxCore data, <a href="restrictions.htm">
+Zorro S</a> is required. </p>
+<p>The file formats are described in the <a href="history.htm">Price History</a> 
+chapter. In T1 data, any tick represents a price quote. In M1 data, a tick represents 
+one minute. Since the price tick resolution of <strong>.t1</strong> and <strong>
+.t6</strong> files is not fixed, <strong>.t1</strong> files can theoretically contain 
+M1 data and <strong>.t6</strong> files can contain T1 data - but normally it's the 
+other way around. Since many price quotes can arrive in a single second, T1 data 
+usually contains a lot more price ticks than M1 data. Using T1 data can have a strong 
+effect on the backtest realism, especially when the strategy uses short time frames 
+or small price differences. Trade management functions (<a href="trade.htm">TMFs</a>) 
+are called more often, the <a href="tick.htm">tick</a> function is executed more 
+often, and trade entry and exit conditions are simulated with higher precision.</p>
+<p>For using T1 historical price data, set the <a href="script.htm">History</a> 
+string in the script to the ending of the T1 files (for instance <strong>History 
+= &quot;*.t1&quot;</strong>). Zorro will then load its price history from
+<strong>.t1</strong> files. Make sure that you have downloaded the required files 
+before, either with the <strong>Download</strong> script, or from the Zorro download 
+page. Special streaming data formats such as NxCore can be directly read by script 
+with the <a href="price.htm">priceQuote</a> function. An example can be found under
+<a href="fill.htm">Fill mode</a>. </p>
+<p>Naturally, backtests take longer and require more memory with higher data resolution 
+and longer test periods. Memory limits can restrict the number of assets and backtest 
+years especially with <strong>.t1</strong> or <strong>.t2</strong> backtests in
+<strong>TICKS</strong> mode. For reducing the resolution of T1 data and thus the 
+memory requirement and backtest time, increase <a href="ticktime.htm">TickTime</a>. 
+Differences of T1 backtests and M1 backtests can also arise from the different composition 
+of M1 ticks on the broker's price server, causing different trade entry and exit 
+prices. For instance, a trade at 15:00:01 would be entered at the first price quote 
+after 15:00:01 with T1 data, but at the close of the 15:00:00 candle with M1 data. 
+If this difference is relevant for your strategy, test it with T1 data. The
+<a href="ticktime.htm">TickFix</a> variable can shift historical ticks forward or 
+backward in time and test their effect on the result.</p>
+<h3>Backtest results vs live results<a id="overfitting" name="overfitting"></a><a name="bias"></a></h3>
+<p>Zorro backtests are as close to real trading as possible, especially when the
+<a href="mode.htm">TICKS</a> flag is set, which causes trade functions and stop, 
+profit, or entry limits to be evaluated at every price tick in the historical data. 
+Theoretically a backtest generates the same trades and thus returns the same profit 
+or loss as live trading during the same time period. In practice there can and often 
+will be deviations, some intentional and desired, some unwanted. Differences of backtest 
+and live trading are caused by the following effects:</p>
+<ul>
+	<li><span class="Highlight">Data cleaning.</span> In live trading, price quotes 
+	arrive in irregular intervals and with outliers. M1 oder D1 historical data 
+	is normally 'cleaned' by removing outliers and combining price quotes to candles. 
+	This can cause intrabar price differences, for instance with the
+	<a href="price.htm">price()</a> function that calculates the average of price 
+	ticks within a bar. Indicators derived from cleaned prices can trigger a trade 
+	signal in the backtest where it didn't occur in live trading, or vice versa. 
+	If a strategy is very senstive to tiny intrabar price differences, the backtest 
+	should be performed with raw, unfiltered T1 data.</li>
+	<li><span class="Highlight">Data resolution</span>. The 'granularity' of M1 
+	or D1 backtests can greatly affect the backtest result when it depends on small 
+	entry-exit distances, as with binary trading or scalping systems. Due to the 
+	priority of <a href="stop.htm">Stop</a> over <a href="stop.htm">TakeProfit</a>, 
+	backtests will be too pessimistic when both exits are hit within the same historical 
+	candle. Pending trades that open and close inside the same candle can even produce 
+	totally meaningless test results. For determining the influence of granularity, 
+	run a test with and without <a href="mode.htm">TICKS</a> and compare the results. 
+	If it's more than slightly different, use T1 data for backtesting (or better, 
+	rework your strategy for making it more robust). As a rule of thumb, systems 
+	that react sensitive on price differences less than a 5-minute candle should 
+	use T1 data - preferably from different sources - for a realistic backtest.</li>
+	<li><span class="Highlight">Data sources</span>. Forex, CFD, and cryptocurrency 
+	price data is different with any broker and any exchange. If your strategy depends 
+	on small price differences, use always in backtests the data from the same source 
+	that you use for live trading. Historical data can also have different trading 
+	hours than live data. For instance, CFDs can get live price ticks around the 
+	clock, but some historical data sets only contain ticks during market hours. 
+	This produces a different number of bars in live and in historical data. In 
+	this case use the <a href="barperiod.htm">TimeFrame</a> or
+	<a href="mode.htm">NOSHIFT</a> mechanisms for skipping bars outside market hours.
+	</li>
+	<li><span class="Highlight">Transaction costs</span>. In live trading, account 
+	parameters such as <a href="spread.htm">spread</a>, <a href="spread.htm">rollover</a>, 
+	and <a href="spread.htm">commission</a> can change all the time and affect trade 
+	profits and losses. In the backtest those parameters have normally fixed values 
+	that are set up by the script or the account model in the
+	<a href="account.htm">asset list</a>. It is normally desired to run backtests 
+	with constant parameters, in order to not add artifacts to the result. Normally 
+	the current account parameter values should be used for more accurately predicting 
+	the strategy performance, even when they were very different in the historical 
+	period covered by the backtest.</li>
+	<li><span class="Highlight">Slippage</span>. It is <a href="spread.htm">simulated</a> 
+	in the backtest, but can nevertheless be very different in live trading dependent 
+	on market liquidity or external events. </li>
+	<li><span class="Highlight">Rejected orders.</span> In live trading, opening 
+	or closing of trades can be rejected by the broker for various reasons that 
+	don't happen in the backtest (see <a href="errors.htm">Warning 075</a>),
+	</li>
+	<li><span class="Highlight">Account differences</span>. If the backtest simulates 
+	an account model with a different leverage or lot size, trades can be skipped 
+	in the test where they are entered in live trading, or vice versa. Different 
+	margins and leverages can greatly affect the performance. See
+	<a href="account.htm">asset list</a> for details about the account models.
+	</li>
+</ul>
+<h3>Backtest bias and reality checks</h3>
+<p>The likeliness that the strategy exploits real inefficiencies depends on in which 
+way it was developed and optimized. There are many factors that can cause bias in 
+the test result. <span class="Highlight">Curve fitting bias</span><strong> </strong>affects all strategies that 
+use the same price data set for test and training. It generates largely too optimistic 
+results and the illusion that a strategy is profitable when it isn't. 
+<span class="Highlight">Peeking 
+bias</span> is caused by letting knowledge of the future affect the trade algorithm. 
+An example is calculating trade volume with capital allocation factors (<a href="optimalf.htm">OptimalF</a>) 
+that are generated from the whole test data set (always test at first with fixed 
+lot sizes!). </p>
+<p><span class="Highlight">Data mining bias</span> (or <span class="Highlight">selection bias</span>) 
+is caused not only by data mining, but already by the mere act of developing a strategy 
+with historical price data, since you will selecting the most profitable algorithm 
+or asset dependent on test results. <span class="Highlight">Trend bias</span> affects all 'asymmetric' 
+strategies that use different algorithms, parameters, or capital allocation factors 
+for long and short trades. For preventing this, <a href="detrend.htm">detrend</a> 
+the trade signals or the trade results. <span class="Highlight">Granularity bias</span> is a consequence 
+of different price data resolution in test and in real trading. For reducing it, 
+use the <a href="mode.htm">TICKS</a> flag, especially when a <a href="trade.htm">
+trade management function</a> is used. <span class="Highlight">Sample size bias</span> is the 
+effect of the test period length on the results. Values derived from maxima and 
+minima - such as <a href="performance.htm">drawdown</a> - are usually proportional 
+to the square root of the number of trades. This generates more pessimistic results 
+on large test periods. </p>
+<p>Before going live, always verify backtest results with a
+<span class="Highlight">Reality Check</span>. It can detect many source of bias. 
+For details please read
+<a href="https://financial-hacker.com/why-90-of-backtests-fail/" target="_blank">
+Why 90% of Backtests Fail</a>. Zorro comes with scripts for two tests:</p>
+<p>A <span class="Highlight">WFO profile</span> determines the dependence of the strategy on 
+the WFO cycles number or length. It should be used for any walk-forward 
+optimized trading system. For this, open the <strong>WFOProfile.c</strong> 
+script, and enter the name of your strategy script in the marked line. In your script, 
+uncomment the NumWFOCycles or WFOPeriod setting and - it it's a portfolio - 
+disable all components except the component you want to test, and disable 
+reinvesting. Then start <strong>
+WFOProfile.c</strong> in [<span class="tast">Train</span>] mode. If the 
+resulting profile shows large random result differences as in the image below, 
+something is likely wrong with that trading system. </p>
+<p class="auto-style2">
+<img height="405" src="../images/WFOProfile_placebo.png" width="701"><br>
+<span class="auto-style1">Suspicious WFO profile. Don't trade this live.</span></p>
+<p>The <span class="Highlight">Montecarlo Reality Check</span> determines 
+whether a positive backtest result was caused by a real edge of the trading 
+system, or just by over-training or randomness. Open the <strong>MRC.c</strong> 
+script and enter the name of your strategy script in the marked line. In your script - it it's a portfolio - 
+disable all components except the component you want to test, and disable 
+reinvesting. Then start <strong>
+MRC.c</strong> in [<span class="tast">Train</span>] mode for trained strategies, 
+or in [<span class="tast">Test</span>] mode when the strategy has no trained 
+models, rules, or parameters. At the end you'll get histogram and a
+<span class="Highlight">p-value</span>. It gives the probability that the 
+backtest result is untrustworthy. The p-value should be well below 5%-10% for a 
+valid backtest.&nbsp; </p>
+<p class="auto-style2">
+<img height="405" src="../images/MRC_placebo.png" width="701"><br>
+<span class="auto-style1">Lucky backtest result (black line). Don't trade this 
+live, either.</span></p>
+<p>&nbsp;</p>
+<h3>See also:</h3>
+<a href="training.htm">training</a>, <a href="trading.htm">trading</a>,
+<a href="mode.htm">mode</a>, <a href="performance.htm">performance</a>,
+<a href="chart.htm">debugging</a>, <a href="trouble.htm">troubleshooting</a>
+<p>&nbsp;</p>
+<a class="button" href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))">&#9658; 
+latest version online</a>
+
+</body>
+
+</html>

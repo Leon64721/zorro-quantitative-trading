@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+<title>slope, line</title>
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/slope.htm">
+</head>
+
+<body>
+
+<h2>slope (int Type, vars Data, int TimePeriod) : var </h2>
+Connects the two highest maxima or lowest minima of the <strong>Data</strong> series 
+within the given <strong>TimePeriod</strong>, and returns the slope of the connecting 
+line. This function can be used to calculate traditional divergence or convergence 
+(triangle) patterns.
+<h3>Parameters:</h3>
+<table border="0">
+	<tr>
+		<td><strong>Type</strong></td>
+		<td><strong>PEAK</strong> for a line through the maxima, <strong>VALLEY</strong> 
+		for a line through the minima.</td>
+	</tr>
+	<tr>
+		<td><strong>Data</strong></td>
+		<td>Time <a href="series.htm">series</a>.</td>
+	</tr>
+	<tr>
+		<td><strong>TimePeriod</strong></td>
+		<td>Period to be examined.</td>
+	</tr>
+</table>
+<h3>Returns:</h3>
+Slope (movement per bar, positive for a rising, negative for a falling line), or
+<strong>0</strong> if the series is flat or no minima/maxima are found.
+<h3>Modifies</h3>
+<strong>rMin, rMinIdx</strong> - value and bar offset of the lower connecting point.<br>
+<strong>rMax, rMaxIdx</strong> - value and bar offset of the higher connecting point.<br>&nbsp;
+<h2>line (int Offset) : var </h2>
+Returns the value of a straight line at the bar with the given
+<strong>Offset</strong> (0 = current bar). The line is defined as connecting the
+<strong>rMin</strong>, <strong>rMinIdx</strong>, <strong>rMax</strong>, <strong>
+rMaxIdx</strong> coordinates which can be either set directly, or generated with
+<strong>slope</strong> or with <a href="transform.htm">Min/Max/MinIndex/MaxIndex</a>.&nbsp;
+<h3 style="left: -6px; top: 0px">Parameters:</h3>
+<table border="0">
+	<tr>
+		<td><strong>Offset</strong></td>
+		<td>Bar offset</td>
+	</tr>
+</table>
+<h3>Returns:</h3>
+Value of the line at the given <strong>Offset</strong>.
+<h3>Remarks:</h3>
+<ul>
+	<li>The <strong>slope</strong> function is used for the <a href="ta.htm">
+	Support</a>, <a href="ta.htm">Resistance</a>, and <a href="ta.htm">
+	Divergence</a> indicators.</li>
+	<li>Source code in <strong>indicators.c</strong>.</li>
+</ul>
+<h3>Example:</h3>
+<pre>var HighsDn[10] = { 1,1,1,2,1,1,1,3,1,1 }; <em>// mind the reverse order</em>
+var LowsUp[10] = { 1,1,1,0.7,1,1,1,0.5,1,1 };
+
+function main()
+{
+  printf(&quot;\nSlope dn %.3f&quot;,slope(PEAK,HighsDn,10));
+  printf(&quot;\nSlope up %.3f&quot;,slope(VALLEY,LowsUp,10));
+}
+</pre>
+<h3>See also:</h3>
+<a href="crossover.htm">crossOver</a>, <a href="crossover.htm">crossUnder</a>,
+<a href="rising.htm">rising</a>, <a href="rising.htm">falling</a>,
+<a href="peak.htm">peak</a>, <a href="peak.htm">valley</a>, <a href="fuzzy.htm">
+peakF</a>, <a href="fuzzy.htm">valleyF</a>, <a href="predict.htm">predict</a><p>
+<a class="button" href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))">&#9658; 
+latest version online</a> </p>
+
+</body>
+
+</html>

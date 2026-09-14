@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>while, do</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/while.htm">
+</head>
+
+<body link="#000000" vlink="#333333" alink="#666666">
+<h2>while (comparison) { instructions... }</h2>
+<h2>do { instructions... } while (comparison) 
+  
+; </h2>
+
+		Repeats 
+  all instructions between the winged brackets as long as the <a href="comparisions.htm">comparison</a> between
+		the round brackets is true or evaluates to non-zero. This repetition
+		of instructions is called a <span>loop</span>. The <b>while</b> statement
+		evaluates the comparison at the begin, the <b>do..while</b> statement at the end of each repetition.
+		<h3>Remarks:</h3>
+		
+<ul>
+          <li>If you
+		  want the <span>loop</span> to run forever, simply use the
+		  value <span>1</span> for
+		  the comparison - 1 is always true. </li>
+          <li>Loops can be prematurely terminated by <a href="acrt-break.htm">break</a>, and prematurely repeated
+            by <a href="acrt-continue.htm">continue</a>.</li>
+          <li>  The winged brackets can be omitted when the loop contains only one
+          instruction. </li>
+</ul>
+        <h3>Example:</h3>
+		
+<pre>
+x = 0;
+while(x &lt; 100) <em>// repeat while x is lower than 100</em>
+  x += 1; 
+</pre>
+<h3>See also:</h3>
+<span class="links"><a href="if.htm">if</a>, <a href="for.htm">for</a>, </span><a href="acrt-break.htm">break</a>, <a href="acrt-continue.htm">continue</a>, <a href="comparisions.htm">comparisons</a>, <a href="loop.htm">loop</a><p>
+  <a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+  version online</a>
+</p>
+</body>
+</html>

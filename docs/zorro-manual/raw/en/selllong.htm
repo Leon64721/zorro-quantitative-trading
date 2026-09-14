@@ -1,0 +1,128 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>exitLong, exitShort</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/selllong.htm">
+</head>
+
+<body>
+<h2>exitLong(<em>string Filter, var Price, int Lots</em>)</h2>
+<h2>exitShort(<em>string Filter, var Price</em><em>, int Lots</em>)</h2>
+Exits all long or all short trades that match the given filter condition (see 
+below), at market or at a given price limit, until the given number of lots is closed.
+<h2>exitTrade(TRADE*<em>,</em> <em>var Price, int Lots</em>): int </h2>
+Exits a particular trade completely or partially at market or at a given price limit. Returns 0 when the order failed, otherwise nonzero.
+<h2>cancelTrade(int Id)</h2>
+<h2>cancelTrade(TRADE*)</h2>
+Cancels an open trade with a particular identifier 
+or <strong>TRADE*</strong> pointer without sending a close order to the broker and without 
+modifying the statistics 
+or the balance. If the trade was still open on the broker side, it will become 
+orphaned and is not anymore under Zorro control. Use this function for removing an externally closed position that was not transmitted to Zorro, 
+for instance on <a href="mode.htm#nfa">NFA</a> compliant accounts. 
+<!--h2>cancelOrder(int Id)</h2>
+<h2>cancelOrder(TRADE*)</h2>
+Cancels any remaining unfilled amount of the <a href="trademode.htm">GTC</a> trade with 
+the given identifier 
+or <strong>TRADE*</strong> pointer. <strong>Id == 0</strong> cancels all open 
+orders on the account. The <a href="brokercommand.htm">DO_CANCEL</a> command 
+must be supported by the broker API. -->
+<h3>Parameters:</h3>
+		<table border="0">
+          <tr>
+            <td><strong>Filter</strong></td>
+            <td> <strong>0</strong> or <strong>&quot;&quot;</strong> for closing all 
+			trades with the current algo/asset component (default).<br>An <a href="algo.htm">algo 
+			name</a> for closing all trades with the given algo and the current 
+			asset.<br>An <a href="asset.htm">asset name</a> for closing all trades with 
+			the given asset and the current algo.<br><strong>&quot;c&quot;</strong> for 
+			closing all <a href="contract.htm">call</a> trades with the current 
+			component.<br><strong>&quot;p&quot;</strong> for closing all
+			<a href="contract.htm">put</a> trades with the current component.<br>
+			<strong>&quot;cp&quot;</strong> for closing all <a href="contract.htm">
+			contract</a> trades with the current component.<br><strong>&quot;u&quot;</strong> 
+			for closing all underlying trades with the current component.<br>
+			<strong>&quot;*&quot;</strong> for closing all trades with the current asset.<br>
+			<strong>&quot;**&quot;</strong> for closing all trades. </td>
+          </tr>
+          <tr>
+            <td><strong>TRADE*</strong></td>
+            <td> A pointer to the trade to be closed, or <strong>ThisTrade</strong> for closing the current trade in a <a href="fortrades.htm">trade enumeration loop</a>. </td>
+          </tr>
+          <tr>
+            <td><strong>Price</strong></td>
+            <td>Optional price or distance to current price for selling the position, or <strong>0</strong> 
+			(default) for selling at market. A positive price or price distance constitutes an exit stop, a negative price is an exit limit (similar to <a href="stop.htm">Entry</a>). An exit stop closes the position when the asset price is at or worse than the given price, like a stop loss; an exit limit closes the position when the asset price is at or better than the given price, like a profit target.</td>
+          </tr>
+          <tr>
+            <td><strong>Lots</strong></td>
+            <td>Optional number of lots to be closed, or <strong>0</strong> 
+			(default) for 
+			closing all open lots. Partially closing trades is not available 
+			with some brokers. </td>
+          </tr>
+          <tr>
+            <td><strong>Id</strong></td>
+            <td>Identifier of the trade to be cancelled. Either the full number as assigned by the broker, or the last 4 digits as displayed in the Zorro window. </td>
+          </tr>
+        </table>
+	           <h3>Remarks:</h3>
+        <ul>
+			<li>Optional parameters can be omitted. F.i. <strong>exitLong()</strong> exits all long positions with the current asset and algo at market. 
+			</li>
+			<li>Long trades exit at the best bid price, short trades at the best 
+			ask price from the order book or the historical data. The real exit 
+			price in live trading can differ from the current ask or bid price 
+			due to slippage.</li>
+			<li>If an <span class="Highlight">exit stop</span> or 
+			<span class="Highlight">exit limit</span> is given, the position is closed as soon as the target price is reached, no matter how long it takes. An exit stop overrides a more distant 
+			<a href="stop.htm">stop loss</a>, an exit limit overrides a previous 
+			<a href="stop.htm">profit target</a>. The <strong>exitLong/Short</strong> function can thus be used to tighten the stop loss or to change the profit target of open trades 
+		  (see example).</li>
+			<li>Before closing a trade, check the <span class="Highlight">business hours</span> of the broker. Not all assets can be traded 24 hours per day. Trading is 
+			normally disabled during <a href="barmode.htm">weekends</a>, during the <a href="lookback.htm">LookBack</a> period, or in the inactive periods of
+		  <a href="barperiod.htm">TimeFrame</a>, <a href="mode.htm"><strong>SKIP</strong></a>, or <strong><a href="dataslope.htm">DataSplit</a></strong>. </li>
+			<li>If the market was closed when exiting a trade in [<span class="tast">Test</span>] or [<span class="tast">Train</span>] 
+			mode, the trade will be closed when the market opens again.</li>
+			<li>If the close <span class="Highlight">order is rejected</span> by the broker in [<span class="tast">Trade</span>] 
+			mode, the reason - such as<strong> &quot;Outside market hours&quot;</strong> - is printed to the log and the message window. 
+			With the 
+			<a href="mt4plugin.htm">MT4/5 bridge</a> the reason can be seen in the MT4/5 Experts Log. The number of rejected orders is stored in the 
+			<a href="winloss.htm">NumRejected</a> variable. There can be several reasons for 
+		  the broker API to refuse closing a trade, for instance NFA compliance, 
+		  FIFO compliance, a wrong asset name, an invalid trade size, a closed market, or no liquidity. Check the requirements of your 
+		  account and set the <a href="mode.htm">NFA</a> flag and 
+			<a href="hedge.htm">Hedge</a> mode accordingly. <br>&nbsp; Zorro will 
+			<span class="Highlight">repeat</span> a rejected close order in increasing time intervals until it is 
+			eventually executed (except for <a href="contract.htm">options</a> or when 
+			<a href="stop.htm">OrderLimit</a> is used). If the position can not be closed after 
+			4 working days, Zorro will assume that is was already externally 
+			closed and remove the trade from its internal list. If the market is not open due to holidays or weekend, a message 
+			<strong>&quot;Can't exit at weekends&quot;</strong> 
+			is printed and the position is closed as soon as the market opens 
+			again. </li>
+			<li>Some cryptocurrency brokers deduct their commission from an open 
+			position, and subsequently reject the close order due to 			<span class="Highlight">insufficient funds</span>. In that case make 
+			sure to have a small additional amount on the account for covering 
+			the commissions.</li>
+			<li>When no <strong>price</strong> was given, pending positions - positions either immediately entered before, or positions with an 
+			<a href="stop.htm">entry</a> stop or limit - are also closed.</li>
+			<li>The price at which the trade is closed in the backtest can be affected with the 
+			<a href="fill.htm">Fill</a>  variable. </li>
+			<li>If an <a href="order.htm">order</a> function is defined in the script, it is called with 
+			<strong>2</strong> for the first argument and the <strong>TRADE*</strong> pointer for the second argument at the moment when the sell order is sent to the broker. This function can f.i. open a message box for manually exiting the trade, or control another broker's user interface. 
+			</li>
+        </ul>
+		<h3>Example:</h3> 
+        <pre>exitShort(0,1.234); <em>// exits all short trades with the current Algo/Asset as soon as the price is at or above 1.234 (exit stop).</em></pre>
+        <h3>See also:</h3>
+  <a href="buylong.htm">enterLong/</a><a href="buylong.htm">Short</a>, 
+<a href="stop.htm">Entry</a>, <a href="hedge.htm">Hedge,</a>
+ <a href="fill.htm">Fill</a>
+ <p>     <a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+  version online</a>
+</p>
+</body>
+</html>

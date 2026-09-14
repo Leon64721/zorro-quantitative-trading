@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>modf</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<style type="text/css">
+<!--
+-->
+</style>
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/modf.htm">
+</head>
+<body>
+<h2>modf(var x, var* p): var</h2>
+Splits <strong>x</strong> in a fractional and integer part, each of which has the same sign as <strong>x</strong>.
+<h3>Parameters:</h3>
+<strong>x</strong> - any number.<br><strong>p</strong> - <strong>var</strong> 
+pointer for the integer part.<br>
+<h3>Returns:</h3>
+Fractional part of <strong>x</strong>. Integer part is stored in *p.
+<h3>Speed:</h3>
+Fast
+<h3>Example:</h3>
+<pre>var y;
+var x = modf(123.456,&amp;y); <em>// x = 0.456 and y = 123.0 </em></pre>
+<h3>See also:</h3>
+<A href="abs.htm"></A><a href="floor.htm">floor</a>,
+<a href="floor.htm">ceil</a>, <a href="fmod.htm">fmod</a>, <a href="avar-Ref.htm">%</a>
+ <p>            <a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+    version online</a>
+</p>
+
+</body>
+</html>

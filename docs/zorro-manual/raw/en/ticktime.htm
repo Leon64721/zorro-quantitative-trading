@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>TickTime, TickSmooth</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/ticktime.htm">
+</head>
+
+<body>
+<h1>Time and latency</h1>
+<h2>TickTime</h2>
+Minimum time in ms per asset between processing price ticks, in live trading and in backtests 
+with tick-based (<strong>.t1</strong> or <strong>.t2</strong>) historical data. Default = <strong>500*sqrt(BarPeriod)</strong>, i.e. 
+500 ms 
+for a strategy with 1-minute bars. When multiple price quotes arrive during that time 
+or are read from historical data, intrabar functions (<a href="trade.htm">TMF</a> or <a href="tick.htm">tick</a>) 
+are excuted only with the most recent price quote. Set this to a higher value for 
+faster backtests and for saving memory. Set it to a smaller value for reducing latency 
+and for backtesting with higher time resolution. 
+By setting <strong>TickTime</strong> to a negative value, <a href="trade.htm">TMF</a> and <a href="tick.htm">tick</a> functions run at 
+the given time period in live trading even when no new price quote is arrived. 
+For affecting tick-based backtests, set this variable before loading the price history 
+with <a href="asset.htm">asset()</a>.
+<h2>TockTime</h2>
+Time in ms between subsequent <a href="tick.htm">tock</a> calls in trade mode (default 
+= <strong>60000 ms</strong>). <h2>TickFix</h2>
+Time delay to be added to or subtracted from ticks in historical data, in ms (default <strong>
+= 0</strong>). Can be used for compensating inaccuracies in timestamps that lead to backtest differences between T1 and M1 ticks, or for determining the 
+effect of small tick time differences on the result of the strategy. Set this variable before 
+loading the price history by calling <a href="asset.htm">asset()</a>.
+<h2>MaxRequests</h2>
+Maximum number of requests per second to the broker API (<strong>0.1</strong> ..
+<strong>1000</strong>; default = <strong>0</strong> 
+= no limit). Price and account requests, orders and status requests, and
+<a href="brokercommand.htm">brokerCommand</a> calls are limited to this rate. 
+If it is exceeded, further requests are automatically delayed. Automatically set up 
+at login by broker plugins that support the <strong>GET_MAXREQUESTS</strong> 
+command. If the broker has a request limit and several Zorros are trading 
+simultaneously on the same connection, reduce the request rate accordingly.
+<h2>MaxTicks</h2>
+Maximum number of ticks per request when downloading historical data. Automatically set up 
+at login by broker plugins that support the <strong>GET_MAXTICKS</strong> 
+command. If the broker has a download limit and several Zorros are downloading 
+data simultaneously on the same connection, reduce the number of ticks accordingly.
+<h2>UpdateTime</h2>
+Time in ms for retrieving price updates for all used assets in live trading 
+mode; determines the maximum possible speed of high-frequency strategies. The more assets are used and the slower the broker API, the broker server, 
+or the Internet connection, the higher is the time needed for updating all 
+assets.
+<h3>Type:</h3>
+<strong>int</strong><br>&nbsp;
+<h3>Remarks:</h3>
+<ul>
+	<li>Price requests can be temporarily disabled with the 
+	<a href="brokercommand.htm">SET_PRICETYPE</a> command or the
+	<a href="assetmode.htm">NOPRICE</a> flag.</li>
+	<li><strong>TickTime</strong> cannot be greater than <strong>BarPeriod</strong> 
+	or <strong>TockTime</strong>, and should not be smaller than <strong>
+	UpdateTime</strong>. </li>
+	<li>Backtests with historical data in <strong>.t6</strong> or <strong>.t8</strong> 
+	format are not affected by <strong>TickTime</strong>. The time between ticks 
+	is then given by the data resolution.</li>
+</ul>
+<h3>Example:</h3>
+<pre>function run()
+{
+  TockTime = 1000; <em>// run the tock function any second</em>
+  ...
+}</pre>
+<h3>See also:</h3>
+<a href="mode.htm">Mode</a>, <a href="run.htm">run</a>, <a href="tick.htm">tick</a>, <a href="tick.htm">tock</a>,
+<a href="outlier.htm">Outlier</a>
+<p>&nbsp;</p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>call</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+.auto-style1 {
+	text-align: right;
+}
+</style>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/call.htm">
+</head>
+
+<body>
+<h2>call (int Event, void* Function, int P1, var P2) </h2>
+Put a user-supplied function on a scheduler in order to to be exeuted at a certain event. Two parameters,
+<strong>int</strong> and <strong>var</strong>, can optionally be passed to the 
+function.
+<h3>Parameters:</h3>
+<table>
+	<tr>
+		<td><strong>Event</strong></td>
+		<td>Run the function: <strong>1</strong> when the system is idle,
+		<strong>2</strong> at the next incoming tick, <strong>4</strong> after 
+		closing a trade, <!--<strong>3</strong> at the 
+		next closing of a trade, --><strong>+16</strong> repeat at any event. </td>
+	</tr>
+	<tr>
+		<td><strong>Function</strong></td>
+		<td>Pointer to a script-defined function, with no, 1, or 2 parameters.</td>
+	</tr>
+	<tr>
+		<td><strong>P1</strong></td>
+		<td><strong>int</strong> variable to be passed to the function as first 
+		parameter, or <strong>0</strong> when the function has no parameters.</td>
+	</tr>
+	<tr>
+		<td><strong>P2</strong></td>
+		<td><strong>var</strong> variable to be passed to the function as second 
+		parameter, or <strong>0</strong> when the function has no second 
+		parameter.</td>
+	</tr>
+</table>
+<h2>event (int Event, void* Function): void* </h2>
+Assign a user-supplied function to a particular event, thus replacing its 
+default function. Functions with the same 
+name as the event are automatically assigned by default at script start. <h3>Parameters:</h3>
+<table>
+	<tr>
+		<td><strong>Event</strong></td>
+		<td><strong>1</strong> <a href="objective.htm">objective</a>, <strong>2</strong>
+		<a href="evaluate.htm">evaluate</a>, <strong>3</strong>
+		<a href="tick.htm">tick</a>, <strong>4</strong> <a href="tick.htm">tock</a>,
+		<strong>5</strong> <a href="trade.htm">manage</a>, <strong>6</strong>
+		<a href="panel.htm">click</a>, <strong>7</strong> <a href="advisor.htm">
+		neural</a>, <strong>8</strong> <a href="bar.htm">bar</a>, <strong>9</strong>
+		<a href="tick.htm">callback</a>, <strong>10</strong> <a href="objective.htm">parameters</a>,
+		<strong>11</strong> <a href="errors.htm">error</a>, <strong>12</strong><br>
+		<a href="evaluate.htm">cleanup</a>.</td>
+	</tr>
+	<tr>
+		<td><strong>Function</strong></td>
+		<td>Pointer to a script-defined function, or <strong>0</strong>  for 
+		disabling a previous event function.</td>
+	</tr>
+	</table>
+<h3>Returns:</h3>
+Previously assigned event function.
+<h3>Remarks:</h3>
+<ul>
+	<li><strong>call(1, ...)</strong> can be used to prevent that the called 
+	function interrupts other functions or I/O operations. This is useful f.i. for 
+	changing the asset, entering 
+	a trade, or 
+	writing to a file in a <a href="panel.htm">click</a> or <a href="tick.htm">
+	callback</a> function.</li>
+	<li>After the first run, <strong>Function</strong> normally removes itself from the scheduler. 
+	If
+	<strong>16</strong> was added to <strong>Event</strong>, the 
+	function stays on the scheduler and keeps being called at the given event.</li>
+	<li>Up to 16 functions can be placed on the scheduler at the same time. They 
+	run in the order of their placement. </li>
+</ul>
+<h3>Example:</h3>
+  <pre>void calltest(int a,var b)
+{
+  printf(&quot;\nCalled with (%i,%.2f) at bar %i&quot;,a,b,Bar);
+}
+
+void run()
+{
+  ...
+  call(1,calltest,2,3.45);
+  ...
+}</pre>
+  <h3>See also:</h3>
+  
+  &nbsp;<a href="run.htm">run</a>, <a href="lock.htm">lock</a>, 
+<a href="quit.htm">quit</a>, <a href="version.htm">version</a>, 
+<a href="sleep.htm">wait</a>, <a href="panel.htm">click</a>
+<p class="auto-style1">     <a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+  version online</a>
+</p>
+</body>
+</html>

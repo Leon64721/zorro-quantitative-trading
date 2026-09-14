@@ -1,0 +1,1882 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+<title>The Z algo trading strategies</title>
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<meta content="Overview of 10 algorithmic trading system included in the Zorro project. 
+The Z systems trade with Forex, CFDs, stocks, ETFs, and cryptocurrencies. They are prefabricated, ready-to-run algo trading strategies 
+with a wide range of algorithms. " name="Description">
+<link href="css.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+.ms-contemp-main {
+	border-style: none;
+}
+.ms-contemp-tl {
+	font-weight: bold;
+	color: black;
+	border-left-style: none;
+	border-right: 2.25pt solid white;
+	border-top: 2.25pt solid white;
+	border-bottom-style: none;
+}
+.ms-contemp-left {
+	font-weight: normal;
+	color: black;
+	border-left-style: none;
+	border-right: 2.25pt solid white;
+	border-top: 2.25pt solid white;
+	border-bottom-style: none;
+}
+.ms-contemp-top {
+	font-weight: bold;
+	color: black;
+	border-left-style: none;
+	border-right: 2.25pt solid white;
+	border-top: 2.25pt solid white;
+	border-bottom-style: none;
+}
+.ms-contemp-even {
+	font-weight: normal;
+	color: black;
+	border-left-style: none;
+	border-right: 2.25pt solid white;
+	border-top: 2.25pt solid white;
+	border-bottom-style: none;
+	background-color: #CCCCCC;
+}
+.ms-contemp-odd {
+	font-weight: normal;
+	color: black;
+	border-left-style: none;
+	border-right: 2.25pt solid white;
+	border-top: 2.25pt solid white;
+	border-bottom-style: none;
+	background-color: #F2F2F2;
+}
+.Stil1 {
+	font-weight: bold;
+}
+.auto-style2 {
+	background-color: #CCCCCC;
+}
+</style>
+<meta content="width=device-width,initial-scale=1" name="viewport">
+<link href="https://zorro-project.com/manual/en/export.htm" rel="canonical">
+</head>
+
+<body>
+
+<h1>The 'Z' Systems: Trading for Regular Income <a name="income">
+</a></h1>
+Before starting automated trading with one of the included Z systems on a real money 
+account, please <span class="Highlight">read this page from top to bottom</span>. 
+Make sure that you understood how the system principially works, how it is set up, 
+and how it is adjusted to your capital, broker, and account. At first, some 
+<span class="Highlight">general 
+rules</span> for achieving a regular trading income.
+<ul>
+	<li><span class="Highlight">Trade only what you understand.</span> Know your algo trading method, the market inefficiency on which it is based, 
+	and what risk and performance you can expect. <span class="Highlight">Test it</span> 
+	under different spread and margin settings to avoid nasty surprises. Stay away 
+	from systems with 'secret algorithms'&nbsp; - it's easy to set up a 'secret system' and fake an impressive 
+	'live equity curve' that's even verified on MyFxBook&#8482;. You can read up 
+	about that in the <strong><a href="links.htm" target="_blank">Black 
+	Book</a></strong> .<br>&nbsp;&nbsp;</li>
+	<li><span class="Highlight">Have enough capital.</span> The minimum capital 
+	for a modest regular income is in the $30k range. The free Zorro version 
+	limits your account size to $15k (see <a href="restrictions.htm">restrictions</a>), 
+	but you need not all capital in the broker account - you can keep it in a bank 
+	account and quickly remargin when necessary. Have at 
+	least twice the <a href="performance.htm">required capital</a> from the performance 
+	report at your disposal. Most brokers allow depositing funds by credit card 
+	in a few minutes. <br>&nbsp;</li>
+	<li><span class="Highlight">Expect long periods under water.</span> Many 
+	successful strategies 
+	have strong equity fluctuations with short profit bursts and long sidewards 
+	and downwards periods. Check out the <strong>Z5</strong> <a href="#z5">live profit curve</a> 
+	below 
+	to learn what you can expect. The <a href="performance.htm#totaldown">down time</a> 
+	of strategies - the time when the account is lower than it was before - is 
+	usually in the <strong>80%-90% area</strong>. Which means that when you 
+	start with $1000, there's a high probability that you are at $900 some days later. If you panic and pull out, the money is gone. 
+	This is a well known phenomenon 
+	in financial investment, and causes people to lose money even with highly 
+	profitable funds. Better grit your teeth and sit it out.<br>&nbsp; </li>
+	<li><span class="Highlight">Do not get greedy.</span> When your profits accumulate, 
+	you'll be tempted to likewise increase the investment. Don't. Follow the <span class="Highlight">square root rule</span>: 
+	For every doubling of your account, increase the invested margin by factor
+	<strong>1.4</strong>, not by factor <strong>2</strong>. Increasing the 
+	investment too fast can wipe out any account. In the 
+	Black Book you can find the formulas for the optimal amount to withdraw for 
+	a regular passive income. <br>&nbsp;&nbsp; </li>
+	<li><span class="Highlight">Pull out in time.</span><strong> </strong>Examine 
+	the trading results regularly - at strategy start, daily - and compare them 
+	with the <a href="performance.htm">test performance</a>. If your strategy strongly 
+	deviates from the expected performance, don't hesitate and stop it. It might 
+	be expired due to a permanent change of the market. This happened in fact 
+	already with 
+	several Z systems, like Z3 and Z5.<br>&nbsp;&nbsp;What is a &quot;strong deviation&quot;? 
+	The simplest way is comparing the current drawdown with the <strong>Required 
+	Capital</strong> from the backtest - when you lost noticeably more, you should 
+	stop. A better way is checking the <a href="ddscale.htm">Cold Blood Index</a> 
+	of your system that's daily updated by the Z systems and printed on the status 
+	page and the log.<br>&nbsp;</li>
+	<li><span class="Highlight">Do not tamper with the strategy.</span> It's hard 
+	to see profits dwindle in a drawdown. But don't forget that the strategy is 
+	already optimized, tested, and verified (or at least, it should). Manual 
+	intervention cannot improve it, but will make it worse. Only exception is when you know of some 
+	upcoming event - such as bizarre statements from a president - with great impact on open positions. In that 
+	case it makes sense to get out of the market or use the Z system's <strong>Panic</strong> 
+	slider for locking current profits.<br>&nbsp;</li>
+</ul>
+<h1>The Z Systems: Overview</h1>
+<p>The Z systems are prefabricated, ready-to-run algo trading strategies for a 
+wide range of markets. They are not based on 'technical analysis', but on solid 
+math. Their algorithms can be found in the
+<a href="links.htm#black">Black Book</a>, some on the
+<a href="https://financial-hacker.com/" target="_blank">Financial Hacker</a> website. 
+To avoid misunderstandings: these systems should not be your only reason of using Zorro! We 
+encourage you to learn developing your own systems. Strategy development is not 
+trivial: If a market inefficiency were very easy to spot and exploit, many trading 
+systems would do that, and the inefficiency would be leveled quickly. This effect keeps 
+the number of successful strategies in check and gives programmers a large advantage 
+over traders. </p>
+<p>The Z systems (with exception of
+<a href="https://zorro-project.com/rangerz.php" target="_blank">RangerZ</a>) are <span class="Highlight">relatively simple</span>. None of the 
+basic algorithms exceeds 25 lines of code. Still, all systems underwent a solid 
+development and test process with the methods described in the Black Book. Early 
+versions of some systems had been in live trading for almost a decade; all results so far 
+have been consistent with the simulation. We're constantly observing the systems 
+and modify or replace expired algorithms with any Zorro update.</p>
+<p>When using a Z system, do not do it blindly, but learn system development, understand 
+how it works, and eventually replace it with your own system. There are
+<strong class="Highlight">five good reasons</strong> why you should prefer a self-programmed 
+system. Firstly, you have the opportunity to program better strategies than the 
+simple Z systems. Secondly, systems traded by a lot of people don't work 
+very well - price curves, especially of minor stocks, can be noticeably affected even 
+by a small number of traders. Third, you can face the inevitable drawdowns in a 
+more relaxed manner when you know precisely what the systems do and why. Fourth, 
+you'll gain experience with programming and statistics - valuable skills not only 
+for trading, but in general life. And finally, you cannot blame us for losses.
+</p>
+<!--p>If you're now <span class="Highlight">discouraged </span>of the Z systems, but 
+not ready yet to develop your own systems, enter a course such as the
+<a href="https://zorro-project.com/docs.php">Algo Bootcamp</a>. There you can not 
+only learn strategy development in depth, but also get some more proven ready-to-trade 
+systems including their theory, algorithms, and source code.</p-->
+<p>The Z systems cover a large range of trade methods, win rates, and budgets. 
+Performance metrics as 
+of <strong>June 2026</strong>:</p>
+<p>
+<table border="0" class="ms-contemp-main" style="width: 95%">
+	<!-- fpstyle: 34,011111100 -->
+	<tr align="center">
+		<td class="ms-contemp-tl" width="10%">
+		<div align="left">
+			System</div>
+		</td>
+		<td class="ms-contemp-top" style="width: 10%">
+		<div align="left">
+			Z1+</div>
+		</td>
+		<td class="ms-contemp-top" width="10%">
+		<div align="left">
+			Z2+</div>
+		</td>
+		<td class="ms-contemp-top" width="10%">
+		<div align="left">
+			Z12+</div>
+		</td>
+		<td class="ms-contemp-top" width="10%">
+		<div align="left">
+			Z6+</div>
+		</td>
+		<td class="ms-contemp-top" width="10%">
+		<div align="left">
+			Z7</div>
+		</td>
+		<td class="ms-contemp-top" width="10%">
+		<div align="left">
+			Z8</div>
+		</td>
+		<td class="ms-contemp-top" width="10%">
+		<div align="left">
+			Z9</div>
+		</td>
+		<td class="ms-contemp-top" width="10%">
+		<div align="left">
+			Z13</div>
+		</td>
+		<td class="ms-contemp-top" width="10%">
+		<div align="left">
+			RangerZ</div>
+		</td>
+	</tr>
+	<tr>
+		<td class="ms-contemp-left"><strong>License</strong></td>
+		<td class="ms-contemp-even" style="width: 10%"><strong>free</strong></td>
+		<td class="ms-contemp-even"><strong>free</strong></td>
+		<td class="ms-contemp-even"><a href="restrictions.htm">Zorro S</a></td>
+		<td class="ms-contemp-even"><a href="restrictions.htm">Zorro S</a></td>
+		<td class="ms-contemp-even"><a href="restrictions.htm">Zorro S</a></td>
+		<td class="ms-contemp-even"><strong>free</strong></td>
+		<td class="ms-contemp-even"><a href="restrictions.htm">Zorro S</a></td>
+		<td class="ms-contemp-even"><a href="restrictions.htm">Zorro S</a></td>
+		<td class="ms-contemp-even">
+		<a href="https://zorro-project.com/rangerz.php" target="_blank">Separate</a></td>
+	</tr>
+	<tr>
+		<td class="ms-contemp-left">
+		<div align="left">
+			<strong>Traded Assets </strong> </div>
+		</td>
+		<td class="ms-contemp-odd" style="width: 10%">
+		<div align="left">
+			Forex, CFDs </div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			Forex, CFDs </div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			Forex, CFDs </div>
+		</td>
+		<td class="ms-contemp-odd">
+		<p align="left">Forex</p>
+		</td>
+		<td class="ms-contemp-odd">
+		<p align="left">Forex</p>
+		</td>
+		<td class="ms-contemp-odd">
+		<p align="left">Stocks, ETFs</p>
+		</td>
+		<td class="ms-contemp-odd">
+		<p align="left">ETFs, Treasure </p>
+		</td>
+		<td class="ms-contemp-odd">
+		<p align="left">Options </p>
+		</td>
+		<td class="ms-contemp-odd">
+		<p align="left">Indexes, BTC </p>
+		</td>
+	</tr>
+	<tr>
+		<td class="ms-contemp-left">
+		<div align="left">
+			<strong>Method </strong> </div>
+		</td>
+		<td class="ms-contemp-even" style="width: 10%">
+		<div align="left">
+			Trend <br>following </div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			Mean <br>reversion</div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			Anti-<br>correlation</div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			Excess<br>volatility </div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			Price <br>patterns </div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			Portfolio<br>rotation</div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			Portfolio<br>rotation</div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			Combo <br>selling</div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			Multiple</div>
+		</td>
+	</tr>
+	<tr>
+		<td class="ms-contemp-left">
+		<div align="left">
+			<strong>Algorithm </strong> </div>
+		</td>
+		<td class="ms-contemp-odd" style="width: 10%">
+		<div align="left">
+			Spectral<br>analysis </div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			Spectral<br>analysis </div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			Spectral<br>analysis </div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			Adaptive <br>grid</div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			Machine <br>learning</div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			Markowitz <br>MVO </div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			Dual <br>momentum </div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			Volatility<br>filter </div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			Apex S portfolio </div>
+		</td>
+	</tr>
+	<tr>
+		<td class="ms-contemp-left">
+		<strong>Risk</strong></td>
+		<td class="ms-contemp-even" style="width: 10%">
+		High</td>
+		<td class="ms-contemp-even">
+		High</td>
+		<td class="ms-contemp-even">
+		High</td>
+		<td class="ms-contemp-even">
+		High</td>
+		<td class="ms-contemp-even">
+		High</td>
+		<td class="ms-contemp-even">
+		Moderate</td>
+		<td class="ms-contemp-even">
+		Moderate</td>
+		<td class="ms-contemp-even">
+		High</td>
+		<td class="ms-contemp-even">
+		High</td>
+	</tr>
+	<tr>
+		<td class="ms-contemp-left">
+		<div align="left">
+			<strong>Bar period </strong> </div>
+		</td>
+		<td class="ms-contemp-odd" style="width: 10%">
+		<div align="left">
+			1 hour</div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			1 hour </div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			1 hour </div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			by tick</div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			1 hour </div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			1 day </div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			1 day </div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			1 day </div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			1 hour </div>
+		</td>
+	</tr>
+	<tr>
+		<td class="ms-contemp-left">
+		<div align="left">
+			<strong>Avg Trade </strong> </div>
+		</td>
+		<td class="ms-contemp-even" style="width: 10%">
+		<div align="left">
+			1 day</div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			10 days </div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			2 days </div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			40 hours</div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			6 hours</div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			6 months</div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			6 months</div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			6 weeks</div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			12 hours</div>
+		</td>
+	</tr>
+	<tr>
+		<td class="ms-contemp-left">
+		<div align="left">
+			<strong>Rebalance
+			</strong> </div>
+		</td>
+		<td class="ms-contemp-odd" style="width: 10%">
+		<div align="left">
+			6 months</div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			6 months</div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			6 months</div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			12 months</div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			12 months</div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			7 weeks </div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			7 weeks </div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			6 weeks </div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			6 months </div>
+		</td>
+	</tr>
+	<tr>
+		<td class="ms-contemp-left">
+		<div align="left">
+			<strong>Max DD</strong></div>
+		</td>
+		<td class="ms-contemp-even" style="width: 10%">
+		<div align="left">
+			8 months</div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			8 months</div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			8 months</div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			6 months</div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			2 years</div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			1 year</div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			1 year</div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			1 year</div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			6 months</div>
+		</td>
+	</tr>
+	<tr>
+		<td class="ms-contemp-left">
+		<div align="left">
+			<strong>Annual<br>Return </strong> </div>
+		</td>
+		<td class="ms-contemp-odd" style="width: 10%">
+		<div align="left">
+			CR
+			100%</div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			CR
+			120%</div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			CR
+			160%</div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			CR 45%</div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			CR 65%</div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			CAGR 17%</div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			CAGR 25%</div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			CAGR 45%</div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			CR 320%</div>
+		</td>
+	</tr>
+	<tr>
+		<td class="ms-contemp-left">
+		<div align="left">
+			<strong>W/L</strong></div>
+		</td>
+		<td class="ms-contemp-even" style="width: 10%">
+		<div align="left">
+			1.3</div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			1.3</div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			1.3</div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			1.2</div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			1.2</div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			3</div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			9</div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			1.3</div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			1.4</div>
+		</td>
+	</tr>
+	<tr>
+		<td class="ms-contemp-left">
+		<div align="left">
+			<strong>R2*</strong></div>
+		</td>
+		<td class="ms-contemp-odd" style="width: 10%">
+		<div align="left">
+			0.86</div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			0.85</div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			0.96</div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			0.93</div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			0.88</div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			*</div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			*</div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			*</div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			0.98</div>
+		</td>
+	</tr>
+	<!--tr>
+		<td class="ms-contemp-left">
+		<strong>R2</strong></td>
+		<td class="ms-contemp-odd">
+		0.78</td>
+		<td class="ms-contemp-odd">
+		0.76</td>
+		<td class="ms-contemp-odd">
+		0.86</td>
+		<td class="ms-contemp-odd">
+		0.93</td>
+		<td class="ms-contemp-odd">
+		&nbsp;</td>
+		<td class="ms-contemp-odd">
+		0.69</td>
+		<td class="ms-contemp-odd">
+		&nbsp;</td>
+		<td class="ms-contemp-odd">
+		&nbsp;</td>
+	</tr-->
+	<!--tr>
+		<td class="ms-contemp-left">
+		<div align="left">
+			<strong>Win Rate</strong></div>
+		</td>
+		<td class="ms-contemp-even" style="width: 10%">
+		<div align="left">
+			42%</div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			52%</div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			47%</div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			65%</div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			42%</div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			62%</div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			73%</div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			44%</div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			40%</div>
+		</td>
+	</tr-->
+	<tr>
+		<td class="ms-contemp-left">
+		<div align="left">
+			<strong>Minimum<br>Capital</strong></div>
+		</td>
+		<td class="ms-contemp-even" style="width: 10%">
+		<div align="left">
+			2000 $</div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			2000 $ </div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			4000 $ </div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			1000 $ </div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			1000 $ </div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			5000 $ </div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			5000 $ </div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			9000 $ </div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			1000 $ </div>
+		</td>
+	</tr>
+	<tr>
+		<td class="ms-contemp-left">
+		<div align="left">
+			<strong>Monthly Income* </strong> </div>
+		</td>
+		<td class="ms-contemp-odd" style="width: 10%">
+		<div align="left">
+			150 $</div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			150 $</div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			600 $</div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			40 $</div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			40 $</div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			*</div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			*</div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			*</div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			200 $</div>
+		</td>
+	</tr>
+</table>
+<br>* with minimum capital, calculated for non-reinvesting systems only</p>
+<p>The metrics above have been 
+generated from a walk-forward analysis with the latest Zorro S version (32-bit), default capital, default 
+asset list, and <a href="hedge.htm">virtual hedging</a> enabled. For stock or ETF portfolios, 3% broker interest on margin is assumed. Using 
+smaller capital, no virtual hedging, or assets with lower leverage or higher spreads, 
+swaps, and commissions 
+reduces the perfomance. For instance, 25:1 leverage instead of 100:1 reduces the 
+annual return of the Z12+ system by 50%. 
+</p>
+<p>The Forex/CFD systems use a subset from the standard asset lists, selected 
+for robust returns and a balanced portfolio. You can remove, but not add assets. The Z systems with dedicated asset lists allow adding and 
+removing assets at your own risk. For early detecting deviations, we're running 
+all Z systems permanently on real money accounts. The Forex/CFD systems are 
+running on <a href="fxcm.htm">FXCM</a> accounts, the systems for 
+options, stocks and ETFs on <a href="ib.htm">IBKR</a> accounts. This has 
+historical reasons and is in no way a recommendation for a particular broker.</p>
+<p>The <span class="Highlight">Risk</span> of a system is estimated from equity curve 
+fluctuations and fundamental criteria. <span class="Highlight">Rebalance</span> 
+is the period after which the system should be rotated or should get newly 
+trained 
+parameters. <span class="Highlight">Annual Return</span> for not reinvesting 
+systems is the annualized Calmar Ratio (<strong>CR</strong>), the average annual profit divided by 
+normalized maximum drawdown plus maximum allocated margin. For 
+portfolio rotation systems that reinvest their profits in the backtest, it's the 
+<strong>CAGR</strong>, the annual account growth. <span class="Highlight">W/L</span> 
+is the <strong>profit factor</strong>, the net win divided by net loss. The
+<span class="Highlight">R2</span> coefficient is the similarity of the equity 
+curve to a straight upwards line (ideal = 1.0); it is a metric about the 
+stability under different market situations. Reinvesting systems have an exponential equity curve, and 
+thus no 
+fixed R2 coefficient and no fixed monthly return. </p>
+<p><span class="Highlight">Capital</span> is the initial capital for the backtest. You can set it up with 
+the <strong>Capital</strong> slider, up to the limit of the free Zorro version. 
+It is not recommended to trade with smaller capital, since then trades will be skipped 
+and the performance will decrease. Any strategy has therefore a lower limit 
+to the capital, depending on account leverage. On low-leverage accounts, determine 
+the required capital by backtesting. 
+There is also an upper limit to the capital: If you want to invest millions, you'll need 
+'iceberg' orders and special entry/exit mechanisms. Contact us in that case.</p>
+<p><span class="Highlight">Montly income</span> in the above table is the average 
+monthly return from a backtest with the given capital. For 
+strategies with rotation or reinvesting, such as Z8, Z9, Z13, the average 
+monthly income has not much 
+meaning since it will be higher at the end and lower at the begin of the 
+test period. For <strong class="Highlight">long-term 
+investment</strong>, the <strong>Z8</strong> or <strong>Z9</strong> systems are 
+probably the best suited since they have the lowest risk. The other Z systems have 
+higher annual returns, but accordingly higher risk, and can theoretically cause 
+a total loss of the invested capital. Many systems 
+have long drawdown periods that you can see in the equity 
+curves below. You're more likely to start in a drawdown than not. Be prepared for 
+that and do not invest what you can't afford to lose. </p>
+<p><strong>The Z systems will not start right away.</strong> 
+You need <span class="Highlight">historical data</span> for testing them. So if you 
+complain on the user forum about &quot;Z1 displays 'history data missing' errors&quot;, 
+we know that you have not read the manual! Stock trading systems load their data 
+from <strong>Stooq</strong>, so you need to enter your Stooq keyword in
+<a href="ini.htm">ZorroFix.ini</a>. For the Forex/CFD systems the historical data files can be downloaded 
+from the <a href="https://zorro-project.com/download.php" target="_blank">Zorro download 
+page</a> and unpacked into the <strong>History</strong> folder. After that, click 
+[<span class="tast">Test</span>]. If the systems had optimized parameters or 
+rules, they run a
+<span class="Highlight">walk-forward analysis</span>, otherwise a plain
+<span class="Highlight">backtest</span> for determining their historical performances 
+with the set <strong>Capital</strong> and <a href="account.htm">asset list</a>. 
+This can take several minutes especially with systems such as Z1, Z2, or Z12 that 
+run through several <a href="numsamplecycles.htm">oversampling</a> cycles. The walk-forward 
+analysis ends at a fixed date, the plain backtests end at the end of the history. 
+The meaning of the performance figures can be found under
+<a href="performance.htm">performance report</a>. </p>
+<p>For <strong class="Highlight">live trading</strong> the Z systems, you normally 
+first have to create an individual <a href="account.htm">asset list</a> with the 
+parameters and symbol names used by your broker (see below). The Z systems do not 
+automatically reinvest profits in live trading. The traded volume depends only on 
+the <strong>Capital</strong> slider and is unrelated to the account balance. For 
+reinvesting, increase the <strong>Capital</strong> slider once per month according 
+to accumulated profit (if any), and follow the <span class="Highlight">square root 
+rule</span> for reinvesting in high leverage forex and CFD systems. The <strong>
+InvestCalculator</strong> script can be used for determining the optimal investment 
+size. The Z systems use the <a href="mode.htm">ACCUMULATE</a> mechanism that allows 
+trading with very small capital exposure.</p>
+<p><strong class="Highlight">Training</strong> the Z systems is not necessary, 
+since we provide updates with new trained rules and parameters 
+with any Zorro update. For this reason, use <span class="Highlight">always the latest 
+Zorro release</span> when you trade a Z system. If you still want to train them 
+between updates, you'll 
+need Zorro S; see 'Tips &amp; Tricks' below.</p>
+<p>The Z systems can be adapted to your need as described below, but they are 
+not 
+available in source code. They are compiled executables 
+(<strong>*.x</strong> or <strong>*.dll</strong>). This is not because they would 
+use some secret trading system. On the contrary, the 
+algorithms are all published in the <a href="links.htm">Black Book</a> or 
+elsewhere. After reading the book, 
+you can easily write similar strategies, or hire our programming service to 
+write them for you. But if 
+we provided the source code, one could determine precisely when the strategies buy and when they 
+sell. It would then be easy to prey on Z system traders with fore-running methods. 
+For the same reasons, the strategies use a small random time offset in live trading, 
+so that they don't open positions all at the same time. </p>
+<p>The exception of the above restrictions is the <strong>
+<a href="https://zorro-project.com/rangerz.php" target="_blank">RangerZ</a></strong> 
+system, which can be adapted in all aspects and is available with full source 
+code. The above performance figures are from the Apex portfolio.</p>
+<p>The same Z system can produce <span class="Highlight"><strong>slightly different returns
+</strong></span>on different accounts, even with the same assets and the same broker. This is partially 
+caused by the above mentioned random offset, but mainly by different 
+start dates and different capital. Because the number of open trades is limited, 
+a different start date leads to a different trade history. Dependent on available 
+capital, trades are skipped. In the long term the returns will equalize, but in 
+short term they can be different.</p>
+<p>Due to the <a href="restrictions.htm">profit limit</a>, the
+<span class="Highlight">free Zorro version</span> allows to trade only one system 
+- either one of the Z strategies or a system of your own - on a real money account. 
+Z1, Z2, and Z8 are included in the free version. The other Z systems are included 
+in <a href="restrictions.htm">Zorro S</a>.</p>
+<h3>RangerZ</h3>
+<p>RangerZ is no part of the Z systems, but separately available. It is not a 
+strategy, but a strategy generator, based on Robert Pardo's
+<a href="https://zorro-project.com/rangerz.php">Ranger system</a> and the
+<a href="shell.htm">evaluation shell</a>. It can be completely customized. The 
+source code is available. </p>
+<p>&nbsp;<img height="405" src="../images/rz_apex.png" width="701"></p>
+<p>The above equity curve is from a walk-forward analysis with its <strong>Apex 
+L</strong> strategy portfolio on a simulated FXCM CFD account. Minimum position 
+size (1 lot, no reinvestment), trading indices und BTC/USD. </p>
+<h3>Z1+, Z2+, Z12+</h3>
+<p>Z12 is a portfolio of algorithm variants, based on <strong>chapters 3 and 4</strong> of the Black Book. 
+It conists of two sub-systems: Z1 algos trade on trend reversals, Z2 algos detect market cycles for trading against the 
+trend. The systems are intended for Forex/CFD brokers 
+with high leverage accounts. The algorithms are self-adapting to the market and 
+use an 'equtiy curve trading' mechanism for skipping unprofitable market periods. <strong><a href="optimalf.htm">OptimalF</a></strong> 
+factors distribute the capital among the components. Some of the algorithms control the 
+trade duration by moving the stop loss; this can cause the stop to move in both 
+directions. </p>
+<p>In 2026, Z12 has been modernized, converted to C++ and based on
+<a href="shell.htm">evaluation shell</a> algos. The new algos run on 
+different timeframes of 1, 2, and 4 hours. This has increased the annual return 
+and produced a smoother equity curve with smaller drawdowns.&nbsp; &nbsp;<!--p>The results from an <a href="numwfocycles">OOS test</a> with the parameters of the last cycle are stored in an additional factor file <strong>Z12oos.fac</strong> and used for further filtering the trades. This way, components are only traded when they have been profitable  both in walk forward analysis with historic parameters, as well as in the OOS test with real trading parameters. If this is not desired, delete <strong>Data\Z12oos.fac</strong> for not filtering trades.</p>
+<p>&nbsp;</p--></p>
+<p><img height="405" src="../images/z1perf.png" width="701"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Z1 
+equity curve</p>
+<!--p>The equity curve 
+above is from a walk-forward analysis on an Oanda US account with 100:1 leverage. 
+The small blue curve below the main chart is the equity curve of the first 
+sample run with the selected asset, here GBP/USD. For reducing the expiration risk 
+of single components, an <a href="lots.htm#phantom">equity curve trading</a> mechanism 
+is implemented. You can deactivate it with the <strong>Phantom</strong> flag (see 
+below). A table with the current algorithm states is displayed on the
+<a href="trading.htm#status">trade status page</a>: </p>
+<table style="font-weight: bold">
+	<tr>
+		<td><span class="Stil1">EUR/USD</span></td>
+		<td><span class="Stil1">VO:LS -198</span></td>
+		<td></td>
+		<td bgcolor="#00FF00"><span class="Stil1">HU:LS +68</span></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td><span class="Stil1">USD/CHF</span></td>
+		<td bgcolor="#00FF00"><span class="Stil1">VO:LS +726</span></td>
+		<td bgcolor="#FF0000"><span class="Stil1">LP: +549</span></td>
+		<td bgcolor="#FF0000"><span class="Stil1">HU:S +612</span></td>
+		<td bgcolor="#00FF00"><span class="Stil1">ES:LS +190</span></td>
+		<td bgcolor="#FF0000"><span class="Stil1">LS: +611</span></td>
+	</tr>
+	<tr>
+		<td><span class="Stil1">GBP/USD</span></td>
+		<td></td>
+		<td bgcolor="#00FF00"><span class="Stil1">LP:LS +610</span></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td><span class="Stil1">USD/CAD</span></td>
+		<td></td>
+		<td></td>
+		<td><span class="Stil1">HU:LS -108</span></td>
+		<td><span class="Stil1">ES:L -73</span></td>
+		<td bgcolor="#00FF00"><span class="Stil1">LS:L +821</span></td>
+	</tr>
+	<tr>
+		<td><span class="Stil1">USD/JPY</span></td>
+		<td bgcolor="#FF0000"><span class="Stil1">VO: +2400</span></td>
+		<td></td>
+		<td bgcolor="#FF0000"><span class="Stil1">HU: +1178</span></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td><span class="Stil1">AUD/USD</span></td>
+		<td><span class="Stil1">VO:S -82</span></td>
+		<td><span class="Stil1">LP:LS -0</span></td>
+		<td></td>
+		<td></td>
+		<td bgcolor="#00FF00"><span class="Stil1">LS:S +582</span></td>
+	</tr>
+	<tr>
+		<td><span class="Stil1">NAS100</span></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td bgcolor="#FF0000"><span class="Stil1">ES: +886</span></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td><span class="Stil1">SPX500</span></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td bgcolor="#00FF00"><span class="Stil1">ES:L +318</span></td>
+		<td bgcolor="#00FF00"><span class="Stil1">LS:L +629</span></td>
+	</tr>
+	<tr>
+		<td><span class="Stil1">US30</span></td>
+		<td></td>
+		<td bgcolor="#FF0000"><span class="Stil1">LP: +256</span></td>
+		<td></td>
+		<td bgcolor="#00FF00"><span class="Stil1">ES:L +761</span></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td><span class="Stil1">GER30</span></td>
+		<td></td>
+		<td bgcolor="#00FF00"><span class="Stil1">LP:LS +746</span></td>
+		<td bgcolor="#00FF00"><span class="Stil1">HU:LS +1186</span></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td><span class="Stil1">XAU/USD</span></td>
+		<td></td>
+		<td bgcolor="#FF0000"><span class="Stil1">LP:L +420</span></td>
+		<td></td>
+		<td bgcolor="#00FF00"><span class="Stil1">ES:S +3457</span></td>
+		<td bgcolor="#FF0000"><span class="Stil1">LS: +2020</span></td>
+	</tr>
+	<tr>
+		<td><span class="Stil1">XAG/USD</span></td>
+		<td bgcolor="#FF0000"><span class="Stil1">VO:L +1797</span></td>
+		<td bgcolor="#FF0000"><span class="Stil1">LP:L +89</span></td>
+		<td></td>
+		<td></td>
+		<td bgcolor="#00FF00"><span class="Stil1">LS:S +156</span></td>
+	</tr>
+	<tr>
+		<td><span class="Stil1">UK100</span></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td><span class="Stil1">LS:L -47</span></td>
+	</tr>
+</table>
+<p>In the above matrix, active algorithms are displayed with their identifier (<strong>VO</strong>,
+<strong>LP</strong>, etc.) and <strong>L</strong> and/or <strong>S</strong> for 
+the currently preferred trade direction, long, short, or both. Algorithms that are 
+currently winning are displayed on a green rectangle. Algorithms that are currently 
+losing and thus temporarily suspended (if equity curve trading was enabled, see 
+below) are displayed on a red rectangle. The displayed numbers are the total win 
+or loss per component, including phantom trades. </p-->
+<p></p>
+<p><span class="Stil1">
+<img height="405" src="../images/z2perf.png" width="701"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+Z2 equity curve</p>
+<p><img height="405" src="../images/z12perf.png" width="701"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+Z12 equity curve</p>
+<p>Z1 and Z2 share their parameter and factor files with Z12. Due to the relatively long lookback period, 
+they should only be traded 
+with brokers that provide sufficient price history. If price data gaps are indicated 
+in the message window at start, it is recommended to use the <strong>Preload</strong> 
+flag (see below) or trade the system with a different broker. &nbsp;</p>
+<!--h3>Z3</h3>
+<p> The Z3 price cluster strategy 
+missed the performance criteria in 2022 and was removed from the Z 
+systems. Z3 is a medium-term commodity and index CFD trading system. It detects   price clusters that precede   breakouts. Price breakouts happen frequently especially with metals and stock indices, and constitute an exploitable inefficiency. The results are uncorrelated to Z1 and Z2, so all  systems can be traded simultaneously with Zorro S. Since Z3  is based on a single algorithm, the equity curve is unaffected by selection bias.</p>
+<p><img src="../images/z3perf.png" width="701" height="405"> </p>
+<p>The equity curve above is from a walk-forward analysis on a Oanda US 
+account with CFDs and 100:1 leverage. The performance depends on asset volatility. In low volatility periods the equity is more or less flat. As with Z1 and Z2, the trade duration is controlled by moving the stop loss level. This can cause the stop to move in both directions and to tighten even when the trade is not in profit.</p>
+<p>Z3 can be traded with CFDs or with index ETFs. In the case of CFDs, select a 
+broker with small swaps and financing fees. Z3 positions are hold for a 
+relatively long time and can otherwise cause substantial rollover costs. </p-->
+<h3>Z6+</h3>
+<p>The new Z6+ system is a special 
+type of grid trader with an <strong>adaptive grid</strong>. Although we have listed grid trading among the
+<a href="https://financial-hacker.com/seventeen-popular-trade-strategies-that-i-dont-really-understand/" target="_blank">
+17 worst trading methods</a>, this one is different, since it is based on a real inefficiency of Forex markets. 
+This effect can be statistically analyzed and is visible in the volatility chart below, from the AUD/USD pair:</p>
+<p><img height="305" src="../images/Z6_VSpectrum_s.png" width="701"></p>
+<p>The red line is the maximum price movement in pips over the period given on 
+the X axis in hours. The black line is the same maximum movement if the markets were 
+perfectly efficient, simulated by randomizing the 
+price curve. The curves don't touch zero because the smallest sample period was 
+one hour. We can see that they approximate a square root function, as can be expected, 
+since volatility follows that rule. 
+But we can also see that the real short-term volatility greatly exceeds the 
+theoretical volatilty from a random price curve. This 'excess volatilty' effect 
+is a strong inefficiency, and remains consistent over the years. It is exploited with 
+this system. </p>
+<p>Trades are 
+triggered by price ticks, so the bar period is not very relevant. The algorithm will be described 
+in detail in an upcoming book about Forex trading. The system can be traded with 
+very low capital, has a high win rate and an almost ideal steadily rising equity curve 
+with <strong>0.96</strong> R2 
+coefficient. The 
+results are unrelated to trends and cycles, and uncorrelated to all other systems.</p>
+<p><img height="545" src="../images/z6perf.png" width="701"> </p>
+<p>Download the minor pairs Forex history for backtesting the system. The equity curve above is from a walk-forward analysis on a Forex account 
+with 100:1 leverage. The blue lines in the small charts below are the separate equity 
+curves of the 
+Forex pairs. You can see that the overall equity curve is 
+much smoother, since 
+several currencies contribute to it. For eliminating the dangers of grid trading, all trades have a maximum 
+life time of one week. Most close earlier. Since long and short positions can be 
+open simultaneously, <a href="hedge.htm">virtual hedging</a> is recommended. The stop loss is 
+relatively distant and is used for risk limitation only. Z6+, as indicated by 
+the '+', was written in <a href="dlls.htm">C++</a>.</p>
+<!--h3>Z3</h3>
+<p> The Z3 price cluster strategy 
+missed the performance criteria in 2022 and was removed from the Z 
+systems. Z3 is a medium-term commodity and index CFD trading system. It detects   price clusters that precede   breakouts. Price breakouts happen frequently especially with metals and stock indices, and constitute an exploitable inefficiency. The results are uncorrelated to Z1 and Z2, so all  systems can be traded simultaneously with Zorro S. Since Z3  is based on a single algorithm, the equity curve is unaffected by selection bias.</p>
+<p><img src="../images/z3perf.png" width="701" height="405"> </p>
+<p>The equity curve above is from a walk-forward analysis on a Oanda US 
+account with CFDs and 100:1 leverage. The performance depends on asset volatility. In low volatility periods the equity is more or less flat. As with Z1 and Z2, the trade duration is controlled by moving the stop loss level. This can cause the stop to move in both directions and to tighten even when the trade is not in profit.</p>
+<p>Z3 can be traded with CFDs or with index ETFs. In the case of CFDs, select a 
+broker with small swaps and financing fees. Z3 positions are hold for a 
+relatively long time and can otherwise cause substantial rollover costs. </p-->
+<h3>Z7</h3>
+<p>Z7 is a short-term, small-capital forex trading system based on the price pattern 
+detection algorithm from <strong>chapter 6</strong> of the 
+<a href="https://www.amazon.com/dp/1546515216" target="_blank">Black Book</a>. It uses time dependent 
+filters to catch matching patterns on the US, European, and Pacific sessions. A 
+'master algorithm' detects price patterns, algorithm variants with several filters 
+enter the trades. Other than the system described in the book, this one passed 
+the reality check. The 
+results are unrelated to trends and cycles, and uncorrelated to the other systems.</p>
+<p><img height="405" src="../images/z7perf.png" width="701"> </p>
+<p>The equity curve above is from a walk-forward analysis on a Forex account 
+with 100:1 leverage. All Z7 trades end after at least one market day, most after 
+a few hours. The stop loss is relatively distant and is used for risk limitation 
+only. A trailing mechanism locks profits when the trade goes high into profit in 
+volatile situations. The system produces many trades with a relatively small 
+profit per trade, so its performance depends heavily on leverage and transaction cost, 
+i.e. spread, commission, and slippage.</p>
+<!--p><span class="edition">&nbsp;!!&nbsp;</span> Z7 was unprofitable in 2018. 
+Although the loss is still within the tolerance range, trade with care. We are 
+observing the system for a possible expiration.</p-->
+<!--p><span class="edition">&nbsp;!!&nbsp;</span> Z7 was unprofitable in 2018. 
+Although the loss is still within the tolerance range, trade with care. We are 
+observing the system for a possible expiration.</p-->
+<h3>Z8</h3>
+<p>Z8 is a long-term trading system based on modified <a href="markowitz.htm">Markowitz mean/variance 
+optimization</a> (MVO). It is a variant of the MVO system 
+described on
+<a href="http://www.financial-hacker.com/get-rich-slowly/" target="_blank">Financial 
+Hacker</a>, and should be traded with a stock/ETF broker. Z8 opens a portfolio of 
+ETFs, stocks, or other assets determined by an external asset list, and re-allocates 
+the invested capital among the portfolio components in regular intervals for 
+keeping a positive balance curve with minimum variance. Since it trades with low leverage, 
+the profit, but also the risk is smaller compared to the other systems. </p>
+<p><img alt="Z8 equity curve" src="../images/z8perf.png"> </p>
+<p>The balance curve above is from a walk-forward test with the default assets, 
+based on a margin account with 2:1 leverage and $5000 start margin. The backtest 
+reinvests the capital growth to the power of 0.9, and keeps the remaining profit 
+as cash reserve on the account for buffering drawdowns. The assets, account leverage, 
+and price data source must be set up in an <a href="account.htm">asset list</a> 
+named <strong>AssetsZ8.csv</strong>. By default it contains a set of ETFs that were 
+selected by industry diversity and by their supposed long-term prospects. Z8 can 
+also trade stock portfolios or any other instruments with long-term positive returns. 
+Forex or CFDs are not suited for Z8. For adding a new asset, just duplicate a line 
+in <strong>AssetsZ8.csv</strong> and edit the asset name in the first column. For 
+temporarily out-commenting a line, add a '#' in front of the asset name. The
+<strong>Symbol</strong> column contains also the download source. Up to 300 assets 
+can be contained in the list, but you should have no less than 5 and no more than 
+30. When you remove an asset from the list, make sure to also manually close any 
+of its open positions (this won't happen automatically). </p>
+<p>Z8 needs not be trained, since this is automatically handled by the MVO process. 
+The [<span class="tast">Train</span>] button can instead be used for finding assets 
+with low correlation (<a href="restrictions.htm">Zorro S</a> only). It displays 
+a heatmap of the correlations between the assets in <strong>AssetsZ8.csv</strong> 
+(red = high correlation, blue = low correlation). If you don't have Zorro S, you 
+can use the script for generating heatmaps on Financial Hacker. </p>
+<p>
+<img alt="Z8 equity curve" height="307" src="../images/Z8heat.png" width="367"></p>
+<p>For the backtest, historical data is automatically downloaded from the data providers 
+set up in the 'Symbol' column in the asset list, so no further price history files 
+are necessary. If you want to download data from a different source, either edit 
+the asset list, or load it before starting the strategy. The system will automatically 
+detect that up-to-date data is already present, and not attempt to download it again.
+</p>
+<p>For trading Z8, the broker API must support the <a href="brokercommand.htm">GET_POSITION</a> 
+command, which is the case for the <a href="ib.htm">IB TWS API</a>. Make sure that 
+you've subscribed market data for all traded assets (with IB, normally the US Equities &quot;Value 
+Bundle&quot; and &quot;Streaming Bundle&quot;), that you're permitted to trade them 
+(check all relevant boxes on the &quot;Trade Permissions&quot; page), and that the 
+leverage in <strong>AssetsZ8.csv</strong> matches your account leverage. If your 
+portfolio contains leveraged ETFs, check their margin requirement: IB accepts
+<strong>Leverage</strong> <strong>2</strong> for unleveraged or 2x leveraged ETFs;
+<strong>Leverage</strong> <strong>1.333 </strong>for 3x ETFs; and <strong>Leverage 
+1</strong> for 4x ETFs. </p>
+<p>Since Z8 trades only every 5th week, it needs not run permanently, and requires 
+no VPS and no permanent broker connection. Just start it in [<span class="tast">Trade</span>] 
+mode once every 5 weeks after the opening time of the New York market (9:30 ET). 
+Z8 will first download historical prices of all assets, then calculate the optimal 
+portfolio. Set the <strong>Capital</strong> slider to the total margin you want 
+to invest. That's normally the cash value on your account. After about a minute 
+a message box will pop up, like this: </p>
+<p>
+<img alt="Z8 equity curve" height="278" src="../images/z8msg.png" width="270"></p>
+<p>&quot;Old&quot; is the current position in the asset, and &quot;new&quot; is 
+the new position. Clicking [<span class="tast">Yes</span>] will automatically sell 
+or buy the difference of any position, and this way optimize the portfolio. If the 
+broker API does not support position requests, the 'old' positions will all be 0, 
+even when positions are open. In that case open or close the position differences 
+manually in the broker's trading platform, then click [<span class="tast">No</span>] 
+on the message box. Afterwards the trading session is closed, and the suggested 
+date for the next start is printed in the message window. </p>
+<p>Since you can only buy integer numbers of shares, the real invested margin will 
+normally be smaller than <strong>Capital</strong>, dependent on portfolio component 
+weights and prices. The maximum capital can be set up in <strong>Z.ini</strong> 
+(see below). For avoiding margin calls, we recommend to set <strong>Capital</strong> 
+not higher than about 80% of the account equity. For accounts with no leverage, 
+edit the asset list and set all leverages to 1; you can then set <strong>Capital</strong> 
+at 100%. If the system does not open all trades - for instance due to a temporary 
+connection problem or to being outside market hours - just run it again. Since it 
+is detects actual positions, running it several times does no harm. If you missed 
+the suggested start date, maybe because you're on vacation with all the money you 
+made so far, run it at the next occasion. Missing a single date does not do much 
+harm, but don't miss many dates in a row.</p>
+<!--p>For <a href="restrictions.htm">Zorro S</a> users, there's a convenient alternative to rebalancing portfolios that can also be used by advisors for rebalancing their client accounts. Set <strong>MaxCapital</strong> in <strong>z.ini</strong> to the total equity under control, and the <strong>Capital</strong> slider to the part of it that you want to invest. [<span class="tast">Test</span>] will now export a  spreadsheet in the format used by <a href="ib.htm">IB</a>  for rebalancing portfolios. Open the <span class="tast">Rebalance Portfolio</span> tool in the TWS, click [<span class="tast">Import</span>] and select <strong>Log\Z8.csv</strong>. The <span class="tast">Target</span> column of the rebalance tool will now be populated with the new weights. The weights  sum up to the percent position of the <strong>Capital</strong> slider multiplied with the account leverage; this can be up to 200% with the slider all to the right. Now click [<span class="tast">Create Rebalance Orders</span>] and [<span class="tast">Transmit All</span>] for rebalancing the portfolio on the master account and on all connected client accounts. </p-->
+<h3>Z9</h3>
+<p>The portfolio rotation system from Black Book <strong>chapter 8</strong>, but with sector ETFs, as 
+proposed by Gary Antonacci in his &quot;Dual Momentum&quot; 
+strategy. It uses the assets in <strong>AssetsZ9.csv</strong>, which should contain 
+a mix of US sectors, non-US indices, and bonds or treasury. The portfolio is rotated 
+in regular intervals so that it always contains the top third of the assets, selected by their highest 
+relative momentum and positive absolute momentum. If no sector or index has any 
+positive momentum, the system invests in gold or treasury. If gold or treasuries tank too, the system 
+stays out of the market. </p>
+<p>
+<img alt="Z9 equity curve" height="405" src="../images/z9perf.png" width="701">
+</p>
+<p>The balance curve above is from a walk-forward test with the default assets, 
+based on a margin account with 2:1 leverage and $5000 initial capital. Although 
+the Z9 system uses a simpler algorithm than the Z8 system above, 
+is achieves better CAGR. Editing the asset list, setting up the <strong>z.ini</strong> 
+parameters, reinvesting profit to the power of 0.9, and rebalancing the portfolio 
+works just as described for <strong>Z8</strong> above. In the <strong>Type</strong> 
+column of the <strong>AssetsZ9</strong> list, enter <strong>0</strong> for sectors,
+<strong>1</strong> for bonds, <strong>2</strong> for non-US indexes, and <strong>
+3</strong> for a lead index that represents the market. The lead index is not 
+traded, but used 
+for detecting weak market periods. It can be omitted at slightly higher risk. As with 
+Z8, [<span class="tast">Train</span>] generates a correlation heatmap. For trading 
+Z8 and Z9 simultaneously on the same account, <strong>AssetsZ8</strong> and
+<strong>AssetsZ9</strong> must be modified for making sure that they share no assets.
+</p>
+<p>Since US ETFs are not available anymore to European traders due to PRIIP regulation, 
+an alternative asset list <strong>AssetsZ9E</strong> has been included that contains 
+only ETFs that can be traded in Europe. The assets are similar, but not identical 
+to their US counterparts, so the profit is smaller than with US ETFs. The asset 
+list can be set up in the <strong>Z.ini</strong> or <strong>Z9.ini</strong> file.
+</p>
+<h3>Z10</h3>
+<p>Z10 was a cryptocurrency rotation system based on mean-variance optimization 
+like <strong>Z8</strong>. It traded with a portfolio of digital coins. Due to 
+its high risk and volatility, we have decided to abandon it and remove it from the Z systems. </p>
+<h3>Z13</h3>
+<p>A variant of the options selling system from <strong>chapter 7</strong> of the <a href="links.htm">Black Book</a>. Z13 trades 
+with a stocks and options broker, like <a href="ib.htm">IB</a>. It sells in-the-money 
+SPY option combos and collects the differences of premiums and assignment losses. 
+The combo type can be set up with the [<span class="tast">Action</span>] 
+scrollbox. It determines the risk and CAGR of the system. </p>
+<p><table>
+	<tr>
+		<td><strong>Naked Put </strong></td>
+		<td>Sell in-the-money puts (high risk). </td>
+	</tr>
+	<tr>
+		<td><strong>Put Spread </strong></td>
+		<td>Sell and buy puts, one in the money and one out of the 
+		money.</td>
+	</tr>
+	<tr>
+		<td><strong>Condor </strong></td>
+		<td>Sell a put, buy a put, sell a call, buy a call. </td>
+	</tr>
+	<!--tr>
+		<td><strong></strong></td>
+		<td>&nbsp;</td>
+	</tr>
+	<!--tr>
+		<td><strong>Leverage 1</strong></td>
+		<td>
+		<p>Nonleveraged account, cash-covered options, linear reinvestment. Needs 
+		the highest capital.</p>
+		</td>
+	</tr>
+	<tr>
+		<td><strong>Leverage 2</strong></td>
+		<td>Margin account, cash-covered options, reinvestment by 1.5th root.</td>
+	</tr>
+	<tr>
+		<td><strong>Leverage 6</strong></td>
+		<td>Margin account, naked options, reinvestment by 1.85th root.</td>
+	</tr-->
+</table>
+</p>
+<p>A naked put can lose a large amount. Put Spread and Condor limit the loss to the 
+strike difference. Risky market situations are detected with a volatility filter; trading is then suspended. The 
+backtest reinvests profits at an exponent given with the <strong>Reinvest</strong> 
+slider (1.0 = reinvest all profits, 0.5 = reinvest square root of profits, 0 = 
+no reinvestment). The figures in the table are from a backtest with naked puts 
+and 0.9 reinvestment.</p>
+<p>When options get exercised, close the assigned position manually, or let the broker liquidate it at market. If you want to leave the closing to 
+the broker, take care to regularly withdraw profits for keeping the account in an 
+insufficient funds state for enforcoing a margin call. If the broker closes the position only partially, close 
+the rest manually. If the broker prematurely exercises options due to 
+insufficient funds, as some brokers do, either have enough capital on the account for 
+preventing this to happen. Or trade the system with an European-style option, 
+such as <strong>SPX</strong> or <strong>XSP</strong>. This reduces the profit, 
+but prevents the counter side from exercising the sold leg. You can set up the instrument in 
+<strong>AssetsZ13.csv</strong>. The system trades the first asset from that 
+list.</p>
+<p>For backtesting Z13 you'll need historical <strong>SPY</strong> options data that you can get 
+from the Zorro download page. The chart below displays the balance curve (blue) of 
+selling put spreads at 0.9 reinvestment, compared with a benchmark line (grey, 
+close to the bottom) from a SPY buy-and-hold 
+strategy at 2:1 leverage.</p>
+<p>
+<img alt="Z10 equity curve" height="405" src="../images/z13perf.png" width="701">
+</p>
+<p>For trading Z13, the broker API should support the
+<a href="brokercommand.htm">SET_COMBO_LEG</a> and the
+<a href="brokercommand.htm">GET_POSITION</a> commands, which is the case for
+<a href="ib.htm">IBKR</a>. Make sure that you're permitted to trade options, and check 
+the relevant boxes on the &quot;Trade Permissions&quot; page. If you have no market 
+subscription for SPY, set <strong>Preload</strong> in <strong>z.ini</strong> (see 
+below) and download SPY from another source. Z13 trades 6-week options and thus 
+opens new positions only every 6th week. Therefore it requires no VPS and no permanent 
+broker connection. You only need to run it every 6 weeks. Start it in [<span class="tast">Trade</span>] 
+mode after the opening time of the New York market (9:30 EST) when the options from 
+the previous run are expired or have been exercised. If a single leg of a combo 
+has been prematurely exercised, close the remaining legs and the assigned underlying 
+manually and start Z13 afterwards for entering the next combo.</p>
+<p>At start, set the <strong>Capital</strong> slider to the total margin you want to invest. 
+For reinvesting profits in live trading, you can use the <strong>InvestCalculator</strong> 
+script to determine the amount. Z13 will first download SPY historical prices and 
+the SPY options chain, which can take up to 20-30 minutes.Then it will 
+place the option orders. Confirm them when the message box pops up. If Z13 considers 
+the market too volatile or the <strong>Capital</strong> too low, it will instead 
+print a message (f.i. <strong>&quot;need XXX&quot;</strong>). 
+If the market is unsuited, wait a few days. If it's too low capital, be more generous 
+with the <strong>Capital</strong> slider and add funds if needed. The statistically best time for 
+running Z13 is Tuesday 15:30 EST after option expiration and short before market 
+close.</p>
+<p>Z13 achieves higher returns with less effort than a mere portfolio rotation system, 
+but at higher risk. Do not trade with money that you cannot afford to lose. </p>
+<p>&nbsp;</p>
+<h1>The Z Systems: Setup and Handling <a name="ini"></a></h1>
+<p>Every Z system can be <span class="Highlight">configured at startup</span> with 
+parameters from an <strong>.ini</strong> file, and is controlled at runtime with 
+the <strong>Capital</strong> and <strong>Panic</strong> sliders. First set up the 
+strategy to your country and other requirements: open <strong>Strategy\z.ini</strong> 
+with the script editor, and edit the following parameters:</p>
+<table border="0" class="ms-contemp-main">
+	<!-- fpstyle: 34,011111000 -->
+	<tr align="center">
+		<td class="ms-contemp-top" style="width: 137px"><strong>Line</strong></td>
+		<td class="ms-contemp-top" width="89">Default</td>
+		<td class="ms-contemp-top" width="823">Description</td>
+	</tr>
+	<tr>
+		<td class="ms-contemp-even" style="width: 137px">
+		<div align="left">
+			<strong>NFA = 0</strong></div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			No NFA compliance</div>
+		</td>
+		<td class="ms-contemp-even">Set this to <strong>1</strong> for for
+		<a href="mode.htm#nfa">NFA mode</a> (only needed when NFA was not defined 
+		in an <a href="account.htm">account list</a>). Often required for US accounts 
+		and NFA brokers, f.i. <a href="ib.htm">IB</a>; not for MT4/MT5 accounts. 
+		A wrong NFA flag causes trades not being closed, so test your account before 
+		setting it! </td>
+	</tr>
+	<!--tr>
+    <td class="ms-contemp-odd"><div align="left"><strong>FXOnly = 0</strong></div></td>
+    <td class="ms-contemp-odd"><div align="left">Trade all assets. </div></td>
+    <td class="ms-contemp-odd">Set this to <strong>1</strong> for trading only currencies; often  required for US accounts, as CFD trading is restricted in the  US. This reduces the profits and increases the risk due to the correlation of major currencies, so 
+	always run a new test after modifying this line, and check if the systenm is 
+	still profitable. </td>
+  </tr-->
+	<tr>
+		<td class="ms-contemp-odd" style="width: 137px">
+		<div align="left">
+			<strong>Phantom = 0 </strong></div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			No equity curve trading.</div>
+		</td>
+		<td class="ms-contemp-odd">Set this to <strong>1</strong> for enabling
+		<a href="trademode.htm">equity curve trading</a>. When active, trades of 
+		Z1, Z2, or Z12 components are temporarily suspended when the algorithm deteriorates, 
+		and resumed when it becomes profitable again. Equity curve trading can reduce 
+		the profit, but can also prevent losses by expiration of strategy components.</td>
+	</tr>
+	<tr>
+		<td class="ms-contemp-even" style="width: 137px; height: 46px;"><strong>NoLock = 0</strong></td>
+		<td class="ms-contemp-even" style="height: 46px">Locking enabled</td>
+		<td class="ms-contemp-even" style="height: 46px">Set this to <strong>1</strong> for setting the
+		<a href="mode.htm">NOLOCK</a> flag. This prevents Zorro instances to wait 
+		for each other when sending commands to the broker API. Use this flag at 
+		your own risk and only when all Zorro instances trade with different brokers.</td>
+	</tr>
+	<tr>
+		<td class="ms-contemp-odd" style="width: 137px">
+		<div align="left">
+			<strong>Hedge = 4 </strong></div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			Virtual hedging.</div>
+		</td>
+		<td class="ms-contemp-odd">Set this to <strong>2</strong> for disabling
+		<a href="hedge.htm">virtual hedging</a>, to <strong>4</strong> when your 
+		broker does not support partially closing of trades (such as MT5 and some 
+		MT4 brokers), or to <strong>5 </strong>for full virtual hedging with partial 
+		closing. <a href="restrictions.htm">Zorro S</a> required for virtual hedging. 
+		Close open trades and restart the strategy after changing this parameter.</td>
+	</tr>
+	<tr>
+		<td class="ms-contemp-even" style="width: 137px">
+		<div align="left">
+			<strong>BarMode = 0 </strong></div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			By script</div>
+		</td>
+		<td class="ms-contemp-even">Set this to <strong>32</strong> for activating
+		<a href="barmode.htm">BR_SLEEP</a> or to <strong>96</strong> for activating
+		<a href="barmode.htm">BR_LOGOFF</a>.</td>
+	</tr>
+	<tr>
+		<td class="ms-contemp-odd" style="width: 137px">
+		<div align="left">
+			<strong>Export = 1 </strong></div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			IBKR export</div>
+		</td>
+		<td class="ms-contemp-odd">Set this to <strong>1</strong> for generating 
+		a CSV file that can be directly imported in the <a href="ib.htm">IBKR</a> 
+		TWS portfolio reblance window.</td>
+	</tr>
+	<tr>
+		<td class="ms-contemp-even" style="width: 137px">
+		<div align="left">
+			<strong>MaxCapital = 10000</strong></div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			10000</div>
+		</td>
+		<td class="ms-contemp-even">Set this to the desired maximum value of the<strong> 
+		Capital</strong> slider for trading with higher volume (see
+		<a href="restrictions.htm">Zorro S</a> for capital limits).. </td>
+	</tr>
+	<tr>
+		<td class="ms-contemp-odd" style="width: 137px">
+		<div align="left">
+			<strong>ScholzBrake = 0</strong></div>
+		</td>
+		<td class="ms-contemp-odd">
+		<div align="left">
+			0</div>
+		</td>
+		<td class="ms-contemp-odd">Activate the <a href="lots.htm#scholz">ScholzBrake</a> 
+		(German users only). </td>
+	</tr>
+	<!--tr>
+    <td class="ms-contemp-even"><strong>BarModeWeekend = 2 </strong></td>
+    <td class="ms-contemp-even"><div align="left">Always online.</div></td>
+    <td class="ms-contemp-even">Set this to <strong>7</strong> (see <a href="barmode.htm">BarMode</a>) for automatically logging off at weekends; set it to <strong>3</strong> for staying online, but not trailing and stopping trades during the weekend.</td>
+  </tr-->
+	<tr>
+		<td class="ms-contemp-even" style="width: 137px">
+		<div align="left">
+			<strong>Verbose = 1</strong></div>
+		</td>
+		<td class="ms-contemp-even">
+		<div align="left">
+			Verbosity.</div>
+		</td>
+		<td class="ms-contemp-even">Set this to <strong>2</strong> or <strong>3</strong> 
+		for more messages (see <a href="verbose.htm">Verbose</a>). Set it to
+		<strong>15</strong> for 'black box' diagnostics.</td>
+	</tr>
+	<tr>
+		<td class="ms-contemp-odd" style="width: 137px"><strong>BrokerPatch = 0
+		</strong></td>
+		<td class="ms-contemp-odd">Broker API ok.</td>
+		<td class="ms-contemp-odd">Set this to <strong>3</strong> for letting Zorro 
+		calculate the balance, equity, and open trade profits displayed on the Zorro 
+		panel (see <a href="brokercommand.htm">SET_PATCH</a>), rather than reading 
+		the values from the broker API. Recommended when the broker API does not 
+		return correct trade profits or equity. This was reported for some versions 
+		of the FXCM API, and some MT4 servers.&nbsp; </td>
+	</tr>
+	<tr>
+		<td class="ms-contemp-even" style="width: 137px"><strong>Preload = 0
+		</strong></td>
+		<td class="ms-contemp-even">Load all prices.</td>
+		<td class="ms-contemp-even">Set this to <strong>1</strong> for loading the 
+		lookback period prices not from the broker's price server, but from Zorro's 
+		historical data files (see <a href="mode.htm">PRELOAD</a>). Recommended 
+		when the broker has only a very short price history, and/or when the 
+		llookback period is rather long. Recent 
+		history files are required. </td>
+	</tr>
+	<tr>
+		<td class="ms-contemp-odd" style="width: 137px"><strong>StopFactor = 0
+		</strong></td>
+		<td class="ms-contemp-odd">No broker stop.</td>
+		<td class="ms-contemp-odd">Set this to the <a href="stop.htm">StopFactor</a>, 
+		or to <strong>0</strong> for not sending 
+		the stop loss level to the broker (see <a href="stop.htm">StopFactor</a> 
+		and <a href="stop.htm">StopPool</a>). Check before if broker 
+		rejects trades with too distant stops, or accepts only certain stop values, 
+		or requires unique sizes for stop loss orders (f.i. <a href="oanda.htm">Oanda</a>).</td>
+	</tr>
+	<tr>
+		<td class="ms-contemp-even" style="width: 137px"><strong>MaxRequests = 0
+		</strong></td>
+		<td class="ms-contemp-even">Default request limit.</td>
+		<td class="ms-contemp-even">Use this to limit the <a href="ticktime.htm">
+		requests per second</a> when several Zorros trade on the same broker account 
+		that has a request limit</td>
+	</tr>
+	<tr>
+		<td class="ms-contemp-odd" style="width: 137px"><strong>BarOffset = 0
+		</strong></td>
+		<td class="ms-contemp-odd">Default bar offset.</td>
+		<td class="ms-contemp-odd">Set this to the trading time in minutes since 
+		midnight when trading assets on daily bars in other time zones. Close open 
+		trades and re-train the strategy after changing this parameter. </td>
+	</tr>
+	<tr>
+		<td class="ms-contemp-even" style="width: 137px"><strong>AssetList = &quot;&quot;
+		</strong></td>
+		<td class="ms-contemp-even">Default account. </td>
+		<td class="ms-contemp-even">Enter a different asset list for simulating different 
+		accounts or for setting up different symbols. All traded assets must be 
+		contained in the list. Close open trades and restart the strategy after 
+		changing this parameter.</td>
+	</tr>
+	<!--tr>
+    <td class="ms-contemp-even" style="width: 137px"><strong>Exclude = &quot;&quot; </strong></td>
+    <td class="ms-contemp-even">No excluded assets. </td>
+    <td class="ms-contemp-even">Enter a list of comma separated asset names (f.i. &quot;EUR/USD,NAS100&quot;) for excluding those  assets in 
+	systems that use no factors and asset lists, such as Z7. The asset prices are still loaded, but the asset is not traded. 
+	Use the <strong>.fac</strong> list (see below) for exclusing assets from Z1, 
+	Z2, Z12. Close open trades and restart the strategy after changing this 
+	parameter.</td>
+  </tr-->
+	<tr>
+		<td class="ms-contemp-odd" style="width: 137px"><strong>Cancel = 0
+		</strong></td>
+		<td class="ms-contemp-odd">Cancel no trade.</td>
+		<td class="ms-contemp-odd">Set this to the trade ID when a position was 
+		closed externally and must not be managed anymore by Zorro. Zorro normally 
+		detects externally closed trades, but not when a trade is closed by opening 
+		a counter-trade on an NFA account. The cancelled trade will be removed from 
+		the trade list at the end of the current bar. In the case of virtual hedging, 
+		cancel the phantom trade only; this will also automatically cancel the pool 
+		trade. </td>
+	</tr>
+</table>
+<p>The <strong>.ini</strong> file is read at start of the strategy. If you want 
+to trade different Z strategies with different parameters, save <strong>Z.ini</strong> 
+under the name of the strategy, f.i. <strong>Strategy\Z12.ini</strong> for Z12. 
+The strategy will then read the parameters from its corresponding <strong>.ini</strong> 
+file.
+<!--p>Due to known bugs in the FXCM ForexConnect API version 1.22 as well as in the recent version 1.30, it is recommended to set <strong>BrokerPatch</strong> to <strong>3</strong> when trading with FXCM (this does not affect trading with the MT4 bridge, where <strong>BrokerPatch</strong> can be left at <strong>0</strong>). This has no effect on trading performance, but will estimate Zorro's displayed equity and open trade profit values rather than retrieving them from the broker. Thus they  will differ slightly to the real values due to price slippage and rollover differences. But they are better than the values returned by the FXCM API, which are partially calculated with a wrong formula and can be off by a great amount. With <strong>BrokerPatch</strong> at <strong>3</strong>, only trades of the current strategy contribute to the displayed equity, so it is not identical to the account equity when several Zorros trade on the same account, or when trades are opened otherwise. </p-->
+Not all parameters have effect on all strategies; f.i. for Z8/Z9 only <strong>MaxCapital</strong>,
+<strong>Verbose</strong>, and <strong>AssetList</strong> are relevant.</p>
+<p>While running, the Z strategies are controlled with up to 3 sliders, 
+dependent on the system:&nbsp; </p>
+<table border="0" class="ms-contemp-main">
+	<!-- fpstyle: 34,011111000 -->
+	<tr align="center">
+		<td class="ms-contemp-top"><strong>Slider</strong></td>
+		<td class="ms-contemp-top">Range</td>
+		<td class="ms-contemp-top">Default</td>
+		<td class="ms-contemp-top">Description</td>
+	</tr>
+	<tr>
+		<td class="ms-contemp-even" style="height: 65px"><strong>Capital</strong></td>
+		<td class="ms-contemp-even" style="height: 65px"><strong>0..10000</strong></td>
+		<td class="ms-contemp-even" style="height: 65px"><strong>1000 .. 9000</strong></td>
+		<td class="ms-contemp-even" style="height: 65px">Determines the trade volume 
+		by setting the invested total amount. The amount on the broker account is irrelevant for the 
+		trade volume. In [<span class="tast">Test</span>] mode you can adjust this slider 
+		for adjusting the desired monthly income (<strong>MI</strong>) and the minimum 
+		required capital on the account (<strong>Capital</strong><span class="auto-style2">
+		</span>in the message window). Set <strong>MaxCapital</strong> (see above) 
+		for modifying the slider range.</td>
+	</tr>
+	<tr>
+		<td class="ms-contemp-odd"><strong>Percentage</strong></td>
+		<td class="ms-contemp-odd"><strong>0..200</strong></td>
+		<td class="ms-contemp-odd"><strong>150</strong></td>
+		<td class="ms-contemp-odd"><strong>Z8</strong>, <strong>Z9</strong> 
+		only: capital percentage for generating an IBKR rebalance file that can 
+		be imported in the TWS rebalance window. <strong>Export</strong> must be 
+		set in the .ini file. On margin accounts, more than 100% of the capital 
+		can be invested, but do not exceed 200%.</td>
+	</tr>
+	<tr>
+		<td class="ms-contemp-even"><strong>Panic</strong></td>
+		<td class="ms-contemp-even"><strong>0..100</strong></td>
+		<td class="ms-contemp-even"><strong>0</strong></td>
+		<td class="ms-contemp-even">Tighten the <a href="stop.htm">stop 
+		loss</a> of all open trades in percent of the current price difference to 
+		the original stop loss. At <strong>0</strong>, stop loss control is completely 
+		up to Zorro; at <strong>100</strong> the stop limits are placed just at 
+		the current asset prices. This causes trades to be sold as soon as their 
+		prices move slightly in adverse direction, and can be used for taking profits 
+		early. No new trades are opened as long as the position is above <strong>
+		90</strong>. This slider reduces the profit, so use it only in drastic situations, 
+		for instance when an upcoming event - like Brexit - will have a large impact 
+		on the stock market. Put it back to <strong>0</strong> when the danger is 
+		over. </td>
+	</tr>
+	<!--tr>
+    <td><strong>Stop</strong></td>
+    <td><strong>0..10000</strong></td>
+    <td><strong>5000</strong></td>
+    <td>Z4/Z5 only: Maximum open trade loss in account currency units. If the negative trade value exceeds this limit, the oldest trades are closed until the open trade value is below the limit again. See <a href="#z5">Z5 description</a> for details.</td>
+  </tr>
+  <tr>
+    <td><strong>Mode</strong></td>
+    <td><strong>1..3</strong></td>
+    <td><strong>1</strong></td>
+    <td>Z4/Z5 only: Hedging mode. 1 = full hedging, 2 = virtual hedging, 3 = long trades only. See <a href="#z5">Z5 description</a> for details.</td>
+  </tr-->
+</table>
+<p>The sliders can be set after starting the strategy in test or trade mode (if 
+no strategy is running, the sliders have no meaning). The last slider positions 
+are stored, and the sliders snap to their last positions when the strategy is started 
+again.<o:p> Move them afterwards to a new posiion if desired. </o:p>
+</p>
+<p>The most important is the <strong>Capital</strong> or <strong>Percentage</strong> slider. The Z systems do not 
+autonomously reinvest profits or determine otherwise how much to invest; that is 
+solely your decision and set up with this slider. Before trading the system, find 
+your minimum capital requirement by running a [<span class="tast">Test</span>] with 
+your current account parameters (see <a href="account.htm">asset list</a>) and the 
+current slider position. Check the <strong>Required Capital</strong> (read
+<a href="performance.htm">performance report</a> about how it's calculated) - that's 
+the absolute minimum you need either in your broker account, or at least in your 
+bank account. For reinvesting your profits, you can slowly increase the slider when 
+the capital on the account grows. For not risking a margin call, take care to reinvest 
+or withdraw capital only according to the <strong>square root rule</strong> explained 
+in the Black Book. </p>
+<p>For a <span class="Highlight">realistic backtest</span>, make sure that the account 
+settings in the <a href="account.htm">asset list</a> are correct and up to date. 
+For the Forex and CFD systems, an average Forex broker account with 100:1 leverage (<strong>AssetsFix.csv</strong>) 
+is simulated in the backtest. For stock and ETF trading systems it's an average 
+IB Margin account with 2:1 leverage. Capital requirement and System performance 
+can be <span class="Highlight">different</span> on different accounts, 
+especially with higher trading costs or lower leverage. If a certain asset is not 
+provided by your broker, remove it from the strategy as described below. If it is 
+available, but under a different symbol, edit the <a href="account.htm">asset list</a> 
+and enter its symbol name. US citizens are often not allowed to trade CFDs, and 
+EU citzens are not allowed to trade US ETFs. Remove or replace unavailable assets 
+as described below in the FAQ. </p>
+<p>Check the <span class="Highlight">requirements of your broker</span> and account. 
+Typical issues are not being able to open or to close a trade (<strong>&quot;Can't 
+close...&quot;</strong>) due to NFA compliance, FIFO compliance, a wrong symbol, 
+an invalid trade size, or unsupported partial closing. Make sure that <strong>NFA</strong> 
+and <strong>Hedge</strong> are set correctly. </p>
+<p>Before starting live, run a final [<span class="tast">Test</span>] with the
+<strong>Capital</strong> slider at the same position as in the trading session. 
+This allows the system to permanently compare live performance with backtest performance, 
+using the <a href="ddscale.htm">Cold Blood Index</a>. The Capital can be increased 
+later, but the initial position must match the last backtest. The CBI is printed 
+once per day in the message window and on the status page. Consider pulling out 
+when it gets down to a low value or 0. </p>
+<p>After starting a strategy, it can take some days or even weeks before the first 
+trades are entered. Don't grow impatient. The frequency of trades depends on the 
+strategy and the market; in unprofitable periods with high market efficiency there 
+can be no trades at all, especially when <strong>Phantom</strong> is set in the
+<strong>Z.ini</strong> file. Most trades are hold for 2-3 days, but some can stay 
+open for weeks when they are profitable. </p>
+<p>Don't unnecessarily <span class="Highlight">stop and restart</span> strategies. 
+This closes open trades, initializes intermediate parameters, and sets back the lookback period. 
+	All this will reduce the profit and performance. Don't tamper with the 
+trades: manually closing an open trade at the wrong moment can cost several hundred pips and can convert a winning strategy to a losing 
+	one. For 'soft stopping' 
+	a strategy without loss, set the <strong>Capital</strong> slider to zero so 
+	that no new trades are opened, then wait until the strategy itself has closed 
+	all open trades.</p>
+<p><a name="z5"></a>Your account balance will <span class="Highlight">often go down in the first 
+weeks</span> after starting a strategy. This has 3 reasons: Drawdown periods are 
+longer and more likely than profitable periods; unprofitable trades are closed first 
+and thus contribute earlier to the account balance; and equity fluctuations - the 
+up and down 'ripples' in the equity curve - almost always exceed the slowly increasing 
+initial profit. Thus, periods of negative balance and equity are common at start 
+of almost all strategies, as in the live profit curve below (from the <strong>Z5</strong> 
+system, now expired). When the profit accumulates, negative profit periods get shorter 
+and eventually disappear. However if you're still not in the profit zone after 6-12 
+months and your trade returns still deviate largely from the predicted performance, 
+as visible from a low <a href="ddscale.htm">CBI</a>, something is wrong. The strategy 
+might be expired and you should stop trading it. </p>
+<p><img alt="Z5 profit curve" height="310" src="../images/z5zulu0.jpg" width="728"><br>
+</p>
+<p>Events - such as entering and exiting trades, or trailing the stop loss - are 
+displayed in Zorro's message window (see <a href="log.htm">Log</a>). Additionally, 
+the current trading status, open trade list, and equity curve is displayed on the
+<a href="trading.htm">status page</a>. You can configure that page to be visible 
+under a particular URL and in this way <span class="Highlight">observe your system</span> 
+online from everwhere. If you have <span class="Highlight">multiple accounts</span> 
+with different brokers, you can use the <strong><a href="trading.htm#zstatus">ZStatus</a></strong> 
+script for displaying the profits of all of them on a single panel. </p>
+<p><img height="137" src="../images/zstatus.png" width="519"></p>
+<p>&nbsp;</p>
+<h1>Z Systems and Algo Trading: Frequently Asked Questions</h1>
+<p><strong>What is the Z systems with the best profit-to-risk ratio?</strong></p>
+<p>Z9.</p>
+<p><strong>Can I stop and start a Z system to any time</strong>?</p>
+<p>Technically yes, when the broker server is online. But since most systems download 
+recent price data at start for filling the <strong>LookBack</strong> period, avoid 
+starting them at weekends when recent prices are not available and broker servers 
+can be offline. Once a system is trading, stop it only in case of an emergency. 
+Most systems do not enter trades immediately after being started, so frequent stopping 
+and starting will reduce the number of trades and the performance. While a system is stopped, it can not 
+react on the market, which bears the danger of a potential loss when positions are 
+still open. </p>
+<p><strong>Must I train the Z systems? </strong></p>
+<p>No. The portfolio rotation and options trading systems have no parameters to 
+be trained. The other Z systems should be re-trained every 6 or 12 months, but 
+we do that with any Zorro update. So you need not train them yourself. </p>
+<p><strong>Do I need VC++ or the 64-bit Zorro version for backtesting a Z 
+system?</strong></p>
+<p>No. All Z systems are designed to run natively on a 32-bit Zorro. Some Z 
+systems require a Zorro S license or subscription.</p>
+<p><strong>Why does the backtest not go up to the current date? </strong></p>
+<p>In <a href="numwfocycles.htm">walk-forward optimized</a> systems, 
+such as Z1-Z7 and Z12+, backtest and training cycles must be in sync and end at the 
+same date. Otherwise the backtest would produce wrong results. For the other systems 
+the backtest ends at the latest date of the available price and/or options data.
+</p>
+<p><strong>When can I withdraw profits?</strong></p>
+<p>All strategies have long drawdowns that are listed in the table above (<strong>max 
+drawdown</strong>). Don't withdraw profits when you're in a drawdown, since this 
+would get you closer to a margin call. Remargin your account when your equity runs 
+dangerously low. If you're winning, you can and even must remove profits regularly 
+from your account, since the free Zorro version will stop trading when your balance 
+exceeds its capital limit (use <a href="restrictions.htm">Zorro S</a> for no limit). 
+For the maximum amount to reinvest or to withdraw during a trading session, observe 
+the <a href="tutorial_kelly.htm">square root rule</a>. </p>
+<p><strong>Can I trade with very little capital?</strong> </p>
+<p>For trading with low capital, such as a few hundred dollars, move the <strong>
+Capital</strong> slider mostly to the left and run repeated tests until the value 
+displayed under <strong>Capital</strong> meets your needs. All margin based Z systems 
+use the <a href="mode.htm">ACCUMULATE</a> flag and thus allow trading with very 
+low capital, although trades are then frequently skipped. Alternatively, reduce 
+the capital requirement by removing assets from the portfolio, as described below. 
+Note that low capital and few assets will normally reduce the live performance and 
+increase risk and drawdowns due to the reduced number of trades. The setting of 
+the <strong>Capital</strong> slider is unrelated to the displayed <strong>&quot;Risk&quot;</strong> 
+of a trade, which does not reflect the strategy risk, but the stop loss distance.</p>
+<p><strong>How can I add new assets or exclude assets from trading?</strong> </p>
+<p>Z8, Z9, Z10 can be used with any portfolio of stocks and ETFs. The other systems 
+are optimized for a particular set of assets; you can not add, but you can exclude 
+assets from trading.
+<!--For excluding particular assets, use the <strong>Exclude</strong> list in <strong>z.ini</strong>.-->
+For excluding a certain component from trading in Z1, Z2, Z12, or Z7, edit
+<strong>Data\Z12.fac</strong> or <strong>Data\Z7.fac</strong> and place minus signs 
+'<strong>-</strong>' in front of its <strong>OptimalF</strong> factors. The algorithms 
+with the <strong>ES</strong>, <strong>HU</strong>, <strong>LP</strong>, <strong>
+LS</strong>, <strong>VO</strong> identifiers belong to Z1, <strong>A2</strong>,
+<strong>BB</strong>, <strong>CT</strong>, <strong>CY</strong>, <strong>HP</strong> 
+to Z2, and <strong>PA</strong>, <strong>PD</strong>, <strong>PDD</strong>,
+<strong>PG</strong> to Z7. An example for excluding the CT algorithm with the USD/CAD 
+asset: </p>
+<pre>...
+USD/CAD:CT          -.041  1.32  263/420
+USD/CAD:CT:L        -.029  1.25  177/227
+USD/CAD:CT:S        -.058  1.38   86/93
+...</pre>
+<p>Components with a negative or <strong>.000</strong> <strong>OptimalF</strong> 
+factor are automatically excluded this way. Be aware that excluding the least profitable 
+assets or algorithms will generate a too optimistic backtest result due to
+<a href="testing.htm#bias">selection bias</a>. </p>
+<p><strong>My broker uses different symbols - how can I rename assets?</strong>
+</p>
+<p>Use an <a href="account.htm">asset list</a> that contains the symbols and and 
+account parameters of your broker. Enter the asset name used by the broker in the
+<strong>Symbol</strong> column of the list, as described <a href="account.htm">here</a>. 
+Do not modify the asset names in the first column, since they are used by the strategies.
+</p>
+<p><strong>Can I 'fire and forget' an automated trading system?</strong> </p>
+<p>Better not. Check the system's <a href="trading.htm">status page</a> often, like 
+once every day. Know your broker's trading platform for being able to observe and 
+manually close trades anytime in case of an emergency, ideally from your mobile 
+phone. If a trade was not correctly opened or closed due to a software glitch - 
+this happens rarely, but it can happen - know how to deal with the problem. If it 
+was a glitch of the broker's server or software, know how to contact the broker 
+and request a refund. If it was a <a href="trouble.htm">bug in your script</a>, you'll get our 
+compassion, but no refund. </p>
+<p><strong>Can I trade several Z systems together? </strong></p>
+<p>You'll need<a href="restrictions.htm"> Zorro S</a> for trading several automated 
+trading systems at the same time. Make sure with your broker that your account is 
+set up to allow multiple sessions. Some brokers set up accounts for single sessions 
+only by default. Since Zorro stores its logs, trades, slider positions and other 
+data in files named after the script, <strong>do not</strong> trade the same script 
+with several Zorro instances in parallel! For doing that, either give the scripts 
+different names, or run them from different Zorro installation folders. </p>
+<p><strong>How does algo trading affect my tax declaration?</strong></p>
+<p>In most countries you have to pay tax for trading profits. Normally the broker 
+keeps records of your trades that you can download from his website. Otherwise Zorro 
+also records all trades in the <strong>trades.csv</strong> spreadsheet in the
+<strong>Data</strong> folder for your tax declaration. Interest (rollover) and profit/loss 
+are recorded separately. Usually you have to submit this spreadsheet or the broker's 
+records together with your tax declaration. Note that some countries' tax laws 
+may not allow you to deduct 
+trading losses from trading profits (<a href="https://financial-hacker.com/the-scholz-brake-fixing-germanys-new-1000-trader-tax/" target="_blank">Scholz 
+Tax</a>). </p>
+<p><strong>How do I update a live trading system?</strong></p>
+<p>We'll publish updates to the Z strategies in regular intervals, so it's recommended 
+to visit the user forum or the <a href="restrictions.htm" target="_blank">Zorro 
+website</a> from time to time. If you checked the box on the download form, you'll 
+also be informed by email about updates. Please look
+<a href="trading.htm#update">here</a> for how to move from an old to a new version 
+with no interruption to trading. </p>
+<p><strong>Can an algo trading system become permanently unprofitable</strong>?
+</p>
+<p>Yes. Any strategy can eventually expire. For instance, there was a <strong>Z5</strong> 
+system that expired when the Swiss removed the CHF cap. If we suspect that a certain 
+system will expire, we'll announce that on the forum and will also inform subscribers 
+and Zorro S users by email. Normally we'll provide a successor after a system expired. 
+As long as the markets are not perfectly effective, possibilities for profitable 
+trade algorithms are almost infinite. </p>
+<p><strong>Can I get the source code of a Z system?</strong></p>
+<p>For reasons described above, the Z systems are not available in source code - 
+not even when you license the Zorro platform source. However you can hire a programmer (or our
+<a href="https://zorro-project.com/development.php" target="_blank">development 
+service</a>) for programming a replica of a Z system. The replica will use 
+similar algorithms, but will not be identical to the original system.</p>
+<h3>See also:</h3>
+<a href="strategy.htm">Strategy</a>, <a href="testing.htm">Testing</a>,
+<a href="trading.htm">Trading</a>, <a href="links.htm">Links</a>
+<p>
+<a class="button" href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))">&#9658; 
+latest version online</a> </p>
+
+</body>
+
+</html>

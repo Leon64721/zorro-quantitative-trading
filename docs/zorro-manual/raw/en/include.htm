@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>#include</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/include.htm">
+</head>
+
+<body>
+<h2>#include &quot;filename&quot;</h2>
+<h2>#include &lt;filename&gt; </h2>
+Reads an additional script from the given file name and then continues
+		compiling the original script file. This way a strategy can consist of an
+		arbitrary number of scripts.
+		<h3>Remarks:</h3>
+		<ul>
+		  <li>If the script name is given in angular brackets <b>&lt;..&gt;</b>,
+          it is searched  in the Zorro <b>include</b> folder. The <strong>include</strong> folder contains
+          all common <b>.h</b> include files and the <b>default.c</b> script with all the trading definitions. </li>
+          <li>If the script name is given in double quotes <strong>&quot;...&quot;</strong>, it can be in any folder; the path must then be given, either an absolute path (f.i. <strong>&quot;C:\...&quot;</strong>) or relative to the <strong>Zorro</strong> folder (f.i. <strong>&quot;Strategy\MyIncludes\...&quot;</strong>). You can omit the <strong>&quot;Strategy\...&quot;</strong> for including files directly from the <strong>Strategy</strong> folder, since this folder is automatically in the include path. </li>
+          <li>
+            
+          If no <strong>#include</strong> statement is found in the main script,
+           
+          <strong>default.c</strong> is automatically included. Otherwise you need to add <strong>#include &lt;default.c&gt;</strong> either in the included file, or in the main file before any other <strong>#include</strong> statements. </li>
+</ul>
+		<h3>Example </h3>
+        <pre>#include &lt;default.c&gt; <i>// default trading functions</i>
+#include &lt;windows.h&gt; <i>// include the Windows API</i>
+#include &quot;Strategy\common.c&quot;
+</pre>
+        <h3>See also:</h3>
+        <a href="define.htm">define</a>, <a href="litec_h.htm">headers</a>
+        <p><a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+    version online</a>
+</p>
+</body>
+</html>

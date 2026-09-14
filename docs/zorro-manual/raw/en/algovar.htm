@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>AlgoVar, AssetVar</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/algovar.htm">
+</head>
+
+<body>
+<h2>AlgoVar[0] .. AlgoVar[7], 
+  AlgoVar2[0] .. AlgoVar2[7]
+</h2>
+16 general purpose variables for storing values specific to the current asset/algo combination. Every strategy component has its own set of <strong>AlgoVar</strong> variables; the sets are automatically switched with any <a href="algo.htm">algo</a> or <a href="asset.htm">asset</a> 
+call. The variables are stored in <strong>STATUS</strong> structs and can be used in portfolio strategies for values that are common to the algorithm, but different for every component of the strategy. They can also be used to pass asset/algorithm specific parameters to a <a href="trade.htm">TMF</a>, or for storing parameters when a system is stopped and restarted.<h2>AlgoPtr[0] .. AlgoPtr[7], 
+AlgoPtr2[0] .. AlgoPtr2[7]</h2>
+15 general purpose <strong>void*</strong> pointers, for storing algo specific 
+series, arrays, or other pointers. Shared with <strong>AlgoVar</strong>. 
+Supported in 32 and 64 bit modes, but with different pointer size, so keep them 
+at the begin of the array starting with <strong>[0]</strong>. Requires a typecast in <strong>.cpp</strong> 
+code.
+<h3>Types:</h3>
+<strong>var, void'<br></strong>
+&nbsp;<h2>AssetVar[0] .. AssetVar[15]</h2>
+<h2>AssetStr[0] .. AssetStr[15]</h2>
+16 general purpose locations for storing either numeric values, or strings specific to the current asset. Every asset has its own set of <strong>AssetVar/AssetStr</strong> variables; the sets are automatically switched with any <a href="asset.htm">asset</a> call. 
+The locations are shared, i.e. either <strong>AssetVar[N]</strong> or <strong>
+AssetStr[N]</strong> can be used, but not both with the same index <strong>N</strong>. The 
+first 8 variables or strings can be read at start from the  <a href="account.htm">asset list</a>  and stored in the <strong>ASSET</strong> structs. They can be used in portfolio strategies for parameters  that are common to the algorithms, but different for every asset. <strong>AssetStr</strong> can only be modified with <a href="str_.htm">strcpy</a> and has a maximum length of 7 characters. 
+Use double quotes (like <strong>&quot;Text&quot;</strong>) for <strong>AssetStr</strong> strings in the asset list for distinguishing 
+them from numbers.
+<h2>AssetInt[0] .. AssetInt[31]</h2>
+<h2>AssetFloat[0] .. AssetFloat[31]</h2>
+32 general purpose <strong>int</strong> or <strong>float</strong> variables 
+for internally storing integers or floats specific to the current asset. They 
+are script-only and not read from the asset list. Two subsequent <strong>
+AssetInt</strong> or <strong>AssetFloat</strong> are shared with <strong>
+AssetVar/AssetStr</strong> at half the index, i.e. <strong>AssetVar[10]</strong> 
+shares its location with <strong>AssetInt[20]</strong> and <strong>AssetInt[21]</strong>.
+<strong>AssetInt</strong> can also be used to store asset-specific <strong>series</strong> 
+or pointers in 32-bit mode.&nbsp;&nbsp;
+<h2>AssetPtr[0] .. AssetPtr[15]</h2>
+15 general purpose <strong>void*</strong> pointers, for storing asset specific 
+series, arrays, or other pointers. Shared with <strong>AssetVar</strong>. 
+Supported in 32 and 64 bit modes, but with different pointer size, so keep them 
+at the begin of the array starting with <strong>[0]</strong>. Requires a typecast in <strong>.cpp</strong> 
+code.
+<h3>Types:</h3>
+<strong>var, char*, int, float, void'<br>&nbsp;</strong>
+<h2>AssetO, AssetH, AssetL, AssetC, AssetP</h2>
+Arrays
+of size <a href="numbars.htm">NumBars</a> in ascending order (no
+<a href="series.htm">series</a>), containing the open, high, low, close, and 
+mean prices of the current asset for direct access. <strong>AssetC[Bar]</strong> 
+is the current close price. In portfolio strategies with assets of different 
+history lengths, not all elements of the arrays are filled. Unfilled elements 
+are zero.
+<h3>Type:</h3>
+<strong>var*</strong> <br>&nbsp;&nbsp;&nbsp;
+<br>
+<h3>Remarks:</h3>
+<ul>
+  <li>The variables use the <strong>Skill</strong> arrays of <strong>TRADE</strong> 
+  and <strong>STATUS</strong> structs and are defined in <strong>variables.h</strong>. </li>
+	<li>Dependent on the <A href="loadstatus.htm"><span class="links">SAV_ALGOVARS</span></A> 
+  flag, the <strong>AlgoVar</strong> and <strong>AlgoVar2</strong> variables of 
+  all algo/asset components are automatically <span class="Highlight">saved and loaded</span> at the end and 
+  after the initial run of 
+  a trading session. This way their values are preserved when a trading system is interrupted or restarted 
+	(note that pointers are not preserved, but must be assigned at start). 
+  Otherwise <strong>AlgoVars</strong> and <strong>AssetVars</strong> are reset to
+  <strong>0</strong> at the begin of a simulation.</li>
+  <li>When training or predicting with an <a href="advisor.htm"> R machine learning algorithm</a>, <strong>AlgoVar[0]..AlgoVar[7]</strong> are 
+  automatically <span class="Highlight">sent over to R</span> and can there be used for setting up parameters to the learning process. </li>
+  <li><span class="Highlight">AlgoVar</span> vs <span class="Highlight">static 
+  series</span> vs <span class="Highlight">static variables</span>: All three 
+  can be used to persistently store per-component numerical parameters. If saving, loading, or reading from the asset list 
+  is important, use <strong>AlgoVar</strong>s or <strong>AssetVar</strong>s. If 
+  you need more than 16 persistent variables per component, use static <a href="series.htm">series</a> (with negative length 
+  for not shifting). If the script trades only a single asset and a single algo, 
+  you can also use static or global <a href="aarray.htm">variables</a>. </li>
+  <li>The <a href="define.htm">#define</a> statement can be used for giving <strong>AlgoVar</strong>s or <strong>AssetVar</strong>s 
+  <span class="Highlight">meaningful names</span>, like <strong>#define 
+  LastWeeksPrice AlgoVar[0]</strong>. 
+  To store a pointer instead of a <strong>var</strong>, use the <strong>as_int()</strong> macro, like <strong>#define MyPtr as_int(AlgoVar[0])</strong>. </li>
+</ul>
+<h3>Examples:</h3>
+<pre><em>// in the run function</em>
+...
+algo("XYZ");
+AlgoVar[0] = 123;
+...
+
+<em>// in the TMF</em>
+...
+algo("XYZ");
+var MySpecificValue = AlgoVar[0];
+...
+</pre>
+<h3>See also:</h3>
+<a href="algo.htm">algo</a>, <a href="asset.htm">asset</a>, <a href="trade.htm">TradeVar</a>, <A href="loadstatus.htm"><span class="links">SAV_ALGOVARS</span></A> 
+  <p>&nbsp;</p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

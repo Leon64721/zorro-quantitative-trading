@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>shift</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/shift.htm">
+</head>
+
+<body>
+<h2>shift (vars Data, var Value, int Length) </h2>
+Shift the first <strong>Length</strong> elements of <strong>Data</strong> by one 
+position, then fill <strong>Data[0]</strong> with <strong>Value</strong>.&nbsp;
+<h3>Parameters:</h3>
+		<table border="0">
+          <tr>
+            <td><strong>Data</strong></td>
+            <td>Series or array to be shifted. </td>
+          </tr>
+            <tr>
+            <td><strong>Value</strong></td>
+            <td>New value for the first element. </td>
+            </tr>
+          <tr>
+            <td><strong>Length</strong></td>
+            <td>Number of elements to be shifted. If negative, the array is 
+			shifted backwards.</td>
+          </tr>
+        </table>        
+<!--h2>shiftSeries (int Filter) </h2>
+Shift all or several dynamic <a href="series.htm">series</a> by one position, 
+and duplicate their last element. Disable the automatic shifting of dynamic
+<a href="series.htm">series</a>.
+<h3>Parameters:</h3>
+		<table border="0">
+          <tr>
+            <td><strong>Filter</strong></td>
+            <td><strong>1</strong>&nbsp; - Shift all dynamic 
+			series of the current component. </td>
+          </tr>
+            <tr>
+            <td>&nbsp;</td>
+            <td><strong>2</strong>&nbsp; - Shift all dynamic 
+			series of the current asset. </td>
+            </tr>
+            <tr>
+            <td>&nbsp;</td>
+            <td><strong>3</strong>&nbsp; - Shift all dynamic series. </td>
+            </tr>
+			</table-->        
+ <h3>Remarks</h3>
+ <ul>
+   <li>The functions can be used to shift static series 
+   or var arrays conditionally or in a <a href="tick.htm">
+   tick</a> or <a href="tick.htm">tock</a> function.
+   Dynamic series are otherwise automatically shifted at any time frame.</li>
+ </ul>
+<h3>Example:</h3>
+<pre>function run()
+{
+  ...
+  vars Data10 = series(0,-10); <em>// create a static series</em>
+  if(SomeCondition) shift(Data10,NewValue,10);
+  ...</pre>
+            <h3>See also:</h3>
+            <a href="series.htm">series</a>,  <a href="diff.htm">diff</a>,
+<a href="rev.htm">rev</a>, <a href="tick.htm">tick</a><br>&nbsp;<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+version online</a>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Fuzzy Logic</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/fuzzy.htm">
+</head>
+
+<body>
+<h1>Fuzzy logic functions </h1>
+<p>Fuzzy logic is a form of many-valued logic. In contrast with traditional binary logic that deals only with <strong>true</strong> or <strong>false</strong>, fuzzy logic functions have a truth value that ranges in degree between <strong>1</strong> and <strong>0</strong>, from 'completely true' over 'almost true' to 'completely false'. Trade signals derived with fuzzy logic are often less susceptible to random noise in the price data, especially with complex logic expressions. </p>
+<p>The following functions return a fuzzy truth value: </p>
+<h2>equalF (var v1, var v2): var </h2>
+<h2>aboveF (var val, var border): var </h2>
+<h2>belowF (var val, var border): var</h2>
+Fuzzy comparison, equivalent to the binary <strong><a href="comparisions.htm">==</a></strong>, <strong>
+<a href="comparisions.htm">&gt;</a></strong> and <a href="comparisions.htm"><strong>&lt;</strong></a><strong></strong> operators.
+<h2>  betweenF (var val, var lower, var upper): var</h2>
+Fuzzy <a href="between.htm">between</a> function.
+<h2>peakF (vars Data): var </h2>
+<h2>valleyF (vars Data): var </h2>
+Fuzzy <a href="peak.htm">peak</a> and <a href="peak.htm">valley</a> functions.
+<h2>risingF (vars Data): var </h2>
+<h2>fallingF (vars Data): var </h2>
+Fuzzy <a href="rising.htm">rising</a> and <a href="rising.htm">falling</a> functions.
+<h2>  crossOverF (vars Data1, vars Data2): var</h2>
+<h2>crossUnderF (vars Data1, vars Data2): var</h2>
+<h2>crossOverF (vars Data, var border): var</h2>
+<h2>crossUnderF (vars Data, var border): var</h2>
+Fuzzy <a href="crossover.htm">crossOver</a> and <a href="crossover.htm">crossUnder </a>functions.
+ <h2>andF (var a, var b): var</h2>
+ <h2>orF (var a, var b): var</h2>
+ <h2>notF (var a, var b): var</h2>
+ Fuzzy logic functions, equivalent to the <a href="comparisions.htm">&amp;&amp;</a>, <a href="comparisions.htm">||</a>, and <a href="comparisions.htm">!</a> operators.
+ <h3>Parameters:</h3>
+ <table border="0">
+   <tr>
+     <td><strong>a, b </strong></td>
+     <td>Fuzzy truth values, <strong>0.0 .. 1.0</strong></td>
+   </tr>
+   <tr>
+     <td><strong>Data, Data1, Data2 </strong></td>
+     <td>Data <a href="series.htm">series</a>. </td>
+   </tr>
+   <tr>
+     <td><strong>val, v1, v2 </strong></td>
+     <td>Values to compare.</td>
+   </tr>
+   <tr>
+     <td><strong>lower, upper, border</strong></td>
+     <td>Comparison borders.</td>
+   </tr>
+ </table>
+ <h3>Returns</h3>
+ Fuzzy truth, from <strong>0.0</strong> (completely false) to <strong>1.0</strong> (completely true)
+ <br>
+&nbsp;
+<h2>fuzzy (var a): bool</h2>
+Defuzzyfication, converts a fuzzy truth value to binary <strong>true</strong> or <strong>false</strong>.
+  Use this function to convert the result of a fuzzy logic expression back to binary logic.
+<h2>eq (var v1, var v2): bool</h2>
+ Fuzzy comparison, returns <strong>true</strong> when the parameters differ less than <strong>FuzzyRange</strong>, otherwise <strong>false</strong>. 
+ <p>&nbsp; </p>
+ <h3>Parameters:</h3>
+ <table border="0">
+   <tr>
+     <td><strong>a</strong></td>
+     <td>Fuzzy truth value, <strong>0.0 .. 1.0</strong></td>
+   </tr>
+ </table>
+ <h3>Returns</h3>
+ Boolean <strong>true</strong> or <strong>false</strong>
+ <br>
+&nbsp;
+<p>The following system variables affect the fuzzy logic calculation: </p>
+ <h2>FuzzyRange</h2>
+ Determines the 'fuzziness' range of the input data (default: <strong>0</strong> = no fuzziness). When comparing two variables, the truth value goes from <strong>0</strong> to <strong>1</strong> within that range. Set this to a small fraction of the price volatility, or f.i. to <strong>0.1*PIP</strong> for comparing moving averages, or to <strong>0.1</strong> for comparing percentage values.
+The smaller this value, the 'less fuzzy' is the logic. At the default value <strong>0</strong> the logic is binary.
+The <strong>FuzzyRange</strong> variable is also used for classifying <a href="advisor.htm">signal patterns</a> for price action trading.
+<h2>FuzzyLevel</h2>
+Determines the level above which fuzzy true becomes binary <strong>true</strong> (default: <strong>0.5</strong>); used by the <strong>fuzzy</strong> function.<br>
+&nbsp;
+<h3>Remarks:</h3>
+<ul>
+  <li>All fuzzy logic functions work just like their binary counterparts, with the difference that the output value depends on the 'closeness' of the result. For instance, <strong>equalF</strong> already returns a nonzero value when the two compared values are close, and <strong>crossOverF</strong> will already return  nonzero when two lines are so close that they almost touch. The functions use the same number of bars as their binary counterparts. </li>
+  <li>The <strong>FuzzyRange</strong> variable is critical for the result of fuzzy logic expressions, and can be subject to an <a href="optimize.htm">optimize</a> process. </li>
+</ul>
+<h3>Example:</h3>
+<pre><em>// Fuzzy version of a Workshop 4 variant ///////////////////</em>
+function run()
+{
+  vars Price = series(price());
+  vars Trend = series(LowPass(Price,1000));
+  vars Signals = series(0);
+ 
+  Stop = 4*ATR(100);
+  FuzzyRange = 0.001*ATR(100);
+
+  var Valley = valleyF(Trend),
+    Peak = peakF(Trend);
+  Signals[0] = orF(Valley,Peak); <em>// store the signal</em>
+  if(fuzzy(Valley))
+    exitShort();
+  if(fuzzy(andF(Valley,notF(Sum(Signals+1,3)))))
+    enterLong();
+  if(fuzzy(Peak))
+    exitLong();
+  if(fuzzy(andF(Peak,notF(Sum(Signals+1,3)))))
+    enterShort();  
+}
+
+<em>// Binary version for comparison </em> 
+function run()
+{
+  vars Price = series(price());
+  vars Trend = series(LowPass(Price,1000));
+  vars Signals = series(0);
+ 
+  Stop = 4*ATR(100);
+  bool Valley = valley(Trend),
+    Peak = peak(Trend);
+  if(Valley or Peak)<em>
+    </em>Signals[0] = 1; <em>// store the signal</em>
+  if(Valley)
+    exitShort();
+  if(Valley and Sum(Signals+1,3) == 0)
+    enterLong();
+  if(Peak)
+    exitLong();
+  if(Peak and Sum(Signals+1,3) == 0)
+    enterShort();  
+}</pre>
+<h3>See also:</h3>
+<a href="crossover.htm">crossOver</a>, <a href="crossover.htm">crossUnder</a>, <a href="rising.htm">rising</a>, <a href="rising.htm">falling</a>, <a href="peak.htm">peak</a>, <a href="peak.htm">valley</a>, <a href="comparisions.htm">comparisons</a><p>&nbsp;</p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

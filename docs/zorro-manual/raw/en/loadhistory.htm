@@ -1,0 +1,383 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+<title>assetHistory</title>
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta content="width=device-width,initial-scale=1" name="viewport">
+<link href="https://zorro-project.com/manual/en/loadhistory.htm" rel="canonical">
+</head>
+
+<body>
+
+<h2>assetHistory(string Name, int Mode): int</h2>
+Loads price history either from the currently selected broker or data feed, or from 
+a specified online price source in CSV or JSON format. Stores the data in a dataset 
+or in a <strong>.t6</strong>, <strong>.t2</strong>, or <strong>.t1</strong> file in the <strong>History</strong> 
+folder. Online price sources can be user defined; some popular sources such as Quandl, 
+Stooq etc. are predefined. <br>
+<h3>Parameters:</h3>
+<table border="0">
+	<tr>
+		<td><strong>Name</strong></td>
+		<td>
+		<p>Asset <a href="symbol.htm">symbol</a> or code specifying the price source, 
+		or the asset name from the asset list, or <strong>0</strong> for the current 
+		asset symbol. </p>
+		</td>
+	</tr>
+	<tr>
+		<td><strong>Mode</strong></td>
+		<td>
+		<p><strong>0</strong> - download tick data (*.t1) or ask/bid quotes 
+		(*.t2) from the selected broker 
+		(<a href="restrictions.htm">Zorro S</a> required). <strong><br>1</strong> 
+		- download one-minute (M1) price data in *.t6 format (all brokers, plus Bittrex, CryptoCompare)..<br>
+		<strong>2</strong> - download hourly (H1) data (Bittrex, CryptoCompare).
+		<br><strong>3</strong> - download daily (D1) data (all online sources, and 
+		IB).<br><strong>4</strong> - download data in <a href="lookback.htm">
+		LookBackResolution</a> (all brokers).<br><strong>8</strong> - download nothing, but get the data from
+		<strong>History\history.csv</strong> (for test purposes).<br><br>
+		<strong>+FROM_SOURCE</strong> - download data from a user-defined source (see <strong>assetSource</strong>; <a href="restrictions.htm">Zorro 
+		S</a> required).<strong><br>+FROM_GOOGLE</strong> - download daily (D1) 
+		data from <strong>Google Finance</strong> (currently unavailable).<br>
+		<strong>+FROM_QUANDL</strong> - download daily (D1) data from
+		<a href="http://www.quandl.com">Quandl/NASDAQ</a> (currently 
+		unavailable). <br><strong>+FROM_AV</strong> - download 
+		daily (D1) data from
+		<a href="http://www.alphavantage.co/" target="_blank">AlphaVantage</a>.(key 
+		required).<br>
+		<strong>+FROM_STOOQ</strong> - download daily (D1) data from
+		<a href="https://stooq.com/" target="_blank">Stooq</a> (currently 
+		unavailable).<br><strong>+FROM_EOD</strong> 
+		- download daily (D1) data from
+		<a href="https://eodhistoricaldata.com/pricing-zorroproject/?utm_source=zorroproject&utm_medium=link&utm_campaign=pricing" target="_blank">
+		EOD</a> (key required).<strong><br>+FROM_YAHOO</strong> - download daily (D1) data from
+		<strong>Yahoo Finance</strong> (currently unavailable)<strong>. </strong><br><strong>+FROM_IEX</strong> - download 
+		daily (D1) data from <a href="https://iexcloud.io">IEX Cloud</a>.(currently unavailable)<strong>.</strong><br>
+		<!--strong>+FROM_BITTREX</strong> - download M1, H1, or D1 data from
+		<a href="bittrex.htm">Bittrex</a> (<a href="restrictions.htm">Zorro S</a> 
+		required). <br--><strong>+FROM_CRYPTOC</strong> - download M1, H1, or D1 data 
+		from <a href="https://www.cryptocompare.com/" target="_blank">CryptoCompare</a> 
+		(<a href="restrictions.htm">Zorro S</a> required).<br>&nbsp;If a key is 
+		required, it can be obtained from thje data provider and entered in
+		<a href="ini.htm">ZorroFix.ini</a>. If no online 
+		source is set, the data is downloaded from the currently selected broker.<br><br>
+		<strong>+UNADJUSTED</strong> - download unadjusted prices (some sources 
+		only; see remarks below).<br><strong>+OVERRIDE</strong> - download price 
+		data even when history is up to date, i.e. not older than half the data 
+		period.<br><strong>+IMMEDIATE</strong> - download at least one tick of recent 
+		price data; for getting a live price from an online source.<br><strong>+VOLATILE</strong> 
+		- store the data in a temporary <a href="data.htm">dataset</a> whose handle 
+		is returned (only D1 data or online sources).<br><strong>+PRECISE</strong> 
+		- load only the period given by <a href="lookback.htm">LookBack</a>,
+		<a href="date.htm">StartDate</a>, and <a href="date.htm">EndDate</a>.<br><strong>+FOR_ASSET</strong> 
+		- store the file under the name of the current asset selected with
+		<a href="asset.htm">asset</a> or <a href="asset.htm">assetAdd</a>.
+		</p>
+		</td>
+	</tr>
+</table>
+<h3>Returns:</h3>
+<strong>0</strong> when nothing was downloaded due to an error or because the data 
+was up to date. Otherwise a nonzero value or the dataset handle.<br>&nbsp;
+<h2>assetSource(string Filename, string URL, string Header, string Body, string 
+Format)</h2>
+Sets up all parameters of a price source website or REST API for a subsequent
+<strong>assetHistory(...,FROM_SOURCE</strong>) call. See examples.<br>
+<h3>Parameters:</h3>
+<table border="0">
+	<tr>
+		<td><strong>Filename</strong></td>
+		<td>
+		<p>Name of the file for storing or appending the downloaded data, or
+		<strong>0</strong> for using the default symbol. </p>
+		</td>
+	</tr>
+	<tr>
+		<td><strong>URL</strong></td>
+		<td>
+		<p>Target URL for the data request, including request parameters. </p>
+		</td>
+	</tr>
+	<tr>
+		<td><strong>Header</strong></td>
+		<td>
+		<p>Request header, or 0 if no header is required. Some online sources requre 
+		an API key or access troken in the header. </p>
+		</td>
+	</tr>
+	<tr>
+		<td><strong>Body</strong></td>
+		<td>
+		<p>Request body for a HTTP POST request, or 0 for a HTTP GET request.
+		</p>
+		</td>
+	</tr>
+	<tr>
+		<td><strong>Format</strong></td>
+		<td>
+		<p>Format string for converting the received data, as described under
+		<a href="data.htm">dataParse</a>. If the format begins with <strong>'['</strong>, 
+		JSON data format is assumed, otherwise CSV format. If 0 or empty, the data 
+		is not converted, but stored under <strong>history.csv</strong> or
+		<strong>history.json</strong>.</p>
+		</td>
+	</tr>
+</table>
+<h3>Remarks:</h3>
+<ul>
+	<li>Price history is stored in the <strong>History</strong> folder under
+	<strong>Name</strong> plus <strong>.t6</strong> extension for D1 or M1 data, 
+	or <strong>.t2</strong> or <strong>.t1</strong> for tick data. The file name 
+	and extension can 
+	be set up with the <a href="script.htm">History</a> string (like <strong>
+	History = &quot;*.t2&quot;;</strong> for storing ask/bid quotes or tick data wth 
+	volume). M1 or higher resolution data 
+	is split into separate years, EOD data or data from 
+	an online source is stored in a single file. The Quandl database name, an appended
+	<strong>&quot;.US&quot;</strong> by Stooq, and <strong>'/'</strong>, <strong>
+	'.'</strong>, or <strong>':'</strong> characters are automatically stripped 
+	from the historical data file names. If the name is otherwise different to the 
+	asset name, use <a href="file_.htm">file_copy</a> to copy the downloaded file 
+	to the correct asset name (f.i. <strong>file_copy(&quot;History\\ICE.t6&quot;,&quot;History\\LONDONICE.t6&quot;)</strong>.
+	</li>
+	<li>The file size of tick data in <strong>.t1</strong> format can be reduced 
+	by setting the <strong>PriceStep</strong> variable to a nonzero value. 
+	Prices are then only stored when they differe from the previous price by at 
+	least the given step value (default <strong>0</strong>).</li>
+	<li>Price history is only downloaded in the <a href="mode.htm">INITRUN</a> or 
+	in the <strong>main</strong> function, and only when existing price history 
+	is not <span class="Highlight">already up to date</span>. For this the most 
+	recent online price or the given <strong>EndDate</strong> is compared with the history file date, and if the difference 
+	is less than half the data resolution, no new history is downloaded. If
+	<strong>FOR_ASSET</strong> is set, <a href="date.htm">UpdateDays</a> are also 
+	considered. For downloading data after the <strong>INITRUN</strong> and regardless 
+	of existing history, set the <strong>OVERRIDE</strong> flag. </li>
+	<li>For <span class="Highlight">automatically</span> downloading price 
+	history at the begin of a backtest, use the
+<a href="date.htm">UpdateDays</a> variable. No <strong>assetHistory</strong> 
+	call is needed.</li>
+	<li>If the same price history is downloaded <span class="Highlight">multiple 
+	times</span>, for instance by several different scripts, make sure that the 
+	begin of already existing data matches the longest needed data period. Newly 
+	downloaded data is only merged to the end of existing history, but not to the 
+	begin.</li>
+	<li>The <span class="Highlight">raw data</span> from online sources (Google, 
+	Quandl, etc) is stored in <strong>History\history.csv</strong> or <strong>History\history.json</strong>. 
+	If the price source does not deliver price data, but some error message instead, 
+	a <strong>&quot;invalid response&quot;</strong> error is displayed. The error 
+	message can then be read from the downloaded raw file. The <strong>assetHistory</strong> 
+	function will attempt twice to download the data before giving up.</li>
+	<li>When downloading <span class="Highlight">adjusted data</span>, use the
+	<strong>OVERRIDE</strong> flag since it affects past prices. </li>
+	<li>If a <span class="Highlight">download failed</span> for some reason, delete 
+	the resulting partial history file (if any). Otherwise subsequent downloads 
+	might attempt to append to it or assume that the data is up to date. Usual reasons 
+	for failed downloads from online sources are wrong symbols or exceeding a quoata 
+	limit. The reason can be normally found in the downloaded <strong>history.csv</strong> 
+	or <strong>history.json</strong> file, which contains the response from the 
+	online source.</li>
+	<li>When downloading data from a broker, the asset is subscribed automatically. 
+	The recent values of the asset's <a href="spread.htm">Spread</a>,
+	<a href="pip-.htm">PipCost</a>, etc. are updated to the
+	<a href="account.htm">Assets.csv</a> file even if no price history is downloaded. 
+	This way new assets can be added and available assets can be set up to their 
+	current parameter values for further simulations. </li>
+	<li>Price history from brokers is downloaded either for the number of recent 
+	years given by <a href="date.htm">NumYears</a>, or for the number of years given 
+	by <a href="date.htm">StartDate</a> and <a href="date.htm">EndDate</a> plus 
+	an additional <a href="lookback.htm">LookBack</a> year. If <strong>FOR_ASSET</strong> 
+	is set, the start and end dates are kept exactly without considering the 
+	lookback period. Otherwise whole years are loaded. If <a href="date.htm">
+	NumYears</a> is set to <strong>-1</strong>, no data is downloaded, but
+	<a href="account.htm">Log\Assets.csv</a> is still updated. Price history from 
+	online sources is downloaded for a fixed number of years up to the current day, 
+	depending on the source.</li>
+	<li>Price data from a broker or from online sources with limited history (<strong>FROM_IEX</strong>,
+	<strong>FROM_CRYPTOC</strong>, <strong>FROM_SOURCE</strong>) is
+	<span class="Highlight">appended at the begin</span> of an existing data file. 
+	Price data from other sources is not appended, but <span class="Highlight">replaces</span> 
+	the previous file unless it's already up to date. Make sure that the time resolution 
+	of the downloaded prices matches the resolution of the historical data files. 
+	Normally the resolution is 1 tick for .t1 or .t2 files, 1 minute for .t6 files 
+	with year number, or 1 day for .t6 files without year number. </li>
+	<li>For <span class="Highlight">backtesting price history</span>,
+	<a href="barperiod.htm">BarPeriod</a> must be at or above the price history 
+	resolution. Set it to <strong>1440</strong> for testing D1 price data. For testing 
+	only parts of a multi-year <strong>.t6</strong> file, use an 8-digit
+	<a href="date.htm">StartDate</a> or <a href="date.htm">EndDate</a>. </li>
+	<li>Price history from online sources is <span class="Highlight">temporarily 
+	stored</span> in a dataset of T6 or T2 records with handle <strong>H_HISTORY</strong>. 
+	It can be used to evaluate the data without loading the history file.</li>
+	<li>Check the correct spelling of the asset name or code. Spelling often differs 
+	slightly, f.i. the same stock can be named <strong>BRK.B</strong>, <strong>BRK_B</strong>,
+	<strong>BRK-B</strong>, or <strong>BRK-B.US</strong> dependent on the website 
+	or price source. </li>
+	<li><span class="Highlight">Outliers</span> in the price history are automatically 
+	fixed on download dependent on the <a href="outlier.htm">Outlier</a> variable. 
+	The first detected outlier will trigger <strong>Warning 035</strong>. Some 
+	high volatility assets, such as cryptocurrencies or penny stocks, could 
+	require a higher outlier tolerance when downloading prices. Candles with 
+	duplicate time stamps are automatically removed on downloading <strong>.t6</strong> 
+	files.</li>
+	<li>A price history file with length <strong>0</strong> is skipped in the 
+	backtest and prevents downloading 
+	prices for that particular year. This way, by storing an empty file, price data 
+	that is unavailable or of bad quality can be excluded from download 
+	and backtests. </li>
+	<li>For T1 data, the price server of the broker must support quote-based price 
+	data; this is the case for FXCM, but not for Oanda, IB, or MT4/MT5 brokers. 
+	Dependent on the price server speed, downloading T1 prices can take a long time, 
+	such as a whole day for one year of price quotes. If the <strong>
+	<a href="mode.htm">LEAN</a></strong> flag is not set, ask and bid prices are 
+	stored in the <strong>.t1</strong> file, otherwise only ask prices.&nbsp;
+	</li>
+	<li>Comments about some predefined data sources (all trademarks are property 
+	of their owners):<ul>
+		<li><strong>Google</strong> prices are adjusted for splits only, unadjusted 
+		prices are not available. Google download is known to fail on certain assets 
+		for no apparent reason, even though they can be downloaded manually. The 
+		service was recently not available.</li>
+		<li><strong>Yahoo</strong> data is split and dividend adjusted; <strong>UNADJUSTED</strong> is supported. Yahoo EOD data was reported to contain 
+		2 entries on dividend payment days, one with the current and one with previous 
+		day's data. Yahoo data of some European assets could be of poor quality; 
+		check the resulting price curve if in doubt.</li>
+		<li><strong>AlphaVantage</strong> data loads relatively slow when there 
+		is much traffic. The data has good quality. <strong>UNADJUSTED</strong> 
+		is supported. The AV API key must be present under <strong>&quot;AVApiKey 
+		= ...&quot;</strong> in <a href="ini.htm">Zorro.ini</a>. Free data is limited 
+		to 5 requests per minute and 500 requests per day.</li>
+		<li><strong>Stooq</strong> requires a country identifier appended to stock 
+		or ETF names. If it is missing, <strong>&quot;.US&quot;</strong> is automatically 
+		appended. The data loads fast and is of good quality. <strong>UNADJUSTED</strong> 
+		is supported. There is a limit to the number of downloads per day, identified 
+		through the IP address. </li>
+		<li><strong>EOD</strong> requires a country identifier appended to stock 
+		or ETF names. If it is missing, <strong>&quot;.US&quot;</strong> is automatically 
+		appended. The free subscription only supports one year data and only 20 
+		requests per day. Prices are split and dividend adjusted, <strong>UNADJUSTED</strong> 
+		is supported. The key token must be entered under <strong>&quot;EODKey = 
+		....&quot;</strong>&nbsp; in <a href="ini.htm">Zorro.ini</a>. Zorro users 
+		get a discount on the all-in-one data package when they order on
+		<a href="https://eodhistoricaldata.com/pricing-zorroproject/?utm_source=zorroproject&amp;utm_medium=link&amp;utm_campaign=pricing" target="_blank">this link</a>. 
+		</li>
+	</ul>
+	<ul>
+		<li><strong>Quandl</strong> data from the <strong>WIKI </strong>(stocks),
+		<strong>CHRIS/CME </strong>and <strong>CHRIS/ICE</strong> (futures),
+		<strong>BITFINEX</strong> and <strong>GDAX</strong> (Bitcoin and other cryptocurrencies) 
+		EOD databases are supported. Databases may be discontinued, so check it 
+		before on the Quandl website. Quandl databases in different formats can 
+		be downloaded with the <a href="data.htm">dataDownload</a> function. Quandl 
+		data loads fast and has usually good quality. The Quandl key must be present 
+		under <strong>&quot;QuandlKey = ...&quot;</strong> in <a href="ini.htm">Zorro.ini</a> and the asset's database code (f.i. 
+		<strong>&quot;WIKI/AAPL&quot;</strong> 
+		or <strong>&quot;BITFINEX/ETHBTC&quot;</strong>) must be passed to
+		<strong>Name</strong>.</li>
+		<li><strong>IEX</strong> provides EOD data for US equities. <strong>UNADJUSTED</strong> 
+		is supported; otherwise data is split- and dividend-adjusted. The IEX API 
+		token must be present under <strong>&quot;IEXlKey = ...&quot;</strong> in
+		<a href="ini.htm">Zorro.ini</a>.</li>
+		<li><strong>Bittrex</strong> provides recent price history for a large number 
+		of cryptocurrencies. Format: <strong>BTC-ETH</strong> returns ETH prices 
+		in BTC. The history length is normally several years for D1 data, several 
+		months for H1 data, and several days for M1 data. It is recommended to insert 
+		a 4 seconds delay between subsequent <strong>loadHistory</strong> calls.</li>
+	</ul>
+	</li>
+	<ul>
+		<li><strong>CryptoCompare </strong>provides recent price history for almost 
+		all existing cryptocurrencies. Format: <strong>ETH/BTC</strong> returns 
+		ETH prices in BTC. The history length is up to 3 years for D1 data, 1 year 
+		for H1 data, and 1 month for M1 data. Since digital currencies are not traded 
+		at a central exchange, prices from different sources can be different.</li>
+		<li><strong>MT4/MT5</strong> servers usually have no long price history, 
+		so the command will print an error message or only partially download the 
+		history. </li>
+		<li><strong>IB</strong> market data must be subscribed before it can be 
+		downloading. For downloading stock M1 data, send a
+		<a href="brokercommand.htm">SET_PRICETYPE</a><strong>,2</strong> command 
+		for switching to the last traded price, because ask/bid prices are sometimes 
+		in poor quality. </li>
+		<li><strong>FCXM</strong> servers provide tick price history from 2002 for 
+		currencies, and from 2008 for index CFDs. </li>
+	</ul>
+	<li>Free historical data is also available on the Zorro download page. 
+	History in M1 resolution and options EOD data for US stocks 
+	can be purchased from oP group.</li>
+	<li>Some data sources, such as Quandl, AlphaVantage, EOD, provide also earnings 
+	reports and other fundamental data in JSON format. It can be retrieved with
+	<a href="http.htm">http_transfer</a> and parsed with <a href="str_.htm">strstr</a> 
+	and <a href="str_.htm">strvar</a> commands.<br></li>
+</ul>
+<h3>Example:</h3>
+<pre><em>// Update M1 price history of all assets from selected broker</em>
+function main()
+{
+  NumYears = 2;
+  while(loop(Assets))
+    assetHistory(Loop1,1);
+}
+
+<em>// Download D1 prices from Quandl</em>
+string Name;
+while(Name = loop(&quot;AAPL&quot;,&quot;MSFT&quot;,&quot;GOOGL&quot;))
+  assetHistory(strf("WIKI/%s&quot;,Name),FROM_QUANDL);
+
+<em>// Download and plot Bitcoin prices from Bitfinex</em>
+function run()
+{
+  BarPeriod = 1440;
+  assetHistory("BITFINEX/BTCUSD",FROM_QUANDL);
+  assetAdd("BTCUSD");
+  asset("BTCUSD");
+  set(PLOTNOW);
+}
+
+<em>// Download unadjusted SPY data and store it in &quot;SPYuna.t6&quot;</em>
+History = &quot;*una.t6&quot;;
+assetHistory(&quot;SPY&quot;,FROM_STOOQ|UNADJUSTED);
+
+<em>// Download AAPL prices from Stooq, using assetSource
+</em>assetSource(&quot;AAPL.t6&quot;,
+&quot;https://stooq.pl/q/d/l/?s=AAPL.US&amp;d1=20000101&amp;d2=20201024&amp;i=d&quot;,
+0,0,&quot;+%Y-%m-%d,f3,f1,f2,f4,f6&quot;);
+assetHistory(0,FROM_SOURCE);
+
+<em>// Download Bitcoin OHLC prices from Coin.io
+</em>int Month, Year = 2019, MinutesPerMonth = 31*1440;
+for(Month = 1; Month &lt;= 12; Month++) {
+  string URL = strf(&quot;https://rest.coinapi.io/v1/ohlcv/BTC/USD/history?period_id=1MIN&amp;time_start=%04d-%02d-01T00:00:00&amp;limit=%d&quot;,
+    Year,Month,MinutesPerMonth);
+  string Name = strf(&quot;BTCUSD_%04d.t6&quot;,Year);
+  assetSource(Name,URL,
+    &quot;X-CoinAPI-Key: my-coin-api-key&quot;,0,
+    &quot;[,time_period_end,%Y-%m-%dT%H:%M:%SZ,price_high,price_low,price_open,price_close,,volume_traded&quot;);
+  assetHistory(0,FROM_SOURCE);
+}
+
+<em>// Download Bitcoin BBO ticks from Kraken via Coin.io
+</em>var From = dmy(20190101), To = dmy(20200101);
+for(; From &lt; To; From += 1.) {
+  string Start = strdate(&quot;%Y-%m-%dT00:00:00&quot;,From),
+    End = strdate(&quot;%Y-%m-%dT00:00:00&quot;,From+1.);
+  assetSource(&quot;BTCUSD_2019.t2&quot;,
+    strf(&quot;https://rest.coinapi.io/v1/quotes/KRAKEN_SPOT_BTC_USD/history?time_start=%s&amp;time_end=%s&amp;limit=100000&quot;,
+      Start,End),
+    &quot;X-CoinAPI-Key: my-coin-api-key&quot;,0,
+    &quot;[,time_exchange,%Y-%m-%dT%H:%M:%SZ,ask_price,ask_size,bid_price,bid_size&quot;);
+  assetHistory(0,FROM_SOURCE);
+}</pre>
+<h3>See also:</h3>
+<a href="price.htm"><span class="links">price</span></a>, <a href="asset.htm">asset</a>,
+<a href="date.htm">UpdateDays</a>, <a href="ticktime.htm">MaxTicks</a>, <a href="loadstatus.htm">loadStatus</a>,
+<a href="history.htm">price history</a>, <a href="data.htm">dataDownload</a>
+<p></p>
+<a class="button" href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))">&#9658; 
+latest version online</a>
+
+</body>
+
+</html>

@@ -1,0 +1,337 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Variables, Arrays, Strings</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+.auto-style1 {
+	color: #FF0000;
+}
+</style>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/aarray.htm">
+</head>
+<body>
+<h1>Variables, Arrays, Strings </h1>
+<p>Variables store numbers. For defining
+  variables and giving them initial values, use a declaration like this:</p>
+<pre>var Number;	<i>// uninitialized variable of type 'var'</i>
+int Number = 123; <i>// initialized variable of type 'int'</i></pre>
+<P>
+  
+  This declaration  creates a variable of the given type with the given <b>name</b>.
+The name can
+    contain up to 30 characters, 
+  and must begin with A..Z, a..z, or an underscore _. Variables must
+    never have names that are already used  for functions and for other previously-defined variables.</P>
+<p>Also constant expressions can be assigned to variables. Example:</p>
+<pre>int Size = 100/2; <em>// assign the value 50</em></pre>
+
+<H3>Variable types </H3>
+
+<p>Computers calculate with finite accuracy. Therefore all normal variable types are limited in precision and range. Lite-C supports the following variable types:</p>
+<TABLE border="1" cellspacing="0" cellpadding="2">
+  <TR ALIGN="LEFT">
+    <TD ALIGN="LEFT"><strong><em>Type</em></strong></TD>
+    <TD ALIGN="LEFT"><strong><em>Size (bytes) </em></strong></TD>
+    <TD ALIGN="LEFT"><strong><em>Range</em></strong></TD>
+    <TD ALIGN="LEFT"><strong><em>
+      
+    Step</em></strong></TD>
+    <TD ALIGN="LEFT"><strong><em>
+      
+    Digits</em></strong></TD>
+    <TD ALIGN="LEFT"><strong><em>Used for </em></strong></TD>
+  </TR>
+  <TR ALIGN="LEFT">
+    <TD ALIGN="LEFT"><strong>double, var </strong></TD>
+    <TD ALIGN="LEFT">8 </TD>
+    <TD ALIGN="LEFT"> -1.8&middot;10<sup>308</sup> to 1.8&middot;10<sup>308</sup></TD>
+    <TD ALIGN="LEFT"> 2.2&middot;10<sup>-308</sup></TD>
+    <TD ALIGN="LEFT">~14 </TD>
+    <TD ALIGN="LEFT">high precision numbers</TD>
+  </TR>
+  <TR ALIGN="LEFT">
+    <TD><b>float</b></TD>
+    <TD>4 </TD>
+    <TD> -3.4&middot;10<sup>38</sup> to 3.4&middot;10<sup>38</sup></TD>
+    <TD> 1.2&middot;10<sup>-38</sup></TD>
+    <TD>~7 </TD>
+    <TD ALIGN="LEFT">script constants, compact numbers</TD>
+  </TR>
+  <TR ALIGN="LEFT">
+    <TD><b>fixed</b></TD>
+    <TD>4 </TD>
+    <TD> -1048577.999 to 1048576.999</TD>
+    <TD>0.001</TD>
+    <TD>~9 </TD>
+    <TD ALIGN="LEFT">special purposes  (HFT)</TD>
+  </TR>
+  <TR ALIGN="LEFT">
+    <TD ALIGN="LEFT"><strong> int, long </strong></TD>
+    <TD ALIGN="LEFT">4 </TD>
+    <TD ALIGN="LEFT">-2147483648 to 2147483647</TD>
+    <TD ALIGN="LEFT">1</TD>
+    <TD ALIGN="LEFT">~10 </TD>
+    <TD ALIGN="LEFT">script constants, counting, flags </TD>
+  </TR>
+  <TR ALIGN="LEFT">
+    <TD><b>short</b></TD>
+    <TD>2 </TD>
+    <TD>0 to 65536</TD>
+    <TD>1</TD>
+    <TD>~5 </TD>
+    <TD ALIGN="LEFT">compact integers  </TD>
+  </TR>
+  <TR ALIGN="LEFT">
+    <TD ALIGN="LEFT"><strong>char, byte </strong></TD>
+    <TD ALIGN="LEFT">1 </TD>
+    <TD ALIGN="LEFT">0 to 256</TD>
+    <TD ALIGN="LEFT">1</TD>
+    <TD ALIGN="LEFT">~2 </TD>
+    <TD ALIGN="LEFT">text characters </TD>
+  </TR>
+  <TR ALIGN="LEFT">
+    <TD ALIGN="LEFT"><strong>bool, BOOL</strong></TD>
+    <TD ALIGN="LEFT">4 </TD>
+    <TD ALIGN="LEFT">true, false or 1,0</TD>
+    <TD ALIGN="LEFT">-</TD>
+    <TD ALIGN="LEFT">-</TD>
+    <TD ALIGN="LEFT">yes/no decisions</TD>
+  </TR>
+    <tr>
+    <TD ALIGN="LEFT"><strong>size_t, intptr_t</strong></TD>
+    <TD ALIGN="LEFT">4 or 8</TD>
+    <TD ALIGN="LEFT">0 to 4294967295 / 18446744073709551615</TD>
+    <TD ALIGN="LEFT">-</TD>
+    <TD ALIGN="LEFT">-</TD>
+    <TD ALIGN="LEFT">sizes, addresses, long integers</TD>
+    </tr>
+  <TR ALIGN="LEFT">
+    <TD ALIGN="LEFT"><strong>char*, string</strong></TD>
+    <TD ALIGN="LEFT">characters+1 </TD>
+    <TD ALIGN="LEFT">&quot;...&quot;</TD>
+    <TD ALIGN="LEFT">-</TD>
+    <TD ALIGN="LEFT">-</TD>
+    <TD ALIGN="LEFT">text</TD>
+  </TR>
+  <TR ALIGN="LEFT">
+    <TD ALIGN="LEFT"><strong>var*, <a href="series.htm">vars</a></strong></TD>
+    <TD ALIGN="LEFT">elements*8</TD>
+    <TD ALIGN="LEFT">-1.8&middot;10<sup>308</sup> to 1.8&middot;10<sup>308</sup></TD>
+    <TD> 2.2&middot;10<sup>-308</sup></TD>
+    <TD>~14 </TD>
+    <TD>arrays, simple time series</TD>
+  </TR>
+    <tr>
+    <TD ALIGN="LEFT"><strong><a href="month.htm">DATE</a></strong></TD>
+    <TD ALIGN="LEFT">8</TD>
+    <TD ALIGN="LEFT">12-30-1899 00:00 to doomsday</TD>
+    <TD>~0.1 ms</TD>
+    <TD>-</TD>
+    <TD>time, date </TD>
+    </tr>
+  <TR ALIGN="LEFT">
+    <TD ALIGN="LEFT"><strong><a href="mat.htm">mat</a></strong></TD>
+    <TD ALIGN="LEFT">rows*cols*8</TD>
+    <TD ALIGN="LEFT">-1.8&middot;10<sup>308</sup> to 1.8&middot;10<sup>308</sup></TD>
+    <TD> 2.2&middot;10<sup>-308</sup></TD>
+    <TD>~14 </TD>
+    <TD>vectors, matrices</TD>
+  </TR>
+  <TR ALIGN="LEFT">
+    <TD ALIGN="LEFT"><strong><a href="data.htm">dataset</a></strong></TD>
+    <TD ALIGN="LEFT">records*(fields+1)*4</TD>
+    <TD ALIGN="LEFT">-3.4&middot;10<sup>38</sup> to 3.4&middot;10<sup>38</sup></TD>
+    <TD>1.2·10<sup>-38</sup></TD>
+    <TD>~7</TD>
+    <TD>candles, complex time series </TD>
+  </TR>
+</TABLE>
+<p><span class="edition">&nbsp;!!&nbsp;</span> The <span class="Highlight">limited accuracy</span> 
+of variable types affects numerical expressions. If an expression contains 
+only integers (numbers without decimals), the result is also an integer. For instance, the 
+expression <strong>(99/2)</strong> is <strong>49</strong>, but <strong>(99.0/2.0)</strong> is <strong>49.5</strong>. 
+The expression <strong>1.0/4</strong> is <strong>0.25</strong>, but <strong>1/4</strong> is <strong>0.</strong> 
+Integer numbers in the script - such as character constants (<strong>'A'</strong>), numeric constants (<strong>12345</strong>) or hexadecimal constants (<strong>0xabcd</strong>) are treated as <strong>int</strong> 
+with 10 significant digits; numbers or constant expressions containing a decimal point (<strong>123.456</strong>) are treated as 
+<strong>float</strong> with 7 significant digits. Due to the 7 digit limit, <strong>var X = 
+123456789.0;</strong> would in fact set <strong>X</strong> to <strong>123456792.0</strong>; but <strong>var X = 
+123456789;</strong> sets it to <strong>123456789.0</strong> since <strong>int</strong> 
+has 10 significant digits.</p>
+<pre>var Half = 1/2;  <span class="auto-style1">// wrong!</span>
+var Half = 1./2; <em>// ok!</em> </pre>
+Since constants or constant expressions are <strong>float</strong>, avoid 
+arithmetic with constants when higher precision is needed. Use <strong>var</strong> or <strong>double</strong> 
+variables instead: 
+<pre>var Days = Seconds/(24.*60.*60.);  <span class="auto-style1">// low precision</span>
+var SecondsPerday = 24*60*60; 
+var Days = Seconds/SecondsPerday; <em>// high precision</em> </pre>
+
+<h3>Typecast operators</h3>
+
+Variables are normally automatically converted to another type. So you can assign <strong>var</strong> to <strong>int</strong> variables or vice versa without having to care about type conversion.
+However, sometimes you'll need to convert expressions or variables when the conversion is not obvious - for instance when calling an overloaded function that accepts several variable types. In this case you can enforce a type conversion with a <strong>typecast operator</strong>. A typecast (or cast) operator is the target variable type in parentheses - f.i. <strong>(int)</strong> or <strong>(var)</strong> - placed before the expression or variable to be converted. Example:
+<pre>var dx = 123.456;<br>float fy = 0.12345;
+printf(&quot;The integer value of dx is %i, fy is %f&quot;,(int)dx,(var)fy); <em>// %i expects the &quot;int&quot; variable type, %f expects &quot;var&quot;</em> </pre>
+Be aware of the above mentioned <span class="Highlight">limited accuracy</span> when using floating 
+point arithmetic and then typecasting the result to an integer. Operations with the 
+theoretical result 
+<strong>1</strong> can in practice return <strong>1.000001</strong> or 
+<strong>0.999999</strong>, and cause unexpected results.<o:p> If in doubt:
+<a href="round.htm">round</a>.&nbsp;&nbsp; </o:p><h3>Global, local, and static variables </h3>
+Variables can be defined <i>outside</i> functions or <i>inside</i> functions. When defined outside, they are called <strong>global variables </strong>and are accessible by all functions. They keep their values until the script is compiled the next time. V<SPAN>ariable</SPAN> definitions <i>inside</i> functions produce <strong>local
+variables</strong>. Local variables only exist within the scope of the function. They are unknown outside 
+the function, and lose their values when the function returns. If a global variable with the same name as a local
+variable exists, the local variable has priority inside it's function. If you 
+declare a variable multliple times, the most recent declared copy is used. But 
+for your own sake you should better avoid using the same name for different 
+variables.&nbsp;
+<p>A local variable can
+  be declared as <b>static</b>. It is then treated as a global variable even
+  if it is declared within a function, and keeps its content when the function
+  terminates or when another instance of the function is called. 
+  
+  This means that it is initialized only the first time the function is called.
+   
+  Example: </p>
+<pre>function foo() 
+{
+  static bool Initialized = false;
+  if(!Initialized) { initialize(); } <i>// initialize only once</i>
+  Initialized = true;
+  ...
+}</pre>
+<span class="edition">&nbsp;!!&nbsp;</span> Static and global variables keep their  values until the script is compiled 
+again. So make sure to initialize them at script start - <a href="is.htm">if(Init)</a> - to their initial values if required.<p>
+The value of another variable, or the return value of a function can be assigned to a local variable at declaration, 
+but not to a global or static variable. Use only constants for a declaration of 
+a global or static variable. </p>
+<pre>int GlobalCounter = count(); <span class="auto-style1">// wrong!</span>
+
+function foo() 
+{
+  int FooCounter = count(); <i>// ok!</i>
+  static int FooCounter2 = FooCounter; <span class="auto-style1">// wrong!</span>
+  ...
+}</pre>
+
+<h3>Arrays </h3>
+If you group several variables of the same type together, you have an <STRONG>array</STRONG>:
+<pre>var name[N]; <i>// uninitialized array</i><br>var name[N] = <span class="litec">{</span> 1, 2, ... N<span class="litec"> }</span>;&nbsp; <i>// initialized global array </i>
+</pre>
+This creates a variable that contains <strong>N</strong> numbers, and optionally gives them default
+values as in the second line. 
+
+Note the winged brackets { } that must surround the
+set of default values. Such a
+multi-number variable is called an <strong>array</strong>.
+The number <strong>N</strong> is called the <strong>length</strong> of the array. 
+It must be really a number; arithmetic expressions or formulas cannot be used for 
+defining a fixed-length array,&nbsp; Example:
+<pre>int my_array[5] = <span class="litec">{ </span>0, 10, 20, 30, 40<span class="litec"> }</span>; </pre>
+<p>This creates an array of 5 numbers that can
+  be accessed in expressions through <strong>my_array[0]...my_array[4]</strong>.
+  In such an expression, the number in the<span> [ ]</span> brackets
+  - the <span><strong>index</strong></span> - tells which one of the 5 numbers of
+the array is meant. Note that there is no <strong>my_array[5]</strong>,
+    as the index starts with <span><strong>0</strong></span>.  The advantage of
+    using an array, compared to defining single variables, is that the index can 
+be any numeric
+expression. Example: </p>
+<pre>int i;
+for (i=0; i&lt;5; i++) 
+&nbsp;&nbsp;my_array[i] = i; <em>// sets the array to 0,1,2,3,... etc.</em>
+</pre>
+<p>Care must be taken that the index never exceeds its maximum value, <b>4</b> in
+  this example. Otherwise the script will crash. </p>
+<p><span class="edition">&nbsp;!!&nbsp;</span> 
+  
+  Initializing in the definition works only for simple arrays; multidimensional arrays, arrays that contain 
+strings, structs, or anything else than numbers, or several arrays defined together in a single logical line must be initialized by explicitly setting their elements. Initializing local arrays makes them <strong>static</strong> (see below), meaning that they keep their previous values when the function is called the next time. For initializing them every time the function is called, explicitly set
+them to their initial values,
+  like this:</p>
+<pre>function foo()
+{
+  var my_vector[3];
+  my_vector[0] = 10;
+  my_vector[1] = 20;
+  my_vector[2] = 30;
+  ...
+  var my_static[3] = { 10, 20, 30 }; <i>// initializing local arrays makes them static </i><i>
+  ...</i>
+} </pre>
+<p><span class="edition">&nbsp;!!&nbsp;</span> 
+  
+All local variables are stored on a special memory area called the <strong>stack</strong>. 
+The stack has a limited size that is sufficient for many variables, but not for huge arrays. Exceeding the stack size causes 
+
+a <a href="errors.htm">Error 111</a> message at runtime, so when you need large arrays of  
+more than 100 variables,
+ 
+better declare them global, i.e. outside the function. When you want to determine the array size dynamically, use the <strong><a href="sys_malloc.htm">malloc</a></strong> / <strong><a href="sys_free.htm">free</a></strong> method. 
+When you need a data structure whose size can grow or change at runtime, use no 
+array, but a <a href="data.htm">dataset</a>.</p>
+<p>In C, arrays are in fact <a href="apointer.htm">pointers</a> to the start of 
+a memory area containing the array elements. So, <strong>my_vector[3]</strong> 
+is the same as <strong>*(my_vector+3)</strong>.</p>
+<p>Arrays can contain not only variables, but also complex data types such as <a href="structs.htm">structs</a>. For sorting or searching arrays, the standard C functions <strong>qsort</strong> and <strong>bsearch</strong> can be used. They are documented in any C book and available in the <a href="litec_h.htm">stdio.h</a> include file. </p>
+<p><span>Multidimensional arrays</span> can be defined
+  by using several indices: </p>
+<pre>var Map[10][20];<i><br></i>...
+Map[j][i] = 10; <i>// j = 0..9, i = 0..19</i></pre>
+Computer memory has only one dimension, so the above defined array is in fact 
+still a pointer to a one-dimensional memory area of the size 200 (10*20). 
+Pointer offsets or the <strong>&amp;</strong> operator can be used to address array elements 
+or pointers to array elements. In the above example, <strong>Map[j][i]</strong> 
+is the same as <strong>*(Map+j*20+i)</strong>, and <strong>&amp;(Map[j][i])</strong> 
+is the same as <strong>(Map+j*20+i)</strong>.
+<h3 align="left"><b>typedef </b></h3>
+
+ You can define your own
+  variable types with <b>typedef</b> statements.
+Example; 
+  <pre>typedef long DWORD;
+typedef char byte;
+
+...
+
+DWORD dwFlags;
+byte mypixel; </pre>
+  <strong>typedef</strong> can be used to redefine variables and <a href="structs.htm">structs</a>; it can not be used for arrays.<br>&nbsp;<br>
+  <h3>Strings<a name="string"></a></h3>
+  <p>Strings are arrays of <strong>char</strong> variables that contain alphanumerical characters - letters, numbers or symbols - which can be used for messages or names. They are defined this way: </p>
+  <pre>string Name = "characters";&nbsp;</pre>
+  <p>This defines a string with the given <span 
+class=param>name</span> and initializes it to the content <span class=param>characters </span>between the quotation marks. Special characters within a string must be preceded by a '<b>\</b>': <span class=param>\n</span> = Line feed; <span 
+class=param>\\</span> = Backslash; <STRONG>\"</STRONG> = Quotation mark. The <strong>string</strong> type is 
+  simply a <strong>char</strong> pointer (<strong>char*</strong>) that points to the first character. The last character is followed by a 0 byte to indicate the end of the string.</p>
+  <p>Any static <strong>char</strong> array can serve as a string with a fixed maximum length and variable content: </p>
+  <pre>char Name[40];
+...
+strcpy(Name,&quot;My String!&quot;);&nbsp;</pre>
+  <p>After filling this array  with characters, it can be used as a <strong>string</strong>. Care must be taken not to exceed 39 characters, as the last one 
+  is the end mark <strong>0</strong>. <a href="str_.htm">String functions</a> can be used for setting and manipulating string content. </p>
+  <p>The content of a <strong>string</strong> can be compared with a string constant using the <strong>'=='</strong> operator:</p>
+  <pre>string MyAsset = "AAPL";
+...
+if(MyAsset == "AAPL")
+  ...
+</pre>
+<span class="edition">&nbsp;!!&nbsp;</span> Comparing strings with string constants is not the same as comparing two strings (f.i. <strong>if(MyAsset1 == MyAsset2) ...</strong>). The latter expression is only true when the two string pointers are really identical. For comparing 
+  the contents of two non-constant strings, use standard C library functions such as <a href="str_.htm">strstr</a> or <a href="str_.htm">strcmp</a>. 
+    <span class="edition"><br><br>&nbsp;!!&nbsp;</span> For convenience reasons, 
+some string functions return <strong>temporary strings</strong> that are allocated on the CPU stack. Temporary strings can not be used for permanently storing content, 
+as they are eventually overwritten by further string functions calls (see
+<a href="str_.htm">string function remarks</a>). </p>
+  <h3>Series</h3>
+ <p><a href="series.htm">Series</a> are a special array of <strong>var</strong> variables, normally used for 
+ time series of price data, indicators, or data curves.  If not given otherwise, the length of a series is determined by the global variable <a href="lookback.htm">LookBack</a>. Series data is stored in reverse order, 
+ so the most recent data is at the begin of the array. </p>
+ <h3>See also:</h3>
+<A href="apointer.htm">pointers</A>, <a href="structs.htm">structs</a>, <A href="function.htm">functions</A>, <a href="series.htm">series</a><p>&nbsp;</p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+version online</a>
+</body>
+</html>

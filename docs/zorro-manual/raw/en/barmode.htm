@@ -1,0 +1,145 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>BarMode</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/barmode.htm">
+</head>
+
+<body>
+<h2>BarMode</h2>
+Determines bar creation and trading behavior when the market is inactive, as on weekends, outside market hours, and 
+on business holidays. 
+By default, any bar contains at least one valid price quote. When no price quotes 
+arrive due to market inactivity, or when it's weekend or a holiday, no bars are created. This behavior can 
+be changed with the following <strong>BarMode</strong> flags. Use <strong>|</strong> 
+or <strong>+</strong> for combining flags and <a href="setf.htm">setf</a> and <a href="setf.htm">resf</a> 
+for setting and resetting single flags.
+<h3>Flags:</h3>
+<table>
+	<tr>
+		<td><strong>BR_FLAT</strong></td>
+		<td>Generate bars even when they contain no price quote. These bars get 
+		flat candles with the close price of the last quote. If that flag is not 
+		set, bars are only created where the first <a href="asset.htm">asset</a> 
+		has valid prices. If set, use <strong>BR_WEEKEND</strong> / <strong>
+		BR_MARKET</strong> and/or the <a href="mode.htm">NOFLAT</a> flag for 
+		letting indicator series skip 
+		flat 
+		periods. This flag affects bar creation and must be set before the first <a href="asset.htm">asset</a> 
+		call.</td>
+	</tr>
+	<tr>
+		<td><strong>BR_WEEKEND</strong></td>
+		<td>Don't don't generate bars and don't trade on <a href="date.htm">holidays</a> or 
+		between <strong>
+		<a href="date.htm">EndWeek</a></strong> 
+  	    and <strong><a href="date.htm">StartWeek</a></strong> in the bar time zone (<a href="assetzone.htm">BarZone</a>), 
+		even when they contain price quotes. This flag is set by default. It 
+		affects bar creation and must be set or 
+		reset before the first <a href="asset.htm">asset</a> 
+		call.</td>
+	</tr>
+	<tr>
+		<td><strong>BR_MARKET</strong></td>
+		<td>Don't on't generate bars and don't trade between <a href="date.htm">
+		EndMarket</a> and <a href="date.htm">StartMarket</a> in the bar time zone (<a href="assetzone.htm">BarZone</a>), 
+		even when they contain price quotes. This flag is for intraday bars only. 
+		It affects bar creation 
+		and must be set before the first <a href="asset.htm">asset</a> 
+		call. </td>
+	</tr>
+	<tr>
+		<td><strong>BR_NOSHIFT</strong></td>
+		<td>Don't shift data <a href="series.htm">series</a> on intraday bars 
+		that end at or after <a href="date.htm">
+		EndMarket</a> and before <a href="date.htm">StartMarket</a> in the bar time zone (<a href="assetzone.htm">BarZone</a>). This 
+		prevents series-based indicators from updating or generating trade signals outside market hours. 
+		Start and end time and zone can be individually set up in the
+		<a href="account.htm">asset list</a>. </td>
+	</tr>
+	<tr>
+		<td><strong>BR_LOCAL</strong></td>
+		<td>Automatically set <a href="date.htm">Start/EndMarket</a> on any
+		<a href="asset.htm">asset</a> call to the local asset 
+		market hours (<a href="date.htm">AssetMarketStart/End</a>), converted 
+		from <a href="assetzone.htm">AssetMarketZone</a> to <a href="assetzone.htm">BarZone</a>.&nbsp; </td>
+	</tr>
+	<tr>
+		<td><strong>BR_LEISURE</strong></td>
+		<td>Don't enter or manage trades between <a href="date.htm">EndMarket</a> 
+		and <a href="date.htm">StartMarket</a>, on holidays, and on weekends by <strong><a href="date.htm">EndWeek</a></strong>/<strong><a href="date.htm">StartWeek</a> </strong>in the bar time zone (<a href="assetzone.htm">BarZone</a>), 
+		even when bars are created during that time. </td>
+	</tr>
+	<tr>
+		<td><strong>BR_SLEEP</strong></td>
+		<td>Don't request or process price quotes when the market is closed due 
+		to <strong>
+		BR_WEEKEND</strong> and <strong>BR_MARKET</strong>. Since no prices are 
+		updated, <a href="tick.htm">tick</a> functions 
+		will not run and price-dependent events will not to be triggered during that time. 
+		Use this for special purposes only.</td>
+	</tr>
+	<tr>
+		<td><strong>BR_LOGOFF</strong></td>
+		<td>Log off on weekends or when the market is closed. <strong>BR_SLEEP</strong> and <strong>BR_WEEKEND</strong> 
+		must be set. Broker API <a href="brokercommand.htm">settings</a>, such 
+		as order texts or price or volume types, are usually reset when logging 
+		off. Use this for special purposes only, such as working around server 
+		maintenance or API unresponsiveness on weekends. Some broker APIs do not 
+		support logging off during a trading session; in that case <strong>
+		BR_LOGOFF</strong> will suspend the session until it is manually 
+		restarted.</td>
+	</tr>
+</table>
+<br>
+<h3>Type:</h3>
+<strong>int</strong>
+<h3>Remarks:</h3>
+<ul>
+	<li>
+    When <strong>BR_FLAT</strong> is not set, the historical time stamps of the first
+	<a href="asset.htm">asset</a> in a portfolio strategy determine the bar 
+	creation. The order of assets does not matter for bar creation when <strong>BR_FLAT</strong> 
+	is set.</li>
+	<li>
+    When <strong>BR_MARKET</strong> is set, make sure that the timestamp of at least 
+	one bar per 
+	day falls within market hours - otherwise the day will have no valid bar (see
+	<a href="errors.htm">Error 014</a>).</li>
+	<li>
+    When <strong>BR_LEISURE</strong> is set, but the system is supposed to trade 
+	around the clock on working days, set <strong>StartMarket = EndMarket = 0;</strong>.</li>
+	<li>When no bars are generated due to weekends, holidays, or market closure, the 
+	[<span class="tast">Status</span>] window displays &quot;Closed&quot;.</li>
+	<li>For trading assets even at weekends, such as cryptocurrencies, reset
+	<strong>BR_WEEKEND</strong> before sampling bars.</li>
+	<li>When <strong>BR_MARKET</strong> or <strong>BR_WEEKEND</strong> are used, 
+	make sure that weekend and market hours are also set up correctly in UTC or 
+	in the <strong>BarZone</strong>. When multiple assets have different market 
+	hours, set them up before selecting the asset. </li>
+	<li>For not updating prices after or before a certain time, use a
+	<a href="tick.htm">tick</a> function and the <a href="mode.htm">NOPRICE</a> 
+	flag.</li>
+</ul>
+<h3>Example:</h3>
+<pre>function run()
+{
+  ...
+  StartWeek = 10400; <em>// start Monday 4 am</em>
+  EndWeek = 51900; <em>// end Friday 7 pm</em>
+  BarMode = BR_WEEKEND+BR_SLEEP; <em>// don't process quotes during the weekend and don't generate bars
+</em>  ...
+}</pre>
+<h3>See also:</h3>
+<a href="bars.htm">Bars</a>, <a href="barperiod.htm">BarPeriod</a>,
+<a href="numbars.htm">NumBars</a>, <a href="assetzone.htm">BarZone</a>, 
+<a href="lookback.htm">MinutesPerDay</a>, 
+<a href="assetzone.htm">AssetZone</a>, <strong><a href="date.htm">StartWeek/EndWeek</a>,
+<a href="date.htm">Holidays</a></strong>
+<p>&nbsp;</p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

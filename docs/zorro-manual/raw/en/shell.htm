@@ -1,0 +1,869 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Evaluation Sherll</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/shell.htm">
+<style type="text/css">
+.auto-style1 {
+	background-color: #CCCCCC;
+}
+.auto-style3 {
+	color: #FFFFFF;
+}
+.auto-style4 {
+	background-color: #C0C0C0;
+}
+.auto-style5 {
+	font-family: Arial, Helvetica, Verdana, sans-serif;
+}
+.auto-style6 {
+	background-color: #D8E4F0;
+	font-style: italic;
+}
+</style>
+</head>
+<body>
+<h1>The Evaluation Shell (Zorro S)</h1>
+<p>The strategy evaluation shell is an addendum to the 
+<a href="https://zorro-project.com" target="_blank">Zorro project</a>. Its purpose is determining the ideal 
+parameters and functions for a given trading strategy, generating a portfolio of asset, algo, and timeframe combinations, and predicting its live 
+perfomance under different market situations. The Zorro evaluation shell can 
+make the best of a strategy, especially of 'indicator soup' type strategies that 
+combine many different indicators and analysis functions.</p>
+<p>A robust trading strategy has to meet several criteria:</p>
+<ul>
+	<li>It 
+must exploit a real and significant market inefficiency. Random-walk 
+	markets cannot be algo traded.</li>
+	<li>It must work in all market situations. A trend follower must survive a mean reverting 
+	regime.</li>
+	<li>It must work under many different optimization settings and parameter 
+	ranges.</li>
+	<li>It must be unaffected by random events and price fluctuations.</li>
+</ul>
+<p>The shell evaluates parameter combinations by these criteria. The robustness 
+under different market 
+situations is determined through the <strong>R2 coefficient</strong>, the 
+parameter range robustness with a WFO profile (aka <strong>Cluster Analysis</strong>), the price 
+fluctuation robustness with <a href="numsamplecycles.htm">oversampling</a>. A
+<strong><a href="https://zorro-project.com/backtest.php">Montecarlo analysis</a></strong> finds out whether the strategy is based on 
+a real market inefficiency. </p>
+<p>Zorro already offers functions for all these tests, but they require a large part of code 
+in the strategy, more than for the algorithm itself. The evaluation shell skips 
+the coding part. It can be simply attached to a 
+strategy script. It makes all strategy variables accessible in a panel, adds 
+optimization and money management as well as support for multiple assets and 
+algos, runs automated analysis processes, and builds the optimal portfolio of 
+strategy variants. It compiles unmodified under lite-C and under C++, and 
+supports <strong>.c</strong> as well as <strong>.cpp</strong> scripts.</p>
+<p>With almost 1500 lines, the shell is probably the largest Zorro script so 
+far, and goes far beyond other strategy evaluation software on the market. It comes with source code, 
+so it can be easily modified and adapted to 
+special needs. It is restricted to <strong>personal use</strong>; any commercial use or 
+redistribution, also partially, requires explicit permission by oP group Germany. Since 
+it creates a panel and a menu, it needs a <a href="restrictions.htm">Zorro S</a> 
+license to run. 
+Theoretically you could remove the panel and menu functions and use the shell 
+with the free Zorro version. This is allowed by the license, but would require clumsy workarounds, 
+like calling functions by script and manually editing CSV files.</p>
+<h3>Overview</h3>
+<p>Developing a successful strategy is a many-step process, described in the
+<a href="links.htm">Black Book</a> and briefly in an article series on
+<a href="https://financial-hacker.com/build-better-strategies-part-3-the-development-process/" target="_blank">
+Financial Hacker</a>. The evaluation shell cannot replace research and model 
+selection. But it takes over when a first, raw 
+version of the strategy is ready. At that stage you're usually experimenting 
+with different functions for market detection and generating trading signals. It is difficult to 
+find out which indicator or filter works best, since they are usually 
+interdependent. Market detector A may work best with asset B and lowpass 
+filter C on time frame D, but this may be the other way around with 
+asset E. It is very time consuming to try out all combinations. </p>
+<p>The evaluation shell solves that task with a semi-automated process. </p>
+<table align="center" border="0">
+	<tr>
+		<td bgcolor="#0000FF" class="auto-style3" valign="middle">
+		<div align="center" class="auto-style3">
+			<strong><br><br>Create <br>&nbsp;Jobs</strong></div>
+		</td>
+		<td><strong>
+		<br><br>
+		<img class="auto-style3" height="36" src="../images/arrow.gif" width="30"></strong></td>
+		<td align="center" bgcolor="#0000FF" class="Stil2"><strong>
+		<br>
+		<br class="auto-style3">&nbsp;</strong><span class="auto-style3"><strong>Generate<br>&nbsp;Summary</strong></span><strong><br class="auto-style3">
+		</strong></td>
+		<td class="Stil4"><strong><br class="auto-style3">
+		<br class="auto-style3">
+		<img class="auto-style3" height="36" src="../images/arrow.gif" width="30"><br>
+		<br></strong></td>
+		<td align="center" bgcolor="#0000FF" class="Stil4"><strong>
+		<br class="auto-style3">
+		<br class="auto-style3"><span class="auto-style3">&nbsp;Cluster</span><br class="auto-style3">
+		<span class="auto-style3">&nbsp;Analysis</span></strong></td>
+		<td class="Stil4"><strong><br class="auto-style3">
+		<br class="auto-style3">
+		<img class="auto-style3" height="36" src="../images/arrow.gif" width="30"><br>
+		<br></strong></td>
+		<td align="center" bgcolor="#0000FF" class="Stil4"><strong>
+		<br class="auto-style3">
+		<span class="auto-style3"><br>&nbsp;Correlation</span><br class="auto-style3">
+		<span class="auto-style3">&nbsp;Analysis</span></strong></td>
+		<td class="Stil4"><strong><br class="auto-style3">
+		<br class="auto-style3">
+		<img class="auto-style3" height="36" src="../images/arrow.gif" width="30"><br>
+		<br></strong></td>
+		<td align="center" bgcolor="#0000FF" class="Stil4"><strong>
+		<br class="auto-style3">
+		<span class="auto-style3"><br>&nbsp;Montecarlo</span><br class="auto-style3">
+		<span class="auto-style3">&nbsp;Analysis</span></strong></td>
+		<td class="Stil4"><strong><br class="auto-style3">
+		<br class="auto-style3">
+		<img class="auto-style3" height="36" src="../images/arrow.gif" width="30"><br>
+		<br></strong></td>
+		<td align="center" bgcolor="#0000FF" class="Stil4"><strong>
+		<br class="auto-style3">
+		<span class="auto-style3"><br>&nbsp;Final</span><br class="auto-style3">
+		<span class="auto-style3">&nbsp;Portfolio</span></strong></td>
+	</tr>
+	</table>
+
+<p>The first step is saving several sets of different parameter settings, named 
+<span class="tast">jobs</span>. 
+Any job is a variant of the strategy that you want to test and possibly include 
+in the final portfolio. You can have parameters that select betwen different 
+market detection algorithms, and others that select between different lowpass 
+filters. The parameters are edited in the <span class="tast">variables panel</span>, then 
+saved with a mouse click as a job. Since a job is just a CSV file with parameter 
+values and ranges, you can also edit or create them directly 
+with a spreadsheet program or a text editor. </p>
+<p>The next step is an automated process that runs through all jobs, trains 
+and tests any of them with any asset, algo, and timeframe used by the strategy, and stores their results in a <span class="tast">summary</span>. 
+The summary is a CSV list of all jobs with their main performance metrics. It is 
+sorted by performance, so the best performing jobs are at the top. So you can see at a glance 
+which parameter combinations work with which assets and time frames, and which are not worth to examine further. 
+You can repeat this step with different global settings, such as bar period or optimization method, and generate multiple summaries in this way.&nbsp; </p>
+<p>The next step in the process is <span class="tast">cluster analysis</span>. Every 
+profitable job in a selected 
+summary is automacially optimized multiple times with different <a href="numwfocycles.htm">
+WFO</a> settings. These settings are taken from - you guessed it - a separate 
+CSV file that may contain a regular WFO matrix, a list of irregular 
+cycles/datasplit combinations, or both. For reducing the process time, only jobs 
+with rising equity curves - determined by a sufficient <strong>R2 coefficent</strong> - get a cluster analysis. You can also further exclude jobs by removing or 
+outcommenting them in the summary. </p>
+<p>After this process, you likely ended up with a couple survivors in the top of the 
+summary. The surviving jobs have all a positive return, a steady rising equity curve, 
+shallow drawdowns, and robust parameter ranges since they passed the cluster analysis. 
+You can now <span class="tast">create a set of algos</span> from the top of the 
+summary with a mouse click, and train them for optimal performance.</p>
+<p>However, some of these algos might not be suited for the final portfolio. The purpose of a 
+job portfolio is 
+diversification, but this would not work when jobs are 
+strongly correlated and 
+have their drawdowns all at the same time. You want a <strong>balanced portfolio</strong> with 
+uncorrelated algorithms. For this, run an <span class="tast">algo comparison</span>. 
+It will display a chart with the equity curves from any algo. Check the curves 
+and throw out variants with bad drawdowns, with high volatility, or with too-similar curves. 
+After removing or out-commenting them from the summary, create an algo set again 
+for the 
+final balanced portfolio. </p>
+<p>You're not finished yet. Any selection 
+process generates <strong>selection bias</strong>. Your perfect portfolio is 
+picked from a multitude of job variants, and will likely 
+produce a great backtest. But will it perform equally well in live trading? To 
+find out, run a <span class="tast">Montecarlo 
+analysis</span>. This is the most important test of 
+all, since it can determine whether your strategy exploits a real market inefficiency 
+or is just a product of selection bias. If 
+the Montecarlo analysis fails with the final portfolio, it will likely also fail 
+with any other parameter combination, so you need to run it only at the 
+end. If 
+your system passes Montecarlo with a <strong>p-value</strong> below 5%, you can be relatively 
+confident that the system will return good and steady profit in live trading. 
+Otherwise, back to the drawing board. <br></p>
+<p>This manual is split in two parts. The following sections deal with the 
+user interface of the shell. For a quick usage example, scroll down to the
+<a href="#tutorial">
+end</a>. Attaching the shell to an existing strategy is 
+described in the <a href="shell2.htm">tutorial</a>. <br></p>
+<h3>Variables panel</h3>
+<p>When you start a strategy with attached shell, the [<span class="tast">Result</span>] button 
+will change to [<span class="tast">Start</span>], 
+a new menu will be available under [<span class="tast">Action</span>], and a panel with 
+the current parameter and variables of the strategy will pop up: </p>
+<p><img height="697" src="../images/shellvars1.png" width="875"></p>
+<p>The panel and menu are the reason why a Zorro S license is required, since panel 
+functions are 
+not supported by the free version. The variables in the panel are divided in 
+three sections.The general system settings, common for all strategies, are in 
+the grey area. The strategy variables specific to a certain algorithm are in the area with red or yellow colors, where any algorithm has its 
+individual color. The strategy variables common to all algorithms are in the 
+blue area.</p>
+<p>Every variable is represented by a row in the panel. The first field is thje 
+variable name. The <strong>Fixed</strong> field can be active (<strong>x</strong>) 
+or disabled (<strong>o</strong>). It can be switched between the states with a 
+mouse click. If a variable value is fixed, it overrides the value from a saved 
+job or from optimization. By default, the system variables are fixed, the 
+strategy specific variables are not.</p>
+<p>The <strong>Value</strong>, <strong>Min</strong>, and <strong>Max</strong> 
+fields contain the default value and range (if any) of the variable. You can 
+edit any field and change its value. Edited values in the panel are remembered 
+at the next start. Changes are indicated with a white background. Exceeding the 
+valid range is allowed, but indicated with a red background.</p>
+<p>The <strong>Step</strong> field is for variables that can be
+<a href="optimize.htm">optimized</a>. A negative step width establishes a 
+percent increase, as recommended with large optimization ranges. If the step 
+width is set to <strong>0</strong>, the variable is not optimized, and gets its default 
+value instead.. </p>
+<p>The system settings in the grey area are mostly self 
+explaining:</p>
+<table>
+	<tr>
+		<td class="auto-style1" style="width: 136px"><strong>_Bar_Period</strong></td>
+		<td>The basic <a href="barperiod.htm">bar period</a> from which the time frames are derived. 
+		Must be unchanged for all jobs of a session.</td>
+	</tr>
+	<tr>
+		<td class="auto-style1" style="width: 136px"><strong>_Lookback_Bars</strong></td>
+		<td>The <a href="lookback.htm">lookback</a> period in bar units.</td>
+	</tr>
+	<tr>
+		<td class="auto-style1" style="width: 136px"><strong>_WFO_Cycles</strong></td>
+		<td>Number of <a href="numwfocycles.htm">WFO cycles</a> in the backtest, 
+		including the last cycle for 
+		generating parameters for live trading. Rule of thumb: Use 1-2 cycles per backtest year. 
+		<!--Set this to <strong>0</strong> for an out-of-sample test after the end 
+		date with the live parameters.--></td>
+	</tr>
+	<tr>
+		<td class="auto-style1" style="width: 136px"><strong>_WFO_OOS</strong></td>
+		<td><a href="dataslope.htm">Out-of-Sample period</a> for WFO, in percent.</td>
+	</tr>
+	<tr>
+		<td class="auto-style1" style="width: 136px"><strong>_Oversampling</strong></td>
+		<td>Number of <a href="numsamplecycles.htm">oversampling</a> cycles with 
+		differently sampled price curves in the backtest. Must be unchanged&nbsp; 
+		for all jobs of a session.</td>
+	</tr>
+	<tr>
+		<td class="auto-style1" style="width: 136px"><strong>_Backtest_Mode</strong></td>
+		<td><strong>-1</strong> for a 'naive' backtest with no trading costs, 
+		<strong>0</strong> for the script default, <strong>1</strong> for a 
+		realistic bar based backtest, <strong>2</strong> for a 
+		minute based backtest, <strong>3</strong> for a backtest with tick-based 
+		history. 
+		Must be the same for all jobs of a session. Historical data in the required resolution must be available.</td>
+	</tr>
+	<tr>
+		<td class="auto-style1" style="width: 136px"><strong>_Backtest_Start</strong></td>
+		<td>Start year or date of the backtest. Use at least 5, better 10 years for the test 
+		period. Must be the same for all jobs of a session.</td>
+	</tr>
+	<tr>
+		<td class="auto-style1" style="width: 136px"><strong>_Backtest_End</strong></td>
+		<td>End year or date of the backtest. Must be the same for all jobs of a 
+		session.</td>
+	</tr>
+	<tr>
+		<td class="auto-style1" style="width: 136px; height: 42px;"><strong>_Train_Mode</strong></td>
+		<td style="height: 42px"><strong>0</strong> Script default<strong>, 1</strong> Ascent (fastest), <strong>2</strong> Genetic, 
+		<strong>3</strong> Brute Force (see <a href="opt.htm">TrainMode</a>). Results of genetic optimization can 
+		differ on any training due to random mutations.</td>
+	</tr>
+	<tr>
+		<td class="auto-style1" style="width: 136px"><strong>_Objective</strong></td>
+		<td>Training objective, aka 'fitness function'. <strong>0</strong> 
+		script defned, <strong>1</strong> PRR, 
+		<strong>2</strong> R2*PRR, <strong>3</strong> Profit/DD, <strong>4</strong> 
+		Profit/Investment, <strong>5</strong> Profit/day, <strong>6</strong> Profit/trade. 
+		For the metrics, see <a href="performance.htm">performance</a>.</td>
+	</tr>
+	<tr>
+		<td class="auto-style1" style="width: 136px"><strong>_Criteria</strong></td>
+		<td>The field number by which the summary is sorted and the profiles are 
+		generated. <strong>0</strong> no sorting, <strong>7</strong> Net Profit, <strong>13</strong> Win 
+		rate, <strong>14</strong> Objective, <strong>15</strong> Profit 
+		factor, <strong>16</strong> Profit per trade, <strong>17</strong> 
+		Annual return (default), <strong>18</strong> CAGR, <strong>19</strong> Calmar ratio, <strong>20</strong> Sharpe, <strong>21</strong> R2 
+		coefficient. See <a href="performance.htm">performance</a> for details 
+		about the metrics. </td>
+	</tr>
+	<tr>
+		<td class="auto-style1" style="width: 136px"><strong>_MRC_Cycles</strong></td>
+		<td>Number of cycles for the Montecarlo 'Reality Check' analysis (default <strong>200</strong>). 
+		Results differ from run to run due to randomizing the price curve, 
+		therefore more cycles produce more precise results. </td>
+	</tr>
+	<tr>
+		<td class="auto-style1" style="width: 136px"><strong>_Max_Threads</strong></td>
+		<td>Number of CPU cores to use for WFO (<strong>0</strong> = single 
+		core), or number not to use when 
+		negative (f.i. <strong>-2</strong> = all cores but 2). 
+		Must be unchanged for all jobs of a session. Using multiple cores is recommended for faster training.</td>
+	</tr>
+	<tr>
+		<td class="auto-style1" style="width: 136px"><strong>_Investment</strong></td>
+		<td>Method for calculating the trade size after algos have been created. <strong>0</strong> Script default, <strong>1</strong> Lots slider, <strong>2</strong> 
+		Margin slider, <strong>3</strong> Margin * OptimalF, <strong>4</strong> Percent of account balance, <strong>5</strong> Percent * square root reinvestment. At <strong>3</strong> or above, 
+		<a href="optimalf.htm">OptimalF</a> 
+		factors are generated and affect the margin. <strong>4</strong> and above reinvest profits and 
+		should only be used in the last stages of development.</td>
+	</tr>
+	<tr>
+		<td class="auto-style1" style="width: 136px"><strong>_Phantom</strong></td>
+		<td>Activate <a href="trademode.htm">equity curve trading</a> by setting 
+		the time period between 10..50. A falling equity curve is detected and 
+		trading is suspended until the market turns profitable again.</td>
+	</tr>
+	<tr>
+		<td class="auto-style1" style="width: 136px"><strong>_Verbose</strong></td>
+		<td>Set to <strong>0</strong> for no logs and reports, <strong>1..3</strong> 
+		for more verbose logs, <strong>17</strong> for halting on any error. The more verbose, the slower the 
+		test. Critical error messages 
+		are collected in <strong>Log\Errors.txt</strong>. Performance summary 
+		reports are always generated, regardless of this setting.</td>
+	</tr>
+	</table>
+	<br>
+	<h3>Ini file</h3>
+From Zorro 3.12 on, the evaluation shell can read system variables and the asset 
+list from entries in a <strong>*.ini</strong> file in the Strategy folder, with 
+the same name as the script. The variables are set in the <strong>main</strong> 
+function with the <strong>INI</strong> macro, like this:<pre>function main()
+{
+  INI(Hedge);
+  INI(TradesPerBar);
+  return 0;
+}
+...
+<em>// ini file content:</em>
+TradesPerBar = 2
+Hedge = 5
+AssetList = "AssetsForex"
+</pre>
+All integer variables and the asset list can be set up in this way.
+
+	
+<h3>Action menu</h3>
+<p>After starting the script in [<span class="tast">Train</span>] 
+mode, a click on [<span class="tast">Action</span>] opens a dropdown menu, like 
+this: </p>
+<p><img height="291" src="../images/shellmenu.png" width="380"></p>
+<table>
+	<tr>
+		<td style="width: 128px" class="auto-style6"><span class="tast"><strong>Reset</strong></span></td>
+		<td>Reset all variables to their defaults, and remove all loaded jobs 
+		and algos. </td>
+	</tr>
+	<!--tr>
+		<td style="width: 149px" class="auto-style2"><span class="tast">Load 
+		Algos from summary</span></td>
+		<td>Select a XML file and load its jobs as algos. A portfolio of up to 
+		10 algos can be trained, tested, and traded simultaneously. Note that 
+		the grey system variables, such as bar period and WFO cycles, must not 
+		change between algos.</td>
+	</tr>
+	<tr>
+		<td style="width: 149px" class="auto-style2"><span class="tast">Load 
+Jobs from XML</span></td>
+		<td>Select a XML file and load its jobs. Depending on number of jobs, 
+		step sizes and ranges, and usage of threads, training can take a long 
+		time. </td>
+	</tr-->
+	<tr>
+		<td style="width: 128px" class="auto-style6"><span class="tast"><strong>Save 
+		Job to CSV</strong></span></td>
+		<td>Save the current panel state with all variables to a job file in CSV 
+		format, in a folder of your choice (<strong>Job</strong> by default). If 
+		the system has no own algos, the job file name will be later used for the 
+		algo names, so don't use a complex or long name.</td>
+	</tr>
+	<tr>
+		<td style="width: 128px" class="auto-style6"><span class="tast"><strong>Load 
+		Job to Panel</strong></span></td>
+		<td>Load a set of variables from a job file to the panel. A click on [<span class="tast">Start</span>] will train 
+		the job and store its 
+		result in the <strong>Summary</strong>. Any trained job will also store 
+		its 'papertrail' of 
+		charts, logs, and reports in a subfolder named after the job.</td>
+	</tr>
+	<tr>
+		<td style="width: 128px" class="auto-style6"><span class="tast"><strong>Load 
+		Job with Variants</strong></span></td>
+		<td>Generate jobs from a single job file with all asset, algo, and timeframe variants. A 
+		click on [<span class="tast">Start</span>] will train all job variants and store their 
+		results in the <strong>Summary</strong> and in their 'papertrail' 
+		folders.</td>
+	</tr>
+	<tr>
+		<td style="width: 128px" class="auto-style6"><span class="tast"><strong>Load 
+		Jobs from Folder</strong></span></td>
+		<td>Select a folder by clicking on a job file inside. All jobs in that folder are loaded, 
+		together with all their asset, algo, and timeframe variants. A click on 
+		[<span class="tast">Start</span>] will train all jobs and store their 
+		results in the <strong>Summary</strong> and in their 'papertrail' 
+		folders.</td>
+	</tr>
+	<tr>
+		<td style="width: 128px" class="auto-style6"><span class="tast"><strong>Add 
+		Jobs from Folder</strong></span></td>
+		<td>Select a <strong>Summary</strong> generated by previous training. All jobs in 
+		the same folder that are not already listed in the summary are loaded. A click on 
+		[<span class="tast">Start</span>] will train the jobs and add their 
+		results to the <strong>Summary</strong> and their 'papertrail' 
+		folders.</td>
+	</tr>
+	<tr>
+		<td style="width: 128px" class="auto-style6"><span class="tast"><strong>Load 
+		Best from Summary</strong></span></td>
+		<td>Select a <strong>Summary</strong> generated by previous training. All jobs 
+		listed in that 
+		summary with a sufficient number of trades, profit factor, and R2 coefficient are loaded. 
+		The thresholds are defined in <strong>eval.c</strong>. Jobs can be excluded by adding a <strong>'#'</strong> hash in front of the 
+		name.</td>
+	</tr>
+	<tr>
+		<td style="width: 128px" class="auto-style6"><span class="tast"><strong>Load 
+		Marked from Summary</strong></span></td>
+		<td>As above, but load all jobs 
+		marked with a <strong>'*'</strong> asterisk in front of the 
+		name in the summary.</td>
+	</tr>
+	<!--tr>
+		<td style="width: 128px" class="auto-style6"><span class="tast"><strong>Copy 
+		Jobs to Folder</strong></span></td>
+		<td>Select a non-empty folder by clicking on a file inside. All currently loaded 
+		jobs are copied into that folder.</td>
+	</tr-->
+	<tr>
+		<td style="width: 128px" class="auto-style6"><span class="tast"><strong>Run 
+		Cluster Analysis</strong></span></td>
+		<td>Run a WFO cluster analysis either for the current setting or for all loaded jobs. WFO offsets and OOS periods 
+		taken from a CSV template.&nbsp;Several templates with various combinations of offsets and periods 
+		are included in the <strong>Job</strong> folder. The percentage of 
+		profitable runs are stored in the <strong>CA%</strong> column of the 
+		Summary. For files containing a regular NxM 
+		cluster matrix, the returns are displayed in a heatmap, otherwise in a 
+		WFO profile.</td>
+	</tr>
+	<tr>
+		<td style="width: 128px" class="auto-style6"><span class="tast"><strong>Run Montecarlo 
+		Analysis</strong></span></td>
+		<td>Run a Montecarlo 'Reality 
+		Check' with the current parameters and shuffled price curves. A reality 
+		check can tell whether the WFO performance was just luck, or was caused 
+		by a real 
+		market inefficiency. The 
+		resulting performance metrics are stored in a <strong>MRC summary</strong>, and 
+		the results are displayed in a histogram together with the original 
+		result with unmodified price curve. Depending on the resulting <strong>p-value</strong>, 
+		the backtest performance is qualified as significant, possibly 
+		significant, or insignificant.</td>
+	</tr>
+	<tr>
+		<td style="width: 128px" class="auto-style6"><span class="tast">
+		<strong>Rearrange Summary</strong></span></td>
+		<td>Re-sort the entries in the summary if <strong>_Criteria</strong> was 
+		changed, or if new jobs were manually added to the summary.</td>
+	</tr>
+	<tr>
+		<td style="width: 128px" class="auto-style6"><strong>Create Algos from 
+		Best</strong></td>
+		<td>Select a summary generated by training jobs. All jobs from that 
+		summary with a CA result &gt; 60% are selected for the final 
+		portfolio. Their <strong>.csv</strong> files are copied to the <strong>
+		Cache</strong> folder, and their variables, assets, algos, and time frames are stored in
+		<strong>Data\*_algo.bin</strong>, with a backup in <strong>
+		*_algo.bak</strong>. The portfolio is automatically loaded at 
+		start, so that training, testing, and trading will now use all selected algos. To 
+		remove the algos, use <span class="tast">Reset</span>.</td>
+	</tr>
+	<tr>
+		<td style="width: 128px" class="auto-style6"><strong>Create Algos from 
+		Marked</strong></td>
+		<td>As above, but select all jobs marked with a <strong>'*'</strong> asterisk in front of 
+		the name in the summary.</td>
+	</tr>
+	<tr>
+		<td style="width: 128px" class="auto-style6"><strong>Run Algo Comparison</strong></td>
+		<td>Generate a chart with the equity curves from any algo of the 
+		portfolio. If you don't like an equity curve, remove the job by outcommenting it with a <strong>'#'</strong> in the summary<strong>,</strong> 
+		then create the 
+		algos again.</td>
+	</tr>
+	<tr>
+		<td style="width: 128px" class="auto-style6"><span class="tast"><strong>Download History</strong></span></td>
+		<td>Open the Zorro Download Page for getting historical data. </td>
+	</tr>
+</table>
+<p>When no job was loaded, clicking on [<span class="tast">Start</span>] will just 
+start a test or 
+training run with the current variable settings in the panel. After a successful backtest, the
+<a href="performance.htm">performance report</a> will open in the editor, and 
+the chart viewer will display the price 
+curve, the trades, and the equity curve. <span class="tast">Train</span> mode will always use walk forward 
+optimization, even when none is defined in the script. <span class="tast">Test</span> mode 
+will only run a backtest; so the strategy should have 
+been trained before. After changing any variable, train again. If a variable range was exceeded or historical data was 
+missing for the selected backtest period, you'll get an <a href="errors.htm">error message</a>. 
+Training errors will store the error message in <strong>
+Log\Errors.txt</strong> and abort. </p>
+<p>When one or more jobs are loaded, a click on [<span class="tast">Start</span>] 
+will train and test all of them in all their asset, algo, and timeframe 
+variants. Their logs, performance reports, and charts will be stored in a 
+subfolders named after the job. In this way training and testing jobs leaves a 
+'perpertrail' that allows evaluating individual results. Instead of the 
+performace report, a <strong>summary</strong> report will open in the editor. </p>
+<h3>Results: Summary</h3>
+<p>The summary report appears when multiple jobs are trained or tested. Any job 
+in any asset, algo, and timeframe variant generates a record in the summary. The 
+summary is sorted, with the best jobs, selected by the <strong>_Criteria</strong> 
+variable, at the top. It is stored in 
+CSV format, so it can be further evaluated in a spreadsheet program. </p>
+<p><img height="316" src="../images/shellsummary.png" width="813"></p>
+<p>The fields:</p>
+<table>
+	<tr>
+		<td class="auto-style4"><strong>Job</strong></td>
+		<td>Job name</td>
+	</tr>
+	<tr>
+		<td class="auto-style4"><strong>Asset</strong></td>
+		<td>Asset used by the job. </td>
+	</tr>
+	<tr>
+		<td class="auto-style4"><strong>Algo</strong></td>
+		<td>Algo used by the job (if any).</td>
+	</tr>
+	<tr>
+		<td class="auto-style4"><strong>TimeFrame</strong></td>
+		<td>Time frame of the job, in minutes.</td>
+	</tr>
+	<tr>
+		<td class="auto-style4"><strong>Days</strong></td>
+		<td>Total days of the backtest, not counting lookback and training.</td>
+	</tr>
+	<tr>
+		<td class="auto-style4"><strong>WFO</strong></td>
+		<td>Number of WFO Cycles</td>
+	</tr>
+	<tr>
+		<td class="auto-style4"><strong>OOS%</strong></td>
+		<td>Out-of-sample period in percent</td>
+	</tr>
+	<tr>
+		<td class="auto-style4"><strong>Profit</strong></td>
+		<td>Sum of wins minus sum of losses minus trading and margin cost.</td>
+	</tr>
+	<tr>
+		<td class="auto-style4"><strong>Margin</strong></td>
+		<td>Amount required for covering the maximum open margin</td>
+	</tr>
+	<tr>
+		<td class="auto-style4"><strong>MaxDD</strong></td>
+		<td>Maximum equity drawdown from a preceding balance peak</td>
+	</tr>
+	<tr>
+		<td class="auto-style4"><strong>PeakDD%</strong></td>
+		<td>Max equity drawdown in percent ot the preceding peak</td>
+	</tr>
+	<tr>
+		<td class="auto-style4"><strong>TimeDD%</strong></td>
+		<td>Time spent in drawdown in percent of backtest time </td>
+	</tr>
+	<tr>
+		<td class="auto-style4"><strong>Trades</strong></td>
+		<td>Number of trades</td>
+	</tr>
+	<tr>
+		<td class="auto-style4"><strong>Win%</strong></td>
+		<td>Percent of won trades.</td>
+	</tr>
+	<tr>
+		<td class="auto-style4"><strong>Obj</strong></td>
+		<td>Backtest return of the objective function.</td>
+	</tr>
+	<tr>
+		<td class="auto-style4"><strong>P/L</strong></td>
+		<td>Profit factor, the sum of wins divided by sum of losses</td>
+	</tr>
+	<tr>
+		<td class="auto-style4"><strong>P/Trade</strong></td>
+		<td>Average profit per trade</td>
+	</tr>
+	<tr>
+		<td class="auto-style4"><strong>Annual%</strong></td>
+		<td>Annual net profit in percent of max margin + max drawdown.</td>
+	</tr>
+	<tr>
+		<td class="auto-style4"><strong>CAGR%</strong></td>
+		<td>Annual growth of the investment in percent.</td>
+	</tr>
+	<tr>
+		<td class="auto-style4"><strong>Calmar</strong></td>
+		<td>CAGR divided by max drawdown in percent.</td>
+	</tr>
+	<tr>
+		<td class="auto-style4"><strong>Sharpe</strong></td>
+		<td>Annualized mean return divided by standard deviation</td>
+	</tr>
+	<tr>
+		<td class="auto-style4"><strong>R2</strong></td>
+		<td>Equity curve straightness, 1 = perfect</td>
+	</tr>
+	<tr>
+		<td class="auto-style4"><strong>CA%</strong></td>
+		<td>Percentage of runs that passed the cluster analysis. </td>
+	</tr>
+</table>
+<p>The meaning of most performance metrics can be read up under
+<a href="performance.htm">performance report</a>, but the metrics in the summary 
+are unadjusted. This means that drawdown, annual return, and Calmar ratio depend 
+not only on performance, but also on the length of the backtest period.</p>
+<h3>Results: Paper trail</h3>
+<p>The test results for any job are automatically stored in subfolders of the 
+selected job folder. The subfolders are named after the job, its 
+asset, its algo, and its timeframe. In this way any job leaves a 'papertrail' of of text, CSV, image, 
+and html files from its training and test runs. All 
+reports can be opened with a plain text editor such as the included Notepad++. 
+The .csv files can also be opened with Excel, and the chart images with an image 
+viewer like the included <strong>ZView</strong>. </p>
+<p>Aside from the summary and the CA or MA charts, the following 
+reports are produced when jobs are processed (for details see <a href="export.htm">exported files</a>): </p>
+<p>*<strong>.txt</strong> - the last <a href="performance.htm">performance report</a>.
+<br><strong>*history.csv</strong>  
+- the performance history of the job. Any test or training run adds a line to 
+the history.<br><strong>*.png</strong> - the chart with 
+the equity curve, trades, and indicators.<br><strong>*.htm</strong> - a page with <a href="optimize.htm">parameter charts</a> that 
+visually display the effect of parameters on the performance.<br><strong>*.log</strong> - the
+<a href="log.htm">event log</a> of the backtest.<br><strong>*train.log</strong> 
+- the <a href="optimize.htm">training log</a> with the objective results for all 
+tested parameter combinations. <br><strong>*pnl.csv</strong> - 
+the equity curve of the backtest, for further evaluation.<br><strong>*trd.csv</strong> 
+- the trade list of the backtest, for further evaluation.<br><strong>*par.csv</strong> 
+- the results of genetic or brute force training runs, for further evaluation.<br>
+<strong>Log\Errors.txt</strong> - the last 
+errors encountered (if any) while training or testing.</p>
+<h3>Results: Cluster analysis </h3>
+<p>Cluster analysis (CA) can be performed either with the current settings and 
+algos, or with a selected job and its variants, or with promising jobs loaded 
+from the summary. In the latter cases its results are stored in the <strong>CA%</strong> 
+field of the summary report. For reducing process time, only jobs with profit 
+factor and <strong>R2</strong> value above predefined limits (1.25 and 0.25) 
+will be loaded from the summary. And only jobs with more 
+than 75% positive CA runs will be taken over to the next step, the algorithm 
+selection.</p>
+<p>Dependent on the selected 
+cluster template, Cluster analysis will generate either a WFO profile or a heatmap: 
+The cluster template is a CSV file with an arbitrary number of WFO cycle / 
+OOS period combinations, like this:</p>
+<pre><span class="auto-style5">WFO,OOS%</span>
+<span class="auto-style5">-4, 25</span>
+<span class="auto-style5">-3, 22</span>
+<span class="auto-style5">-2, 20</span>
+<span class="auto-style5">-1, 18</span>
+<span class="auto-style5">0, 15</span>
+<span class="auto-style5">1, 12</span>
+<span class="auto-style5">2, 9</span>
+<span class="auto-style5">3, 7</span>
+<span class="auto-style5">4, 5</span></pre>
+The 
+first column are offsets to the value of the <strong>_WFO_Cycles</strong> 
+variable, the second column are the OOS periods in percent. Any offset/period 
+combination generates a performance values that is determined by <strong>
+_Criteria</strong> and displayed in a profile diagram, which pops up in the 
+chart viewer:&nbsp; 
+<p><img height="405" src="../images/WFOProfile.png" width="701"><br>WFO profile, 
+from a non-matrix cluster analysis. Y axis: <strong>_Criteria</strong>, X axis: 
+line number in the template.</p>
+<p>Usually, the cluster template will be a regular matrix, like this (for a 5x5 
+matrix):</p>
+<pre>WFO,OOS%
+-2, 5
+-2, 10
+-2, 15
+-2, 20
+-2, 25
+-1, 5
+-1, 10
+-1, 15
+-1, 20
+-1, 25
+0, 5
+0, 10
+0, 15
+0, 20
+0, 25
+1, 5
+1, 10
+1, 15
+1, 20
+1, 25
+2, 5
+2, 10
+2, 15
+2, 20
+2, 25
+</pre>
+This will produce a heatmap as below.
+The X axis is the number of WFO cycles, the Y axis is the OOS period in percent. The numbers in the fields are the resulting strategy performance by 
+<strong>_Criteria</strong>.
+<p><img height="405" src="../images/RangerMatrix.png" width="701"></p>
+<p>WFO heatmap, from cluster analysis with a regular matrix</p>
+<p>The color of the fields represents the performance. You want as much red 
+fields in the heatmap as possible. The example above, with the Pessimistic Return Ratio (PRR) as metric, has only 13 red fields out of 25. This job would not pass the 
+75% CA threshold. <br>&nbsp;<h3>Create portfolio</h3>
+<p>The goal of evaluation is creating a balanced 
+portfolio from optimal components. <span class="tast">Create Algos from Best</span> 
+will generate a portfolio from the best job variants with at least 60% CA and 1.25 
+profit factor, and store it in <strong>&quot;*_algo.bin&quot;</strong> in 
+the <strong>Data</strong> folder. This portfolio is then loaded at start, and 
+further test or training operations are applied to the whole portfolio unless it 
+is reset or something else is selected. The algo/asset/timeframe components are listed at start, like 
+this:</p>
+<pre>Algo TRND_2 (EUR/USD, 60M)
+Algo TRND_5 (USD/JPY, 60M)
+Algo CNTR_7 (USD/JPY, 240M)
+Algo CNTR_8 (EUR/USD, 240M)
+Algo CNTR_9 (USD/JPY, 240M)
+Algo CNTR_10 (USD/JPY, 240M)
+</pre>
+The numbers refer to the records in the summary.<h3>Results: Algo comparison</h3>
+<p>After creating and training a portfolio of algos, run an algo comparison in [<span class="tast">Test</span>] 
+mode. It produces a chart like this:<p>
+<img height="833" src="../images/shellalgos.png" width="701"><p>You can now 
+identify equity curves that you don't like - there are several in the above 
+example chart - and remove them from the summary, or outcomment them. The 
+numbers in the algo names are the line number in the summary.<h3>Results: Montecarlo analysis</h3>
+<p>Montecarlo Analysis, aka 'Reality Check', is normally only applied to the final strategy 
+after algos have been generated. Depending on whether <strong>Test</strong> or
+<strong>Train</strong> was clicked, the analysis runs without or with training. It produces a histogram of results from randomized 
+price curves (red) and from the original price curve (black). This one below 
+(from the 'placebo system' in the Financial Hacker article) indicates that you 
+better don't trade that system live, even though it produced a great 
+walk-forward analyis.
+<p><img height="405" src="../images/MRC_placebo.png" width="701"></p>
+<p>Another Montecarlo histogram from a real stragegy that generated less 
+walk-forward performance than the 'placebo system', but a lot more performance 
+in live trading since it exploits a real market 
+inefficiency:</p>
+<p><img height="362" src="../images/RealityCheck_s1.png" width="701"> </p>
+<p>More about cluster analysis and Montecarlo analysis can be found on
+<a href="https://financial-hacker.com/why-90-of-backtests-fail" target="_blank">
+financial-hacker.com/why-90-of-backtests-fail</a>. Make sure to train the 
+portfolio again after the Montecarlo analysis, since the original training data 
+have been overwritten by the process.<br></p>
+&nbsp;<h3>Very concise usage tutorial</h3>
+<p><a name="tutorial"></a></p>
+The following usage example uses <a href="tutorial_kelly.htm">workshop 6</a>.
+You can 
+find prepared template and job files in the <strong>Job</strong> folder. 
+Adapting the shell to an existing script is described in the
+<a href="shell2.htm">second part</a>.<ul>
+	<li>First, create the performance summary. For this select <strong>Workshop6c</strong> 
+	and click [<span class="tast">Train</span>].</li>
+	<li>From the [<span class="tast">Action</span>] scrollbox, select
+	<span class="tast">Load Jobs from Folder</span>. </li>
+	<li>4 example jobs beginning with <strong>&quot;W6...&quot;</strong> are in 
+	the <strong>Job</strong> folder. Double click one of them.</li>
+	<li>Click [<span class="tast">Start</span>]. All jobs with their asset, 
+	algo, timeframe variants are now trained. </li>
+	<li>At the end of the process, the <span class="tast">Summary</span> 
+	will pop up in the editor.<br>&nbsp;</li>
+	<li>Next, cluster analysis. Click [<span class="tast">Train</span>] and 
+	select <span class="tast">Load Best from Summary.</span></li>
+	<li>Double click on <strong>Job\Workshop6c_Summary.csv</strong> that was 
+	generated in the previous step.</li>
+	<li>From the [<span class="tast">Action</span>] scrollbox, select
+	<span class="tast">Run Cluster Analysis</span>. </li>
+	<li>Now you have the choice between several predefined clusters. Select
+	<strong>WFO_Cluster3x3</strong>.</li>
+	<li>After a lengthy process, the summary appears with the <strong>CA%</strong> 
+	column of the best jobs populated,<br>&nbsp;</li>
+	<li>Next, portfolio creation. Click [<span class="tast">Train</span>] and 
+	select <span class="tast">Create Algos from Best.</span></li>
+	<li>Double click on <strong>Job\Workshop6c_Summary.csv. </strong>You'll see 
+	a list of select algo variants that build the final system. </li>
+	<li>Click [<span class="tast">Start</span>] to train. The perfomance report 
+	of the final system will pop up at the end.<br><br></li>
+	<li>Next, algo comparison. Click [<span class="tast">Test</span>]. The 
+	portfolio of algos is automatically loaded.</li>
+	<li>&nbsp;Select <span class="tast">Run Algo comparison</span>. It will 
+	create a chart with the equity curves of all algos.</li>
+	<li>Remove jobs with unconvincing equity curves from the summary. </li>
+	<li>Create algos again from the remaining jobs in the summary.<br>&nbsp;</li>
+	<li>Finally, the Montecarlo Reality Check. Click [<span class="tast">Train</span>]. 
+	The portfolio of algos is automatically loaded.</li>
+	<li>From the [<span class="tast">Action</span>] scrollbox, select
+	<span class="tast">Run MonteCarlo Analysis</span>. </li>
+	<li>At the end of the process you'll get the <strong>p-value</strong> and a 
+	histogram of the final system.<br>&nbsp;</li>
+	<li>If according to the p-value the system is not worth trading, come up 
+	with a better system. </li>
+	<li>Otherwise click [<span class="tast">Train</span>]. The portfolio must be trained 
+	again after the montecarlo process.</li>
+	<li>After training, select your broker and account, and make sure the asset 
+	list matches your broker. </li>
+	<li>Click [<span class="tast">Trade</span>], 
+	and get rich. </li>
+</ul>
+<p>Naturally, training hundreds of jobs and variants will take its time. For 
+highest speed, activate multiple threads, code in C++, and use the 64 bit Zorro 
+version. <br>&nbsp;</p>
+<h3>Remarks
+</h3>
+<ul>
+	<li>After <span class="Highlight">temporarily changing</span> variable values or ranges 
+	in the script, click <span class="tast">Reset</span> on the next start, 
+	otherwise the variables keep their last stored values and ranges.</li>
+	<li>For overriding a particular variable value, activate
+	<span class="tast">Fixed</span> by clicking the the column.</li>
+	<li>Variables that affect bar creation and training, such as bar period, WFO 
+	settings, lookback period, and start/end dates, can only be changed for the 
+	whole strategy, but not for single jobs. Leave their <span class="tast">
+	Fixed</span> column always enabled.</li>
+	<li>If the <span class="Highlight">strategy was changed</span> after creating algos, the whole 
+	evaluation process must be repeated if the modification affects multiple 
+	jobs in different ways. Otherwise it is 
+	sufficient to train the algos again.</li>
+	<li>If a <span class="Highlight">new job was added</span>, load, train, and 
+	cluster analyze the job with its algo/asset/timeframe variants. </li>
+	<li>For <span class="Highlight">adding multiple jobs</span> to an existing 
+	summary, copy the jobs in a new folder, load and train them. then copy the 
+	new summary at the end of the existing summary and rearrange the summary.</li>
+	<li>For preventing that algos are loaded at start, click <span class="tast">Reset</span> or delete 
+	<strong>Data\*_algo.bin</strong>.</li>
+	<li>Make sure that <strong>_Lookback_Bars</strong> is 
+	sufficient for running all 
+	loaded jobs with the largest time frame. 
+	</li>
+	<li>When extending or reducing the backtest years, adapt <strong>_WFO_Cycles</strong> 
+	accordingly. </li>
+	<li>When using multiple assets, it is recommended to set
+	<a href="barmode.htm">BarMode |= BR_FLAT</a> and <a href="mode.htm">
+	set(NOFLAT)</a> for not skipping bars in the backtest.</li>
+	<li>For <span class="Highlight">highest speed</span>, activate multiple threads, 
+	code in C++, and use the 64 bit Zorro version. </li>
+	<li>If a thread 
+	encounters an <span class="Highlight">error</span>, the optimization will stop 
+	and the error message can be 
+	found in the file <strong>Log\Errors.txt</strong>. </li>
+	<li><span class="Highlight">Training results</span> are only kept for last training run or 
+	for the final 
+	portfolio. Test results of any job are permanently kept in the 'paper trail' 
+	folders. When you switch jobs or change parameters, always train again.</li>
+	<li>Do not click on a Zorro button or variables panel while a
+	<span class="Highlight">file dialog</span> is open. Close the dialog before.</li>
+	<li>Do <span class="Highlight">not open results in 
+Excel</span> while a shell process is running. Excel will block any access to its open 
+	files.</li>
+</ul>
+<h3>See also:</h3>
+<strong> <a href="started.htm">Get Started with Zorro</a>, <a href="account.htm">
+Portfolio Lists</a>, <a href="numwfocycles.htm">Walk Forward Optimization</a>,
+<a href="performance.htm">Performance Reports</a>, <a href="shell2.htm">Adapting 
+the Shell</a></strong><p><a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a> </p>
+</body>
+</html>

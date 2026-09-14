@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>wait</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+.auto-style1 {
+	text-align: right;
+}
+</style>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/sleep.htm">
+</head>
+
+<body>
+<!--h2>Sleep (int milliseconds)</h2>
+Windows API function; freezes the program and suspends execution for the given number of milliseconds.-->
+<h2>wait (int n): int </h2>
+Suspends execution for the time given by <strong>n</strong> in milliseconds. The user 
+interface remains responsive during the wait time. The function returns <strong>0</strong> when the [<span class="tast">Stop</span>] button was hit 
+or <a href="quit.htm">quit</a> was called, otherwise nonzero. 
+If <strong>n</strong> is negative, the function checks and updates the user interface only every <strong>n</strong>th time, for not 
+delaying fast loops. Use <strong>wait</strong> in a loop for avoiding unresponsiveness during long computations or external function calls. 
+For displaying progress during very long processes, use <a href="progress.htm">
+progress</a> instead.
+<h3>Parameters:</h3>
+<strong>n</strong> - wait time in milliseconds when positive, user interface 
+update frequency when negative, <strong>0</strong> for immediate user interface 
+update. 
+
+<h3>Returns</h3>
+
+<strong>0</strong> when the script is to be terminated, <strong>1</strong> otherwise.
+
+<h3>Remarks:</h3>
+<ul>
+	<li>Trades and prices are not updated during <strong>wait</strong> time, so do not use 
+	this function to wait for a trade 
+	to enter or a price limit to be reached. For triggering a function at a 
+	certain event, use <a href="call.htm">call</a>.</li>
+	<li>Since <strong>wait()</strong> triggers the Windows message system, even
+	<strong>wait(0)</strong> can take several hundred microseconds on slow 
+	systems. Use <strong>wait(-1000)</strong> in time critical loops.</li>
+</ul>
+<h3>Examples:</h3>
+  <pre>Rx("TrainNeuralNet()",1); <em>// start a long computation</em>
+while(Rrun() == 2)
+  if(!wait(100)) return; <em> // wait until computation is finished or [Stop] was hit</em></pre>
+  <pre>while(some_long_loop) {
+  ...
+  if(!wait(-1000)) break; <em>// prevent unresponsiveness in long loops
+</em>}</pre>
+  <h3>See also:</h3>
+  
+  <a href="timer.htm">timer</a>, <a href="run.htm">run</a>, <a href="rbridge.htm">R bridge</a>, <a href="lock.htm">lock</a>, 
+<a href="is.htm">BUSY</a>, <a href="quit.htm">quit</a>, <a href="version.htm">version</a>, <a href="progress.htm">progress</a>,
+<a href="suspended.htm">suspended</a>, <a href="call.htm">call</a>
+<p class="auto-style1">     <a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+  version online</a>
+</p>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>tick, tock</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/tick.htm">
+</head>
+
+<body>
+<h2>tick()</h2>
+User-supplied function that is called on arrival of a new price quote of any asset used in the strategy. This function can be used when an immediate reaction on every new price quote is required. 
+<h2>tock()</h2>
+User-supplied function that is called once per minute (adjustable via <a href="ticktime.htm">TockTime</a>; 
+unaffected by
+<a href="date.htm">DayOffset</a>), regardless of price quotes. This function can be used for 
+auxiliary purposes, such as periodic input/output tasks when live trading. 
+<h2>callback(void* Address)</h2>
+User-supplied function that is called when either the <a href="brokerplugin.htm">BrokerProgress</a> function is 
+triggered with a pointer as argument, or when Zorro receives a <strong>WM_APP+2</strong> 
+window 
+message. This function is not in sync with other functions or I/O operations, so use 
+the <a href="call.htm">call</a> scheduler when modifying global variables or 
+accessing non-reentrant parts of the broker API. 
+        &nbsp;<h3>Remarks:</h3>
+        <ul>
+          <li>The <strong>tick </strong>function runs in <span class="Highlight">irregular intervals</span> dependent on market activity. The more assets are traded, the more quotes will trigger a <strong>tick</strong> run. The <strong>tick</strong> function normally executes 
+		  much more frequently than the <a href="run.htm">run</a> function, but can also execute less often when few quotes are received, f.i. after market hours. The minimum time between two 
+		  <strong>tick</strong> calls can be set up with <a href="ticktime.htm">TickTime</a>. If a new quote arrives earlier, it is delayed until the 
+		  <strong>TickTime</strong> is over. </li>
+          <li>Within a <strong>tick</strong> function the asset name, the current ask price, and the current ask-bid spread can be evaluated with  the <strong><a href="script.htm">Asset</a></strong> string, 
+		  with <a href="price.htm">priceClose(0)</a>, 
+		  and with the <a href="spread.htm">Spread</a> variable. The time stamp 
+		  of the last quote is returned by <a href="month.htm">seconds(0)</a> or <a href="month.htm">wdate(0)</a>. 
+		  Date/time functions inside <strong>tick</strong> or <strong>tock</strong> 
+		  return the current time, not the time of the last bar. For evaluating component specific parameters such
+		  <a href="winloss.htm">trade statistics</a>, call <strong>
+		  <a href="asset.htm">asset(Asset)</a></strong> and/or
+		  <a href="algo.htm">algo(...)</a> at the begin of the <strong>tick</strong> 
+		  function. </li>
+          <li>The same price quote can trigger a <strong>tick</strong> function as well as a <a href="trade.htm">TMF</a>. The <strong>tick</strong> functions of all assets that had quotes in the last <a href="ticktime.htm">TickTime</a> are  executed first, afterwards all triggered TMFs are executed. </li>
+          <li>In [<span class="tast">Test</span>] or [<span class="tast">Train</span>] mode, the <strong>tick</strong> and <strong>tock</strong> 
+		  functions normally run only <span class="Highlight">once per bar</span>, 
+		  right before the <strong>run</strong> function at the end of the bar. 
+		  When the <a href="mode.htm">TICKS</a> flag is set, the <strong>tick</strong> function 
+		  runs at any new price quote 
+		  of any asset in the historical data, and the <strong>tock</strong> 
+		  function can run multiple times per bar. When a bar period is smaller than <a href="ticktime.htm">TockTime</a>, 
+		  the <strong>tock</strong> function can run less often than once 
+		  per bar. </li>
+          <li>The <a href="series.htm">series</a> function can not be called in any 
+		  of the above functions; this includes indicators that internally create data series. However, series 
+		  in global variables can be evaluated, and static series or arrays can be shifted in a tick or tock function by calling
+		  <a href="shift.htm">shift</a>. In this way <span class="Highlight">tick based indicators</span> 
+		  or indicators on time frames shorter than <a href="barperiod.htm">
+		  BarPeriod</a> 
+		  can be used.</li>
+			<li>As long as the current bar is not finished, the current 
+			<span class="Highlight">candle is incomplete</span> in any of the 
+			above functions. Its range and height 
+			differs to the preceding complete candles and should therefore normally not be used for 
+			indicators and trade signals. The <a href="price.htm">price</a> functions 
+			reflect the current tick and return different values than in a <strong>run</strong> 
+			function. <strong>priceC()</strong> is the current price at the time 
+			of the tick. </li>
+			<li>Trading with different assets in the same <strong>tick</strong> 
+			function can cause backtest <span class="Highlight">snooping bias</span>. 
+			When historical price ticks for assets A and B have the same time 
+			stamps, the <strong>tick</strong> function will first run with asset 
+			A, then with asset B. In the first run, asset A has the current 
+			price, but asset B still the previous price. This can be used to 
+			snoop the next B price especially when it strongly depends on the A 
+			price. This is a rare and mostly theoretical issue, but to prevent it, 
+			you can use the <strong>tock</strong> 
+			function instead of <strong>tick</strong> for trading multiple assets. 
+			The <strong>tock</strong> function is asynchronous to price quotes. 
+			Set <a href="ticktime.htm">TockTime</a> 
+			to the tick resolution of the used historical data, or to
+			<a href="ticktime.htm">TickTime</a> in live trading.</li>
+			<li>When printing inside a <strong>error</strong> function, make 
+			sure that the printed text does not contain any of the trigger 
+			words. Otherwise you'll get an endless loop.</li>
+			<li>Tick, tock, and callback functions can be disabled or 
+			re-assigned at runtime with the <a href="call.htm">event</a> 
+			function.</li>
+        </ul>
+        <h3>Examples (see also <a href="hwnd.htm">HWnd</a>):</h3>
+<pre><em>// print every price quote in a file
+</em>function tick()<br>{<br>  file_append(&quot;Log\\ticks.txt&quot;,<br>    strf(&quot;\n%i.%i %2i:%2i:%2.3f =&gt; %s %4.5f&quot;,<br>      day(),month(),hour(),minute(),second(),Asset,priceC())); <br>}</pre>
+<pre><em>// store the last 100 ticks and timestamps
+</em>vars MyTicks,MyStamps;<em> // use global series
+
+</em>function tick()<br>{
+  shift(MyTicks,priceC(0),100); <em>// store the prices 
+</em>  shift(MyStamps,wdate(0),100); <em>// store the timestamps</em>
+}
+
+function run()
+{
+  MyTicks = series(0,-100); <em>// generate static series
+</em>  MyStamps = series(0,-100); 
+  ...</pre>
+            <h3>See also:</h3>
+			<a href="bars.htm">Bars and Candles</a>, <a href="numbars.htm">Bar</a>, <a href="barperiod.htm">BarPeriod</a>, <a href="ticktime.htm">TickTime</a>, 
+<a href="trade.htm">manage</a>, <a href="run.htm">run</a>, 
+<a href="call.htm">call</a>, <a href="funclist.htm">user supplied functions</a>
+			<p></p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+version online</a>
+</body>
+</html>

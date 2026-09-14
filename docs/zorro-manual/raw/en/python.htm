@@ -1,0 +1,323 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+<title>Python bridge | Zorro Project</title>
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta content="width=device-width,initial-scale=1" name="viewport">
+<link href="https://zorro-project.com/manual/en/python.htm" rel="canonical">
+</head>
+
+<body>
+
+<h1>Python Bridge</h1>
+<p>Python is the most popular interactive script language, created by Guido van 
+Rossum and first released in 1991. Spaces, tabs and line feeds matter in Python 
+code, and enforce a clean code style with correct indentations. Python is interpreted 
+and thus slow compared to compiled languages like C. So it is not suited for high-speed 
+strategies, but its strengths are a simple and modern syntax, and access to all 
+sorts of libraries for machine learning and data analysis. Many tasks can be solved 
+in the same way in lite-C as well as in Python, but Python often has already a dedicated 
+command implemented or library available for that.</p>
+<p>There are two methods to run Python code from Zorro. The <strong>Python bridge</strong> 
+allows directly calling Python functions from a Zorro script and using their results 
+for trade signals. A script can start a Python session, send price data or indicator 
+values to it, and use Python machine learning packages for training and prediction. 
+Alternatively, Zorro can directly call the <strong>Python interpreter</strong>
+<strong>pythonw.exe</strong> and exchange data via files. This method is slower, 
+but works even when the used Python library does not support embedded Python. Examples for both methods are can be found below.</p>
+<h3>Installation and test </h3>
+Here's the procedure (Zorro 2.5 or above)
+<ul>
+	<li>For the 32-bit Zorro version, install <strong>Python 3.6 (32 bit)</strong> 
+	or above from <a href="https://www.python.org" target="_blank">https://www.python.org</a>. Note 
+	that newer Python versions above 3.6 don't 
+	support Win XP and Win 7.</li>
+	<li>For the 64-bit Zorro64 version, install <strong>Python 3.10 (64 bit)</strong> 
+	or above.</li>
+	<li>If you have several Python versions, set up the Windows <strong>System Environment 
+	Variables</strong> so that the <strong>Path</strong> variable contains the right 
+	Python folder. This is not needed for Zorro, but for some Python modules.</li>
+	<li>Open <strong><a href="ini.htm">Zorro.ini</a></strong> and set <strong>PythonPath</strong> 
+	and/or <strong>PythonPath64</strong> to your Python folder that contains the 
+	Python DLLs. If the folder has a nonstandard name other than f.i. <strong>
+	Python32</strong> or <strong>Python12-32</strong>, give the direct name of 
+	the Python DLL including the path. Examples: <strong>&quot;C:\Users\YourName\AppData\Local\Programs\Python\Python310-32&quot;</strong> 
+	or .<strong>&quot;C:\MyPythonPath\Python310.dll&quot;.</strong></li>
+	<li>Start Zorro and run the script <strong>PythonTest</strong>. If everything 
+	went well, it prints out 0, 10, 20, 30, 40 and the sum 100.</li>
+	<li>For additional modules, move to the Python folder and install them 
+	with <strong>pip</strong>:<strong> python -m pip install [module name]
+	</strong></li>
+	<li>For updating an existing module to the latest version, use <strong>python 
+	-m pip install [module name] --upgrade</strong></li>
+</ul>
+<p>Make sure that any needed Python module is installed to your Python folder 
+(don't use the pip <strong>--user</strong> option). Afterwards the module can be 
+mounted with the <strong>import</strong> statement. Please read the remarks about 
+issues with particular modules.</p>
+<p align="justify">The following functions are available via Python bridge for sending 
+data to Python, performing computations, and receiving data back:</p>
+<h2>pyStart(string Filename, int Mode): int </h2>
+Start a new Python session, and optionally load and run Python code from the file
+<strong>Filename</strong>. This function must be called before any Python computations 
+can be done. It returns <strong>0</strong> when the Python session could not be started, 
+otherwise nonzero. The Python session will stay alive until the end of the Zorro session.&nbsp;&nbsp;
+<h3>Parameters:</h3>
+<table border="0">
+	<tr>
+		<td><strong>Filename</strong></td>
+		<td>
+		<p>Name of a <strong>.py</strong> file in the <strong>Strategy</strong> 
+		folder containing all needed Python functions and variables (f.i.
+		<strong>&quot;MySource.py&quot;</strong>), or <strong>0</strong> for not 
+		loading a file. </p>
+		</td>
+	</tr>
+	<tr>
+		<td><strong>Mode</strong></td>
+		<td>
+		<p>A combination of the following flags, otherwise <strong>0</strong>.<br><strong>1</strong> - log Python output and errors to the files
+		<strong>PyOut.txt</strong> and <strong>PyError.txt</strong> in the 
+		<strong>Log</strong> folder<br><strong>2</strong> - don't release Python 
+		variables and modules at session end. Required for some modules (see 
+		remarks).<br></p>
+		</td>
+	</tr>
+</table>
+<!--h2>pyExit() </h2>
+  Closes the Python session and allows access to the files <strong>PyOut.txt</strong> and <strong>PyError.txt</strong>. 
+If the session is not explicitely closed, it is automatically closed at the end 
+of the script.<br--><br>
+<h2>pyX(string Code): int </h2>
+Execute Python <strong>Code</strong>. It can contain an expression, like <strong>&quot;a 
+= b + c&quot;</strong>, a function call, a function definition, an import, or any 
+other valid Python statement. If the code cannot be excuted, <strong>0</strong> 
+is returned, otherwise nonzero.<br>
+<h3>Parameters:</h3>
+<table border="0">
+	<tr>
+		<td><strong>Code</strong></td>
+		<td>Python code to be executed. Separate lines with <strong>\n</strong> 
+		and mind whitespace indentations. </td>
+	</tr>
+	<!--tr>
+      <td><strong>mode</strong></td>
+      <td><p><strong>0</strong> -  synchronous. Wait until the computation was finished (default).<br>
+        <strong>1</strong> - asynchronous. Return immediately. <strong>Rrun()</strong> can be used to check when the next 
+	  Python command can be sent.<br>
+        <strong>2</strong> - asynchronous, with a <a href="sleep.htm">wait</a> loop. Return <strong>1</strong> when finished, or <a href="quit.htm">quit</a> with returning <strong>0</strong> when the   session was aborted due hitting [<span class="tast">Stop</span>] or due to a fatal  
+	  Python error.<br>
+        <strong>3</strong> - asynchronous with a <a href="sleep.htm">wait</a> 
+	  loop, and direct Python <strong>print</strong> output to the Zorro window. The <strong>debuglevel</strong> must be set accordingly.
+</p>
+      </td>
+    </tr-->
+</table>
+<br>
+<h2>pySet(string Name, int n)</h2>
+<h2>pySet(string Name, var d)</h2>
+<h2>pySet(string Name, string s)</h2>
+<h2>pySet(string Name, var *v, int elements)</h2>
+<!--h2>pySet(string Name, var *m, int rows, int cols)</h2-->Store an int, var, string, 
+series or double array in the Python variable <strong>Name</strong>. Since the target 
+type depends on the variable type, make sure to use the correct type. When storing 
+constants, typecast them with <strong>(int)</strong> or <strong>(var)</strong> if 
+in doubt.&nbsp;
+<h3>Parameters:</h3>
+<table border="0">
+	<tr>
+		<td><strong>Name</strong></td>
+		<td>Name of the Python variable to be set (see remarks).</td>
+	</tr>
+	<tr>
+		<td><strong>i</strong></td>
+		<td><strong>int</strong> value to be assigned to a Python integer variable.</td>
+	</tr>
+	<tr>
+		<td><strong>d</strong></td>
+		<td><strong>var</strong> value to be assigned to a Python floating point 
+		variable.</td>
+	</tr>
+	<tr>
+		<td><strong>s</strong></td>
+		<td><strong>char* </strong>string to be assigned to a Python Unicode string 
+		variable.</td>
+	</tr>
+	<tr>
+		<td><strong>v</strong></td>
+		<td>Pointer of the <strong>var</strong> array or series to be assigned to 
+		a Python list.</td>
+	</tr>
+	<tr>
+		<td><strong>elements</strong></td>
+		<td>Length of the vector or series. Make sure to give the exact number of 
+		elements. </td>
+	</tr>
+	<!--tr>
+      <td><strong>rows, cols </strong></td>
+      <td>Number of rows and columns of the matrix.</td>
+    </tr-->
+</table>
+&nbsp;
+<h2>pyInt(string Name): int</h2>
+<h2>pyVar(string Name): var</h2>
+<h2>pyStr(string Name): string</h2>
+<h2>pyVec(string Name, var *v, int elements)</h2>
+Return the Python variable with the given <strong>Name</strong> as an int, double, 
+string, or array. Errors, such as wrong variable names or types, return
+<strong>-1</strong>.<h3>Parameters:</h3>
+<table border="0">
+	<tr>
+		<td><strong>Name</strong></td>
+		<td>Name of a Python variable, previously defined by <strong>pyX</strong> 
+		or <strong>pySet</strong> (see remarks). </td>
+	</tr>
+	<tr>
+		<td><strong>v</strong></td>
+		<td>Pointer of the <strong>var</strong> array to be filled with the Python 
+		list.</td>
+	</tr>
+	<tr>
+		<td><strong>elements</strong></td>
+		<td>Number of elements of the vector; must be identical in the Python code 
+		and in the lite-C script. </td>
+	</tr>
+</table>
+<h3>Remarks:</h3>
+<ul>
+	<li>Variable names cannot contain expressions or elements. <strong>&quot;A&quot;</strong> is ok, but <strong>&quot;A[1]&quot;</strong>, <strong>&quot;A.size&quot;</strong>, 
+	or <strong>&quot;A+B&quot;</strong> is not.</li>
+	<li>Global variables to be modified by functions must always be declared
+	<strong>global</strong> inside the function. </li>
+	<li>Test your Python commands and functions carefully with the Python console 
+	before executing them in a script. Errors - wrong syntax, a 
+	wrong path, a missing Python package, or a bad parameter for a Python function 
+	- will terminate the Python session. 	</li>
+	<li>While testing, open Python in <strong>Mode 1</strong> or <strong>3</strong> 
+	so that print and error outputs are redirected to the <strong>Log</strong> 
+	folder. The print and error output is updated after the end of the script 
+	(in <strong>Mode 1</strong>) or after closing Zorro (in <strong>Mode 3</strong>).</li>
+	<li>If you have the choice, do computations on the Zorro side. C 
+	and C++ are about 100 times faster than Python.&nbsp; </li>
+	<li>The <strong>numpy</strong> package does <span class="Highlight">not support multiple runs</span> with embedded Python 
+	(details in
+	<a href="https://github.com/numpy/numpy/issues/8097" target="_blank">this discussion</a>). 
+	This is caused by a combination of design flaws in the Python and numpy 
+	de-initialization, and affects all modules based on <strong>numpy</strong>, such as scipy, pandas, 
+	keras, tensorflow, etc. Since this problem is known for a long time, a 
+	shortly fix is not to be expected. For not having to restart Zorro every 
+	time after running numpy based 
+	code, start Python in Mode <strong>2</strong> or <strong>
+	3</strong>, or run numpy functions by calling the Python executable 
+	as in the example below.</li>
+	<li>You can use [<span class="tast">Train</span>] mode and
+	<a href="numwfocycles.htm">WFO</a> for training Python machine learning algorithms, 
+	f.i. a SVM or neural network. For this, send training data to Python at the 
+	end of every WFO cycle, and store the trained models in files for later use 
+	in the [<span class="tast">Test</span>] or [<span class="tast">Trade</span>] 
+	session, similar to the <strong><a href="advisor.htm">neural</a></strong> function for R. We will provide 
+	a <strong>neural</strong> function for Python in a future Zorro version. 
+	</li>
+	<li>Packages containing Python, such as <span class="Highlight">Anaconda</span> 
+	or <span class="Highlight">Jupyter</span>, do normally not support external 
+	Python calls since they set up their own environment. In that case, install 
+	additionally a plain Python package. </li>
+</ul>
+<h3>Examples: </h3>
+<pre><em>// run some Python code
+</em>function main()
+{
+  if(!pyStart(0,1)) {
+    printf(&quot;Error - Python won't start!&quot;);
+    return;
+  }
+
+  var Vec[5] = { 0,1,2,3,4 };
+  pySet(&quot;PyVec&quot;,Vec,5);
+  pyX(&quot;for i in range(5): PyVec[i] *= 10\n&quot;);
+  pyVec(&quot;PyVec&quot;,Vec,5);
+
+  int i;
+  printf(&quot;\nReturned: &quot;);
+  for(i=0; i&lt;5; i++) printf(&quot;%.0f &quot;,Vec[i]);
+
+<em>// test a function
+</em>  pyX(&quot;def PySum(V):\n Sum = 0.0\n for X in V:\n Sum += X\n return Sum\n\n&quot;);
+  pyX(&quot;Result = PySum(PyVec)&quot;);
+  printf(&quot;\nSum: %.0f&quot;,pyVar(&quot;Result&quot;));
+}
+</pre>
+<pre><em>// run a Python function</em>
+function main()
+{
+  if(!pyStart(&quot;MyPythonScript.py&quot;,1)) {
+    printf(&quot;Error - Python script won't start!&quot;);
+    return;
+  }
+  pyX("Result = MyPythonFunction()");
+  var Result = pyVar("Result");
+  printf("\nResult: %.2f",Result);
+}
+</pre>
+<pre><em>// trade by a Python signal</em>
+function run()
+{
+  if(is(INITRUN))
+    if(!pyStart(&quot;MyPythonScript.py&quot;,1))
+      return quit(&quot;Error - Python script won't start!&quot;);
+
+  asset(Asset);
+  pySet(&quot;Price&quot;,priceC()); <em>// send current price to Python</em>
+  pyX("Signal = PythonTradeAlgorithm(Price)");
+  int Signal = pyInt("Signal"); <em>// received trade signal
+</em>  if(Signal &gt; 0)
+    enterLong();
+  else if(Signal &lt; 0)
+    enterShort(); 
+}
+</pre>
+<pre><em>// start Python interpreter and process a data array
+
+// Python side: --------------------------------
+#read signals from file
+</em>Signals = []
+with open(&quot;Data/In.txt&quot;,&quot;r&quot;) as File:
+  for Line in File:
+    Signals.append(float(Line))
+<em># process signals and write result back to file
+</em>Processed = processMyData(Signals)
+with open(&quot;Data/Out.txt&quot;,&quot;w&quot;) as File:
+  for Line in Processed:
+    File.write(str(Line))
+    File.write('\n')
+
+
+<em>// Zorro side: --------------------------------
+/ send signals to file </em>
+string Content = zalloc(NumSignals*32);
+for(i=0; i&lt;NumSignals; i++)
+  strcat(Content,strf(&quot;%.4f\n&quot;,Signals[i]));
+file_write(&quot;Data\\In.txt&quot;,Content,0);
+<em>// call the Python interpreter </em>
+string PythonPath = &quot;MyPythonPath\\Pythonw&quot;;
+exec(PythonPath,&quot;Strategy/MyPython.py&quot;,1);
+<em>// get returned signals
+</em>file_read(&quot;Data\\Out.txt&quot;,Content,NumSignals*32);
+Signals[0] = atof(strtok(Content,&quot;\n&quot;));
+for(i=1; i&lt;NumSignals; i++)
+  Signals[i] = atof(strtok(0,&quot;\n&quot;));
+...
+</pre>
+<h3>See also:</h3>
+<a href="conversion.htm">Code conversion</a>, <a href="rbridge.htm">R Bridge</a>,
+<a href="https://perso.limsi.fr/pointal/_media/python:cours:mementopython3-english.pdf" target="_blank">
+Python cheat sheet</a>
+<p></p>
+<a class="button" href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))">&#9658; 
+latest version online</a>
+
+</body>
+
+</html>

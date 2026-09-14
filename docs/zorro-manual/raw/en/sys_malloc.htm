@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>malloc</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/sys_malloc.htm">
+</head>
+
+<body>
+<h1>C Memory Functions</h1>
+<h2>malloc(long size): void* </h2>
+Allocates a contiguous memory area with the given size in bytes. This can be used to create arrays of dynamic size.
+This function is slow, so it is recommended to use it for allocating memory 
+areas in the initial run.
+<span>&nbsp;</span>If there is not enough memory, <strong>0</strong> is 
+returned.
+<h2>realloc(void* ptr, long size): void* </h2>
+Reallocates the memory area given by <strong>ptr</strong>. It must have been previously allocated by<span>&nbsp;<strong>malloc</strong>. 
+Returns a pointer to the new memory area. The old memory area is freed, the old content is 
+copied over to the new area. This 
+function is slow. </span>If there is not enough memory, the old memory area is 
+not freed and <strong>0</strong> is returned.<h2>zalloc(long size): void* 
+(temporary)</h2>
+Like <strong>malloc</strong>, but returns a pointer to a temporary memory area 
+that is initialized to zero and preserved until the next <strong>zalloc</strong> 
+call. This function is fast, and the memory area needs not be freed. Use this 
+for allocating a temporary array inside functions. Call it only once per 
+function. If the function needs mutliple arrays, use <strong>zalloc</strong> to 
+allocate the total area and divide it among the 
+arrays.&nbsp;&nbsp;
+<h3>Parameters:</h3>
+		
+<strong>size</strong> - Size of the allocated memory area, in bytes.
+<h3>Returns:</h3>
+		
+			<strong>void*</strong> pointer to the allocated memory area, or 
+<strong>0</strong> when the allocation failed.<br>
+			&nbsp;  
+<h2>free(void* ptr)</h2>
+            Releases a contiguous memory area that was allocated with <a href="sys_malloc.htm">malloc</a>.
+            <h3>Parameter:</h3>
+            <strong>ptr - void*</strong> pointer to the allocated memory area. <br>
+            &nbsp;<br>
+            <h2>memcpy(void* dest, void* src, long size)</h2>
+            Copies <strong>size</strong> bytes from <strong>src</strong> to <strong>dest</strong>. Can be used to copy a whole struct or array with a single function.
+            <h3>Parameters:</h3>
+            <strong>dest</strong> - Target address. <br>
+<strong>src - </strong>Source address.<br>
+            <strong>size</strong> - 
+Number of bytes to copy.  <br>
+&nbsp;<br>
+<h2>memset(void* dest, int c, long size)</h2>
+Sets the first <strong>size</strong> characters of <strong>dest</strong> to the character <strong>c</strong>.
+Can be used to initialize a whole struct or array to zero.
+<h3>Parameters:</h3>
+<strong>dest</strong> - Target address. <br>
+<strong>c - </strong>value to copy, 0..255.<br>
+<strong>size</strong> - 
+Number of bytes to copy. <br>
+&nbsp;<br>
+<h2>memcmp(void* buffer1, void* buffer2, long size)</h2>
+Compares <strong>buffer1</strong> with <strong>buffer2</strong>. Returns <strong>
+0</strong> when both are identical, otherwise nonzero.
+<h3>Parameters:</h3>
+<strong>buffer1</strong> - First buffer. <br>
+<strong>buffer2</strong> - Second buffer. <br>
+<strong>size</strong> - 
+Number of bytes to compare. <br>
+&nbsp;<h3>Remarks:</h3>
+<ul><li>Memory allocated in a function with <strong>malloc</strong> must be released 
+	- normally at the end of the function - with <strong>free</strong>.  
+	This is not needed when allocating memory with <strong>zalloc</strong>. For 
+	conveniently freeing globally allocated memory areas, define a <strong>
+	<a href="evaluate.htm">cleanup</a></strong> function that releases the 
+	memory. </li>
+  <li>It is recommended to set pointers to released memory areas to zero. Accessing a memory area after it's released will result in a crash. </li>
+	<li>Check the allocation size carefully. Exceeding the allocated size will 
+	result in a delayed crash, usually when freeing the memory.</li>
+</ul>
+<h3>Example (see also <A href="http.htm"><span class="links">http</span></a>):</h3>
+<pre>var calculate_something()
+{
+  var *Buffer = zalloc(100*sizeof(var));
+  int i;
+  for(i=1; i&lt;100; i++)
+    buffer[i] = buffer[i-1]+1;
+  return Buffer[99]; <em>// last element</em>
+}</pre>
+<h3>See also:</h3>
+<a href="structs.htm">sizeof</a>, <a href="memory.htm">memory</a>
+<p>          <a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+  version online</a></p>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<html>
+<head>
+<TITLE>Headers</TITLE>
+<META NAME="description" CONTENT="API">
+<META NAME="keywords" CONTENT="CScript C language Compiler">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/litec_h.htm">
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000" link="#3333FF" vlink="#0000FF" alink="#3333FF" >
+ <h1 align="left">Header files</h1>
+        <p><span class="edition">
+          </span>The following standard header files are used in
+          Zorro strategy scripts and/or in C++ strategy DLLs:</p>
+        <h3>#include &lt;litec.h&gt;</h3>
+ Standard header for lite-C, contains standard variable type definitions.
+ Automatically included in <strong>default.c</strong>.
+ <h3>#include &lt;trading.h&gt;</h3>
+            Standard header for strategy scripts, with definitions of the 
+ structs <strong>GLOBALS</strong>, <strong>TRADE</strong>, <strong>ASSET</strong>, 
+ <strong>T6</strong>, etc. Automatically included in <strong>default.c</strong> 
+ and <strong>zorro.h</strong>.
+            <h3>#include &lt;variables.h&gt;</h3>
+            Standard header for strategy scripts; contains #defines for all 
+ predefined trading variables. This file 'translates' 
+            the struct members into easier to memorize variable names. 
+ Automatically included in <strong>default.c </strong>and <strong>zorro.h. </strong>&nbsp;<h3>#include &lt;functions.h&gt;</h3>
+            Standard header for strategy scripts, with definitions of all functions.
+            Automatically included in <strong>default.c</strong> and <strong>
+ zorro.h</strong>.&nbsp;&nbsp;
+            <h3>#include &lt;default.c&gt;</h3>
+            Standard header for 
+ lite-C strategy scripts; includes all the headers above. Automatically included when no 
+ other <strong>#include</strong> statement is found in the main script.
+Otherwise it must be explicitly included.       
+            <h3>#include &lt;windows.h&gt;</h3>
+            Optional 
+ lite-C header; contains common definitions and  functions from the Windows
+            API.
+Requires including <strong>&lt;default.c&gt;</strong> when trading functions are used. 
+<h3>#include &lt;stdio.h&gt;</h3>
+  Optional lite-C header; contains all usual file, directory, and sort/search functions from the
+  standard C libraries <b>io.h</b>, <b>stdio.h</b>, <strong>stdlib.h</strong>, <b>direct.h</b>.
+
+Requires including <strong>&lt;default.c&gt;</strong> when trading functions are used.
+<h3>#include &lt;r.h&gt;</h3>
+  Optional header for the <a href="rbridge.htm">R bridge</a>. 
+ Can be included in lite-C scripts and/or in C++ strategy DLLs. 
+<h3>#include &lt;contract.c&gt;</h3>
+  Optional header for <a href="contract.htm">contract</a> functions.Can be 
+ included in lite-C scripts and/or in C++ strategy DLLs.&nbsp; 
+<h3>#include &lt;profile.c&gt;</h3>
+  Optional lite-C header for <a href="profile.htm">histogram plotting</a> functions.
+<h3>#include &lt;zorro.h&gt;</h3>
+  Header for <a href="dlls.htm">C++ strategy DLLs</a>. Not for lite-C.<h3>#include &lt;legacy.h&gt;</h3>
+            Header for 
+ deprecated and outdated lite-C keywords, for backwards compatibility to very 
+ old Zorro versions. If your script contains a deprecated keyword, you can 
+ include this header. But better remove or replace it.
+<h3>See also:</h3>
+  <A href="litec_api.htm">API</A>, <a href="scripts.htm">scripts</a>
+  <p><a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+    version online</a>
+</p>
+</body>
+</html>

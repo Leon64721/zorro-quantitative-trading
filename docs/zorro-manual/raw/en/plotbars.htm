@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>PlotBars, PlotScale</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/plotbars.htm">
+</head>
+
+<body>
+<h1>Chart variables
+</h1>
+<h2>PlotBars</h2>
+Maximum number of bars to plot in the chart, or <strong>0</strong> for plotting all bars (default). A positive number plots the bars from the start, a negative number from the end. Enter a small number for increasing the scale of the chart and zoom in to the start or to the end.<h2>PlotStart</h2>
+Start bar number of the chart. Can be used to start the chart at a certain bar, 
+f.i. 10 bars before the opening a trade (for this set <strong>PlotStart = Bar-10;</strong> 
+in the trade trigger code). If at <strong>0</strong> (default), the chart starts 
+10 bars before the end of the <a href="lookback.htm">LookBack</a> period.&nbsp;
+<h2>PlotDate</h2>
+Alternative start of the chart, as a date in the <strong>yyyymmdd</strong> 
+format.
+<h2>PlotScale</h2>
+Candle and symbol width in pixels (default <strong>5</strong>). Use a negative number for displaying hi-low bars instead of candlesticks. The candle 
+type is automatically switched between black/white candles, hi/low bars, and 
+plain lines dependent on this variable and the chart size. 
+<h2>PlotText</h2>
+Zoom threshold for visibility of text labels on the chart, in percent of a 
+candle width (default = 1 = text visible on candles &gt; 0.01 pixel).&nbsp; 
+<h2>PlotLabels</h2>
+Distance in bars between x-axis labels in histograms (default = 0 = label at any bar). 
+Use this for better readability of labels in tight histograms. 
+<h2>PlotBorder</h2>
+The size of the border around the chart where the axis labels are displayed, in 
+pixels (default: <strong>50</strong>).
+<h2>PlotWidth</h2>
+Maximum chart image width in pixels (default <strong>2000</strong>), or <strong>0</strong> for no chart. The candle width is accordingly reduced when the chart exceeds <strong>PlotWidth</strong>. Note that too-large chart images can't be displayed with most image viewers.
+The initial chart width in the interactive chart viewer is <strong>600</strong> 
+pixels plus borders.
+<h2>PlotHeight1</h2>
+Height of the main chart with the price bars in chart images, in pixels (default <strong>480</strong>).&nbsp;
+<h2>PlotHeight2</h2>
+Height of  additional charts (<strong>plot</strong> with type=<strong>NEW</strong>), in pixels (default <strong>160</strong>). 
+Also used for the parameter or contour charts in training, and for determining the 
+proportions of additional charts in relation to the main chart in the interactive chart viewer. 
+<h2>PlotPeriod</h2>
+Period in minutes for updating the chart on the <a href="trading.htm">trade status page</a> (default: <strong>
+60</strong> = 1 hour). 
+<h3>Range:</h3>
+<strong>0..999999</strong>
+<h3>Type:</h3>
+<strong>int</strong>
+<h3>Remarks:</h3>
+See <a href="plot.htm">plot</a>. For removing chart elements such as price candles or equity curves, set their 
+<a href="colors.htm">Color</a> to 0. 
+<h3>Example:</h3>
+<pre>function run()
+{
+  PlotBars = 2000;
+  ...
+}</pre>
+<h3>See also:</h3>
+<a href="plot.htm">plot</a>, <a href="plotmode.htm">PlotMode</a>, <a href="profile.htm">profile</a>, <a href="colors.htm">Color</a>, <a href="date.htm">StartDate</a>
+<p>&nbsp;</p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

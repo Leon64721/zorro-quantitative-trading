@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Command, Define</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/cmd.htm">
+</head>
+
+<body>
+<h2>Command[0] .. Command[3] </h2>
+Contains the numbers passed with the <strong>-i</strong> option on the <a href="command.htm">command line</a> 
+(Zorro S only).
+<br>
+<h3>Type:</h3>
+<strong>int</strong>&nbsp;
+<h2>Define</h2>
+The name given with the <strong>-d</strong> option on the <a href="command.htm">command line</a> 
+(Zorro S only).&nbsp;
+<h3>Type:</h3>
+<strong>string</strong>
+<h3>Remarks:</h3>
+<ul>
+  <li>The <strong>Command</strong> variables are used for passing the live trading start date and bar offset to a Zorro instance in <a href="retraining.htm">Retest mode</a>. </li>
+</ul>
+<h3>Example:</h3>
+<pre>function run()
+{
+  switch(Command[0]) {
+    case 1: doThis(); break;
+    case 2: doThat(); break;
+  }
+  ...
+}</pre>
+<h3>See also:</h3>
+<a href="command.htm">Command line</a>
+<p>&nbsp;</p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

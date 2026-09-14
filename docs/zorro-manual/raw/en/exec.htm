@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>exec</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/exec.htm">
+</head>
+
+<body">
+<h2><strong>
+  
+</strong>exec(string Program, string Options, int Flags)</h2>
+Execute an external program, open a document or URL, or run a script or batch file.
+<h3>Parameters:</h3>
+<strong>Program</strong> - file name of the <strong> </strong>exe, batch file, document, URL to be opened. 
+Use <strong>&quot;Editor&quot;</strong> for opening the script editor, <strong>
+&quot;Viewer</strong>&quot; for opening the chart viewer, and
+&quot;<strong>Zorro&quot;</strong> for another Zorro instance.<br>
+<strong>Options</strong> - command line parameter string to be passed to the program, <strong> </strong>or <strong>0</strong> for no command line options.
+<br>
+<strong>Flags</strong> - <strong>1</strong> for waiting until the external program was terminated, 
+<strong>2</strong> for hiding its window, otherwise <strong>0</strong>.
+<h3>Returns:</h3>
+<strong> 0</strong> if the program was not found or could not be started, 
+otherwise the return code of the program in mode <strong>1</strong>, or the 
+process ID in mode <strong>0</strong>.
+<h3>Remarks:</h3>
+<ul>
+  <li>The <b>Program</b> parameter can specify a full path (from the root), a partial path (from the Zorro folder), or just a filename. In the latter case the <strong>exec</strong> function first looks for the file in the Zorro folder, and then in the in the folders specified by the system's PATH environment variable.</li>
+  <li> <b></b>If the <b>Program</b> string does not have a filename extension, the <b>exec</b> function first tries the .COM extension, then the .EXE extension, then the .BAT extension, and finally the .CMD extension.</li>
+  <li>If the <strong>Program</strong> string contains a URL or the name of a document, the standard internet browser or the standard editor for that document is opened.</li>
+  <li> <b>'\'</b> characters in strings, like for file paths, have to be given in C-Notation as <b>&quot;\\&quot;</b><b>.</b></li>
+  <li>The external program can be controlled with the <a href="keys.htm">keys</a> function. 
+  </li>
+	<li>Data can be exchanged with the executed program through a text file; an 
+	example can be found under <a href="python.htm">Python</a>.<br>
+  </li>
+</ul>
+<h3>Examples (see also <a href="python.htm">Python</a>):</h3>
+<pre>exec(&quot;notepad&quot;,&quot;test.txt&quot;,0); <em>// open notepad</em>
+exec(&quot;Editor&quot;,strf(&quot;Log\\%s.csv&quot;,Script),0); <em>// open a .csv file in the Log folder with the editor</em>
+exec(&quot;c:\\program files\\internet explorer\\iexplore.exe&quot;,&quot;https://zorro-project.com&quot;,0); <em>// open an URL with Internet Explorer
+</em>exec(&quot;https://zorro-project.com&quot;,0,0); <em>// open an URL with the standard browser
+</em>exec(&quot;Zorro&quot;,&quot;-run Myscript.c&quot;,1); <em>// run a Zorro script in another instance
+</em>exec(&quot;Zorro&quot;,strf(&quot;-train %s&quot;,Script),0); <em>// train current script in another Zorro instance</em></pre>
+<h3>See also:</h3>
+<a href="window.htm">window</a>, <a href="keys.htm">keys</a>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+version online</a>
+</body>
+</html>

@@ -1,0 +1,242 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Fill</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/fill.htm">
+</head>
+
+<body>
+<h1>Order Filling and HFT Simulation</h1>
+<p>The <strong>Fill</strong> variable  supports several modes for  simulating naive or realistic order filling, as well as a HFT simulation mode. <strong>HFT</strong> (<span class="Highlight"><strong>H</strong>igh <strong>F</strong>requency <strong>T</strong>rading</span>) is a trading method that exploits inefficiencies on the millisecond or microsecond time scale. It is very different to normal 
+algorithmic trading. Usual trading accessories such as  candles or indicators, are not used. The deciding factor is speed. HFT systems do  not run on a trading platform - even Zorro would be 
+not fast enough -  but are either programmed in a high speed language such as C, Pentium assembler, 
+GPU language (HLSL or CUDA), or directly relized in hardware using a FPGA design language 
+like VHDL. </p>
+<p>No retail trading platform supports HFT trading, but Zorro can be used for testing HFT systems 
+under different latency conditions. An introduction to HFT testing with Zorro, and an example of a HFT 
+arbitrage system can be found on <a href="http://www.financial-hacker.com/hacking-hft-systems/" target="_blank">Financial Hacker</a>.  In 
+Fill mode 8, only direct trading, receiving price quotes, and plotting data are supported; indicators, series, or  the <a href="run.htm">run</a> function are not used. Use the <strong>main</strong> function for initializing the system and for looping through bars. The maximum number of bars must be set up with <strong>MaxBars</strong>. Trades are opened and closed only with <a href="buylong.htm">enter</a> and <a href="selllong.htm">exit</a> commands; TMFs, 
+limits, stops or targets are not used in HFT mode. <a href="hedge.htm">Hedge</a> mode must be 2.  Price quotes are entered to the system with the <a href="price.htm">priceQuote</a> function. Any price quote must include the exchange time stamp, since the system is synchronized to it. The two-way latency between exchange and PC location is set up with <a href="timewait.htm">OrderDelay</a> and determines the price quote at which the enter or exit order will be filled.</p>
+<p>For determining the real latency between your system and an exchange,  make sure that your PC clock is exactly in sync with the clock used at the exchange, then compare the exchange time stamp of incoming live price quotes with the arrival time stamp. Double this time for getting the roundtrip latency and add the 
+latecy time of your hardware and software that you should know. As a rule of thumb, the time stamp difference is about 1 ms per any 300 km distance to the exchange (light travels at 300.000 km/sec), plus about 1..2 ms additional delay due to signal routing. <strong>OrderDelay</strong> can be set up with a precision of 1 microsecond. 
+HFT tick data by data vendors has usually a precision of 1 ms. </p>
+<h2>Fill</h2>
+Determines how order fills are simulated in  [<span class="tast">Test</span>] and  [<span class="tast">Train</span>] mode and how orders entries affect other open trades.
+<h3>Modes:</h3>
+<table border="0">
+  <tr>
+    <td><strong>0</strong></td>
+    <td>'Naive' order filling. Trades open or close at the current market price 
+	and at their <a href="stop.htm">Entry</a>, <strong> <a href="stop.htm">Stop</a></strong>, or <strong><a href="stop.htm">TakeProfit</a></strong> 
+	limits, regardless of slippage and intrabar price movement. 
+	Accidental 'cheating' - generating unrealistic profits - is possible by 
+	modifying stop or profit limits in a <a href="trade.htm">TMF</a>. The 
+	naive 
+	fill mode, in combination with <a href="spread.htm">Penalty</a>, can be used for replicating backtest results 
+	by other platforms. </td>
+  </tr>
+  <tr>
+    <td><strong>1</strong></td>
+    <td>Realistic order filling (default). Trades open or close at the most 
+	recent price quote plus <a href="spread.htm">Slippage</a> or <a href="spread.htm">Penalty</a>. If an entry or exit threshold is hit, the position is filled at a price 
+	replicating live trading as accurate as possible (see details below). With daily bars, this mode simulates 
+	trading right before the market closes.</td>
+  </tr>
+    <tr>
+    <td><strong>2</strong></td>
+    <td>Alternative order filling. Like fill mode <strong>1</strong>, 
+	but entries and exits will be filled at limit even when the market price 
+	is better (see details below). This causes often a slightly more pessimistic 
+	backtest.</td>
+    </tr>
+  <tr>
+    <td><strong>3</strong></td>
+    <td>Delayed realistic order filling. Trades do not fill immediately, but 
+	wait for the next price quote. With daily bars,  this mode simulates 
+	trading at the market open price of the next day. </td>
+  </tr>
+	<tr>
+    <td><strong>5</strong></td>
+    <td>Delayed alternative order filling. </td>
+    </tr>
+  <tr>
+    <td><strong>8</strong></td>
+    <td>HFT fill mode. Trades open or close at the <a href="price.htm">priceQuote</a> whose time stamp 
+	is most recent to the current time plus <a href="timewait.htm">OrderDelay</a>. 
+	This mode can be used for testing HFT systems at different latencies.</td>
+  </tr>
+</table>
+<br>
+<h3>Type:</h3>
+<strong>int</strong>
+<h3>Remarks:</h3>
+<ul>
+  <li>High resolution price data for HFT simulation often has outliers. Use the <a href="ticktime.htm">Outlier</a> variable to filter out extreme prices 
+  that can distort the backtest.  </li>
+	<li>Delayed order filling affects trade statistics separately for entering 
+	and for filling the order. As long as the order is not filled, it is assumed pending. 
+	<a href="winloss.htm">NumPendingTotal</a> is increased when the order is 
+	entered, and <a href="winloss.htm">NumOpenTotal</a> when it is filled.</li>
+	<li>Fill modes have no effect on the display of trade start or end points on 
+	the <a href="chart.htm">chart</a>, which are always placed on the first and 
+	last bar of the trade.</li>
+	<li>Fill prices are normally rounded to the point value of the asset.
+	<a href="trademode.htm">TR_FRC</a> enables unrounded fill prices.</li>
+	<li>When <a href="spread.htm">Penalty</a> is set, 
+	the fill price always is the given threshold plus or minus <strong>Penalty</strong>, 
+	depending on trade direction. 
+	</li>
+	<li>Fill prices by triggering an <a href="stop.htm">Entry</a>, <a href="stop.htm">Stop</a>, or
+	<a href="stop.htm">Takeprofit</a> threshold are determined by the current 
+	fill mode, the slippage, penalty, and the open, high, and low prices of the 
+	historical bar or tick that hit the price level. If <a href="mode.htm">TICKS</a> 
+	is not set and thus intrabar ticks are not evaluated, an intrabar order fill is 
+	estimated with the following algorithm:<br><br>
+	<table>
+		<tr>
+			<td><strong>Event</strong></td>
+			<td><strong>Fill = 0</strong></td>
+			<td><strong>Fill = 1</strong></td>
+			<td><strong>Fill = 2</strong></td>
+		</tr>
+		<tr>
+			<td>Long Entry stop</td>
+			<td>Entry</td>
+			<td>Max of Entry and Open</td>
+			<td>Max of Entry and Open</td>
+		</tr>
+		<tr>
+			<td>Long Entry limit:</td>
+			<td>Entry</td>
+			<td>Min of Entry and Open</td>
+			<td>Entry</td>
+		</tr>
+		<tr>
+			<td>Short Entry stop</td>
+			<td>Entry</td>
+			<td>Min of Entry and Open</td>
+			<td>Min of Entry and Open</td>
+		</tr>
+		<tr>
+			<td>Short 
+	Entry limit:</td>
+			<td>Entry</td>
+			<td>Max of Entry and Open </td>
+			<td>Entry </td>
+		</tr>
+		<tr>
+			<td>Long Stop</td>
+			<td>Stop</td>
+			<td>Min of Stop and Open</td>
+			<td>Min of Stop and Open</td>
+		</tr>
+		<tr>
+			<td>Long TakeProfit</td>
+			<td>TakeProfit</td>
+			<td>Max of TakeProfit and Open</td>
+			<td>TakeProfit</td>
+		</tr>
+		<tr>
+			<td>Short Stop</td>
+			<td>Stop</td>
+			<td>Max of Stop and Open</td>
+			<td>Max of Stop and Open</td>
+		</tr>
+		<tr>
+			<td>Short TakeProfit:</td>
+			<td>TakeProfit</td>
+			<td>Min of TakeProfit and Open</td>
+			<td>TakeProfit</td>
+		</tr>
+		<tr>
+			<td>Long OrderDelay</td>
+			<td>Open or Entry</td>
+			<td>Max of Entry and Midprice</td>
+			<td>Max of Entry and Midprice</td>
+		</tr>
+		<tr>
+			<td>Short OrderDelay</td>
+			<td>Open or Entry</td>
+			<td>Min of Entry and Midprice</td>
+			<td>Min of Entry and Midprice</td>
+		</tr>
+	</table>
+	</li>
+</ul>
+<h3>Example:</h3>
+<pre>function run()
+{
+  BarPeriod = 1440;
+  Fill = 3; <em>// enter trades at next day's open</em> 
+  ...
+}</pre>
+<h3>HFT simulation framework:</h3>
+<pre><em>// Simulate a stock trading HFT system</em>
+
+#define LATENCY  2.5   <em>// simulate 2.5 milliseconds latency</em>
+
+typedef struct QUOTE {
+  char  Name[24];
+  var  Time,Price,Size;
+} QUOTE; <em>// Quote struct by the NxCore plugin</em>
+
+int callback(QUOTE *Quote) <em>// called by the plugin</em>
+{
+  static int Counter = 0; <em>// quote counter</em>
+  if(0 == (++Counter % 1000)) { <em>// every 1000 quotes...</em>
+    if(!wait(0)) return 0; <em>// check if [Stop] was clicked</em>
+  }
+    
+  asset(Quote->Name+1); <em>// NxCore adds "e" to the asset name</em>
+  priceQuote(Quote->Time,Quote->Price);
+  ...
+<em>// trade algorithm here, generate TradeSignalLong/Short</em>
+  ...
+  if(!(NumOpenLong+NumPendingLong) && TradeSignalLong) {
+    exitShort();
+    enterLong();
+  } else if(!(NumOpenShort+NumPendingShort) && TradeSignalShort) {
+    exitLong();
+    enterShort();
+  }
+  return 1;
+}
+
+function main()
+{
+  if(Broker != "NxCore") {
+    quit("Please select NxCore plugin!");
+    return;
+  }
+
+  StartDate = 20170103;
+  EndDate = 20170131;
+  LookBack = 0;
+  set(LOGFILE);
+  assetList("AssetsHFT");
+  OrderDelay = LATENCY/1000.;
+  Hedge = 2;
+  Fill = 8;
+  Lots = 1;
+  Verbose = 3;
+
+<em>// process the NxCore history tape files, one for each day</em>
+  login(1);	<em>// for initilizing the plugin</em>
+  int NxDate;
+  for(NxDate = StartDate; NxDate = EndDate; NxDate++) {
+    string NxHistory = strf("History\\NxTape%8d.nx2",NxDate);
+    printf("\nProcessing tape %s..",NxHistory);
+    brokerCommand(SET_HISTORY,NxHistory);
+    if(!wait(0)) break; <em>// check if [Stop] was clicked</em>
+  }
+}</pre>
+<h3>See also:</h3>
+<a href="buylong.htm">enter</a>, <a href="selllong.htm">exit</a>, <a href="hedge.htm">Hedge</a>, <a href="spread.htm">Slippage</a>, 
+<a href="spread.htm">Penalty</a>, <a href="mode.htm">mode</a>, <a href="price.htm">priceQuote</a>
+<p>&nbsp;</p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

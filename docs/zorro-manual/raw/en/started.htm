@@ -1,0 +1,440 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+<title>Algo Trading in C/C++ | Getting started with Zorro</title>
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/started.htm">
+<style type="text/css">
+.auto-style1 {
+	color: #FFFFFF;
+}
+.auto-style2 {
+	color: #FFFFFF;
+	background-color: #0000FF;
+	vertical-align: middle;
+}
+.auto-style3 {
+	vertical-align: middle;
+	background-color: #FFFFFF;
+}
+.auto-style4 {
+	color: #FFFFFF;
+	vertical-align: middle;
+}
+.auto-style5 {
+	vertical-align: middle;
+}
+.auto-style6 {
+	color: #FFFFFF;
+	vertical-align: middle;
+	text-align: center;
+}
+.auto-style7 {
+	color: #FFFFFF;
+	background-color: #0000FF;
+	vertical-align: middle;
+	text-align: center;
+}
+.auto-style8 {
+	border-width: 3px;
+}
+.auto-style9 {
+	vertical-align: middle;
+	text-align: center;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Welcome to Algorithmic Trading in C/C++! Getting Started</h1>
+<p>Zorro is an ecosystem for financial research and algorithmic trading. It is not 
+a 'robot' and not a trading platform, but has some elements of both. While trading 
+platforms are usually designed for manual trading, Zorro is specialized on 
+research and algorithmic trading in automated or semi-automated modes. It can do 
+a lot more than mere trading platforms. Technically 
+it's a front end to a C and C++ compiler with a set of modules for time series analysis, 
+machine learning, optimization, and online API connection. It allows with a few button clicks to edit 
+algo trading strategies, train machine learning 
+algorithms, optimize and backtest systems with multiple methods, and deploy them 
+for live trading. This workflow is reflected in the six buttons of Zorro's control panel. &nbsp;</p>
+<table align="center" border="0" cellpadding="4" cellspacing="3">
+	<tr>
+		<td class="auto-style8"></td>
+		<td></td>
+		<td class="auto-style2" valign="middle">
+		<strong>&nbsp;Indicator<br>&nbsp;Libraries</strong></td>
+		<td></td>
+		<td class="auto-style7" colspan="3"><strong>
+		 Data Sources</strong></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td class="auto-style4" valign="middle">
+		<div class="auto-style1">
+			<strong>&nbsp;</strong></div>
+		</td>
+		<td class="auto-style5">&nbsp;</td>
+		<td class="auto-style6" valign="middle">
+		<img height="30" src="../images/arrowdn.gif" width="36">&nbsp;</td>
+		<td class="auto-style5">&nbsp;</td>
+		<td class="auto-style9">
+		<img height="30" src="../images/arrowdn.gif" width="36">&nbsp;&nbsp;</td>
+		<td class="auto-style9">
+		<img height="30" src="../images/arrowdn.gif" width="36">&nbsp;&nbsp;</td>
+		<td class="auto-style9">
+		<img height="30" src="../images/arrowdn.gif" width="36">&nbsp;</td>
+		<td class="auto-style5">&nbsp;</td>
+		<td class="auto-style5">&nbsp;</td>
+	</tr>
+	<tr>
+		<td bgcolor="#0000FF" class="auto-style4" valign="middle" rowspan="3">
+			<strong>&nbsp;User<br>&nbsp;Script </strong>
+		</td>
+		<td class="auto-style5"><strong>
+		<img class="auto-style1" height="36" src="../images/arrow.gif" width="30" align="middle"></strong></td>
+		<td bgcolor="#0000FF" class="auto-style4" valign="middle">
+		<div class="auto-style1">
+			<strong>&nbsp;lite-C / C++<br>&nbsp;Compiler </strong></div>
+		</td>
+		<td class="auto-style5"><strong>
+		<img class="auto-style1" height="36" src="../images/arrow.gif" width="30" align="middle"></strong></td>
+		<td bgcolor="#0000FF" class="auto-style6" colspan="3">
+		<strong>
+		Trading Engine</strong></td>
+		<td class="auto-style5"><strong>
+		<img class="auto-style1" height="36" src="../images/arrow.gif" width="30" align="middle"><br>
+		<img height="36" src="../images/arrowleft.gif" width="30"></strong></td>
+		<td bgcolor="#0000FF" class="auto-style5"><strong>
+		<span class="auto-style1">&nbsp;Broker /<br>&nbsp;Exchange</span></strong></td>
+	</tr>
+	<tr>
+		<td class="auto-style5" style="height: 45px"></td>
+		<td class="auto-style6" valign="middle" style="height: 45px">
+		<img height="30" src="../images/arrowup.gif" width="36">&nbsp;</td>
+		<td class="auto-style5" style="height: 45px"></td>
+		<td class="auto-style3" style="height: 45px">
+		<img height="30" src="../images/arrowdn.gif" width="36">&nbsp;&nbsp;<img height="30" src="../images/arrowup.gif" width="36"></td>
+		<td class="auto-style3" style="height: 45px">
+		<img height="30" src="../images/arrowdn.gif" width="36">&nbsp;&nbsp;<img height="30" src="../images/arrowup.gif" width="36"></td>
+		<td class="auto-style3" style="height: 45px">
+		<img height="30" src="../images/arrowdn.gif" width="36">&nbsp;<img height="30" src="../images/arrowup.gif" width="36"></td>
+		<td class="auto-style5" style="height: 45px"></td>
+		<td class="auto-style5" style="height: 45px"></td>
+	</tr>
+	<tr>
+		<td class="auto-style5"><strong>
+		<img class="auto-style1" height="36" src="../images/arrow.gif" width="30" align="middle"></strong></td>
+		<td bgcolor="#0000FF" class="auto-style4" valign="middle">
+		<div class="auto-style1">
+			<strong>&nbsp;Python / R<br>&nbsp;Bridge </strong></div>
+		</td>
+		<td class="auto-style5">&nbsp;</td>
+		<td bgcolor="#0000FF" class="auto-style6"><strong>&nbsp;Backtest</strong></td>
+		<td bgcolor="#0000FF" class="auto-style6"><strong>&nbsp;Optimizer</strong></td>
+		<td bgcolor="#0000FF" class="auto-style6"><strong>AI</strong></td>
+		<td class="auto-style5">&nbsp;</td>
+		<td class="auto-style3">&nbsp;</td>
+	</tr>
+	</table>
+<p>The answer on questions like '<em><strong>Does Zorro have X?</strong></em>' (where 
+<strong><em>X</em></strong> is a market scanner, a stock exchange crash 
+predictor, a ChatGPT-controlled trading system, or whatever trading or analysis feature), the answer is most likely: '<strong><em>Yes. 
+Just write a script for it</em></strong>'. Everything you're doing with Zorro is based on a <strong>script</strong>, 
+and all trading, analysis, and AI features are functions called in your script. There are many 
+included scripts for all possible tasks, usually with a set of 
+parameters that can be edited for adapting them to particular needs. In order to 
+use Zorro effectively, you need to know how to edit and write scripts in the 
+lite-C or C++ language. There are
+<a href="links.htm">books</a>, <a href="https://zorro-project.com/docs.php">
+online courses</a>, and also a <a href="tutorial_var.htm">short tutorial</a> in 
+this manual.
+</p>
+<h3>Control panel</h3>
+<p>We admit: the user interface is more functional than pretty. But is has 
+anything that you'll ever need for research and trading. For settings specific 
+to your script, you can add 
+<a href="panel.htm">your 
+own user interface</a> with as many colorful fields and buttons 
+as you want. The default control panel is designed for minimum space (~ 300x600 pixels), 
+so several Zorro instances can run on a small notebook screen in the background. There 
+is no menu. Entry fields and scroll boxes allow setting up the 
+broker connection and selecting the script and assets to trade. </p>
+<table border="0">
+	<tr>
+		<td>
+		<img align="left" height="622" src="../images/zorro.png" width="304"></td>
+		<td valign="top">
+		<table border="0" width="490" style="height: 620">
+			<tr>
+				<td colspan="2">
+				<div align="center">
+					<h3>Broker</h3>
+				</div>
+				</td>
+			</tr>
+			<tr>
+				<td class="tast">
+				<div align="left">
+					Account</div>
+				</td>
+				<td class="auto-style1">Primary account (<strong>Demo</strong>, <strong>Real</strong>, 
+				etc) and
+				broker connection (<strong>FXCM</strong>,
+				<strong>IB</strong>, <strong>MT4</strong>, etc) for live 
+				trading. </td>
+			</tr>
+			<tr>
+				<td class="tast" width="69">
+				<div align="left">
+					Login</div>
+				</td>
+				<td width="518">User ID, account number, password, API token, 
+				or other credentials for the selected account.</td>
+			</tr>
+			<tr>
+				<td class="tast">
+				<div align="left">
+					Status</div>
+				</td>
+				<td>Server time and market state in live trading mode. Green 
+				when connected, red when offline.
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+				<div align="center">
+					<h3>Strategy</h3>
+				</div>
+				</td>
+			</tr>
+			<tr>
+				<td class="tast">
+				<div align="left">
+					Script</div>
+				</td>
+				<td>Select a script from the <strong>Strategy
+				</strong>folder. See <a href="scripts.htm">scripts</a> for 
+				included scripts and the <a href="tutorial_var.htm">tutorial</a> for writing 
+				your own scripts.</td>
+			</tr>
+			<tr>
+				<td class="tast">
+				<div align="left">
+					Asset</div>
+				</td>
+				<td>
+				<p>Select the primary asset. You can add any asset - crypto, 
+				stocks, futures, options - to this scrollbox 
+				through <a href="account.htm">asset lists</a>.&nbsp;
+				</p>
+				</td>
+			</tr>
+			<tr>
+				<td class="tast">
+				<div align="left">
+					Action</div>
+				</td>
+				<td>
+				<p>Run predefined Zorro tasks, programs, or script functions with a mouse click.</p>
+				</td>
+			</tr>
+			<tr>
+				<td class="tast">
+				<div align="left">
+					Period</div>
+				</td>
+				<td>
+				<p><a href="bars.htm">Bar period</a> in minutes; 
+				normally set up by script.&nbsp; </p>
+				</td>
+			</tr>
+			<tr>
+				<td class="tast">
+				<div align="left">
+					Slider1..3</div>
+				</td>
+				<td>User configurable, to modify script parameters.&nbsp; </td>
+			</tr>
+			<tr>
+				<td colspan="2">
+				<div align="center">
+					<h3>Buttons</h3>
+				</div>
+				</td>
+			</tr>
+			<tr>
+				<td class="tast">
+				<div align="left">
+					Help</div>
+				</td>
+				<td>Open the help manual and script reference. </td>
+			</tr>
+			<tr>
+				<td class="tast">
+				<div align="left">
+					Edit</div>
+				</td>
+				<td>Open the selected script in the <a href="npp.htm">editor</a>. 
+				Reset all settings by the previous run. </td>
+			</tr>
+			<tr>
+				<td class="tast">
+				<div align="left">
+					Test</div>
+				</td>
+				<td><a href="testing.htm">Test</a> the script with historical 
+				price data in single-step, tick-based, or walk-forward mode.</td>
+			</tr>
+			<tr>
+				<td class="tast">Train</td>
+				<td><a href="training.htm">Train</a> the script by
+				<a href="optimize.htm">optimizing</a> parameters, generating 
+				trade <a href="advisor.htm">rules</a>, or training neural networks. </td>
+			</tr>
+			<tr>
+				<td class="tast">
+				<div align="left">
+					Trade</div>
+				</td>
+				<td>
+				<p>Run the script live with broker connection.
+				<a href="trading.htm">Trade</a> assets and start earning (or losing) money. </p>
+				</td>
+			</tr>
+			<tr>
+				<td class="tast">
+				<div align="left">
+					Result</div>
+				</td>
+				<td>Open the <a href="chart.htm">chart 
+				viewer</a> and the editor with the log and
+				<a href="performance.htm">performance analysis</a>.</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+				<div align="center">
+					<h3>Output</h3>
+				</div>
+				</td>
+			</tr>
+			<tr>
+				<td class="tast">
+				<div align="left">
+					Progress</div>
+				</td>
+				<td>Trading or test status. Profits green, losses 
+				red. </td>
+			</tr>
+			<tr>
+				<td class="tast">Info</td>
+				<td>Numerical status display.&nbsp;
+				</td>
+			</tr>
+			<tr>
+				<td class="tast">Messages</td>
+				<td>What Zorro has to tell. Double click to copy.</td>
+			</tr>
+		</table>
+		</td>
+	</tr>
+</table>
+<h3>What you need</h3>
+<p>
+<img height="298" src="../images/monitors.jpg" width="421" class="auto-style1" style="float: right">Some traders 
+own a desk full of PCs and monitors 
+with an impressive show of indicators and price curves. Good for boasting on 
+trader forums, but useless for serious algo trading. You only need two 
+machines:</p>
+<ul>
+	<li class="auto-style1">For <span class="Highlight">live trading</span>, any decent Windows PC with 
+	Internet access 
+	will normally do. Either 
+	install Zorro on a reliable notebook with permanent Internet connection, or 
+	rent for a small fee a Windows Server VPS from Amazon, Google, 
+	Microsoft, or any other reliable provider. The smallest VPS is normally sufficient unless you want 
+	to use high-frequency trading or run multiple Zorro 
+	instances. For setting up a VPS, look under <a href="vps.htm">Zorro 
+	in the Cloud</a>. If you run many Zorro instances on several VPS with 
+	different brokers and accounts, you can 
+	observe the statuses of all of them on your PC at home with the
+	<a href="trading.htm#zstatus">ZStatus</a> script.<br>&nbsp; You also need an 
+	account with an <a href="brokers.htm">online broker</a> (or several accounts 
+	with several brokers) that offer the asset types - currencies, stocks, 
+	options, digital coins - that you want to trade.<br>&nbsp;</li>
+	<li class="auto-style1">For 
+	<span class="Highlight">algorithm development</span> your PC can't be powerful 
+	enough, since a lot training and backtesting will be involved. Get a machine 
+	with a fast processor, such as Intel i9 or AMD Ryzen, with at least 16 GB RAM 
+	and 8 cores. For <span class="Highlight">deep learning</span> algorithms, 
+	we recommend a recent NVidia 
+	graphics card with CUDA support. If your computer at home won't do, the alternative is renting a powerful VPS in the cloud.<br>&nbsp; 
+	For algo development in C you need no further software. For developing in 
+	C++, get the latest <a href="dlls.htm">Visual Studio Community Edition</a> 
+	from Microsoft and install it with its C++ environment. For using deep 
+	learning libraries, install <a href="rbridge.htm">R</a> or
+	<a href="python.htm">Python</a>.</li>
+</ul>
+<h3>Getting started </h3>
+<ul>
+	<li><strong class="Highlight">Set up Zorro:</strong> Download Zorro (it's free) from
+	<a href="https://zorro-project.com/download.php" target="_blank">https://zorro-project.com/download.php</a>, 
+	and install it on your PC or on a trading server. For installing Zorro 
+	under Linux or in other special ways, 
+	see <a href="vps.htm">Installation</a>.<br><strong>&nbsp;</strong></li>
+	<li><strong class="Highlight">Let Zorro do something:</strong> Start Zorro 
+	(the normal version, not Zorro64). Select <strong>Workshop4</strong> 
+	under <span class="tast">Script</span><strong>, </strong>select <strong>EUR/USD</strong> 
+	under <span class="tast">Asset</span>, then click [<span class="tast">Test</span>]. 
+	After clicking [<span class="tast">Result</span>] you can see the log and 
+	performance statistics in the editor. Try also other scripts. Some 
+	are unrelated to trading, some will require training, and some will need 
+	historical data, but they will give you an impression of what you can do 
+	with Zorro. Here's a <a href="scripts.htm">list 
+	of included scripts</a>. <br>&nbsp;</li>
+	<li><strong class="Highlight">Learn trading strategy development:</strong>&nbsp; Work through the
+	<a href="tutorial_var.htm">quick tutorial</a>, or get the <a href="links.htm">Black 
+	Book</a> for a thorough intoduction to strategy programming in C. If you have a question or an issue with Zorro, ask on the
+	<a href="http://www.opserver.de/ubb7/ubbthreads.php?ubb=cfrm&amp;c=1" target="_blank">
+	user forum</a>. For individual help, subscribe a support ticket on the
+	<a href="http://zorro-project.com/docs.php" target="_blank">Zorro support 
+	page</a>. If you need help with developing a trading strategy, contact our
+	<a href="http://zorro-project.com/development.php" target="_blank">system development 
+	service</a>. <br>&nbsp;&nbsp; &nbsp; </li>
+	<li><strong class="Highlight">Earn virtual money:</strong> Open a demo 
+	trading account with a 
+	supported broker, such as FXCM or Oanda. Five minutes later you should have a $50,000 demo account and can log 
+	in and start trading. Start Zorro, select the broker, enter your login credentials, 
+	select a <strong><a href="zsystems.htm">Z</a></strong><a href="zsystems.htm"> 
+	strategy</a>, and click 
+	[<span class="tast">Trade</span>]. Wait a couple of months and observe the money 
+	accumulate on your account... <br>&nbsp;</li>
+	<li><strong><span class="Highlight">Earn real money:</span> </strong>The free Zorro version is fully functional 
+	and can trade with real money. But before investing your hard earned money in 
+	one of the included strategies, please read the <a href="zsystems.htm#income">Z systems</a> 
+	chapter from top to bottom. Open a real money account with the broker of your 
+	choice (for finding a broker, read the <a href="brokers.htm">Brokers</a> page). 
+	Some brokers offer a <a href="restrictions.htm">free Zorro S subscription</a> 
+	for opening new accounts. Once the account is established, transfer some money onto it. Start Zorro, select 
+	the strategy and click [<span class="tast">Trade</span>]. If you don't own Zorro S, withdraw your profits 
+	regularly from the broker account, as the free Zorro version stops trading when 
+	the account balance exceeds a certain limit (see <a href="restrictions.htm">
+	Zorro S</a> 
+	for details). <br>&nbsp;. </li>
+</ul>
+<h3>See also</h3>
+<a href="https://zorro-project.com/" target="_blank">Zorro Home</a>,
+<a href="content.htm">Content</a>, <a href="new.htm">What's New</a>,
+<a href="strategy.htm">Algo Trading Principles</a>, <a href="tutorial_var.htm">Tutorial</a>,
+<a href="zsystems.htm">Z Strategies</a>
+<p align="right">
+<a class="button" href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))">&#9658; 
+latest version online</a></p>
+
+</body>
+
+</html>

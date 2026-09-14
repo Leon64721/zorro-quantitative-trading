@@ -1,0 +1,143 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>for(current_trades)</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/fortrades.htm">
+</head>
+<body>
+<h1>Enumeration loops</h1>
+<h2>for(current_trades)  { ... }</h2>
+A <a href="for.htm">for</a> loop that cycles through all open and pending trades with the current <a href="asset.htm">asset</a> and <a href="algo.htm">algo</a>, 
+starting with the earliest trade; useful f.i. for closing trades in a FIFO 
+compliant way.<h2>for(last_trades) { ... }</h2>
+A <a href="for.htm">for</a> loop that cycles backwards through the internal list 
+of open, pending, closed, and cancelled trades with the current <a href="asset.htm">asset</a> and <a href="algo.htm">algo</a>, 
+starting with the last trade.
+<h2>for(open_trades) { ... }</h2>
+A <a href="for.htm">for</a> loop that cycles through all open and pending trades of all assets and algos, 
+starting with the earliest trade.<h2>for(closed_trades) { ... }</h2>
+A <a href="for.htm">for</a> loop that cycles backwards through all closed trades of all assets and algos, 
+starting with the latest trade. 
+<h2>for(all_trades)  { ... }</h2>
+A <a href="for.htm">for</a> loop that cycles through the internal list of all trades; useful for a detailed trade statistic after the simulation. 
+<h2>for(past_trades)  { ... }</h2>
+A <a href="for.htm">for</a> loop that cycles backwards through the internal list 
+of all trades, starting with the latest trade; useful for equity 
+curve trading.  
+<h2>for(listed_assets)  { ... }</h2>
+A <a href="for.htm">for</a> loop that cycles through all assets from the
+<a href="account.htm">asset list</a>, in the same order as in the list, and 
+selects one after the other without loading itss history.
+<h2>for(used_assets)  { ... }</h2>
+A <a href="for.htm">for</a> loop that cycles through all assets used in the 
+script in alphabetical order, and selects one after the other.
+<h2>for(all_algos)  { ... }</h2>
+A <a href="for.htm">for</a> loop that cycles through all asset/algo combinations 
+used in the script, and selects one component after the other,&nbsp; 
+<h2>break_trades</h2>
+<h2>break_assets</h2>
+<h2>break_algos</h2>
+Special <a href="acrt-break.htm">break</a> macros for aborting a trade, asset, 
+or algo enumeration loop. Use <strong>return_trades</strong> for returning from 
+inside a trade loop. All macros are defined in <strong>variables.h</strong>.
+<h3>Type:</h3>
+<strong>Macro</strong>
+<h3>Remarks:</h3>
+<ul>
+    <li>The above enumeration loops are 
+	<a href="define.htm">macros</a> defined in <strong>include\variables.h</strong>. 
+	Unlike a normal <a href="for.htm">for</a> loop, enumeration loops cannot be nested, and they must not be 
+	aborted by <strong>break</strong> or 
+	<strong>return</strong> statements. The <strong>break_trades</strong>,
+	<strong>break_assets</strong>, <strong>break_algos</strong> 
+	macros can be used to abort these loops. The asset list can alternatively be enumerated, 
+	with no restrictions, with a normal loop 
+	like this: <strong>for(i=0; Assets[i]; i++) { asset(Assets[i]); ... } </strong>
+	).</li>
+	<li>The predefined <strong>Itor</strong> variable starts at <strong>0</strong> 
+	and is incremented at any loop. It can be used for counting cycles or 
+	indexing arrays. </li>
+	<li>The asset that was selected at loop begin is stored in
+	<a href="script.htm">AssetPrev</a> and automatically re-selected after the 
+	end of the loop. </li>
+	<li>Trades are sorted in the order of entering, either forwards or 
+	backwards dependent on loop type.</li>
+	<li>The code inside a <strong>for(...trades)</strong> loop sets the
+	<a href="trade.htm">ThisTrade</a> pointer to the loop trade and has access to all 
+	its <a href="trade.htm">trade variables</a>.  
+	When called inside a <a href="trade.htm">TMF</a>, all <a href="trade.htm">trade variables</a> 
+	inside the enumeration loop refer to the current loop trade, while outside the loop they refer to the trade of the TMF. All asset specific variables 
+	in the trade loop - <a href="script.htm">Asset</a>, <a href="spread.htm">Spread</a>, etc. - are set to the 
+	trade asset. Algo specific variables (f.i. <a href="algovar.htm">AlgoVar</a>) 
+	and component specific variables (f.i. <a href="winloss.htm">trade statistics</a>) are 
+	<span class="Highlight">not set 
+	up</span> in the loop; if this is desired, call <a href="algo.htm">algo(TradeAlgo)</a> inside 
+	a trade loop.
+	</li>
+	<li>Asset loops select the asset name and parameters, but don't initialize the asset 
+	or load its history. Call <a href="asset.htm">asset(<strong>Asset</strong>)</a> and/or <a href="algo.htm">algo(...)</a> for 
+	evaluating 
+component specific <a href="winloss.htm">trade statistics</a> in the loop.
+	</li>
+	<li>Use an <strong>if(TradeIsPending)</strong>, <strong>
+	if(TradeIsOpen)</strong>, or <strong>if(TradeIsClosed)</strong> condition, 
+	or a combination of them, to filter out the desired trades in a trade 
+	enumeration loop. When <a href="hedge.htm">virtual hedging</a> is used, <strong>open_trades</strong> 
+	includes phantom as well as pool trades. Make sure to distinguish them with
+	<strong>if(<a href="trade.htm">TradeIsPool</a>)</strong>. You don't want to modify pool trades.
+	</li>
+	<li>Enumeration loops must normally not modify themselves. For instance, a 
+	loop over all open trades must not change the number of open trades. 
+	As an exception, a new trade can be opened inside a trade enumeration loop. 
+	But since this will add a new cycle to that loop, be careful not to create an endless loop this way. 
+	It is also allowed to close the current trade in the loop by <strong>
+	<a href="selllong.htm">exitTrade</a>(ThisTrade)</strong>.</li>
+</ul>
+<h3>Example:</h3>
+<pre><em>// find all pending trades with the current asset and all algos</em>
+int numPending(bool isShort)
+{
+  int num = 0;
+  for(open_trades)
+    if(0 == strcmp(Asset,AssetPrev) 
+      &amp;&amp; TradeIsPending &amp;&amp; TradeIsShort == isShort)
+        num++;
+  return num;
+}
+ 
+<em>// sum up the profit/loss of all open trades with the current asset</em>
+var val = 0;
+for(open_trades)
+  if(0 == strcmp(Asset,AssetPrev) &amp;&amp; TradeIsOpen &amp;&amp; !TradeIsPhantom)
+    val += TradeProfit;
+
+<em>// increase the stop of all winning trades slowly over time</em>
+for(open_trades) {<br>  if(TradeIsOpen &amp;&amp; TradeProfit &gt; 0 &amp;&amp; !TradeIsPool)<br>    TradeStopLimit -= 0.02 * TradeStopDiff;<br>}<br>
+
+<em>// lock 80% profit of all winning trades</em>
+for(open_trades) {
+  if(TradeIsOpen &amp;&amp; !TradeIsPool &amp;&amp; TradeProfit > 0) {
+    TradeTrailLock = 0.80;
+    if(TradeIsShort)
+      TradeTrailLimit = max(TradeTrailLimit,TradePriceClose);
+    else
+      TradeTrailLimit = min(TradeTrailLimit,TradePriceClose);
+  }
+}
+
+<em>// sum up open profits of all assets and the current algo
+</em>var ProfitSum = 0;
+for(used_assets) {
+  asset(Asset); <em>// select the current component
+</em>  ProfitSum += ProfitOpen;
+}</pre>
+<h3>See also:</h3>
+<a href="bars.htm">bar</a>, <a href="buylong.htm">enterLong</a>/<a href="buylong.htm">Short</a>, <a href="trade.htm">trade variables</a>,
+<a href="results.htm">results</a>, <a href="loop.htm">loop</a>
+<p>&nbsp;</p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

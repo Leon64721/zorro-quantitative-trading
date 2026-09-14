@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>NumCores</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+.auto-style1 {
+	background-color: #FFFFFF;
+}
+</style>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/numcores.htm">
+</head>
+
+<body>
+<h2>NumCores</h2>
+Determines the number of logical CPU cores for <a href="numwfocycles.htm">WFO</a> training (<a href="restrictions.htm">Zorro S</a> 
+re<span class="auto-style1">quired</span>). Either a positive value for the number of cores to use, or a negative value for the number of cores not to use, f.i. <strong>-1</strong> for using all available cores but one. Default = <strong>0</strong> for no multi-core training. The WFO cycles are evenly distributed among parallel Zorro processes assigned to different CPU cores.
+The more cores, the faster is the training run; f.i. assigning 5 cores of a 6-core CPU will reduce the training time by 80%.
+<h2>Core</h2>
+The current core 
+number in a WFO multicore training run from <strong>1..NumCores</strong>, or the current <a href="engine.htm">
+process number</a>, or <strong>0</strong> when no multicore process is set up (read/only).
+<h3>Type:</h3>
+<strong>int</strong>
+<h3>Remarks:</h3>
+<ul>
+  <li><strong>NumCores</strong> must be set in the <a href="is.htm">INITRUN</a>. 
+  <a href="slider.htm">Sliders</a> and other user interface controls should be 
+  <span class="Highlight">at default settings</span> for WFO training, since their positions are not 
+  transferred to other cores. </li>
+	<li>Zorro supports up to 192 cores. How many cores are really used depends on 
+	available CPU threads (logical processors) and on the number of WFO cycles. 
+	Obviously, the number of used cores won't exceed the number of WFO cycles, but it is possible to 
+	set up more cores than CPU threads are available. Training will then consume most CPU resources and can render the PC 
+	temporarily unresponsive. The number of physical and logical threads is displayed in the Windows Task Manager. </li>
+	<li>Multicore training uses the <a href="coommand.htm">command line</a> for passing parameters and script name to the separate training processes. The script name must be 
+	<span class="Highlight">command line compliant</span>, i.e. no blanks and no path, 
+  and the script must be located in the 
+<strong>StrategyFolder</strong> given in <a href="ini.htm">Zorro.ini</a>. Aside 
+	from the script, the <a href="cmd.htm">Define</a> string and the 4
+	<a href="cmd.htm">Command</a> variables are passed to the training processes via command line. 
+	In this way the training script can pass additional information to the 
+	processes.</li>
+	<li>The processes run as minimized Zorro instances. The message windows display only the cycles trained by the dedicated process. Parameter diagrams in multi-core mode are generated from the main process only, not from the parallel processes. The 
+	<a href="mode.htm">TESTNOW</a> flag is not compatible with multicore 
+	training.</li>
+	<li>Training <a href="rbridge.htm">R-based algorithms</a> works also in 
+  multi-core mode. Several R instances will then run in parallel. The 
+  used R libraries <span class="Highlight">must support parallel processes</span>. That's not the case when they connect to a local server (such as 
+	<strong>H2O</strong>), 
+  or when they use the GPU or other hardware resources (such as <strong>Keras</strong>, 
+	<strong>TensorFlow</strong>, 
+  or <strong>MxNe</strong>t in GPU mode).</li>
+	<li>Normally only the main process can write to the log file. For getting 
+	logs also from the additional cores, set <strong>
+	<a href="numtotalcycles.htm">LogNumber</a> = Core</strong>.</li>
+	<li>Aside from WFO, Zorro processes on different cores can also be started by command 
+	line and communicate with each 
+	other. For details see <a href="engine.htm">processes</a>.</li>
+</ul>
+<h3>Example:</h3>
+<pre>NumCores = -2; <em>// use all logical cores but two</em></pre>
+<h3>See also:</h3>
+<a href="numwfocycles.htm">NumWFOCycles</a>, <a href="training.htm">Training</a>, 
+<a href="engine.htm">Processes</a>
+<p>&nbsp;</p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

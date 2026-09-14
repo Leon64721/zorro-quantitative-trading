@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>FTP functions</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/ftp.htm">
+</head>
+<body link="#000000" vlink="#333333" alink="#666666">
+<h1>FTP functions</h1>
+<p>The FTP functions can be used for uploading or downloading files from a web server.</p>
+<h2>ftp_download(string url, string path, string username, string password) </h2>
+Starts a file download from a FTP server. Returns <strong>0</strong> if an error occured,  nonzero otherwise.
+Use <strong>ftp_status</strong> to check when the transfer was complete.
+<h2><b> </b> ftp_upload(string url, string path, string username, string password)</h2>
+Starts a a file upload to a FTP server. Returns <strong>0</strong> if an error occured,  nonzero otherwise.&nbsp;Use
+<strong>ftp_status</strong> to check when the transfer was complete.&nbsp;
+<h2>ftp_getdate(string url, string username, string password)</h2>
+Starts a file access for getting the timestamp and size of a file stored on a FTP server.
+Returns <strong>0</strong> if an error occured,  nonzero otherwise.&nbsp;Use
+<strong>ftp_status</strong> to check when the file access was complete.&nbsp;
+<h2>ftp_stop()</h2>
+Stops the currently running FTP transfer.
+<h2>ftp_size(): long </h2>
+Returns the total file size of the current/last file in bytes.
+<h2>ftp_sent(): long </h2>
+Returns the amount of sent data of the current/last file in bytes.
+<h2>ftp_timestamp(): long </h2>
+Returns the timestamp of the current/last file, after <strong>ftp_getdate()</strong> was executed successfully.
+<h2>ftp_status()</h2>
+Returns the status of a currently running or the last FTP transfer: <br>
+<br>
+<strong>-1</strong> if the last FTP transfer was stopped because of an error<br>
+<strong>0</strong> if the FTP transfer is still running<br>
+<strong>1</strong> if the last FTP transfer was successful<br>
+<h2>ftp_log (var mode)</h2>
+Enables/disables the logging of FTP transfers. The logfile is named <strong>"ftp_log.txt"</strong>.
+<h3>Parameters:</h3>
+<strong>url</strong> - URL of the file to be downloaded, or destination URL for a file upload (e.g.: "ftp://www.testhoster.com/downloads/test.txt").<br>
+<strong>path</strong> - local path + filename (e.g.: "testdir/test.txt")<br>
+<strong>username</strong> - FTP username<br>
+<strong>password</strong> - FTP password<br>
+<strong>mode</strong> - <strong>1</strong> to enable, <strong>0</strong> to disable FTP logging<br>
+<h3>Remarks:</h3>
+<ul>
+  <li> Only one FTP transfer can be run at the same time. After calling <strong>ftp_download(), ftp_upload() or ftp_getdate()</strong> wait until the value of <strong>ftp_status()</strong> is nonzero.</li>
+    <li>For uploading or downloading to SFTP servers, or for other FTP/SFTP 
+	operations such as creating directories, get
+	<a href="https://curl.haxx.se/windows/" target="_blank">curl.exe</a> and run 
+	it with <a href="exec.htm">exec</a>. Example: <strong>
+	exec(&quot;C:\\Tools\\curl.exe&quot;,&quot;-k \&quot;sftp:/myserver.host/upload/\&quot; --user 
+	\&quot;myname:pass\&quot; -T \&quot;Data\\file.txt\&quot; --ftp-create-dirs&quot;,1);</strong>.<br>
+	</li>
+</ul>
+<h3>Example:</h3>
+<pre>function main() 
+{ 
+<em>//Downloads the file "myfile.txt" and saves it in the Data folder</em> 
+  ftp_download("ftp://www.testhost.com/files/myfile.txt","Data/myfile.txt","username","password"); 
+  while(!ftp_status()) <em>//as long as the download is running</em>
+    wait(50);
+  if (ftp_status() == 1) 
+    printf("\nDownload successful!"); 
+  else 
+    printf("\nDownload failed!"); 
+}
+</pre>
+<h3>See also:</h3>
+<span class="links"><a href="http.htm">http functions</a></span><span class="links">, <a href="file_.htm">file functions</a>,
+<a href="email.htm">email</a></span><p> 
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+version online</a>
+</p>
+</body>
+</html>

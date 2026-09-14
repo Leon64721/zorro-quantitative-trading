@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>diff</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/diff.htm">
+</head>
+
+<body link="#000000" vlink="#333333" alink="#666666">
+<h2>diff (var x, int Period): var </h2>
+Returns the difference of <strong>x</strong> to its value from <strong>Period</strong> bars before.
+<h3>Parameters:</h3>
+		<table border="0">
+          <tr>
+            <td><strong>x</strong></td>
+            <td>Variable for difference calculation. </td>
+          </tr>
+        </table>        
+        <h3>Returns</h3>
+        <strong>x - previous x</strong><br>
+ <h3>Remarks</h3>
+ <ul>
+   <li>This function generates a <a href="series.htm">series</a> and must be 
+   called in a fixed order in the script.   </li>
+   <li><strong>diff(log(x),1)</strong> returns the log return of <strong>x</strong> , since <strong>log(a/b) = log(a) - log(b)</strong>. </li>
+ </ul>
+<h3>Example:</h3>
+<pre><em>// generate a price difference serie</em>
+vars Changes = series(diff(priceC(),1));
+</pre>
+            <h3>See also:</h3>
+            <a href="series.htm">series</a>, <a href="ta.htm#roc">ROCP</a>
+            <p></p>
+			<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+version online</a>
+</body>
+</html>

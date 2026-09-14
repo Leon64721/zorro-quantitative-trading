@@ -1,0 +1,302 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>NumWFOCycles, WFOCycle, SelectWFO</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+<!--
+.Stil1 {font-size: smaller}
+-->
+</style>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/numwfocycles.htm">
+</head>
+
+<body>
+<h1>Walk Forward Optimization</h1>
+Walk Forward Optimization (WFO in short) is a variant of cross-validation for 
+time series and was first published by Robert Pardo as a backtest method for 
+algorithmic trading strategies. It trains and tests the strategy in several cycles using a 
+data frame that &quot;walks&quot; over the simulation period. This allows an
+<a href="https://zorro-project.com/backtest.php" target="_blank">out-of-sample 
+backtest</a> that still uses most of the historical data. WFO is not restricted to 
+backtests, but can be continued In live trading and regularly adapt the strategy 
+parameters to the current market situation. In this way, a WFO trained strategy 
+is essentially a 'parameter-less' system.<br><br>For greatly reducing the 
+backtest time with WFO, Zorro separates test and training and stores all trained 
+parameters, trading rules, or machine learning models separately for any WFO cycle. This way a backtest needs not perform 
+all optimizations again. It automatically switches between sets of parameters or 
+rules. To activate WFO in a strategy script, only the 
+following variable needs to be set: 
+
+<h2>NumWFOCycles</h2>
+Number of cycles in a <strong>Walk Forward Optimization / Analysis</strong> (default = <strong>0</strong> = no Walk Forward Optimization). If <strong>NumWFOCycles</strong> is set to a positive number 
+at or above<strong> 2</strong>, rolling walk forward optimization is enabled 
+with the given number of cycles; if it is set to a negative number at or below
+<strong>-2</strong>, anchored walk forward optimization is enabled. In Walk Forward Optimization, a data frame consisting of a training and test period is  shifted over the simulation period in the given number of cycles (see image 
+for ).<br>
+<br>
+<table border="0" align="center" cellspacing="3">
+  <tr>
+    <td><div align="center"><strong>WFOCycle</strong></div></td>
+    <td colspan="9" bgcolor="#CCCCCC"><div align="center"><strong>Simulation period </strong></div></td>
+  </tr>
+  <tr>
+    <td><div align="center"><strong>1</strong></div></td>
+    <td colspan="2" bgcolor="#FFFF00"><div align="center"><strong>LookBack</strong></div></td>
+    <td colspan="3" bgcolor="#00FF00"><div align="center"><strong>Training </strong></div></td>
+    <td width="40" bgcolor="#FF9900"><div align="center"><strong>Test1</strong></div></td>
+    <td><div align="center"></div></td>
+    <td><div align="center"></div></td>
+    <td><div align="center"></div></td>
+  </tr>
+  <tr>
+    <td><div align="center"><strong>2</strong></div></td>
+    <td width="40"><div align="center"></div></td>
+    <td colspan="2" bgcolor="#FFFF00"><div align="center"><strong>LookBack</strong></div></td>
+    <td colspan="3" bgcolor="#00FF00"><div align="center"><strong>Training</strong></div></td>
+    <td bgcolor="#FF9900"><div align="center"><strong>Test2</strong></div></td>
+    <td><div align="center"></div></td>
+    <td><div align="center"></div></td>
+  </tr>
+  <tr>
+    <td><div align="center"><strong>3</strong></div></td>
+    <td><div align="center"></div></td>
+    <td width="40"><div align="center"></div></td>
+    <td colspan="2" bgcolor="#FFFF00"><div align="center"><strong>LookBack</strong></div></td>
+    <td colspan="3" bgcolor="#00FF00"><div align="center"><strong>Training</strong></div></td>
+    <td bgcolor="#FF9900"><div align="center"><strong>Test3</strong></div></td>
+    <td><div align="center"></div></td>
+  </tr>
+  <tr>
+    <td><div align="center"><strong>4</strong></div></td>
+    <td><div align="center"></div></td>
+    <td><div align="center"></div></td>
+    <td width="40"><div align="center"></div></td>
+    <td colspan="2" bgcolor="#FFFF00"><div align="center"><strong>LookBack</strong></div></td>
+    <td colspan="3" bgcolor="#00FF00"><div align="center"><strong>Training</strong></div></td>
+    <td bgcolor="#FF9900"><div align="center"><strong>Test4</strong></div></td>
+  </tr>
+  <tr>
+    <td><div align="center"><strong>5</strong></div></td>
+    <td><div align="center"></div></td>
+    <td><div align="center"></div></td>
+    <td><div align="center"></div></td>
+    <td>&nbsp;</td>
+    <td colspan="2" bgcolor="#FFFF00"><div align="center"><strong>LookBack</strong></div></td>
+    <td colspan="3" bgcolor="#00FF00"><div align="center"><strong>Training</strong></div></td>
+  </tr>
+  <tr>
+    <td align="center"><strong>OOS Test</strong></td>
+    <td colspan="2" bgcolor="#FFFF00"><div align="center"><strong>LookBack</strong></div></td>
+    <td colspan="4" bgcolor="#FF9900"><div align="center"><strong>Test5</strong></div></td>
+    <td><div align="center"></div></td>
+    <td><div align="center"></div></td>
+    <td><div align="center"></div></td>
+  </tr>
+  <tr>
+    <td align="center"><strong>WFO Test</strong></td>
+    <td width="40"><div align="center"></div></td>
+    <td width="40"><div align="center"></div></td>
+    <td width="40"><div align="center"></div></td>
+    <td width="40" bgcolor="#FFFF00"><div align="center"><strong>Look</strong></div></td>
+    <td width="40" bgcolor="#FFFF00"><div align="center"><strong>Back</strong></div></td>
+    <td width="40" bgcolor="#FF9900"><div align="center"><strong>Test1</strong></div></td>
+    <td width="40" bgcolor="#FF9900"><div align="center"><strong>Test2</strong></div></td>
+    <td width="40" bgcolor="#FF9900"><div align="center"><strong>Test3</strong></div></td>
+    <td width="40" bgcolor="#FF9900"><div align="center"><strong>Test4</strong></div></td>
+  </tr>
+</table>
+<div align="center"><span class="Stil1">Rolling Walk Forward Optimization (<strong>NumWFOCycles</strong> <strong>
+	= 5</strong>)</span> <br>
+&nbsp;</div>
+<table border="0" align="center" cellspacing="3">
+  <tr>
+    <td><div align="center"><strong>WFOCycle</strong></div></td>
+    <td colspan="9" bgcolor="#CCCCCC"><div align="center"><strong>Simulation period </strong></div></td>
+  </tr>
+  <tr>
+    <td><div align="center"><strong>1</strong></div></td>
+    <td colspan="2" bgcolor="#FFFF00"><div align="center"><strong>LookBack</strong></div></td>
+    <td colspan="3" bgcolor="#00FF00"><div align="center"><strong>Training </strong></div></td>
+    <td bgcolor="#FF9900"><div align="center"><strong>Test1</strong></div></td>
+    <td><div align="center"></div></td>
+    <td><div align="center"></div></td>
+    <td><div align="center"></div></td>
+  </tr>
+  <tr>
+    <td><div align="center"><strong>2</strong></div></td>
+    <td colspan="2" bgcolor="#FFFF00"><div align="center"><strong>LookBack</strong></div></td>
+    <td colspan="4" bgcolor="#00FF00"><div align="center"><strong>Training</strong></div></td>
+    <td bgcolor="#FF9900"><div align="center"><strong>Test2</strong></div></td>
+    <td><div align="center"></div></td>
+    <td><div align="center"></div></td>
+  </tr>
+  <tr>
+    <td><div align="center"><strong>3</strong></div></td>
+    <td colspan="2" bgcolor="#FFFF00"><div align="center"><strong>LookBack</strong></div></td>
+    <td colspan="5" bgcolor="#00FF00"><div align="center"><strong>Training</strong></div></td>
+    <td bgcolor="#FF9900"><div align="center"><strong>Test3</strong></div></td>
+    <td><div align="center"></div></td>
+  </tr>
+  <tr>
+    <td><div align="center"><strong>4</strong></div></td>
+    <td colspan="2" bgcolor="#FFFF00"><div align="center"><strong>LookBack</strong></div></td>
+    <td colspan="6" bgcolor="#00FF00"><div align="center"><strong>Training</strong></div></td>
+    <td bgcolor="#FF9900"><div align="center"><strong>Test4</strong></div></td>
+  </tr>
+  <tr>
+    <td><div align="center"><strong>5</strong></div></td>
+    <td colspan="2" bgcolor="#FFFF00"><div align="center"><strong>LookBack</strong></div></td>
+    <td colspan="7" bgcolor="#00FF00"><div align="center"><strong>Training</strong></div></td>
+  </tr>
+  <tr>
+    <td align="center"><strong>WFO Test</strong></td>
+    <td width="40"><div align="center"></div></td>
+    <td width="40"><div align="center"></div></td>
+    <td width="40"><div align="center"></div></td>
+    <td width="40" bgcolor="#FFFF00"><div align="center"><strong>Look</strong></div></td>
+    <td width="40" bgcolor="#FFFF00"><div align="center"><strong>Back</strong></div></td>
+    <td width="40" bgcolor="#FF9900"><div align="center"><strong>Test1</strong></div></td>
+    <td width="40" bgcolor="#FF9900"><div align="center"><strong>Test2</strong></div></td>
+    <td width="40" bgcolor="#FF9900"><div align="center"><strong>Test3</strong></div></td>
+    <td width="40" bgcolor="#FF9900"><div align="center"><strong>Test4</strong></div></td>
+  </tr>
+</table>
+<div align="center"><span class="Stil1">Anchored Walk Forward Optimization</span> <span class="Stil1">(<strong>NumWFOCycles</strong> <strong>
+	= -5</strong>)</span><br>
+</div>
+<p><a href="optimize.htm">Strategy parameters</a> and <a href="advisor.htm">trade rules</a> are generated separately for every cycle in [<span class="tast">Train</span>] mode, and are separately loaded for every test segment in [<span class="tast">Test</span>] mode. This way, the strategy test is guaranteed to be out of sample - it uses only parameters and rules that were generated in the preceding training cycle from data that does not occur in the test. This simulates the behavior of real trading where parameters and rules are generated from past price data. A Walk Forward Test gives the best prediction possible of the strategy performance over time. </p>
+<h2>WFOPeriod</h2>
+Alternative to <strong>NumWFOCycles</strong>; number of bars of one WFO cycle (training + test), f.i. <strong>5*24</strong> for a one-week WFO cycle with 1-hour bars. For getting a fixed test period of <strong>N</strong> bars, set <strong>WFOPeriod </strong>to <strong>N*100/(100-DataSplit)</strong>. 
+Since the number of WFO cycles now depends on the number of bars in the history,
+<a href="asset.htm">asset</a> must be called before. The WFO period is automatically adjusted so that the simulation period covers an integer number of WFO cycles.&nbsp; 
+<h2>WFOSelect</h2>
+Set this to a certain WFO cycle number for selecting only this cycle in a training or test; otherwise the process runs over all cycles. 
+Setting it to <strong>-1</strong> selects the last cycle that's normally used 
+for live trading.
+<h3>Type:</h3>
+<strong>int</strong>
+<h2>WFOCycle</h2>
+The number of the current WFO cycle, from <strong>1</strong> to <strong>NumWFOCycles</strong>.
+Automatically set during WFO test and training.
+<h2>WFOBar</h2>
+The bar number inside the current WFO cycle, starting with <strong>0</strong> at the begin of the cycle. Can be used to determine when the cycle starts: <strong>if(WFOBar == 0)</strong>. 
+Automatically set during a WFO test.
+<h2>ISPeriod</h2>
+Number of bars of the in-sample (training) period of a WFO cycle. Automatically set 
+in the <a href="is.htm">FIRSTRUN</a> of a WFO test.
+<h2>OOSPeriod</h2>
+Number of bars of the out-of-sample (test) period of a WFO cycle. Automatically set 
+in the <a href="is.htm">FIRSTRUN</a> of a WFO test.
+<h3>Type:</h3>
+<strong>int, read/only</strong>
+<h3>Remarks:</h3>
+<ul>
+  <li>WFO theory is explained in the <a href="training.htm">Training</a> chapter and 
+  in more detail in the <a href="links.htm">Black Book</a>. In training, every WFO cycle is a separate simulation run including
+	<a href="mode.htm">INITRUN</a> and <a href="mode.htm">EXITRUN</a>. In backtesting all WFO cycles are tested in a single simulation run. 
+  In live trading, only the data trained in the last WFO cycle is used.</li>
+	<li>Due to the preceding training cycle, the overall test period is 	<span class="Highlight">reduced</span> by WFO (see 
+	diagrams above). For a longer test period, increase the number of WFO cycles 
+	and/or reduce <strong>DataSplit</strong>. The length of a test and training 
+	cycle can be found in the <a href="performance.htm">performance report</a> 
+	under &quot;WFO Test Cycles&quot; and &quot;WFO Train Cycles&quot;. The WFO 
+	test starts at <a href="date.htm">StartDate</a> plus one WFO training cycle.</li>
+	<li>When changing the number of WFO cycles or the backtest period, the 
+	system must be <span class="Highlight">trained again</span>. Otherwise the 
+	WFO test and training cycles will be out of sync. For avoiding unintended 
+	changes of the test period when new price data becomes available, set a 
+	fixed
+	<a href="date.htm">StartDate</a> and <a href="date.htm">EndDate</a>.
+	</li>
+	<li>If <strong><a href="dataslope.htm">DataSplit</a></strong> is not set otherwise,  WFO uses a default training period of <strong>85%</strong> and a default test period of <strong>15%</strong>. </li>
+	<li><a href="dataslope.htm">DataSlope</a> can improve the parameter quality with anchored WFO cycles.
+	</li>
+	<li>Use <a href="dataslope.htm">DataHorizon</a> to block trades at the begin 
+	of a new WFO period. This prevents accidental signals by parameter changes, or 
+	<span class="Highlight">test bias</span>  when 
+	a training target is based on future prices or future trade returns, as for
+	<a href="advisor.htm">machine learning</a> algorithms.</li>
+	<li>WFO training is <span class="Highlight">much faster</span> than normal 
+	training when using
+	<a href="numcores.htm">multiple CPU cores</a>.
+	</li>
+	<li>For executing code at the begin of every WFO cycle, check <strong>
+	if(WFOBar == 0) ... </strong>.</li>
+	<li>The <span class="Highlight">optimal number</span> of WFO cycles depends on the strategy, the 
+	backtest period, and the time frame. Normally a WFO cycle should cover about 
+	six to twelve months. Large time frames or infrequent trading require a small number of 
+	long WFO cycles for getting enough trades per cycle. Very market-dependent strategies with fast expiring parameters require a high number of 
+	short WFO cycles. If the strategy performance highly varies with small changes of
+	<strong>NumWFOCycles</strong>, a periodic seasonal effect can be the reason. Try to determine and eliminate seasonal effects before optimizing a strategy.
+	Use the <a href="scripts.htm">WFOProfile</a> script for finding the most 
+	robust number of WFO cycles for your strategy.</li>
+	<li>Parameters and rules by WFO are stored in files in the <strong>Data</strong> folder. The number of the cycle is added to the file name, except for the last WFO cycle. F.i. a parameter WFO of a script &quot;<strong>Trade.c</strong>&quot; and 4 cycles will generate the following parameter files in the
+	<strong>Data</strong> folder: <strong>Trade_1.par</strong>, <strong>Trade_2.par</strong>, 
+	<strong>Trade_3.par</strong>, <strong>Trade.par</strong>, <strong>Trade.fac</strong>. [<span class="tast">Test</span>] mode reloads the parameters  and rules for every segment during the test cycle. [<span class="tast">Trade</span>] mode uses the parameters  and rules from the last WFO cycle, without an attached number.
+	</li>
+	<li>Normally the <a href="lookback.htm">LookBack</a> period precedes only the first WFO cycle in [<span class="tast">Test</span>] mode. 
+	Subsequent cycles just continue series and indicators. If the
+	<a href="mode.htm">RECALCULATE</a> flag is set, a dedicated lookback period precedes every WFO cycle. The content of all
+	<a href="series.htm">series</a> is discarded and recalculated from the parameters and rules of the new cycle. This increases the test time, but produces a slightly more realistic test by simulating the  start of a new trade session at every WFO cycle.
+	</li>
+	<li>While <span class="Highlight">live trading</span> a walk-forward optimized strategy, it is recommended to
+	<a href="retraining.htm">re-train</a> the last cycle perodically for making 
+	the strategy independent on parameter settings.&nbsp;The best time period 
+	between retraining is the time of a WFO test cycle.</li>
+	<li>The last WFO cycle (cycle <strong>5</strong> in the figure above) has no test period. 
+	It can be a few bars longer than the other cycles to ensure training until 
+	the very <strong>EndDate</strong>. If
+	<strong>SelectWFO</strong> is set to <strong>-1</strong> in [<span class="tast">Test</span>] mode, the out-of-sample period before the training is tested 
+	(<strong>OOS Test</strong> in the figure; rolling WFO only). The OOS test often generates low profit, but can inform about the long-term performance of the strategy when it is not  re-trained.</li>
+	<li>Anchored WFO can be used to test the lifetime of parameters or rules. If anchored WFO generates a better result than rolling WFO, the strategy is longlived and does not need to be retrained often. Normally, rolling WFO produces better results, meaning that the market changes and that parameters / rules must be adapted from time to time.
+	</li>
+	<li>Use the <a href="profile.htm">plotWFOCycle</a> and <a href="profile.htm">plotWFOProfit</a> functions for analyzing the profit curve over one or several WFO cycles.
+	</li>
+</ul>
+<h3>Examples:</h3>
+<pre><em>// anchored WFO, 10 cycles</em> 
+function run()
+{
+  NumWFOCycles = -10;
+  DataSplit = 80;<em> // 20% test cycle</em>
+  DataSlope = 2;  <em>// more weight to more recent data</em>
+  set(PARAMETERS,TESTNOW); <em>// run a test immediately after WFO</em>
+  ...
+}<em>
+
+// set WFO period and DataSplit from a fixed test and training cycle
+</em>function setWFO1(int TestDays,int TrainDays)
+{
+  WFOPeriod = (TestDays+TrainDays) * 1440/BarPeriod;
+  DataSplit = 100*TrainDays/(TestDays+TrainDays);<em>
+</em>}<em>
+
+</em><em>// set <strong>NumWFOCycles</strong> from a fixed test cycle in days
+// (DataSplit and LookBack should be set before)
+</em>function setWFO2(int TestDays)<br>{<br>  asset(Asset); <em>// requires NumBars, so asset must be set</em><br>  int TestBars = TestDays * 1440/BarPeriod;<br>  var Split = ifelse(DataSplit &gt; 0,DataSplit/100.,0.85);
+  int TrainBars = TestBars * Split/(1.-Split);<br>  int TotalBars = NumBars-LookBack;<br>  NumWFOCycles = (TotalBars-TrainBars)/TestBars + 1;<br>}
+
+<em>// set a fixed date for the WFO test start
+// modifies StartDate, needs EndDate and TestDate in YYYYMMDD</em>
+function setWFO3(int TestDate)
+{
+  var Split = ifelse(DataSplit &gt; 0,DataSplit/100.,0.85);
+  var TrainDays; 
+  if(WFOPeriod &gt; 0)
+    TrainDays = Split*WFOPeriod*BarPeriod/1440;
+  else if(NumWFOCycles &gt; 1)
+    TrainDays = Split/(1.-Split)*(dmy(EndDate)-dmy(TestDate))/(NumWFOCycles-1);
+  else return;
+  StartDate = ymd(dmy(TestDate)-TrainDays);
+}
+</pre>
+<h3>See also:</h3>
+<a href="training.htm">Training</a>, <a href="tutorial_fisher.htm">Tutorial</a>, <strong><a href="dataslope.htm">DataSplit</a></strong>, 
+<a href="dataslope.htm">DataHorizon</a>, <a href="numsamplecycles.htm">NumSampleCycles</a>, <strong><a href="numtotalcycles.htm">NumTotalCycles</a></strong>, <a href="tutorial_fisher.htm"></a> <a href="numparameters"></a><a href="opt.htm">NumOptCycles</a>
+<p>&nbsp;</p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

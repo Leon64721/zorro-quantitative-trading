@@ -1,0 +1,271 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Historical data</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+.auto-style2 {
+	border: 1px solid #000000;
+}
+.auto-style3 {
+	background-color: #FFFF99;
+}
+.auto-style4 {
+	background-color: #C9F4FF;
+}
+</style>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/history.htm">
+</head>
+<body>
+<h1>Historical data (and how to get it)</h1>
+<p>Historical price data is used in [<span class="tast">Test</span>] and [<span class="tast">Train</span>] mode, and 
+can also be used in [<span class="tast">Trade</span>] mode for pre-loading the <a href="lookback.htm">LookBack</a> period. The 
+needed data period is determined with <a href="date.htm">StartDate</a> and <a href="date.htm">EndDate</a>. If historical prices from the desired period are missing, they can be downloaded with the <a href="loadhistory.htm">assetHistory</a> function or the <strong>Download</strong> script (see below). All downloaded prices are usually aligned to  UTC time. The broker's time zone does not matter. Therefore it's normally no problem to use price data from different sources for the simulation and for trading. </p>
+<p>Zorro stores historical price data in files the <strong>History</strong> folder. 
+The file name begins with the asset name, and the file extension indicates the 
+content:</p>
+<ul>
+	<li><strong>.t1</strong> for plain ask/bid quotes (ticks), </li>
+	<li><strong>.t2</strong> for order book (market depth) data with volume,</li>
+	<li><strong>.t6</strong> for candles with optional spread and volume,
+	</li>
+	<li><strong>.t8</strong> for futures and options with strike and expiration. 
+</li>
+</ul>
+<p>Any historical data file is simply a list of structs. Any struct represents a candle, quote, 
+contract, or order book entry. The struct size - the number of elements besides 
+the time stamp - is indicated by the number after the &quot;<strong>t</strong>&quot; extension. 
+Thus, a <strong>.t6</strong> file consists of <strong>T6</strong> structs (see 
+below) with a time stamp and 6 data elements. For avoiding extremely large files 
+that are awkward to handle, price history is normally split in multiple years. The 
+file name has then the year number attached; for instance, <strong>&quot;AAPL_2010.t2&quot;</strong> 
+contains <strong>AAPL</strong> order book data from <strong>2010</strong>. 
+Those multi-year files are automatically detected and loaded. </p>
+<p>Some files, such as high 
+resolution options data, can be too large even for year splitting. They can then 
+be split in months or days, and loaded by script at the begin of any month 
+or day in the backtest. If additional data besides prices, spread, volume and 
+timestamp is required, it can be separately imported from arbitrary user-specific formats in a 
+<a href="data.htm">dataset</a>. The <strong>.t6</strong> price data files included with Zorro are 
+normally split in years and contain a list of 1-minute candles in <strong>T6</strong> 
+format. 
+The data resolution is format independent, but should be at least as high or 
+higher than the <a href="bars.htm">bar resolution</a> in backtests.</p>
+<p>The same asset can have different price histories, for instance EOD data for 
+strategies with daily bars, M1 data for day trading and T1 data for scalping. 
+The historical data files can be distinguished with a postfix character to the 
+file name, for instance <strong>&quot;AAPLeod.t6&quot;</strong> for EOD data with no year number,
+<strong>&quot;AAPL_2018m1.t6&quot;</strong> for M1 candle data split into years and <strong>
+&quot;AAPL_2018.t1&quot;</strong> for tick data. The script can then select the right 
+price history through the <a href="script.htm">History</a> variable. For 
+instance,
+<strong>&quot;History = *eod.t6&quot;</strong> selects the EOD data, <strong>&quot;History = 
+*m1.t6&quot;</strong> the M1 data and <strong>&quot;History = *.t1&quot;</strong> the tick 
+data. The default is <strong>*.t6</strong> for bars of one minute or more, and
+<strong>*.t1</strong> for bars of less than one minute. </p>
+<p>Historical data files contain either <strong>T1</strong>, <strong>T2</strong>,
+<strong>T6</strong>, or <strong>CONTRACT</strong> structs in descending 
+timestamp order (newest price first).The structs are defined in the <strong>
+trading.h</strong> header:</p>
+<pre>typedef struct T1<br>{<br>  DATE  time; <em>// UTC timestamp of the tick in DATE format</em><br>  float fPrice;<em> // trade/ask/bid price, positive for ask, negative for bid</em><br>} T1;
+ 
+typedef struct T2
+{
+  DATE time;  <em>// UTC timestamp in DATE format
+</em>  float fPrice; <em>// trade/ask/bid price, negative for bid
+</em>  float fVol; <em>// trade volume or ask/bid size
+</em>} T2; 
+ 
+typedef struct T6
+{
+  DATE  time;<em> // UTC timestamp of the close, DATE format</em>
+  float fHigh,fLow;	
+  float fOpen,fClose;	
+  float fVal;  // <em>additional data, usually ask-bid spread</em>
+  float fVol;  /<em>/ additional data, usually volume</em>
+} T6;
+ 
+typedef struct CONTRACT
+{
+  DATE  time;   <em>// UTC timestamp in DATE format</em>
+  float fAsk,fBid; <em>// premium without multiplier</em>
+  float fVal,fVol;  <em>// additional data, like delta, open interest, etc.</em>
+  float fUnl;   <em>// underlying price (unadjusted)</em>
+  float fStrike; <em>// strike price</em>
+  long  Expiry; <em>// YYYYMMDD format</em>
+  long  Type;   <em>// PUT, CALL, FUTURE, EUROPEAN, BINARY</em>
+} CONTRACT;</pre>
+<p>All years and assets should have the same historical file format; 
+mixing different formats would 
+produce an error message. Data in <strong>.t2</strong> order book format or <strong>
+.t8</strong> options format can be used additionally to the historical price data, 
+since they are loaded with different functions (<a href="ordercpd.htm">orderUpdate</a> 
+and <a href="contractcpd.htm">contractUpdate</a>). Underlying prices (<strong>fUnl</strong> 
+in the <strong>CONTRACT</strong> struct) and order book data is normally 
+unadjusted, while historical prices in <strong>.t1</strong> or <strong>.t6</strong> 
+files are usually split and dividend adjusted. Some strategies require both 
+types of prices.</p>
+<p>The structs are stored in descending time order, i.e. the most recent  tick comes first. 
+Timestamps are in OLE <strong>DATE</strong> format, which is a <strong>double float</strong> 
+that counts days since midnight 30 December 1899. Hours, minutes, seconds, and 
+milliseconds are simply fractions of days. If the tick covers a time period, its timestamp 
+is the UTC time 
+of its last price, 
+i.e. the time of the Close. If you have price data based on local time, convert it to UTC (you can find some example code <a href="brokerplugin.htm">here</a>). 
+Daily (<strong>D1</strong>) price history with timestamps containing the date 
+only - i.e. no time of day - is supposed to be from the market close time. A bar time offset, 
+such as 15:40, is then automatically set up when the user does not define a 
+different offset. If the original price data contains bid prices,  convert them to ask prices by adding the spread. 
+If the price data contains time stamps not from the close of a tick, but from the 
+open or middle price, correct them with the <a href="ticktime.htm">TickFix</a> 
+  variable if needed for the strategy. In most cases it has little effect on backtest results 
+if ticks contain ask, bid, or trade prices, or if time stamps are from the tick 
+open or the close.&nbsp;&nbsp; </p>
+<p>The <strong>fOpen</strong>, <strong>fClose</strong>, <strong>fHigh</strong> and <strong>fLow</strong> data streams can be separately accessed 
+with <a href="price.htm">price</a> functions. The <strong>fVal</strong> and <strong>fVol</strong> data can be used to store additional data, such as spread, quote frequency, trade volume, 
+implied volatility, delta, swap, etc, and accessed with <a href="price.htm">
+market</a> functions. All data streams are automatically synchronized to the streams of the first <a href="asset.htm">asset</a> call in the script; so it does not matter if some data is only available in daily or weekly 'ticks'. </p>
+<p>Outliers in historical data are automatically detected and removed. If this 
+is not desired, for instance with high volatility assets such as 
+cryptocurrencies or penny stocks, disable <a href="outlier.htm">outlier 
+detection</a> or raise the detection level.</p>
+<h3>Import and conversion</h3>
+<p>Data can be downloaded from brokers, free online source, data vendors, or the 
+Zorro <a href="https://zorro-project.com/download.php" target="_blank">download 
+page</a>. You can get it in different resolutions, and - with stocks - either split 
+ and dividend adjusted, or unadjusted. You normally use adjusted data for 
+ backtests. Forex M1 data and stock D1 data is free, but data 
+ in higher resolution or for other assets is not. M1 history for US Stocks and 
+D1 options history can be purchased from us in <strong>.t6</strong> and <strong>
+.t8</strong> format, or from data vendors in CSV or JSON formats. When 
+downloading data from a broker, make sure to select the 'last trade' price type 
+if available, and adjust stock prices to avoid artifacts by splits and 
+dividends. Purchased data usually contains adjusted trade prices.</p>
+<p>For using data files with a resolution of less than one minute (such as  <strong>.t1</strong> 
+or <strong>.t2</strong> files), <a href="restrictions.htm">Zorro S</a> is 
+required. For importing price or options data files from external sources, 
+convert them to a list of T1, T2, T6, or CONTRACT structs, optionally divide 
+them into years or months, and store them in binary files with the format and name 
+described above. </p>
+<p>Data from online sources or vendors in CSV or JSON formats can be converted to <strong>.t1</strong>, 
+<strong>.t2</strong>, <strong>.t6</strong>, or <strong>.t8</strong> with the <a href="data.htm">dataParse</a> function. Examples 
+can be found under <a href="import.htm">Import</a>. The <strong>Strategy</strong> folder 
+also contains several <a href="scripts.htm">small scripts</a> for download and 
+conversion from popular formats. <strong>Download.c</strong> (see below) downloads historical data in <strong>.t6</strong>  or <strong>.t1</strong> format from Yahoo, IB, FXCM, or Oanda. <strong>CSVtoHistory</strong> converts data from 
+popular .csv formats, f.i. from HistData, Quandl, or Yahoo, to the Zorro <strong>.t6</strong> format. Example code for automatically downloading <strong>.csv</strong> price data from the Internet or from a provider API can be found on the <a href="http.htm">http</a> page. A script for generating 
+artificial <strong>.t8</strong> historical data for options from the yield rate, dividends, and underlying price history can be found <a href="http://www.financial-hacker.com/algorithmic-options-trading/" target="_blank">here</a>.
+ Example scripts for converting history 
+ files from complex <strong>.csv</strong> or <strong>.nxc</strong> formats to the <strong>.t1</strong> format can be found <a href="http://www.financial-hacker.com/hacking-hft-systems/" target="_blank">here</a>.</p>
+<p>For looking into <strong>.t8</strong>, <strong>.t6</strong>, <strong>.t2</strong>, or <strong>.t1</strong> 
+files and displaying their content, use the <strong>
+<a href="scripts.htm">History</a></strong> 
+or <a href="scripts.htm">Chart</a> scripts.</p>
+<h3>The Download script</h3>
+<p>Historical data for many common tasks is avaiable on the
+<a href="https://zorro-project.com/download.php" target="_blank">Zorro Download 
+Page</a>. Further data is available from brokers, online price sources, and data 
+vendors. For downloading data from your broker, a small script - <strong>
+Download.c</strong> - is included in the Zorro distribution. It can be used not 
+only for 
+retrieving price data, but also for updating asset parameters. You can download either the 
+ history of a single asset, or do a bulk download of all assets of a given <a href="account.htm">asset list</a>. </p>
+<p>The script opens a tiny control panel with  
+a few toggle buttons (blue) and entry fields (yellow): </p>
+ <p>
+ <table cellspacing="1" class="auto-style2">
+	 <tr>
+		 <td>History</td>
+		 <td>&nbsp;</td>
+	 </tr>
+	 <tr>
+		 <td class="auto-style3">AAPL</td>
+		 <td>Either asset symbol, or asset list file name</td>
+	 </tr>
+	 <tr>
+		 <td class="auto-style3">2020-2024</td>
+		 <td>Time period to download</td>
+	 </tr>
+	 <tr>
+		 <td class="auto-style4">M1</td>
+		 <td>Data resolution: M1, T1, T2, or D1</td>
+	 </tr>
+	 <tr>
+		 <td class="auto-style4">Ask/Bid</td>
+		 <td>Data type: Ask/Bid, Bid, Trades, Unadjusted, Parameters</td>
+	 </tr>
+	 <tr>
+		 <td class="auto-style4">Broker</td>
+		 <td>Data source: Broker, Stooq, Yahoo, AlphaVantage</td>
+	 </tr>
+	 <tr>
+		 <td class="auto-style4">Download!</td>
+		 <td>Click here to start the download.</td>
+	 </tr>
+ </table>
+</p>
+ <p><strong>Asset </strong>or <strong>Asset List</strong></p>
+<p>Enter here the symbol of the asset in the form needed by the broker or price 
+source, f.i. <strong>&quot;AAPL.US&quot;</strong> for downloading AAPL data from Stooq. If 
+the name contains the word <strong>&quot;Assets&quot;</strong> or ends with <strong>&quot;.csv&quot; </strong>
+(f.i. <strong>&quot;AssetsFXCM.csv&quot;</strong>), 
+all assets of the asset list with the given name are downloaded. </p>
+<p><strong>Data resolution </strong> </p>
+ <ul>
+   <li><strong>M1</strong> loads data in 1-minute OHLC ticks from the selected broker, 
+   and stores it in year files. This is the resolution 
+   that you normally use for backtests.</li>
+	 <li><strong>T1</strong> and <strong>T2</strong> stores single price quotes to <strong>.t1</strong> 
+	 or <strong>.t2</strong> 
+	 year files in high 
+	 resolution (Zorro S required). </li>
+   <li><strong>D1</strong> loads End-of-Day data from online sources to a 
+   single multi-year file.</li>
+ </ul>
+ <p><strong>Data type</strong></p>
+ <ul>
+   <li><strong>Ask/Bid</strong> are the default data that you normally use for backtests. 
+   Candles usually contain ask prices.</li>
+	 <li><strong>Bid</strong> stores data from bid prices, for special purposes.</li>
+   <li><strong>Trades</strong> stores trade prices and volume (if supported by 
+   the broker).</li>
+     <li><strong>Unadjusted</strong> selects EOD prices from Internet data sources that are not split and dividend adjusted. 
+	 They are used for special 
+	 purposes, f.i. options trading. </li>
+	 <li><strong>Parameters</strong> downloads no prices, but updates the asset parameters from the selected 
+	 broker (if supported), and stores them in <strong>Log\Assets.csv</strong>. 
+	 Asset parameters not provided by the broker are taken from the current 
+	 asset list.</li>
+ </ul>
+ <strong>Data source</strong><ul>
+   <li> <strong>Broker</strong> downloads data from the broker account 
+   selected in the Zorro panel.</li>
+   <li><strong>Stooq</strong> downloads historical EOD data from Stooq (see
+   <a href="loadhistory.htm">assetHistory</a>). </li>
+	<li><strong>Yahoo</strong> downloads historical EOD data from Yahoo Finance (see
+   <a href="loadhistory.htm">assetHistory</a>). </li>
+	<li><strong>AlphaVantage</strong> downloads historical EOD data from 
+	AlphaVantage; an AV key is required (see <a href="loadhistory.htm">
+	assetHistory</a>). </li>
+</ul>
+ <p>Not all combinations make sense. For instance, you can normally not download 
+ M1 data or asset parameters from online data sources. Check with your 
+ broker which assets are available. It is recommended to download forex data 
+ from the same broker that you use for trading, since it's broker dependent. If a price history file of the same asset 
+ already exists, the new prices are appended at the end. If the file was already 
+ updated on the same or previous day, no data is downloaded. If you tried to 
+ download nonexisting data from a data source, you'll normally get a file 
+ containing an error message as response. Zorro won't interpret that file, but 
+ you can find it in your <strong>History</strong> folder as the most recent 
+ file, open it with a text editor, and see what's wrong.</p>
+<p>&nbsp;After all is 
+ downloaded, click [<span class="tast">Stop</span>] to end the session.</p>
+
+<h3>See also:</h3>
+<a href="bars.htm">Bars</a>,  <a href="file_.htm">file</a>, <a href="data.htm">
+dataset</a>, <a href="import.htm">data import</a>, <a href="pip.htm">asset parameters</a>, <a href="loadhistory.htm">assetHistory</a>
+<p align="right"><a class=button href ="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" >&#9658;  latest
+version online</a></p>
+</body>
+</html>

@@ -1,0 +1,429 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+<title>Developing Algo Trading Systems with VC++</title>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta content="width=device-width,initial-scale=1" name="viewport">
+<link rel="canonical" href="https://zorro-project.com/manual/en/dlls.htm">
+</head>
+<body>
+<h1><strong>Developing Algo Trading Systems in C++</strong></h1>
+<p>The Zorro platform accepts 4 types of scripts in the <strong>Strategy</strong> 
+folder: lite-C code (<strong>.c</strong>), C++ code (<strong>.cpp</strong>), lite-C executables (<strong>.x</strong>), 
+and DLLs (<strong>.dll</strong>). The 64-bit version <strong>Zorro64</strong> has no lite-C 
+compiler and thus accepts only <strong>
+.cpp</strong> and <strong>.dll</strong> scripts. Scripts of supported types appear in the 
+[<span class="tast">Script</span>] scrollbox and run automatically 
+when the [<span class="tast">Test</span>], [<span class="tast">Train</span>], or 
+[<span class="tast">Trade</span>] button is clicked.</p>
+<p>&nbsp;<a href="restrictions.htm">Zorro S</a> can compile <strong>.x</strong> and <strong>.dll</strong> 
+files from <strong>c.</strong> and <strong>.cpp</strong> sources automatically. For compiling
+<strong>.cpp</strong> scripts it utilizes the <strong>Visual Studio™</strong> 
+<strong>VC++</strong> compiler. Theoretically other languages can 
+also be implemented, such as C#, Java, Pascal, Delphi, or Basic, as long 
+as they are able to generate a 32- or 64-bit Windows DLL. The included batch and 
+header files in
+<strong>Source\VC++</strong> can serve as templates for integrating other languages.</p>
+<p>When should you use lite-C and when C++? Most scripts and strategies have a 
+simple structure, and lite-C is absolutely sufficient. But as soon as a script 
+becomes more complex end exceeds 100 lines of code, you might want to switch it 
+to C++. Using C++ as script language has many 
+advantages. Additional development tools, such as the Visual Studio debugger and 
+profiler, are available. External libraries, such as <strong>Boost</strong>, can be 
+integrated without a wrapper. The 64-bit mode has access to the whole PC memory 
+for backtests. All lite-C functions and all system variables can still be used, 
+but additionally you have C++ classes and templates at your disposal. Error 
+handling is more strict and you'll get warnings about bad code style. The VC++ 
+compiler is a bit slower than the lite-C on-the-fly compiler, but is only 
+invoked when the script was changed. The resulting code runs equally fast or - 
+in 64 bit mode - even faster. The only disadvantage is that you have to install 
+the free
+<strong>Microsoft Visual Studio™</strong> <strong>2022</strong> 
+or above. </p>
+<p><a name="project"></a>The <strong>Visual Studio Debugger</strong> can display local and global variables, 
+can profile code execution, and can step into code 
+without the need of <a href="watch.htm">watch</a> statements. Use if when you It is better suited than lite-C for finding 
+hidden bugs or crashes in 
+the code. However for finding bugs or flaws in the trading logic, the
+<a href="chart.htm">
+Zorro visual debugger</a> 
+is still the best way, and works with C and C++ projects as well. </p>
+<h3>Getting started with C++</h3>
+<p>You can get the free <strong>Visual Studio Community Edition</strong> from 
+<a href="https://visualstudio.microsoft.com/de/downloads/" target="_blank">
+https://visualstudio.microsoft.com/de/downloads</a>. Install it with its C++ 
+desktop applications enviroment. Locate its build path - that's the folder containing 
+the file <strong>
+vcvars32.bat</strong>, normally <strong>"<a href="file:///C:/Program%20Files/Microsoft%20Visual%20Studio/2022/Community/VC/Auxiliary/Build">C:\Program 
+Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build</a>"</strong> - 
+and enter it in
+<a href="ini.htm">ZorroFix.ini</a>. This enables Zorro S to directly compile and 
+start C++ scripts, and automatically generate a VC++ project from a script.</p>
+<p>You can use C++ also with the free Zorro version. It's a bit more complicated 
+though. For any script you need to set up a DLL project as described below, and 
+use the Visual Studio IDE to compile your .cpp script to a DLL in the Strategy 
+folder. DLLs are supported by the free version. Only for debugging it with 
+Visual Studio, you'll really need Zorro S.</p>
+<p>The VC++ compiler and linker options can be 
+found in <strong>Source\VC++\compile.bat</strong> and <strong>compile64.bat</strong>. They are set up for Visual Studio 2022, but 
+should also work for 2017 and 2019. 
+When you know what you're doing, you can edit the batch files and modify the 
+compiler or linker options for enabling special code optimizations or linking additional 
+libraries. If you are unfamiliar with the VC++ command line options, leave the files 
+untouched. </p>
+<p>The 32-bit Zorro version compiles 32-bit DLLs, Zorro64 (see <a href="vps.htm">
+Setup</a>) compiles 
+64-bit DLLs. When you switch between 32 and 64 bit versions, delete the old
+<strong>.dll</strong> 
+file and compile it again. Or use different names for 32 bit and 64 bit .cpp 
+scripts. A 64 bit program cannot load a 32 bit DLL, and vice versa.</p>
+<p>DLLs can be used not only for developing strategies, but also for extending 
+the lite-C language with external packages (see <a href="litec_api.htm">using 
+DLLs</a>). The code syntax for strategies in C++ is similar to 
+lite-C; the 
+example file <strong>MyStrategy+.cpp</strong>  contains C++ versions of some of 
+the included scripts.
+<br></p>
+<h1>C++ vs. lite-C: Code differences</h1>
+<p>Lite-C contains 'abbreviations' to make code shorter and less complex. Most 
+of them work also with 'real' C++. Therefore a <strong>.c</strong> script looks 
+normally almost the same as its <strong>.cpp</strong> equivalent. But the 
+emphasis is on 'almost'. When converting to C++, please mind the differences in 
+the list below. Most incompatible statements will be anyway indicated with a 
+compiler error, but not all - see below. For conversion 
+the other way, see <a href="litec_c.htm">lite-C for C/C++ programmers</a>.</p>
+<table style="width: 100%">
+	<tr>
+		<td>
+<pre><em>// lite-C strategy (e.g. "test.c")</em>
+
+
+function run()
+{
+  vars Prices = series(price());
+  vars SMA100 = series(SMA(Prices,100));
+  vars SMA30 = series(SMA(Prices,30));
+
+  if(crossOver(SMA30,SMA100))
+    enterLong();
+  if(<span>crossUnder(SMA30,SMA100)</span>)
+    enterShort();
+}</pre>
+		</td>
+		<td>
+<pre><em>// C++ strategy (e.g. "test+.cpp")</em>
+#include &lt;zorro.h&gt;
+
+DLLFUNC void run()
+{
+  vars Prices = series(price(0));
+  vars SMA100 = series(SMA(Prices,100));
+  vars SMA30 = series(SMA(Prices,30));
+
+  if(crossOver(SMA30,SMA100))
+    enterLong();
+  if(<span>crossUnder(SMA30,SMA100)</span>)
+    enterShort();
+}</pre>
+		</td>
+	</tr>
+</table>
+<h3>Include &lt;zorro.h&gt;</h3>
+If lite-C scripts have no header, the <strong>&lt;default.c&gt;</strong> header is 
+automatically included. C++ scripts always need the header <strong>&lt;zorro.h&gt;</strong>:
+<pre>#include &lt;zorro.h&gt; <em>// C++ header</em>
+...</pre>
+<h3>Exported and void functions </h3>
+If a function does not return something, it must be defined with the <strong>
+void</strong> 
+type. This is optional in lite-C, but mandatory in C++. If functions are 
+exported - like all predefined functions such as <strong>run</strong>, <strong>main</strong>,
+<strong>objective</strong>, etc - define them with the <strong>DLLFUNC</strong> 
+macro. The <strong>function</strong> keyword is defined as <strong>DLLFUNC int</strong> 
+in C++; functions of <strong>function</strong> type must therefore always return a 
+value.&nbsp;
+<pre>function click() { ... } <i>// lite-C</i>
+DLLFUNC void click() { ... } <i>// C++</i></pre>
+<h3>No variable initialization</h3>
+The lite-C compiler initializes all global and local variables and arrays to
+<strong>0</strong>; a normal C++ compiler does not. This means they have random 
+content at start. So take care to properly initialize all variables when 
+necessary (normally also recommended in lite-C code!):
+<pre>var MyArray[10];  <i>// lite-C; automatically initialized to zero</i>
+var MyArray[10] = { 0,0,0,0,0,0,0,0,0,0 }; <i>// C++</i></pre>
+<h3>Less parameter omitting</h3>
+Some functions, for instance the date/time and price functions, can be called without 
+parameter in lite-C. The lite-C compiler replaces the missing parameter with 0. 
+Not so in C++. Pass the required parameters.
+<pre>int CurrentMonth = month();  <i>// lite-C; missing parameter is assumed zero</i>
+int CurrentMonth = month(0); <i>// C++
+</i>var Close = priceC();  <i>// <em>lite-C</em>
+</i>var Close = priceC(0); <i>// C++</i></pre>
+<h3>Less automatic type conversion</h3>
+In lite-C, 32-bit integer types or pointers like <strong>char*</strong>, <strong>
+void*</strong>, <strong>int</strong>, <strong>long</strong>, <strong>DWORD</strong> 
+etc are converted into each other without explicit typecasting. Not so in C++. Use typecast 
+operators, either in C style or (preferably) in C++ style.
+The <strong>intptr_t</strong> type converts to a 32-bit word or a 64-bit word 
+depending on the platform:
+<pre>int Pos = brokerCommand(GET_POSITION,Asset);  <i>// lite-C
+</i>int Pos = brokerCommand(GET_POSITION,(intptr_t)Asset);  <i>// C++, C style
+</i>int Pos = brokerCommand(GET_POSITION,static_cast&lt;intptr_t&gt;(Asset))<i>;  // C++ style</i></pre>
+<h3>Early comparison abort </h3>
+In lite-C, the order of expressions in a comparison does not matter. In C/C++, 
+comparisons with <strong>&amp;&amp;</strong> or <strong>||</strong> are order sensitive. 
+The comparison is aborted when a <strong>&amp;&amp;</strong> is encountered and the 
+expression so far evaluated to <strong>false</strong>, or when a <strong>||</strong> 
+is encountered and the expression evaluated to <strong>true</strong>. This can 
+cause a different behavior when the comparison contains function calls:
+<pre>if(test(x) &amp;&amp; test(y)) .. <i>// lite-C always calls test(x) and test(y)</i>
+if(test(x) &amp;&amp; test(y)) .. <i>// C++ calls test(y) only when test(x) returns nonzero</i></pre>
+<h3>String vs. char* vs. const char*</h3>
+In lite-C, there's no difference between strings, char pointers, and constant 
+char pointers. In C++, <strong>string</strong> is defined as <strong>char*</strong>, 
+and <strong>cstr</strong> is defined as <strong>const char*</strong>. Both are 
+different types.&nbsp; <pre>string Name = "Sherlock"; <i>// lite-C</i><br>cstr Name = "Sherlock"; <i>// </i><em>C++</em></pre>
+If a function expects <strong>const char*</strong> and you want to pass&nbsp; a string, use the 
+<strong>(const char*)</strong> typecast. Vice versa, if you have defined a 
+string constant like <strong>"ABCDEF"</strong> and you want to pass it to a 
+function that expexts a string, use the <strong>(string)</strong> or <strong>
+(char*)</strong> typecast.
+<h3>Different string comparing</h3>
+In lite-C, strings can be compared with string constants using the normal 
+comparison operators, such as <strong>==</strong>, <strong>!=</strong>, or <strong>
+switch...case</strong>. In the C++ DLL headers, a <strong>string</strong> is 
+a <strong>char*</strong> 
+pointer. Comparison with <strong>'='</strong> will not give an error message, 
+but will always result in <strong>false</strong> - the is the number one reason 
+of misbehavior when converting a lite-C script to C++. 
+Either use C++ types like <strong>CString</strong> or <strong>basic_string</strong> 
+for string handling (but make sure to call lite-C functions always with C-style, 
+null-terminated strings), or use the <strong>str...</strong> functions from the<strong>
+</strong>C library.
+<pre>if(Algo == "TRND") ... <i>// lite-C - will silently fail in C++!!</i><br>if(strstr(Algo,"TRND")) ... <i>// </i><em>C++</em></pre>
+<h3>Different bool size</h3>
+In lite-C, <strong>bool</strong> has a size of 4 bytes, in C++ it's 1 byte. The 
+lite-C <strong>bool</strong> type is equivalent to the C++ <strong>BOOL</strong> 
+type. For avoiding confusion, you might prefer to use <strong>int</strong> 
+instead of <strong>bool</strong> or <strong>BOOL</strong>.<h3>Different pointer size</h3>
+In lite-C a pointer has always a size of 4 bytes. In C++ it can have 4 or 8 
+bytes, depending on whether you compile with <strong>Zorro</strong> or <strong>Zorro64</strong>. 
+Consider this when coding pointer arithmetics. The predefined variable types
+<strong>size_t</strong> and <strong>intptr_t</strong> also change between 4 and 
+8 bytes. Make sure to recompile DLL-based strategies when using a newer or 
+different Zorro version, since the size of global structs may be different.&nbsp; <h3>Different constant precision</h3>
+Both C+++ and lite-C have the same precision for variables, but not for constants 
+directly written in the code. In lite-C, floating point constants are 
+interpreted with 7 digits 
+precision, in C++ with 14 digits.&nbsp;
+<pre>printf("\n %.10f", 0.55555555); <i>// lite-C prints 0.555555555224</i><br>printf("\n %.10f", 0.55555555); <i>// C++ prints 0.555555555000</i></pre>
+<h3>No watch()ed variables </h3>
+Zorro's single-step debugger can still be used with a DLL, and the
+<a href="watch.htm">watch</a> statement can still set breakpoints or
+<a href="trouble.htm">identify script crashes</a>, but its variables are 
+ignored. Use <strong>printf()</strong> 
+or
+<strong>print(TO_WINDOW,...)</strong> instead for printing variables.
+<pre>watch("My Variable: ",MyVar) <i>// lite-C</i>
+print(TO_WINDOW,"\nMy Variable: %.2f",MyVar) <i>// </i><em>C++</em></pre>
+<h3>Colliding definitions</h3>
+Many lite-C variables and flags are pre-defined in <strong>variables.h</strong> 
+and <strong>trading.h</strong>. If you're using a C++ library with a function, 
+variable, or flag that has the same name, undefine the lite-C keyword with an <strong>
+#undef</strong> 
+statement after including <strong>zorro.h</strong> and before including the 
+headers of your library. Otherwise you'll get compiler errors.&nbsp;<h3>Calling 
+external DLL functions </h3>
+In lite-C, the<strong> API</strong> macro imports functions from a DLL library. 
+In C/C++, use the <strong>LoadLibrary</strong> and <strong>GetProcAddress</strong> 
+standard functions for that:
+<pre>int __stdcall MyDLLFunction(double a,double b);
+API(MyDLL,MyDLLFunction) <i>// lite-C</i></pre>
+<pre>int (__stdcall *MyDLLFunction)(double a,double b);
+HMODULE DllHandle = LoadLibrary("MyDLL");  <em>// C/C++</em>
+if(DllHandle) {
+   *(FARPROC*)&amp;MyDLLFunction = GetProcAddress(DllHandle,"MyDLLFunction");
+   ...
+}
+...
+if(DllHandle) FreeLibrary(DllHandle);</pre>
+<h3>Lite-C libraries</h3>
+Some lite-C libraries such as <strong>profile.c</strong> or <strong>r.h</strong> 
+contain function bodies, so they can be included in the main strategy code only, 
+but not in multiple source modules.
+<h3>Click and evaluate</h3>
+In lite-C, <a href="panel.htm">click</a> and <a href="evaluate.htm">evaluate</a> 
+functions could be triggered by button clicks even after the script run, as long 
+as no other script was selected. DLL functions can only be triggered while the 
+script is running. <br>&nbsp;
+<h3>Using other languages</h3>
+You can write strategy DLLs in any language that supports 32-bit or 64-bit dynamic link 
+libraries. In that case you must write new headers and a
+<strong>ZorroDLL.cpp</strong> version in the new language. Aside from the DLL entry point that is unused, it 
+contains a <strong>zorro()</strong> function that is called upon strategy start, 
+and receives a pointer to the <strong>GLOBALS</strong> struct. The <strong>
+GLOBALS</strong> 
+struct is defined in <strong>trading.h</strong>. It is a singleton with all 
+predefined variables and functions. Its <strong>Functions</strong> pointer leads 
+to a list of addresses of all Zorro functions in the same order as listed in <strong>
+functions.h</strong>. The functions must be called with <strong>__cdecl</strong> 
+calling convention.
+<p>When importing the <strong>GLOBALS</strong> struct, set up the compiler so 
+that it does not pad the struct with dummy elements for aligning the struct 
+members. If available, use a #pragma or similar statement to set the struct 
+alignment to 4 bytes or below for all structs in the <strong>trading.h</strong> 
+header. This is needed to ensure that the structs have identical size in your 
+DLL and in Zorro.&nbsp;</p>
+<p>&nbsp;
+</p>
+<h1>VC++ setup for a DLL project (free Zorro version)</h1>
+<p>If you own Zorro S, you need not read this chapter, since Zorro S 
+automatically generates a VC++ 2022 project file (<strong>*.vcxproj</strong>) when 
+compiling a C++ script in the Strategy folder. You only need to click on it for 
+invoking the Visual Studio environment. If you use different Visual Studio 
+versions than VC++ 2022, you can edit the project template <strong>
+Source\VC++\ZorroDLL.proj</strong> and change the toolset line at the begin to 
+the toolset version used by your Visual Studio.</p>
+<p>The free Zorro version also supports C++, but you need to manually set up a VC++ project 
+for any C++ script. The dialogs shown below are for Visual C++ 2017, but for 
+later versions like VC++ 2019 and 2022 they are very similar: </p>
+<ul>
+	<li>If you haven't already, download and install Visual Studio with the C++ desktop applications 
+	environment. Make yourself familiar with its editor and tools - there 
+	are tons of books and courses for Visual Studio.<br><br></li>
+	<li>Create a new project (<b class="tast">File &gt; 
+	New &gt; Project</b>). Select <span class="tast">Visual C++</span>,
+	<span class="tast">Windows Desktop</span>, <span class="tast">Dynamic-Link Library</span>. 
+	In the lines at the bottom of the form, enter the project name and a project folder location, 
+	then click <span class="tast">Ok</span>..</li>
+</ul>
+<p><img height="443" src="../images/vcpp1.png" width="786"></p>
+<ul>
+	<li>&nbsp;VC++ will now create a folder with a new empty DLL project and 
+	several .cpp and .h files. You need none of them. Check 
+	the <span class="tast">Source Files</span> list in the Solution Explorer and 
+	remove all .cpp files, like <strong>dllmain.cpp</strong> and <strong>
+	stdafx.cpp</strong>, from the project (right click &gt;
+	<span class="tast">Remove</span>). <br><br></li>
+	<li>Add two source files: your <strong>.cpp</strong> strategy from&nbsp; the
+	<strong>Zorro\Strategy</strong> folder,&nbsp; and <strong>ZorroDLL.cpp</strong> 
+	from <strong>Zorro\Source\VC++</strong>&nbsp; 
+	(<span class="tast">Source Files &gt; right click &gt; Add&gt; Existing Item</span>). 
+	<strong>ZorroDLL.cpp</strong> imports Zorro's function library and variables 
+	to the DLL.</li>
+</ul>
+<ul>
+	<li>Now set up the project properties. Right click on the project name in the 
+	Solution Explorer and select <span class="tast">Properties</span>. First 
+	choose the <span class="tast">Platform</span>: <span class="tast">Win32</span> 
+	or <span class="tast">x86</span> 
+	for the normal 32-bit Zorro version, <span class="tast">x64</span> for the 64-bit Zorro. Then set the 
+	following properties for all configurations:<br>&nbsp;<br></li>
+	<li><span class="tast">General / Advanced  &gt; Character 
+	Set</span>. Select <span class="tast">Multi-Byte Character 
+	Set</span>. This causes Windows functions to expect text 
+	strings in 8-bit ANSI, not in 16-bit Unicode.</li>
+</ul>
+<p><img height="558" src="../images/vcpp8.png" width="822"></p>
+<ul>
+	<li><span class="tast">General &gt; Target Name</span>. Enter here the name of 
+	the <strong>.cpp</strong> script without extension. For a 64 bit target (compiled with the
+	<strong>x64</strong> 
+	option) add '<strong>64</strong>' to the name. <br>&nbsp;</li>
+	<li><span class="tast">General &gt; Output Directory</span>. Enter here your 
+	Zorro <strong>Strategy</strong> folder path where the compiled file is supposed to end up.<br>&nbsp;</li>
+	<li><span class="tast">General &gt; VC++ Directories</span>. Add your Zorro
+	<strong>include</strong> folder path to the VC++ <span class="tast">Include 
+	Directories</span>. It contains <strong>zorro.h</strong> and other headers that your code needs to compile. Make sure 
+	to add the folder at the end of the path list - not at the beginning! You 
+	don't want to override the standard windows headers with the lite-C headers 
+	in that folder.</li>
+</ul>
+<p><img height="558" src="../images/vcpp7.png" width="838"></p>
+<ul>
+	<li>
+	<span class="tast">C/C++ &gt; Code Generation</span>. If you want to 
+	distribute your strategy DLL to other people, change 
+	the <span class="tast">Runtime Library</span> of the <strong>Release</strong> 
+	configuration from <strong>Multi-threaded DLL (/MD)</strong> to <strong>Multi-threaded 
+	(/MT)</strong>. Otherwise people had to install the 
+	VC++ Runtime Redistributable for using your strategy.<br>&nbsp;</li>
+	<li>&nbsp;<span class="tast">C/C++ &gt;&nbsp; Floating Point Model</span>. Set it to
+	<span class="tast">Strict</span> for catching floating point errors.<br></li>
+	<li><span class="tast">C/C++ &gt; Precompiled Headers</span>. Trading scripts 
+	won't need them, so turn them off. <br>&nbsp;</li>
+	<li>For debugging your script with Visual C++, either run Zorro with 
+	the compiled debug version of the DLL and select <span class="tast">Attach To Process</span>. 
+	Or set up <span class="tast">Command</span>, <span class="tast">Command 
+	Arguments</span>, and <span class="tast">Working Directory</span> under
+	<span class="tast">Debugging</span> as shown below, then start the debugger directly from 
+	Visual Studio. For a 64-bit project, give the path to <strong>Zorro64.exe</strong> 
+	under <span class="tast">Command</span>. The <span class="tast">Working Directory</span> 
+	is always the Zorro folder.</li>
+</ul>
+<p><img height="558" src="../images/vcpp6.png" width="822"></p>
+<ul>
+	<li>Now you're all set to debug your strategy with Visual Studio. Always include
+	<strong>&lt;zorro.h&gt;</strong> and put the strategy code in a <strong>DLLFUNC 
+	void run()</strong>. The <strong>zorro.h</strong> header has all needed variables 
+	and function definitions. Functions to be exported by the DLL, especially user 
+	provided functions such as <strong>run</strong>, <strong>tick</strong>,
+	<strong>evaluate</strong> etc, must be preceded with the <strong>DLLFUNC</strong> 
+	macro. The calling convention is <strong>__cdecl</strong>. For debugging a system 
+	variable, look into the header <strong>variables.h</strong> that contains all 
+	system variable definitions and their equivalents in the <strong>g</strong> 
+	singleton struct.<br></li>
+</ul>
+<p><img height="779" src="../images/vcpp5.png" width="883"></p>
+<ul>
+	<li>Mistakes - for instance, a wrong compiler setup 
+	- will cause <a href="errors.htm">Error 062</a> when starting the DLL. In that 
+	case check your project for a correct setup.<br>&nbsp;&nbsp;</li>
+	<li>If a strategy DLL works on your PC, but produces <a href="errors.htm">Error 
+	062</a> on another PC, the reason is most likely a missing module. Use a tool 
+	such as <a href="http://www.dependencywalker.com/" target="_blank">Dependency 
+	Walker</a> for finding out which module is missing on that particular PC. If 
+	the DLL needs VC++ runtime libraries, install <strong>vc_redist.x86.exe</strong> 
+	or <strong>vc_redist.x64.exe</strong>.<br> </li>
+	<li>C++ syntax errors are displayed in the message window and stored in
+	<strong>Log\compiler.log</strong>.<br>&nbsp;&nbsp; </li>
+	<li>You can run a <strong>.cpp</strong> script either directly from Zorro, 
+	or directly from the VC++ environment by clicking on the <strong>.vcxproj</strong> 
+	file (Zorro S only). While developing the script, VC++ is 
+	preferable, since it allows to immediately jump to lines with syntax errorr, 
+	or to debug the code line by line. If the script includes further code that 
+	you're working on, always use VC++. Zorro willl display syntax errors only 
+	in the main <strong>.cpp</strong> script, but not in included code.<br>&nbsp;</li>
+	<li>When running a <strong>.cpp</strong> script that #includes other 
+	scripts, make sure to compile again after changing something in an included 
+	file. This is not automatically detected by Zorro, since it only compares 
+	the timestamp of the main script. Clicking on [<span class="tast">Edit</span>] 
+	always triggers recompilation.<br>&nbsp;</li>
+	<li>For avoiding header conflicts when using large external libraries, the 
+	easiest way is packing the library in a separate DLL and calling it from 
+	your script with <strong>LoadLibrary</strong> / <strong>GetProcAddress</strong>. </li>
+</ul>
+<p>If you have a mix of lite-C and C++ scripts, we recommend to add a '+' to a <strong>
+.cpp</strong> script name 
+for marking it in the scrollbox. Since <strong>.c</strong> overrides <strong>
+.cpp</strong>, don't use the same name for both variants. The example file <strong>MyStrategy+.cpp</strong> contains C++ versions of 
+workshops and example scripts. Which one to compile can be selected 
+with a #define at the begin. Check it out for learning the differences of writing 
+a strategy in VC++ instead of lite-C. All known code differences are listed below. 
+If you encounter any other incompatility with a function or variable, please report 
+on the user forum or to Zorro support. </p>
+<p>A template for a VC++ zorro project by a user is available on
+<a href="https://github.com/szabonorbert/zorro-project-template" target="_blank">
+https://github.com/szabonorbert/zorro-project-template</a>.</p>
+<h3>See also:</h3>
+<a href="litec_api.htm">API access</a>, <a href="litec_c.htm">lite-C vs C++</a>,
+<a href="conversion.htm">migration</a>, <a href="engine.htm">engine API</a>
+<p>
+<a class="button" href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))">
+► latest version online</a> </p>
+
+</body>
+
+</html>

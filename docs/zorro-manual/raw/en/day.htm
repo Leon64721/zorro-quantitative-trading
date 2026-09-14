@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+<title>dayOpen, Close, High, Low, Pivot</title>
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/day.htm">
+</head>
+
+<body>
+
+<h2>dayOpen (int zone, int day) : var </h2>
+<h2>dayClose (int zone, int day) : var </h2>
+<h2>dayHigh (int zone, int day) : var </h2>
+<h2>dayLow (int zone, int day) : var </h2>
+<h2>dayPivot (int zone, int day) : var </h2>
+Returns the open, close, high, low, and pivot point within the <a href="date.htm">market 
+hours</a> (by default, 9:30 am until 16:00 pm) of a given working day and time zone. 
+Can be used for seasonal trading, gap trading, or daily price action. The pivot 
+point is defined as <strong>(High+Low+Close)/3</strong>. <br>
+<h3>Parameters:</h3>
+<table border="0">
+	<tr>
+		<td><strong>zone</strong></td>
+		<td><strong>UTC</strong> for UTC time or <strong>ET</strong> for New York 
+		time, or a number giving the zone offset in hours to UTC. Daylight saving 
+		time is considered in non-UTC zones from 2000 to 2019.</td>
+	</tr>
+	<tr>
+		<td><strong>day</strong></td>
+		<td>Working day offset, i.e. <strong>0</strong> = today (see remarks),
+		<strong>1</strong> = yesterday, <strong>2</strong> = day before yesterday, 
+		and so on. Weekends are skipped, f.i. if today is Monday, <strong>1</strong> 
+		refers to last Friday. </td>
+	</tr>
+</table>
+<h3>Returns</h3>
+Price.
+<h3>Usage:</h3>
+<strong>dayClose(ET,1)</strong> returns yesterday's closing price of the current 
+asset at the New York Stock Exchange.
+<h3>Remarks:</h3>
+<ul>
+	<li>During the <a href="nhistory.htm">LookBack</a> period all day price functions 
+	return <strong>0</strong>.</li>
+	<li>The <a href="barperiod.htm">BarPeriod</a> matters for precision. F.i. for a time precision of 30 minutes, use a <strong>BarPeriod</strong> 
+	of 30 or below. The functions do not work for bar periods above one day.</li>
+	<li>Time travel attempts - for instance requesting today's high, low, or close price 
+	when the market is still open - will cause a &quot;negative price offset&quot; 
+	warning when the <a href="mode.htm">PEEK</a> flag is not set. </li>
+	<li>Market hours can be changed through the global variables <strong>
+	<a href="date.htm">StartMarket</a></strong> (default: <strong>930</strong>) 
+	and <strong><a href="date.htm">EndMarket</a></strong> (default: <strong>1600</strong>) 
+	in the <strong>hhmm</strong> format. If the hours don't matter, use alternatively 
+	the <a href="price.htm">price</a> functions from daily bars, or the
+	<a href="ta.htm">HH</a> / <a href="ta.htm">LL</a> functions. Daily bars change 
+	at midnight UTC. By setting <strong>StartMarket</strong> and <strong>EndMarket</strong> 
+	accordingly, arbitrary time periods can be used. F.i. for getting the high-low 
+	range of the first hour of a trading day, set <strong>StartMarket</strong> at
+	<strong>930</strong> and <strong>EndMarket</strong> at <strong>1030</strong>.
+	<strong>EndMarket</strong> must be higher than <strong>StartMarket</strong>.</li>
+	<li>Some traders believe that markets turn at fixed &quot;support and resistance&quot; 
+	pivot levels named <strong>S1, S2, S3, R1, R2, R3</strong>, etc. which are calculated from
+	<strong>dayPivot</strong>, <strong>dayClose</strong>, <strong>dayHigh</strong>, and <strong>dayLow</strong>. 
+	There are many pivot level variants, for instance:<br><br>Persons Pivot 
+	levels:<br><strong>S1 = 2*Pivot - High <br>S2 = Pivot 
+	- (High - Low)<br>S3 = 2*Pivot - (2*High - Low)<br>R1 = 2*Pivot - Low<br>R2 = Pivot + (High 
+	- Low)<br>R3 = 2*Pivot + (High - 2*Low)<br><br></strong>Camarilla Pivot 
+	levels:<br><strong>S1 = Close - (High - Low) x 1.0833<br>S2 = Close - (High 
+	-Low) x 1.1666<br>S3 = Close - (High - Low) x 1.2500<br>S4 = Close - ((High 
+	- Low) x 1.5000<br>R1 = Close + (High - Low) x 1.0833<br>R2 = Close + (High 
+	-Low) x 1.1666<br>R3 = Close + (High - Low) x 1.2500<br>R4 = Close + ((High 
+	- Low) x 1.5000<br></strong></li>
+	<li>The source code of the day price functions can be found in <strong>Source\indicators.c</strong>.
+	</li>
+</ul>
+<h3>Example:</h3>
+<pre><em>// simple gap trading system, 
+// based on a publication by David Bean</em> 
+function run()
+{
+  BarPeriod = 10;
+  LookBack = 100*24*60/BarPeriod;<em> // 100 days lookback</em> 
+
+  asset("SPX500");  
+  Stop = 100*PIP;
+  TakeProfit = 40*PIP;
+
+  vars Prices = series(price());  
+  var High = dayHigh(ET,1);
+  var Low = dayLow(ET,1); 
+  var Close = dayClose(ET,1);
+<em>
+// enter a trade when the NYSE opens</em> 
+  if(High &gt; 0 &amp;&amp; Low &gt; 0 &amp;&amp; Close &gt; 0 
+    &amp;&amp; timeOffset(ET,0,9,30) == 0)
+  {
+    var Avg = SMA(Prices,LookBack);
+    if(*Prices &gt; Close 
+      &amp;&amp; *Prices &lt; High
+      &amp;&amp; *Prices &lt; Avg)
+      enterShort();
+          
+    if(*Prices &lt; Close 
+      &amp;&amp; *Prices &gt; Low
+      &amp;&amp; *Prices &gt; Avg)
+      enterLong();
+  }
+}</pre>
+<h3>See also:</h3>
+<a href="price.htm">price</a>, <a href="month.htm">timeOffset</a>,
+<a href="month.htm">market</a>, <a href="barmode.htm">BarMode</a>,
+<a href="ta.htm#pivot">Pivot</a>, <a href="ta.htm">Support/Resistance</a>
+<p align="right">
+<a class="button" href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))">&#9658; 
+latest version online</a></p>
+
+</body>
+
+</html>

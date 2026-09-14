@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Button</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/button.htm">
+</head>
+
+<body>
+<h2>Button</h2>
+The mode - by pressing a button on the main or the chart panel, or by starting 
+Zorro with a command line - in which the current code is running.<br>&nbsp;
+<table>
+	<tr>
+		<td><strong>2</strong></td>
+		<td>Test </td>
+	</tr>
+	<tr>
+		<td><strong>3</strong></td>
+		<td>Train </td>
+	</tr>
+	<tr>
+		<td><strong>4</strong></td>
+		<td>Trade </td>
+	</tr>
+	<tr>
+		<td><strong>5</strong></td>
+		<td>Result </td>
+	</tr>
+	<tr>
+		<td><strong>8</strong></td>
+		<td>Single Step (see <a href="chart.htm">debugging</a>)</td>
+	</tr>
+	<tr>
+		<td><strong>10</strong></td>
+		<td>Replay (see <a href="chart.htm">debugging</a>)</td>
+	</tr>
+</table>
+&nbsp;<br>
+<h3>Type:</h3>
+<strong>int</strong>
+<h3>Remarks:</h3>
+<ul>
+  <li>By setting <a href="mode.htm">TESTNOW</a>, the script can perform a
+  <strong><a href="is.htm">Test</a></strong> run even when running in [<span class="tast">Train</span>] 
+  mode (<strong>Button == 3</strong>).</li>
+</ul>
+<h3>Example:</h3>
+<pre> if(Button == 8) <em>// single step</em>
+  updateMyPanel() <em>// display variables in a panel</em></pre>
+<h3>See also:</h3>
+<a href="command.htm">Command line</a>, <a href="chart.htm">visual debugger</a>,
+<a href="is.htm">Test</a>, <a href="is.htm">Train</a>
+<br>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">Latest version online</a>
+</body>
+</html>

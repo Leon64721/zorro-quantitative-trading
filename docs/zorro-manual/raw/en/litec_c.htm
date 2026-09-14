@@ -1,0 +1,160 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"> 
+<html>
+	<head>
+		
+<title>C for programmers</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+		<link href="css.css" rel="stylesheet" type="text/css">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/litec_c.htm">
+</head>
+	<body>
+	<h1>Lite-C for C/C++  programmers</h1>
+    <P>
+  
+  Zorro's lite-C compiler uses the familiar syntax of C based languages such as C, C++, C#, or Javascript. Although it has some differences to allow a simpler  compiler structure and faster compiling, it is 'compatible enough' to access the Windows API and even use complex external C++ libraries such as DirectX or OpenGL. Therefore it can be used to write any normal computer program (see<strong> <a href="scripts.htm">Mandelbrot</a></strong>). 
+    <P>The differences of lite-C to standard C/C++ are listed here:
+    <h3>No early if(A &amp;&amp; B) abort </h3>
+The <strong>&amp;&amp;</strong> and <strong>||</strong> operators are aliased with <strong>and</strong> and <strong>or</strong>, but can of course still be used. In C/C++, comparisons are early aborted when a <strong>&amp;&amp;</strong> is encountered and the expression so far evaluated to <strong>false</strong>, or when a || is encountered and the expression evaluated to <strong>true</strong>. Lite-C always calculates the expressions up to the end; the order of comparisons plays no role. This requires a different syntax for  checking the value of a struct pointer and its element in the same expression:
+<pre>if((ptr != NULL) &amp;&amp; (ptr-&gt;element == ..)) .. <i>// C/C++</i>
+if(ptr != NULL) if(ptr-&gt;element == ..) .. <i>// lite-C</i> </pre>
+<h3>Trinary operators </h3>
+Lite-C does not support the <b>comparison ? expression : expression;</b> syntax. Use the <a href="ifelse.htm">ifelse</a> statement instead.
+<pre>x = (x&lt;0 ? -1 : 1); <i>// C/C++</i>
+x = ifelse(x&lt;0,-1,1);  <i>// lite-C</i> 
+</pre>
+<h3>Infinite loops </h3>
+Lite-C requires the continuation statement in a <a href="for.htm">for</a> loop. 
+	So don't use <strong>for(;;)</strong> for infinite loops..
+<pre>for(;;) ... <i>// C/C++</i>
+while(1) ... <i>// lite-C</i> 
+</pre>
+<h3>Multiple operations in one command</h3>
+
+Lite-C does not support the comma for clustering multiple operations in one command.
+<pre>x = 2, y = 2; <i>// C/C++</i><br>x = y = 2;    <i>// </i><em>lite-C</em>
+x = 2; y = 2; <i>// lite-C</i> </pre>
+<h3>Struct and array initialization</h3>
+In C/C++ <span>
+
+</span>structs can be initialized just like arrays, by giving a list of member values. This is only supported for numerical arrays
+in lite-C. Lite-C can initialize structs by directly setting their elements (see
+	<a href="structs.htm">structs</a>).
+<h3>Struct copying</h3>
+In C++, structs can be copied into each other with the '<strong>=</strong>' operator. In lite-C, use <strong>memcpy</strong> for copying structs or arrays:
+    <pre><em>// C++:
+</em>D3DXVector3 vecA, vecB;
+...
+vecA = vecB;<em>
+
+// lite-C:
+</em>D3DXVector3 vecA, vecB;
+...
+memcpy(&amp;vecA,&amp;vecB,sizeof(D3DXVector3));</pre>
+<h3>Struct returning</h3>
+In C++, 
+	functions can return structs. In lite-C, return struct pointers 
+	instead.
+	<h3>sizeof</h3>
+In C/C++, <strong>sizeof</strong> is a built-in function. In lite-C, it's a 
+	macro with some restrictions for structs and arrays (see
+	<a href="structs.htm">structs</a>).
+	
+    <h3>Enums</h3>
+Enums are not supported and must be replaced by defines:
+    <pre>enum RGB { RED=1; BLUE=2; GREEN=3 }; <i>// C/C++</i>
+<br>#define RED 1 <i>// lite-C</i>
+#define BLUE 2
+#define GREEN 3</pre>
+    <h3>
+      
+    Unions</h3>
+
+ Union members of the same type can be substituted
+by a <b>#define</b>, and  union members of different type can be treated as a
+different members of the struct. Example:
+<pre>typedef struct S_UNION { 
+   int data1;
+   union { int data2; float data3; };
+   union { int data4; int data5; };
+} S_UNION; <i>// C/C++
+</i>
+<br>typedef struct S_UNION { 
+   int data1;
+   int data2;
+   float data3;
+   int data4; 
+} S_UNION; <i>// lite-C</i>
+#define data5 data4</pre>
+<p>If the struct size must not change, or if for some reason the program requires
+  different variable types to occupy the same place in the struct, a special
+  conversion function can be used to convert the type of a variable without converting
+  the content:</p>
+<pre>typedef struct S_UNION { 
+   int data1;
+   union { int data2; float data3; };
+
+} S_UNION; <i>// C/C++</i>
+...
+S_UNION s_union;
+s_union.data3 = 3.14;
+<br>typedef struct S_UNION { 
+   int data1;
+   int data2;
+} S_UNION; <i>// lite-C</i>
+#define data3 data2
+...
+int union_int_float(float x) { return *((int*)&amp;x); }
+...
+S_UNION s_union;
+s_union.data3 = union_int_float(3.14);
+</pre>
+<h3>Function pointers</h3>
+In C/C++, function pointers are declared like this: <b>int (*foo)(int
+a, int b);</b>.
+In lite-C there's no difference between function prototypes and
+function pointers: <b>int foo(int a, int b);</b>. See details under <a href="apointers.htm">pointers</a>.
+<h3>Signed, unsigned, extern, const, register...</h3>
+In lite-C, variables are only defined by their type; further qualifiers are not used. <strong>Float</strong>, <strong>double</strong>, <strong>var</strong>, <strong>long</strong>, <strong>int</strong> are generally signed, and pointers,
+<strong>char</strong> and <strong>short</strong> are generally unsigned, according to the normal way they are used.
+The
+ 
+<b>include\litec.h</b> file
+contains definitions for all usual unsigned variables like <b>DWORD</b> or <b>WORD</b> that
+are used in Windows functions. So using unsigned variables normally does not
+cause any problems. However you need to take care when variables exceed
+their range. For instance, subtracting <b>1</b> from <b>(DWORD)0</b> results
+in <b>-1</b> under lite-C, but in <b>0xFFFFFFFF</b> in standard C/C++.
+<h3>Relaxed variable and function type checking</h3>
+Lite-C allows a lot of things where a C++ compiler would issue a warning, such as assigning an int to a pointer, or not returning a value from a function. This relaxed checking is heavily used in the predefined scripts for making the code shorter and less complicated, but it also allows the user to make more mistakes.  
+<h3>main() and run() functions</h3>
+  The <strong>main()</strong> function works like in C. The <strong>run()</strong> function indicates that the program is a strategy script. It is called once before the start of the strategy for initialization, and then once for each bar.    
+  <h3>Using C library or Windows API functions </h3>
+Lite-C already contains the most often used functions from the standard C/C++ libraries - they are  listed in <strong>&lt;litec.h&gt;</strong>, which is automatically included in all scripts without explicit <a href="include.htm">#include</a> statement. So you normally won't need to include C headers such as <strong>stdio.h</strong> or <strong>math.h</strong>. If you need a function that is not contained in <strong>&lt;litec.h&gt;</strong>, add it as described under <a href="litec_api.htm">Using
+the Windows API</a>. Here's a brief instruction of how to add an external function
+to lite-C:
+<ul>
+  <li>Find out in which Windows DLL the function is contained. C library function
+    are normally found in the <b>mscvrt.dll</b>. You can use a free DLL browser,
+    for instance the <b>DLL Export Viewer</b> from <a href="http://www.nirsoft.net">http://www.nirsoft.net</a>,
+    for checking which DLL contains which function. </li>
+  <li>Declare a function prototype in your source code. In most cases you can
+    directly copy the prototype from the <b>.h</b> header file that accompanies
+    the DLL, or from the documentation to the C library. </li>
+  <li>Additionally to the prototype, either add a <b>#define PRAGMA_API</b> line
+    for initializing the function prototype, f.i. <b>#define PRAGMA_API MessageBox;user32!MessageBoxA</b> as
+    described in the API example. Or, for dynamic initalization, add a <b>DefineApi</b>    call
+    in your main function. </li>
+</ul>
+<p>If you need certain structs or variable types that are not yet contained in <b>include\windows.h</b> or
+  in the other standard include files, just add them from their original file
+  either into your script. If you think that a certain function, struct, or variable
+  type is often needed, suggest its inclusion on the Zorro
+  future forum.</p>
+<h3>See also:</h3>
+    <A href="apointer.htm">Pointers</A>, <a href="structs.htm">Structs</a>, <A href="function.htm">Functions</A>,	<a href="litec_api.htm">API</a>
+<p>	  <a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+  version online</a>
+    </p>
+	</body>
+</html>

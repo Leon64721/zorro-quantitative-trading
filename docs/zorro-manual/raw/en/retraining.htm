@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Retraining, retesting</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/retraining.htm">
+</head>
+<body>
+<h1>Retraining and Retesting (Zorro S)</h1>
+<p>A live trading strategy should be retrained in regular intervals for adapting its parameters to the current market situation. 
+It should also be retested after a certain trading time for verifying that the 
+script behaves identically in live trading and in the backtest. Retraining and retesting 
+are <a href="restrictions.htm">Zorro S</a> features and are executed by a separate process, this way 
+preventing any interruption of the live trading process. The newly trained parameters, rules, or machine learning models are 
+then automatically loaded by the trading system at the begin of the next bar. </p>
+<h3>Retraining</h3>
+<p>The retraining process is triggered either automatically by setting the <a href="date.htm">ReTrainDays</a> 
+variable, or manually by clicking the [<span class="tast">Train</span>] button while trading. A second Zorro instance will pop up and start a <a href="training.htm">training run</a>, while the first Zorro continues trading. In this training run the <strong><a href="is.htm">ReTrain</a></strong> boolean variable is nonzero. The script can then download new price data from the server, and generate a new parameter and AI rule set (see also <a href="tutorial_fisher.htm">workshop 5</a>). After finishing the training run, the second Zorro closes. The new parameters, rules and factors are then automatically loaded by the trading instance. Example of a retraining statement in the script:</p>
+<pre>if(ReTrain) { 
+  EndDate = 0;<em>     // set the end date to the current date</em>
+  UpdateDays = -1; <em>// reload new price data from the server</em>
+  SelectWFO = -1;  <em>// select the last cycle for re-optimization</em>
+  reset(FACTORS);  <em>// don't re-train factors</em>
+}</pre>
+<p>If the trading system is connected to a broker that does not provide enough price history (such as <a href="mt4plugin.htm">MT4</a>), the recent price history can be downloaded 
+from a different source with a specific <a href="symbol.htm">history symbol</a> 
+or by another Zorro instance with the <a href="history.htm">Download</a> script. </p>
+<p>A trading system can be retrained even without a <strong>ReTrain</strong> statement in the script. In that case just download price history and train the system with another Zorro instance. Training produces new <strong>.c</strong>, <strong>.par</strong>, <strong>.fac</strong>, or <strong>.ml</strong> files in the <strong>Data</strong> folder. You can train on a different PC and then copy the files into the <strong>Data</strong> folder of the trading system. Zorro will detect that the files were updated, and load them automatically at the end of the current bar. </p>
+<p>Re-training a WFO system is required in intervals corresponding to the length of a WFO test cycle, which is displayed in the <a href="performance.htm">performance report</a>. The system normally needs not to be retrained more often, with one exception. If live trading results of a certain component or asset are exceptionally bad, the market could have been changed - for instance it could have got a different dominant cycle. In that case an extraordinary training run can be useful for getting the strategy back on track. On the other hand, re-training continues open trades and running functions with different parameters, which can cause a slight reduction in profit. So don't re-train too often. </p>
+<h3>Retesting</h3>
+<p>The retesting process is triggered by clicking  the [<span class="tast">Test</span>] button while trading. Its purpose is verifying whether the script behaves in the simulation exactly as in live trading. For this, Zorro downloads historical data and then performs a backtest over the period since the begin of trading. The log, profits, and trades from the backtest can then be compared to the live trading session. </p>
+<p>For retesting the trading session, a second Zorro instance will perform the actual test while the first Zorro continues trading. The start date of the trading session and the bar offset are transferred to the second instance via command line. In the test run the <strong><a href="is.htm">ReTest</a></strong> boolean variable is nonzero and can be used to set up test parameters in the script. After finishing the test, the second Zorro closes. The trade list  
+<strong>*_trd.csv</strong> can then be compared to <strong>trades.csv</strong>. Example of a retesting statement in the script:</p>
+<pre>if(ReTest) { 
+  StartDate = Command[0]; <em>// get start date and bar offset from the trading Zorro via command line</em>
+  BarOffset = Command[1];
+  EndDate = 0;<em>     // set the end date to the current date</em>
+  UpdateDays = -1; <em>// reload new price data from the server</em>
+  NumSampleCycles = 0; <em>// no sample cycles</em>
+  SelectWFO = -1; <em> // use parameters from the last WFO cycle</em>
+}</pre>
+<p>Retest a system when at least about 50 trades have been entered; retests with few trades make not much sense. Make sure that the test runs with exactly the same parameters - bar offset, trade volume, etc. - as live trading. For retesting accurately, the price data 
+must come from the same source as in live trading, must have T1 resolution, and the <a href="account.htm">asset list</a> 
+must reflect the actual trading account parameters. 
+The following effects cause to differences between test and trading results:</p>
+<ul>
+	<li>Strategy sensitiveness to small differences between historical 
+	prices and live prices or volumes. Even when from the same source,
+	<span class="Highlight">historical prices 
+	often  differ from live prices</span> due to outlier filtering, gap filling, differences between PC 
+	time and server time, and Internet latency. Likewise, live volume can be 
+	different to historical volume where delayed transactions, busted trades, 
+	combos and unreportable trades are filtered out. Price differences can cause trades to enter or exit at a  different bar. Depending on the sensitivity of the strategy to small price differences, the test result in those cases can be very different to the live trading result.</li>
+	<li>Strategy sensitiveness to the tick frequency. In the backtest, the tick 
+	frequency is determined by the historical data (usually 1 minute with M1 
+	data), in live trading the ticks come in irregular intervals with a minimum 
+	distance set up by <a href="ticktime.htm">TickTime</a>.</li>
+	<li>Strategy sensitiveness to small indicator value differences.&nbsp;Recursive indicators, such as <a href="filter.htm">LowPass</a>, <a href="filter.htm">HighPass</a>, <a href="filter.htm">DominantPeriod</a> etc., are influenced by all past bars and therefore  
+	can have   slightly different values between simulation and live trading at the begin of the trading session. The 
+	differences are normally negligible, but can in extreme cases with short 
+	lookback periods affect entry and exit conditions of the first trades.</li>
+	<li>Different start parameters, f.i. slider settings. For comparable results, sliders and other strategy-affecting parameters must have the same values in trading and test. Sliders must not have been moved during the trading session. 
+	</li>
+	<li>Different asset parameters. For comparable results, all <a href="account.htm">asset data</a> - such as spread, slippage, rollover,  account currency rate - must be 
+	from the same broker account. But even then, asset data such as spread, pip 
+	cost, or margin cost varies in live trading, but has normally constant values in the test. This 
+	will cause  profit differences between test and live trading.</li>
+	<li>Retraining the strategy during the trading session. Retraining invalidates further retesting 
+	because it modifies the parameters or rules. So you can either retrain or retest a strategy, but not retest after retraining.
+	</li>
+</ul>
+<h3>Remarks</h3>
+<ul>
+  <li>Retraining and retesting use the <a href="coommand.htm">command line</a> for passing parameters and script name to the training or test process. The script name must be command line compliant. </li>
+  <li>The retrain and retest processes need recent price history. It can be automatically downloaded per <a href="date.htm">UpdateDays</a> setting. When the broker API does not provide price history (as with <a href="mt4plugin.htm">MT4</a> or <a href="ib.htm">IB</a>) or when the account only supports a single connection (as with <a href="oanda.htm">Oanda</a>), download recent price history from another source with the <a href="history.htm">Download</a> script prior to retraining or retesting.</li>
+    <li>Retesting or retraining large portfolio strategies, such as the Z systems, can require  a large amount of free RAM (~4 GB) and thus might not work on a low-end VPS. 
+	</li>
+</ul>
+<h3>See also:</h3>
+<a href="bars.htm">bar</a>, <a href="mode.htm">mode</a>, <a href="testing.htm">Testing</a>, <a href="training.htm">Training</a>, <a href="date.htm">ReTrainDays</a>, <a href="command.htm">command line</a>
+<p>&nbsp;</p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

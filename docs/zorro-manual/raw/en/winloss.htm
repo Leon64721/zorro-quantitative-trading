@@ -1,0 +1,175 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Trade statistics</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/winloss.htm">
+</head>
+<body>
+<h1>Trade statistics </h1>
+<p>The following system variables can be used to obtain trade statistics separately per asset, algorithm, and long/short trade direction. They can be evaluated in real time while trading, or at the end of a simulation cycle for calculating  statistics in [<span class="tast">Test</span>] mode. All parameters are read/only. Most  come in three flavors:</p>
+<p><strong>...Long</strong>: Results of all long trades with the current <a href="asset.htm">asset</a> and <a href="algo.htm">algorithm</a>. Including <a href="lots.htm">phantom trades</a>, but not including <a href="hedge.htm">pool trades</a>. <br>
+  <strong>...Short</strong>: Results of all short trades with the current asset and algorithm, including phantom trades, but no  pool trades.<br>
+<strong>...Total</strong>: Results of all trades with all assets and algorithms, not including phantom trades. </p>
+<p>In [<span class="tast">Test</span>] mode the <strong>...Long</strong> and <strong>...Short</strong> results are from the current sample cycle only, which allows to produce statistics distributions of sample cycles. If the <a href="allcycles.htm">ALLCYCLES</a> flag is set, the <strong>...Long</strong> and <strong>...Short</strong> results are summed up from the all  sample cycles. The <strong>...Total</strong> results are always summed up.</p>
+<p>A set of overall <a href="statistics.htm">strategy statistics</a> is available after the end of a simulation,  and can be evaluated in the <a href="optimize.htm">objective</a> or the <a href="evaluate.htm">evaluate</a> function. 
+For calculating various statistics of the last N trades, use the
+<a href="results.htm">results</a> function.<br>
+&nbsp;</p>
+<h2>WinLong</h2>
+<h2>WinShort</h2>
+<h2>WinTotal</h2>
+Sum of profits of  all trades won so far. When using <a href="numsamplecycles.htm">oversampling</a> or <a href="lots.htm">phantom trades</a>, <strong>WinLong</strong> or <strong>WinShort</strong> can be higher than <strong>WinTotal</strong>.&nbsp;
+<h2>PipsTotal</h2>
+Profit of  all won trades  minus loss of all lost trades, in volume neutral PIP 
+units.
+For converting a component profit to a profit in average PIP units, multiply it 
+with <strong>PipsTotal/(WinTotal-LossTotal)</strong>.
+<h2>LossLong</h2>
+<h2>LossShort</h2>
+<h2>LossTotal</h2>
+Sum of losses by all trades lost so far. The accumulated balance, i.e. the return of all closed trades is <strong>WinTotal - LossTotal</strong>. <strong>WinTotal</strong> or <strong>LossTotal</strong> can be modified by script for simulating additional wins or losses 
+in the backtest.
+The current profit factor, clipped at 10, is <strong>ifelse(LossTotal &gt; 
+0,WinTotal/LossTotal,10)</strong>.
+<h2>LossGlobal</h2>
+Sum of losses by all trades of all Zorro instances that have set the <a href="lots.htm#scholz">ScholzBrake</a> 
+and are trading real accounts on the same PC. This variable 
+is only available in [<span class="tast">Trade</span>] mode. It is increased by 
+any loss, and updated to the other Zorro instances once per bar and on any trade.
+<h2>WinValLong</h2>
+<h2>WinValShort</h2>
+<h2>WinValTotal</h2>
+Open profit of all currently winning trades. 
+<h2>LossValLong</h2>
+<h2>LossValShort</h2>
+<h2>LossValTotal</h2>
+Open loss amount of all currently losing trades. The accumulated equity, i.e. the current profit of all open and closed trades is <strong>WinTotal - LossTotal + WinValTotal - LossValTotal</strong>.<h2>PipsValTotal</h2>
+Open profit of  all open trades in volume neutral PIP units.
+For converting a component open profit to a profit in average PIP units, multiply it 
+with <strong>PipsValTotal/(WinValTotal-LossValTotal)</strong>.&nbsp; 
+<h2>ProfitClosed</h2>
+Realized component profit so far; <strong>WinLong-LossLong+WinShort-LossShort</strong>.
+<h2>ProfitOpen</h2>
+Unrealized component profit so far; <strong>WinValLong-LossValLong+WinValShort-LossValShort</strong>.
+<h2>ProfitTotal</h2>
+Realized and unrealized total profit so far; <strong>
+WinTotal-LossTotal+WinValTotal-LossValTotal</strong>.
+<!--h2>BalanceLong</h2>
+<h2>BalanceShort</h2>
+Sum of returns of  all closed  trades of the current component; <strong>WinLong-LossLong</strong> or <strong>WinShort-LossShort</strong>.
+<h2>EquityLong</h2>
+<h2>EquityShort</h2>
+Sum of returns  of  all closed, plus value of all open  trades of the current 
+component; <strong>BalanceLong+WinValLong-LossValLong</strong> or <strong>BalanceShort+WinValShort-LossValShort</strong-->.
+<h2>WinMaxLong</h2>
+<h2>WinMaxShort</h2>
+<h2>WinMaxTotal</h2>
+Maximum profit of a trade so far.
+<h2>LossMaxLong</h2>
+<h2>LossMaxShort</h2>
+<h2>LossMaxTotal</h2>
+Maximum loss of a trade so far.
+<h2>NumWinLong</h2>
+<h2>NumWinShort</h2>
+<h2>NumWinTotal</h2>
+Number of trades closed with a profit so far, including partially closed trades. The average return per 
+profitable trade is <strong>WinTotal/NumWinTotal</strong>. 
+<h2>NumLossLong</h2>
+<h2>NumLossShort</h2>
+<h2>NumLossTotal</h2>
+Number of trades closed with a loss so far, including partially closed trades.  The average return per  trade is <strong>(WinTotal-LossTotal)/(NumWinTotal+NumLossTotal)</strong>. 
+The total number of closed trades is <strong>NumWinTotal+NumLossTotal</strong>. 
+<h2>LossStreakLong</h2>
+<h2>LossStreakShort</h2>
+<h2>LossStreakTotal</h2>
+Current number of losses in a row, or <strong>0</strong> if the last trade was a winner. 
+Can be reset by script. 
+<h2>WinStreakLong</h2>
+<h2>WinStreakShort</h2>
+<h2>WinStreakTotal</h2>
+Current number of wins in a row, or <strong>0</strong> if the last trade was  lost. 
+Can be reset by script. 
+<h2>LossStreakValLong</h2>
+<h2>LossStreakValShort</h2>
+<h2>LossStreakValTotal</h2>
+Accumulated loss of the current loss streak, or <strong>0</strong> if the last trade was a winner.
+<h2>WinStreakValLong</h2>
+<h2>WinStreakValShort</h2>
+<h2>WinStreakValTotal</h2>
+Accumulated profit of the current win streak, or <strong>0</strong> if the last trade was lost.
+<h2>NumWinningLong</h2>
+<h2>NumWinningShort</h2>
+Number of currently open winning trades with the current asset and algorithm, including phantom trades.
+<h2>NumLosingLong</h2>
+<h2>NumLosingShort</h2>
+Number of currently open losing trades with the current asset and algorithm, including phantom trades.
+
+<h2>NumOpenLong</h2>
+<h2>NumOpenShort</h2>
+Number of currently open trades with the current asset and algorithm, including phantom trades.
+
+<h2>NumLongTotal</h2>
+<h2>NumShortTotal</h2>
+<h2>NumOpenTotal</h2>
+<h2>NumOpenPhantom</h2>
+Numbers of currently open trades with all assets and algorithms.
+The total open volume can be determined through <a href="balance.htm">MarginTotal</a> 
+and the account leverage.
+<h2>NumPendingLong</h2>
+<h2>NumPendingShort</h2>
+<h2>NumPendingTotal</h2>
+Number of currently pending trades, i.e. trades that have just been entered, or that have not yet reached their <a href="stop.htm">Entry</a> Stop or Limit within their <a href="timewait.htm">EntryTime</a> period. <strong>NumPendingTotal</strong>  includes  pending phantom trades in <a href="hedge.htm">Virtual Hedging</a> mode, as they also trigger real trades.
+<h2>NumRejected</h2>
+Number of rejected open or close orders in live trading, due to lack or market liquidity, broker connection failure, market closures, holidays, or other reasons.
+<h2>LotsPool</h2>
+<h2>LotsVirtual</h2>
+<h2>LotsPhantom</h2>
+Open position of the current asset, positive when long and negative when short. 
+The variables hold the difference of long and short open lots of 
+real trades (<strong>LotsPool</strong>), virtual trades in <a href="hedge.htm">virtual hedging</a> 
+mode (<strong>LotsVirtual</strong>), and phantom trades (<strong>LotsPhantom</strong>). Only for the underlying, not for positions of
+<a href="contract.htm">options</a> and <a href="combo.htm">combos</a>. 
+Open account positions can be read from the broker API with the
+<a href="brokercommand.htm">GET_POSITION</a> command.&nbsp;
+<p>&nbsp;</p>
+<h3>Type:</h3>
+<strong>int</strong> for numbers that count something, otherwise<strong> var</strong>.
+<h3>Remarks:</h3>
+<ul>
+  <li>The parameters are part of the <strong>GLOBALS</strong> struct and the <strong>STATUS</strong> structs. They are defined in <strong>include\variables.h</strong>.</li>
+  <li>The parameters are only affected by trades opened with the current Zorro instance. Trades opened manually or with other platforms on the same account do not affect the trade statistics parameters. </li>
+	<li>The parameters are updated once per bar. Therefore they can be 
+	inaccurate when trades are opened or closed immediately before reading the 
+	variables, but are correct again at the next bar.</li>
+  <li>Every <a href="algo.htm">algo</a> and <a href="asset.htm">asset</a> call changes the component-dependent <strong>...Long</strong> and <strong>...Short</strong> statistics variables. They are set to the  statistics of the selected asset and algorithm identifier. The <strong>...Total</strong> statistics variables are unaffected by <a href="algo.htm">algo</a> and <a href="asset.htm">asset</a> calls.</li>
+	<li>In a <a href="trade.htm">TMF</a> or <a href="fortrades.htm">trade loop</a>, 
+	the asset is automatically set to the asset of the trade, but the algo is 
+	not. For evaluating component-dependent statistics of a trade, select the 
+	trade algo by <strong>algo(TradeAlgo); </strong>(even when no different 
+	algos are used).</li>
+  <li>If a backtest or training runs over several <a href="numsamplecycles.htm">bar cycles</a>, the <strong>...Long</strong> and <strong>...Short</strong> statistics variables are taken from the last bar cycle, while the <a href="numsamplecycles.htm"></a> <strong>...Total</strong> statistics variables are taken from  the average of all bar cycles.</li>
+	<li>Win/loss metrics can be calculated from the above parameters. For 
+	instance, <strong>AvgWin = WinValTotal/WinTotal; AvgLoss = 
+	LossValTotal/LossTotal; WinRate = WinTotal/(var)LossTotal</strong> (check 
+	divisors for zero!). Trade-dependent metrics can be calculated by enumerating trades with
+	<a href="fortrades.htm">for(open_trades)</a> or <a href="fortrades.htm">for(all_trades)</a>, 
+	or with the <a href="results.htm">results</a> function. 
+	Asset-dependent metrics can be calculated with a <a href="fortrades.htm">
+	for(assets)</a> loop that enumerates all assets used in the system.</li>
+  <li>Trade statistics are reset when the 
+  strategy is restarted. For preventing this, store them at the end of a live session and resume 
+  them in 
+	the next session with <strong>setf(SaveMode,<a href="loadstatus.htm">SV_STATS</a>)</strong>. </li>
+</ul>
+<h3>Example:</h3>
+<pre><em>// suspend trading after 4 losses in a row<br></em>if(LossStreakShort &gt;= 4 || LossStreakLong &gt;= 4) <br>&nbsp;&nbsp;setf(TradeMode,TR_PHANTOM); <em>// phantom trades</em><br>else 
+&nbsp;&nbsp;resf(TradeMode,TR_PHANTOM); <em>// normal trading</em></pre>
+<h3>See also:</h3>
+<a href="trade.htm">Trade parameters</a>, <a href="balance.htm">Balance</a>, <a href="lots.htm">Lots</a>, <a href="fortrades.htm">for(trades)</a>, <a href="statistics.htm">strategy statistics</a>, <a href="performance.htm">performance report</a>,
+<a href="results.htm">results</a><p>&nbsp;</p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

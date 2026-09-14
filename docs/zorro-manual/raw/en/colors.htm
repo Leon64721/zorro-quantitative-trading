@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Colors</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/colors.htm">
+</head>
+
+<body>
+<h1>Colors</h1>
+<h2>ColorUp</h2>
+<h2>ColorDn</h2>
+Colors for the white and black candles (default: <strong>ColorUp</strong> = <strong>0x00CCCCCC</strong> = bright grey, <strong>ColorDn</strong> = <strong>0x00222222</strong> = dark grey). If both colors are <strong>0</strong>, no price candles are plotted in the main chart.
+<h2>ColorEquity</h2>
+Color for the equity bars (default: <strong>0x00666699</strong> = blue-grey). If at <strong>0</strong>, no equity curve is plotted in the main chart.
+<h2>ColorDD</h2>
+Color for the &quot;underwater equity&quot; bars (default: <strong>0x00FF3333</strong> = red). If at <strong>0</strong>, no underwater equity is plotted in the main chart.
+<h2>ColorWin</h2>
+<h2>ColorLoss</h2>
+Colors for the winning and losing trades (default: <strong>ColorWin</strong> = <strong>0x0033FF33</strong> = green, <strong>ColorLoss</strong> = <strong>0x00FF3333</strong> = red). If both colors are <strong>0</strong>, no trades are plotted in the main chart.
+<h2>ColorBars[3]</h2>
+Colors for the bars on <a href="optimize.htm">parameter charts</a>. Default: <strong>ColorBars[0]</strong> = objective (red), <strong>ColorBars[1]</strong> = wins (blue), <strong>ColorBars[2]</strong> = losses (blue-grey). 
+<h2>ColorPanel[6]</h2>
+Default colors for the cells on a <a href="panel.htm">control panel</a>. <strong>ColorPanel[0]</strong> = text background (light grey), <strong>ColorPanel[1]</strong> = number background (reddish), <strong>ColorPanel[2]</strong> = editable (white), <strong>ColorPanel[3]</strong> = button (blue), <strong>ColorPanel[4]</strong> = highlighted text (red), <strong>ColorPanel[5]</strong> = grayed out text (grey).
+<h3>Range:</h3>
+<strong>0..0xFFFFFFFF</strong>
+<h3>Type:</h3>
+<strong>long </strong>
+<h3>Remarks:</h3>
+<ul>
+  <li>Colors can be defined as hexadecimal numbers just as in HTML pages, in the form <strong>0xTTRRGGBB</strong> (f.i. <strong>0x000000FF</strong> = opaque blue, <strong>0x80FF0000</strong> = half transparent red). The transparency<strong> TT</strong> runs from <strong>0</strong> (full opaque) over <strong>80</strong> (half transparent) to <strong>FF</strong> (full transparent). </li>
+	<li>For convenience reasons, use the macro <strong>rgb(Red,Green,Blue)</strong> 
+	with colors in the <strong>0.255</strong> range.</li>
+  <li>Some colors are predefined: <strong>RED</strong>, <strong>GREEN</strong>, <strong>BLUE</strong>, <strong>CYAN</strong>, <strong>DARKBLUE</strong>, <strong>LIGHTBLUE</strong>, <strong>PURPLE</strong>, <strong>YELLOW</strong>, <strong>MAGENTA</strong>, <strong>ORANGE</strong>, <strong>DARKGREEN</strong>, <strong>OLIVE</strong>, <strong>MAROON</strong>, <strong>SILVER</strong>, <strong>GREY</strong>, <strong>BLACK</strong>. <strong>+TRANSP</strong> can be added for 50% transparency. </li>
+  <li>For generating color ranges dependent on a variable, use the <a href="color.htm">color</a> function. </li>
+</ul>
+<h3>Example:</h3>
+<pre>function run()
+{
+  ColorEquity = rgb(0,255,0); <em>// green equity bars, same as 0x0000FF00</em>
+  ColorDD = 0; <em>// no underwater equity</em>
+  ...
+}</pre>
+<h3>See also:</h3>
+<a href="plot.htm">plot</a>, <a href="color.htm">color</a>, <a href="plotscale.htm">plotScale</a>, <a href="performance.htm">performance</a>
+<p>&nbsp;</p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

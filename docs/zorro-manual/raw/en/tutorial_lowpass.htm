@@ -1,0 +1,140 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+<title>Algorithmic Trading in C/C++ | Workshop 4a</title>
+<link href="css.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+<!--
+.Stil2 {	font-weight: bold;
+	font-style: italic;
+}
+.Stil3 {font-weight: bold}
+.Stil4 {font-weight: bold}
+-->
+</style>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/tutorial_lowpass.htm">
+</head>
+<body>
+<p><a href="tutorial_trade.htm">Previous: Trend trading </a></p>
+
+
+<h1><span>Workshop 4a: Indicator Implementation. More about series.</span></h1>
+
+
+<p>All the time,<span> technical traders invent new indicators in their never ending 
+hope to find one that really works. The article series
+<a href="https://financial-hacker.com/" target="_blank">Petra on Programming</a> 
+illustrates how to implement all sorts of complex and exotic indicators, and use 
+them for trading systems. As an addendum to the previous workshop, we're going to implement the 
+lowpass filter indicator. A second order lowpass filter 
+is a bit more complex than its 
+simple minded colleagues SMA, EMA, Stochastic, Ichimoku &amp; Co. So it's a good exercise 
+for serious indicator implementation. </span></p>
+<p><span>When we're only interested in implementing an indicator from a ready 
+formula, we can skip all math and 
+start directly with the code. If 
+you're interested in the theory, get the books by <strong>John Ehlers</strong> (<a href="links.htm">book 
+list</a>) who introduced signal processing for traders. The Gaussian highpass filter formula below 
+is from his book. For avoiding math, skip the following section.</span></p>
+<h3>&gt;&gt;&gt; Math starts here</h3>
+<p>A lowpass filter suppresses the high frequency components in a data stream, a 
+highpass filter suppresses the low frequency components. The higher the order of 
+the filter, the sharper is the frequency cutoff, which is normally desired for 
+indicators. The filter's formula usually 
+expresses the <span class="Highlight">filter gain</span> - output divided by input - in 
+<a href="https://en.wikipedia.org/wiki/Z-transform" target="_blank">Z-transform notation</a>. 
+Here's the gain of a second order Gaussian highpass filter that you can get from 
+a digital filter design book: </p>
+<p><em>GainHP = Out / In = (1 - a/2)</em><sup><em>2</em></sup><em> &middot; (1 - 2 z</em><sup><em>-1</em></sup><em> + z</em><sup><em>-2</em></sup><em>) 
+/ (1 - (2 - 2a) z</em><sup><em>-1</em></sup><em> 
++ (1 - a)</em><sup><em>2</em></sup><em> z</em><sup><em>-2</em></sup><em>)&nbsp;&nbsp;
+</em></p>
+<p>where <strong><em>a</em></strong> is the <span class="Highlight">filter coefficient</span> and the operator <strong>
+<em>z</em></strong><sup><strong><em>-n</em></strong></sup> 
+applies <strong><em>n</em></strong> units of delay to the data. 
+<span class="Highlight">Z-transform notation</span> is an elegant 
+method to define arbitrary filters - if interested, read it up under the above 
+link. For getting a lowpass 
+filter, we can simply subtract the above highpass filter from a neutral filter 
+with a gain of <strong>1</strong>:</p>
+<p><em>GainLP = Out / In = 1 - (1 - a/2)</em><sup><em>2</em></sup><em> &middot; (1 - 2 z</em><sup><em>-1</em></sup><em> + z</em><sup><em>-2</em></sup><em>) 
+/ (1 - (2 - 2a) z</em><sup><em>-1</em></sup><em> 
++ (1 - a)</em><sup><em>2</em></sup><em> z</em><sup><em>-2</em></sup><em>) 
+</em></p>
+<p>Converting to nominator / denominator form for separating input and output:</p>
+<p><em>Out / In = (a - a</em><sup><em>2</em></sup><em>/4 + a</em><sup><em>2</em></sup><em>/2 z</em><sup><em>-1</em></sup><em> 
+- (a - 3a</em><sup><em>2</em></sup><em>/4) z</em><sup><em>-2</em></sup><em>) / 
+(1 - (2 - 2a) z</em><sup><em>-1</em></sup><em> + (1 - a)</em><sup><em>2</em></sup><em> 
+z</em><sup><em>-2</em></sup><em>) </em> </p>
+<p>Cross multiplication:</p>
+<p><em>(1 - (2 - 2a) z<sup>-1</sup> + (1 - a)<sup>2</sup> z<sup>-2</sup>) · 
+Out&nbsp; = (a - a</em><sup><em>2</em></sup><em>/4 + a</em><sup><em>2</em></sup><em>/2 z</em><sup><em>-1</em></sup><em> 
+- (a - 3a</em><sup><em>2</em></sup><em>/4) z</em><sup><em>-2</em></sup><em>) · 
+In</em></p>
+<p>Applying the <strong>z</strong> operators to the input and output data; 1·Out 
+= Out[0],&nbsp; z<sup>-1</sup>·Out = Out[1], etc:</p>
+<p><em>1 · Out[0] - (2 - 2a) · Out[1] + (1 - a)<sup>2</sup> · Out[2] = (a - a<sup>2</sup>/4) 
+· In[0] + a<sup>2</sup>/2 · In[1] - (a - 3a<sup>2</sup>/4) · In[2] </em> </p>
+<p>where <em>Out[0]</em> is the current output value, <em>Out[1]</em> is the 
+output delayed by one bar, and so on. The final result:</p>
+<p><em><strong>Out[0] = (a - a<sup>2</sup>/4) · In[0] + a<sup>2</sup>/2 · In[1] - 
+(a - 3a<sup>2</sup>/4) · In[2] + (2 - 2a) · Out[1] - (1 - a)<sup>2</sup> · 
+Out[2]</strong></em></p>
+<p>This is the formula that we can now directly implement as an indicator function. </p>
+<h3>&gt;&gt;&gt; Math ends here</h3>
+<p><span> With the <a href="series.htm">series</a> function that we already used in 
+the previous workshop, it's easy to implement the delayed data from the above 
+formula. The filter coefficient <strong>a</strong> is converted from a 
+more convenient time period by a 'smoothing formula', normally <strong>a = 2/(1+Period)</strong>. The higher the
+<strong>Period</strong>, the smaller is <strong>a</strong> and the stronger is 
+the high frequency attenuation effect of the filter. </span> </p>
+<p><span> That's the implementation </span>(<strong>Workshop4a</strong>): </p>
+<pre>var lowpass(vars In,int Period)
+{
+  var a = 2./(1+Period);
+  vars Out = series(In[0],3);
+  return Out[0] = (a-0.25*a*a)*In[0]
+    + 0.5*a*a*In[1]
+    - (a-0.75*a*a)*In[2]
+    + (2-2*a)*Out[1]
+    - (1-a)*(1-a)*Out[2];
+}
+</pre>
+<p>The first line converts the time period to the filter coefficient <strong>a</strong>. Mind the 
+dot of the '<strong>2.</strong>'. The decimal point tells the compiler that it's a real number. A 
+plain '<strong>2</strong>' would be an <strong>int</strong>. <strong>1+Period</strong> is also an <strong>int</strong>, so we 
+had an integer calculation that yields an integer result. Which will be normally
+<strong>0</strong> since the integer <strong>2</strong> divided by a higher integer is <strong>0</strong>. This 
+is one of the programming traps. If in doubt, put a decimal point to all numbers in any floating point formula 
+in your scripts.</p>
+<p>For the output we're creating a new <strong>series</strong>, but since we only need delay by of up to 2 bars, 
+the series only needs a length of 3 elements. If we omitted the length parameter, the series had the length of the 
+lookback period, which would be a waste of resources. We also initialize the series to the input data for preventing 
+that it starts with 0.</p>
+<p>Note that <strong>Period</strong> hs no effect on the amount of data. The 
+filter uses only the last 3 bars. The plot of the <strong>lowpass</strong> function is the same as in the 
+previous workshop, because the internal <a href="filter.htm">LowPass</a> filter 
+has the same formula: </p>
+<p><img src="../images/work4_lp.png" width="880" height="321"></p>
+<p>You can now look into the file <strong>indicators.c</strong> in the <strong>
+Source</strong> folder that contains the code of many indicators, and check out how those indicators work.</p>
+<h3>What have we learned in this workshop?</h3>
+<ul>
+  <li>The <strong>Z-transform</strong> is a conventient way to define and 
+  calculate digital filters.</li>
+  <li>Applying the Z transform to data is equivalent to taking a delayed element 
+  from a <strong>series</strong>.</li>
+	<li>The length of a series can be given in the second argument.</li>
+	<li>Mind the difference of integer and floating point calculations. Use 
+	decimal points when needed.</li>
+  <li>Even complex filters need only a few lines of code.</li>
+</ul>
+<p align="right">
+<span><a href="tutorial_fisher.htm">Next: Walk Forward Analysis</a></span></p>
+<hr>
+<h3>Further reading: &#9658; <a href="series.htm">series</a>, 
+<a href="filter.htm">filters</a></h3>
+</body>
+</html>

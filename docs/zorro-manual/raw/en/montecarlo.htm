@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Monte Carlo simulation</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/montecarlo.htm">
+</head>
+
+<body>
+<h1>Confidence Analysis</h1>
+<p>&quot;Montecarlo&quot; is a common term for an analysis based on randomized data or 
+random samples. A Montecarlo simulation can be applied to the price curve as 
+well as to the equity curve. The former method can be used for a
+<a href="shell.htm">Montecarlo Reality Check</a>, the latter method for 
+generating confidence levels. For this, Zorro automatically calculates
+<a href="performance.htm">performance metrics</a> for a  distribution of many possible 
+equity curves for any backtest. The Montecarlo method produces results that are more accurate and less subject to random fluctuations.</p>
+<p>The equity curve from the backtest is randomly resampled many times. This generates many different equity curves that each represent a different order of trades and different price movements inside each trade. The curves are analyzed, and their results are sorted according to their performance. This way a confidence level is assigned to every result. The confidence level determines how many of the curves had the same or better performance than the given result. </p>
+<p>Without confidence analysis, the annual rate of return is calculated from the 
+profits and drawdowns of the backtest equity curve. For example, it might be found that the annual return over the curve was 200%. With 
+confidence analysis, hundreds of different equity curves are analyzed, and the annual return determined from them might be, for instance, 145% with 95% confidence. This means that of all the thousands of possible outcomes of the simulation, 95% had annual return rates better than or equal to 145%.</p>
+<p>Confidence analysis is particularly helpful in estimating the risk and capital requirement of a strategy. The maximum historical drawdown is normally used as a measure of risk, but this means  we're basing our risk calculations on a historical price curve that won't repeat 
+in live trading. Even if the statistical distribution of trades is the same in the future, the sequence of those trades and their equity movements are largely a matter of chance.
+     
+Calculating the drawdown based on one particular sequence is thus somewhat arbitrary: with a sequence of several losses in a row, you can get a very large drawdown. But the same trades arranged in a different order, such that the losses are evenly dispersed, might produce a negligible drawdown. This randomness in the result can be eliminated by 
+Montecarlo analysis that takes many different equity curves and many different trade sequences into account. </p>
+<p>Example of the result distribution in the performance report: </p>
+<pre>Confidence level     AR   DDMax  Capital
+ 
+ 10%                236%  1440$  1390$
+ 20%                227%  1550$  1470$
+ 30%                218%  1680$  1570$
+ 40%                209%  1830$  1680$
+ 50%                202%  1940$  1760$
+ 60%                193%  2140$  1900$
+ 70%                186%  2340$  2040$
+ 80%                174%  2730$  2320$
+ 90%                165%  3080$  2580$
+ 95%                145%  4010$  3580$
+100%                104%  5640$  4710$</pre>
+<p>The first  column identifies the confidence level; in the next columns the annual return, the maximum drawdown, and the required capital at that level are listed. The most likely result is at <strong>50%</strong> confidence level (here, 202% annual return). This means that half the simulations had this or a better result, and half a worse result. The higher the confidence level, the more pessimistic are the results. The result at <strong>100%</strong> confidence level is the worst  of  all  simulations; thus the probability to get this (or an even worse) result is <strong>1/n</strong>, where <strong>n</strong> is the number of simulations. Note that the capital can be smaller than the maximum drawdown when the test period was longer than 3 years (capital and annual return are based on a 3-years normalized drawdown). </p>
+<p>  The following variables are used for confidence analysis: </p>
+<h2>MonteCarlo</h2>
+Number of Montecarlo simulations (default: <strong>200</strong>). Every simulation generates a different equity curve. The more simulations, the more accurate is the result, but the more time is needed for the computation. If set to <strong>0</strong>, no 
+confidence analysis is performed. 
+<h2>Confidence</h2>
+ Confidence level for the <a href="performance.htm">performance analysis</a> in percent (<strong>0..100</strong>); determines the calculation of the main performance parameters such as annual return, drawdown, required capital, etc. The higher the confidence level, the more pessimistic are the results. At <strong>0</strong> (default) the performance parameters are calculated from the real equity curve and not from the 
+Montecarlo simulation.
+ <h3>Remarks</h3>
+<ul>
+  <li>If the <a href="lots.htm">Capital</a> variable is set, reinvesting is 
+  assumed and no Montecarlo analysis can be performed.</li>
+  <li>Confidence analysis is biased when trade returns are strongly correlated (i.e. the strategy produces long winning and losing streaks) or strongly anticorrelated (winning and losing alternate). In the former case 
+  the analysis can display too optimistic results, otherwise too pessimistic results. </li>
+  <li>Confidence analysis does not guarantee a minimum performance. If the strategy was expired or was  <a href="testing.htm">tested</a> in a wrong way (f.i. in-sample),  live trading returns can be worse than the 
+  Montecarlo performance even at 100% confidence level.</li>
+</ul>
+<h3>Examples</h3>
+<pre>
+function run()
+{
+  MonteCarlo = 1000; <em>// 1000 simulations</em>
+  Confidence = 75; <em>// 75% confidence level</em>
+  ...
+</pre>
+<h3>See also:</h3>
+<a href="testing.htm">Testing</a>, <a href="winloss.htm">Win/Loss</a>, <a href="performance.htm">Performance</a>
+<p>&nbsp;</p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

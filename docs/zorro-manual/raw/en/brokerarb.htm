@@ -1,0 +1,248 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Broker Arbitrage with Zorro</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+.auto-style1 {
+	border: 1px solid #000000;
+}
+</style>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/brokerarb.htm">
+</head>
+<body>
+<h1>Broker Arbitrage: Trading with multiple brokers</h1>
+<p>Trading simultaneously with multiple accounts, brokers, exchanges, or data feeds allows
+<strong>broker arbitrage</strong>, i.e. exploiting prices differences of the 
+same asset between different market places. 
+Arbitrage opportunities appear for instance when Forex <a href="brokers.htm">liquidity providers</a> deviate from 
+each other, or when <a href="brokers.htm">market makers</a> do not precisely follow the market. 
+There is no central exchange for currencies and CFDs, so their prices vary from 
+broker to broker. If the price differences temporarily exceed trading costs, you 
+can collect risk-free profits. </p>
+<p><a href="restrictions.htm">Zorro 
+S</a> can simultaneously trade with up to 12 brokers or price data feeds. It 
+allows trading strategies to compare currency or 
+CFD prices 
+between broker A and broker B, and enter 
+a long position with the cheaper broker and a short position with the other. 
+Here's the step by step setup and a 
+code example for taking advantage of Forex/CFD price differences. But be 
+aware that brokers dislike broker arbitrage practices, and may close accounts when they learn that they were 
+exploited in this way.</p>
+<ul>
+	<li>Brokers A and B must not use the same broker plugin Dll. If they do, 
+	simply duplicate 
+	the DLL in the Plugin folder and give the copy a different 
+	name (f.i. <strong>ZorroMT4b.dll</strong>). When both brokers trade through MT4 
+	or MT5, make also 
+	sure that you have two different client terminals versions installed, one 
+	for broker A and one for broker B, because neither MT4 nor MT5 supports 
+	simultaneous trading on multiple accounts. (MT4/MT5 are not really suited for broker 
+	arbitrage anyway due to their high latency - you'll normally need a Zorro 
+	plugin with a direct 
+	API connection).<br>&nbsp;</li>
+	<li>Set up an <a href="account.htm">account list</a> with accounts from 
+	brokers A and B. Example:<br>&nbsp;<table cellpadding="2" cellspacing="0" class="hidden-xs" style="width: 100%">
+	 <tr>
+		 <td class="auto-style1" style="height: 25px"><strong>Name</strong></td>
+		 <td class="auto-style1" style="height: 25px"><strong>Broker</strong></td>
+		 <td class="auto-style1" style="height: 25px"><strong>Account</strong></td>
+		 <td class="auto-style1" style="height: 25px"><strong>User</strong></td>
+		 <td class="auto-style1" style="height: 25px"><strong>Pass</strong></td>
+		 <td class="auto-style1" style="height: 25px"><strong>Assets</strong></td>
+		 <td class="auto-style1" style="height: 25px"><strong>CCY</strong></td>
+		 <td class="auto-style1" style="height: 25px"><strong>Real</strong></td>
+		 <td class="auto-style1" style="height: 25px"><strong>NFA</strong></td>
+		 <td class="auto-style1" style="height: 25px"><strong>Plugin</strong></td>
+	 </tr>
+	 <tr>
+		 <td class="auto-style1">BrokerA</td>
+		 <td class="auto-style1">AAA</td>
+		 <td class="auto-style1">0</td>
+		 <td class="auto-style1">4009876</td>
+		 <td class="auto-style1">n4qw4ert7</td>
+		 <td class="auto-style1">AssetsArb</td>
+		 <td class="auto-style1">USD</td>
+		 <td class="auto-style1">1</td>
+		 <td class="auto-style1">0</td>
+		 <td class="auto-style1">Broker1.dll</td>
+	 </tr>
+	 <tr>
+		 <td class="auto-style1">BrokerB</td>
+		 <td class="auto-style1">BBB</td>
+		 <td class="auto-style1">0</td>
+		 <td class="auto-style1">3456789</td>
+		 <td class="auto-style1">ab234qrz2</td>
+		 <td class="auto-style1">AssetsArb</td>
+		 <td class="auto-style1">USD</td>
+		 <td class="auto-style1">1</td>
+		 <td class="auto-style1">0</td>
+		 <td class="auto-style1">Broker2.dll</td>
+	 </tr>
+	 </table>
+    <br>&nbsp;</li>
+	<li>Set up the account names in the <a href="symbol.htm">Symbol</a> fields 
+	of the used <a href="account.htm">asset list</a>. If an account name is addedin 
+	front of a 
+	symbol, the account is used for prices, history, and trading of that asset:<br><br>
+<table style="width: 100%" cellpadding="2" cellspacing="0" class="hidden-xs">
+	<tr>
+		<td class="auto-style1"><strong>Name</strong></td>
+		<td class="auto-style1"><strong>Price</strong></td>
+		<td class="auto-style1"><strong>Spread</strong></td>
+		<td class="auto-style1"><strong>Roll</strong></td>
+		<td class="auto-style1"><strong>Roll</strong></td>
+		<td class="auto-style1"><strong>PIP</strong></td>
+		<td class="auto-style1"><strong>Cost</strong></td>
+		<td class="auto-style1"><strong>Margin</strong></td>
+		<td class="auto-style1"><strong>Market</strong></td>
+		<td class="auto-style1"><strong>Amount</strong></td>
+		<td class="auto-style1"><strong>Comm</strong></td>
+		<td class="auto-style1"><strong>Symbol</strong></td>
+	</tr>
+	<tr>
+		<td class="auto-style1">EURUSD_A</td>
+		<td class="auto-style1">1.17311</td>
+		<td class="auto-style1">0.00005</td>
+		<td class="auto-style1">0</td>
+		<td class="auto-style1">0</td>
+		<td class="auto-style1">0.0001</td>
+		<td class="auto-style1">0.1</td>
+		<td class="auto-style1">-0.01</td>
+		<td class="auto-style1">0</td>
+		<td class="auto-style1">1000</td>
+		<td class="auto-style1">0.6</td>
+		<td class="auto-style1">BrokerA:EUR/USD</td>
+		</tr>
+	<tr>
+		<td class="auto-style1">EURUSD_B</td>
+		<td class="auto-style1">1.17299</td>
+		<td class="auto-style1">0.00007</td>
+		<td class="auto-style1">0</td>
+		<td class="auto-style1">0</td>
+		<td class="auto-style1">0.0001</td>
+		<td class="auto-style1">0.1</td>
+		<td class="auto-style1">-0.01</td>
+		<td class="auto-style1">0</td>
+		<td class="auto-style1">1000</td>
+		<td class="auto-style1">0.5</td>
+		<td class="auto-style1">BrokerB:EUR/USD</td>
+	</tr>
+	</table>
+	<br>The symbols select <strong>BrokerA</strong> as price source and trading target for
+	<strong>EURUSD_A</strong>, and <strong>BrokerB</strong> likewise for <strong>
+	EURUSD_B</strong>. If you wanted an asset to trade with <strong>BrokerB</strong>, but to get 
+	prices from <strong>BrokerA</strong>, you had to split the symbol in two, separated 
+	by an exclamation mark: <strong>BrokerB:EUR/USD!BrokerA:EUR/USD</strong>.&nbsp;In 
+	the examples below you'll find a small script to automatically combine 
+	several asset lists to a multi-broker asset list.<br>&nbsp;</li>
+	<li>For backtesting, use the <a href="history.htm">Download</a> script and 
+	get <strong>.t1</strong> price histories of the same asset from brokers A 
+	and B. Rename the history files to the names used in the asset list (f.i.
+	<strong>EURUSD_A_2017.t1</strong> and <strong>EURUSD_B_2017.t1</strong>). 
+	Run a backtest in <strong>.t1</strong> mode. For an accurate backtest, the 
+	historical data must be identical to live data, and have the same 
+	resolution. Some brokers, such as <strong>IB</strong> and <strong>Oanda</strong>, 
+	deliver historical tick data only in reduced resolution. This data is not suited 
+	for broker arbitrage backtests.<br>&nbsp; </li>
+	<li>For live trading, select either <strong>BrokerA</strong> or <strong>
+	BrokerB</strong> from the [<span class="tast">Account</span>] scrollbox. The 
+	selected broker determines the time and price displayed in the [<span class="tast">Server</span>] 
+	window, as well as the displayed balance and equity. For trades, use market orders, not limit orders. If a limit order is not filled with broker A, but 
+	filled with broker B, you won't have arbitrage, but are fully exposed to the market risk.<br>&nbsp;<br></li>
+	<!--li>When terminating a session, close open trades manually. The 
+	close-and-resume mechanism does not support multiple brokers.</li-->
+	
+</ul>
+
+
+<h3>Example:</h3>
+<pre><em>// Simple broker arbitrage example ////////////////////////////
+</em>
+function tick()
+{
+  asset(&quot;EURUSD_A&quot;);
+  var SpreadA = Spread, PriceA = priceClose(), 
+    CommissionA = Commission*LotAmount/10000*PIP/PIPCost; <em>// convert commission to price difference</em> 
+  asset(&quot;EURUSD_B&quot;);
+  var SpreadB = Spread, PriceB = priceClose(), 
+    CommissionB = Commission*LotAmount/10000*PIP/PIPCost;
+
+  var Threshold = 1.5*(SpreadA+SpreadB+CommissionA+CommissionB); <em>// arbitrage threshold</em>
+  var Difference = PriceA - PriceB;
+
+  asset(&quot;EURUSD_A&quot;);
+  if(NumOpenShort &amp;&amp; Difference &lt; 0)
+    exitShort();
+  else if(NumOpenLong &amp;&amp; Difference &gt; 0)
+    exitLong();
+  else if(!NumOpenShort &amp;&amp; Difference &gt; Threshold) <em>// go short with the expensive asset</em>
+    enterShort();
+  else if(!NumOpenLong &amp;&amp; Difference &lt; -Threshold) <em>// go long with the cheap asset</em>
+    enterLong();
+
+  asset(&quot;EURUSD_B&quot;);
+  if(NumOpenShort &amp;&amp; Difference &gt; 0)
+    exitShort();
+  else if(NumOpenLong &amp;&amp; Difference &lt; 0)
+    exitLong();
+  else if(!NumOpenShort &amp;&amp; Difference &lt; -Threshold)
+    enterShort();
+  else if(!NumOpenLong &amp;&amp; Difference &gt; Threshold)
+    enterLong();
+}
+
+function run()
+{
+  StartDate = EndDate = 2017;
+  LookBack = 0;
+  set(TICKS);
+  History = &quot;*.t1&quot;;
+  assetList(&quot;AssetsArb.csv&quot;);
+  asset(&quot;EURUSD_A&quot;);
+  asset(&quot;EURUSD_B&quot;);
+}
+</pre>
+<pre><em>// Generate a multi-broker asset list ///////////////////////
+</em>
+#define LISTS &quot;FXCM&quot;,&quot;Oanda&quot;
+#define ASSETLIST &quot;AssetsMulti&quot;
+
+function main() 
+{
+  char OutName[NAMESIZE2]; <em>// to store a temporary string</em>
+  strcpy(OutName,strf(&quot;History<a href="file://%25s.csv%22,ASSETLIST">\\%s.csv&quot;,ASSETLIST</a>));
+  file_delete(OutName);
+  string Name, Source = 0;
+  while(Name = of(LISTS))
+  {
+    static char Dest[40000]; 
+    file_read(strf(&quot;History\\Assets%s.csv&quot;,Name),Dest,0);
+    if(!*Dest) return quit(&quot;Source not found!&quot;);
+    string Pos = strchr(Dest,'\n');
+<em>// skip header line after first file
+</em>    if(!Source) Source = Dest;
+    else Source = Pos;
+    while(Pos) {
+      Pos = strchr(Pos+1,',');
+      if(!Pos) break;
+<em>// append list name to asset name
+</em>      strcatf(Pos,strf(&quot;_%s&quot;,Name));
+      int i;
+      for(i=0; i&lt;11; i++) <em>// find Symbol column</em>
+        Pos = strchr(Pos+1,',');
+<em>// append list name as source to symbol
+</em>      strcatf(Pos+1,strf(&quot;%s:&quot;,Name));
+      Pos = strchr(Pos,'\n');
+    }
+    file_append(OutName,Source,0);
+  }
+}</pre>
+<h3>See also:</h3>
+<a href="account.htm">Account list</a>, <a href="symbol.htm">Symbols</a>, <a href="brokers.htm">Brokers</a>,
+<a href="trademode.htm">TradeMode</a><p><a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a> </p>
+</body>
+</html>

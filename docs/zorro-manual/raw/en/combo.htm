@@ -1,0 +1,208 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Option Combos</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+.auto-style1 {
+	text-align: center;
+}
+</style>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/combo.htm">
+</head>
+
+<body>
+<h1>Option Combos</h1>
+The functions below can be used for 
+handling combinations of <a href="contract.htm">options</a>, such as Spreads, Straddles, 
+Strangles, Condors, Butterflies, etc. Option combos are mainly used for limiting 
+risk. For an introduction to options trading, see
+<a href="http://www.financial-hacker.com/algorithmic-options-trading/" target="_blank">
+Financial Hacker</a>.
+The image below shows the profit or loss of an Iron Condor combo dependent of 
+the underlying price, at expiration (blue) and halfway to expiration (red).&nbsp;
+<p class="auto-style1">
+<img height="356" src="../images/condor.png" width="699"><br>Iron Condor payoff 
+diagram (<strong>Payoff.c</strong>)</p>
+&nbsp;
+<h2>combo (CONTRACT* C1, int N1, CONTRACT* C2, int N2, CONTRACT* C3, int N3, 
+CONTRACT* C4, int N4): int </h2>
+Combines 2, 3, or 4 option contracts <strong>C1..C4</strong> to a combo. The number 
+and trade direction of contracts are given by <strong>N1..N4</strong>; use negative 
+numbers for selling and positive numbers for buying, f.i. <strong>
+-2</strong> for short selling two contracts. <strong>C3</strong>/<strong>N3</strong> 
+and <strong>C4</strong>/<strong>N4</strong> 
+can be <strong>0</strong> for combos with only 2 or 3 legs. Returns the number of combo legs, i.e. the number of different contracts of the 
+combo. If all numbers <strong>N</strong> are <strong>0</strong>, or if any <strong>CONTRACT*</strong> pointer is zero while 
+its associated 
+number <strong>N</strong> is nonzero, the combo is disabled and the function returns 
+<strong>0</strong>. Source code in <strong>contract.c</strong>.
+<h2>comboAdd (CONTRACT* C, int N): int </h2>
+Adds a copy of the option contract <strong>C</strong> to the current combo. Amount 
+and trade direction of the contract is given by <strong>N</strong>; use a negative 
+number for selling and a positive number for buying. Returns the number of 
+the current combo leg. If <strong>C</strong> is 0, the function deletes all contracts from 
+the combo and returns 0.<h2>comboLegs (): int</h2>
+Returns the number of legs of the current combo that was defined before with
+<strong>combo()</strong> or <strong>comboAdd()</strong> calls. 
+<h2>comboContract (int Leg):  CONTRACT*</h2>
+Pointer to the <strong>CONTRACT</strong> struct of the combo leg with the given 
+number (1..4). Macro defined in <strong>contract.c</strong>.&nbsp;&nbsp; 
+<h2>comboLeg (int Leg):  int</h2>
+Selects the contract of the combo leg with the given number (1..4), and returns 
+the number assigned to that contract as defined in the <strong>
+combo()</strong> function. The number is negative for selling and positive for 
+buying, so it can be directly used for the <strong>Lots</strong> parameter 
+passed to <a href="buylong.htm">enterLong</a>.&nbsp; 
+<h2>comboStrike (int Leg): var</h2>
+Returns the strike value of the given combo <strong>Leg</strong> (1..4).
+Source code in <strong>contract.c</strong>.
+<h2>comboProfit (var Price, int Sign): var</h2>
+Returns the profit or loss of the current bought (<strong>Sign == 1</strong>) or 
+sold (<strong>Sign == -1</strong>) combo when expiring at the given <strong>Price</strong>.
+<strong>Type</strong>, <strong>fAsk</strong>, and <strong>fBid</strong> of all contracts of the combo must be set, so
+<a href="contract.htm">contractPrice</a> should have been called before; the other contract 
+parameters don't matter. Multiplier and transaction costs are not included. Source code in <strong>contract.c</strong>.
+<h2>comboRisk (int Sign): var</h2>
+Returns the maximum possible loss of the current bought (<strong>Sign == 1</strong>) or 
+sold (<strong>Sign == -1</strong>) combo. For combos with unlimited loss, 
+returns the loss when the price drops to zero or ends up at twice the strike, 
+whichever is worse. <strong>Type</strong>, <strong>fAsk</strong>, <strong>fBid</strong>, 
+and <strong>fStrike</strong> of all contracts of the combo must be set, so
+<a href="contract.htm">contractPrice</a> must have been called before; the other contract 
+parameters don't matter. Multiplier and transaction costs are not included. Source code in <strong>contract.c</strong>.
+<h2>comboPremium (int 
+Sign): var</h2>
+Returns the premium of the current bought (<strong>Sign == 1</strong>) or 
+sold (<strong>Sign == -1</strong>) combo, also referred to as the combo's ask 
+and bid price. Positive premium is earned, negative 
+premium is paid. If the combo consists of long and short positions, its ask 
+price can be lower than its bid price. <strong>fAsk</strong> and <strong>fBid</strong> of all 
+contracts of the combo must be set, so <a href="contract.htm">contractPrice</a> 
+should have been called before; the other contract parameters don't matter. Multiplier 
+and Transaction costs are not included. Source code in <strong>contract.c</strong>.<h2>comboType (): 
+int</h2>
+Returns the combo type: <strong>1</strong> for a single put, <strong>2</strong> 
+for a single call, <strong>6</strong> for a call spread, <strong>7</strong> for a strangle (call and put), <strong>
+8</strong> for 
+a put spread, <strong>13</strong> 
+for a call butterfly (3 calls), <strong>14</strong> for a put butterfly (3 puts), 
+and <strong>
+20</strong> for a 4-contract combo such as a condor (2 calls and 2 puts). Source code in <strong>contract.c</strong>.<h2>comboMargin (int 
+Sign, int AssetType): var</h2>
+Calculates the margin cost of the current bought (<strong>Sign == 1</strong>) or 
+sold (<strong>Sign == -1</strong>) combo with the given <strong>AssetType</strong>.<strong>
+</strong>Uses the margin formula on the Interactive Broker's
+<a href="https://www.interactivebrokers.com/en/index.php?f=26660&amp;hm=us&amp;ex=us&amp;rgt=1&amp;rsk=0&amp;pm=1&amp;rst=101004100808" target="_blank">
+US Options Margin Requirements</a> page. Supports single calls and puts, call 
+spread, put spread, strangle (call and put), Butterfly with 3 calls, Butterfly 
+with 3 puts, and Condor (2 calls and 2 puts). Source code in
+<strong>contract.c</strong>.<br>
+<br>
+<h3>Parameters:</h3>
+<table border="0">
+  <tr>
+    <td><strong>C1..C4</strong></td>
+    <td><strong>CONTRACT*</strong> pointer for leg 1..4, or <strong>0</strong> when the leg is not used 
+	in the combo.</td>
+  </tr>
+  <tr>
+    <td><strong>N1..N4</strong></td>
+    <td>Number of contracts for leg 1..4, negative for selling and positive for 
+	buying contracts. <strong>0</strong> when the leg is not used in the combo. </td>
+  </tr>
+    <tr>
+    <td><strong>Leg</strong></td>
+    <td>Number of the combo leg, 1..4, starting with <strong>1</strong> 
+	for the first contract.</td>
+    </tr>
+  <tr>
+    <td><strong>Sign</strong></td>
+    <td>Position sign, <strong>-1</strong> for short and <strong>1</strong> for 
+	long.</td>
+  </tr>
+    <tr>
+		<td><strong>AssetType</strong></td>
+		<td><strong>1</strong> for a currency, <strong>2</strong> for an index,
+		<strong>3</strong> for stocks and ETFs. The margin for futures must be 
+		individually calculated.</td>
+	</tr>
+  </table><br>&nbsp;
+<h2>comboPrint (int To)</h2>
+Prints the parameters of the current combo contracts to the destination <strong>
+To</strong>, as in <a href="printf.htm">print(To,...)</a>.&nbsp;&nbsp;
+<h2>plotCombo (var HistVol, var Min, var Max, int Days, int 
+Modus)</h2>
+Plots the <span class="Highlight">payoff diagram</span> of the current combo 
+with volatility <strong>HistVol</strong> from price <strong>Min</strong> to 
+price <strong>Max</strong>. <strong>Modus 0</strong> initializes the plot and 
+plots a zero line, <strong>Modus 1</strong> plots the diagram at expiration,
+<strong>Modus 2</strong> at the given <strong>Days</strong> into the lifetime (<strong>R</strong> 
+and <strong>RQuantLib</strong> 
+required), and <strong>Modus 3</strong> plots the Delta. Type, strike, ask, bid, 
+and expiry in days must be set in all contracts of the combo. Two different 
+expiration periods are supported. Source code in <strong>contract.c</strong>; 
+usage example in <strong>PayOff.c</strong>. <br>&nbsp;
+  
+  <h3>Remarks:</h3>
+<ul>
+  <li><strong>contract.c</strong> must be included for all above functions. 
+	</li>
+	<li>Combo trades should be opened or closed in the order of legs, starting 
+	with leg 1. They are then automatically combined to a combo order which is sent to the broker 
+	with the last leg. 
+	Many brokers offer <span class="Highlight">reduced margin and commission</span> on combos. The combo order 
+	internally uses the <a href="brokercommand.htm">SET_COMBO_LEG</a> command, 
+	which must be supported by the broker plugin. Otherwise the combo is split 
+	in separate contract orders. Make sure that all legs of the combo are 
+	entered together; &quot;pending 
+	legs&quot; won't work. </li>
+	<li><a href="stop.htm">Order limits</a> are normally interpreted by the 
+	broker as a price limit of the whole combo. The <a href="stop.htm">Stop</a> 
+	variable affects individual legs; closing the whole combo at a certain loss 
+	must be handled by script. </li>
+	<li>Combos orders <span class="Highlight">can take several minutes</span> for being executed, even at 
+	market. For this reason it is recommended to use <a href="trademode.htm">GTC</a> 
+	orders and/or to increase the wait time with the <a href="brokercommand.htm">
+	SET_WAIT</a> command.</li>
+	<li>If a combo order is not opened by the broker, the <a href="buylong.htm">
+	enter</a> call with the last leg will fail. In that case cancel the 
+	preceding legs with the <a href="selllong.htm">cancelTrade</a> function.</li>
+	<li>The elements of the current combo can be accessed through the <strong>
+	ThisCombo</strong> pointer, defined in <strong>trading.h</strong>.</li>
+	<li>The current combo remains valid until the next <strong>combo()</strong> 
+	or <a href="contract.htm">contractUpdate</a><strong>()</strong> call. </li>
+	<li>Use the <a href="algo.htm">algo</a> function for getting separate 
+	combo-specific statistics. For determining the current profit/loss of a 
+	combo position, use a <a href="fortrades.htm">trade loop</a> and sum up all
+	<a href="trade.htm">TradeProfit</a> of the same <a href="trade.htm">
+	TradeAlgo</a>. Trades of the same combo are listed in sequence in the trade 
+	loop.</li>
+	<li>The script <strong>Payoff.c</strong> contains definitions of 
+	often used combos, such as <span class="Highlight">spread</span>, 
+	<span class="Highlight">strangle</span>, <span class="Highlight">butterfly</span>, 
+	<span class="Highlight">condor</span>. You can 
+	enter an individual combo for plotting its profit/loss curve.</li>
+	<li>For brokers with a different combo margin structure, the <strong>
+	comboMargin</strong> function can be copied from <strong>contract.c</strong> 
+	into the strategy script and accordingly modified.<br>
+	</li>
+</ul>
+<h3>Example (see also Workshop 8 and Payoff.c):</h3>
+<pre>if(combo(
+  contract(CALL,Days,Strike),1, 
+  contract(PUT,Days,Strike),1,
+  0,0,0,0)) <em>// Strangle combo</em>
+{
+   enterLong(comboLeg(1));
+   enterLong(comboLeg(2));
+}</pre>
+<h3>See also:</h3>
+<a href="contract.htm">contract</a>, <a href="contracts.htm">contract variables</a>,
+<a href="tutorial_options.htm">Workshop 8</a>
+<p>&nbsp;</p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

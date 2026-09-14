@@ -1,0 +1,348 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Tips &amp; Tricks</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+<!--
+.Stil1 {font-style: italic}
+-->
+</style>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/tips.htm">
+</head>
+<body>
+<h1>Tips &amp; Tricks</h1>
+<p>In the following you'll find short code snippets for common tasks. </p>
+<h1>I. Trade Management </h1>
+<h3>Change  stops and profit targets of all open long trades with the current algo and asset </h3>
+<pre>exitLong(0,NewStop);
+exitLong(0,-NewTakeProfit);</pre>
+<h3>If a trade is opened, close all other pending trades</h3>
+<pre>if(NumOpenTotal &gt; 0) 
+  for(open_trades)
+    if(TradeIsPending)
+      exitTrade(ThisTrade);
+</pre>
+<h3>Lock 80% profit of  all winning trades</h3>
+<pre>for(open_trades)
+  if(TradeIsOpen &amp;&amp; !TradeIsPool &amp;&amp; TradeProfit &gt; 0) {
+    TradeTrailLock = 0.80; <em>// 80% profit (minus trade costs)</em>
+    if(TradeIsShort)
+      TradeTrailLimit = max(TradeTrailLimit,TradePriceClose);
+    else
+      TradeTrailLimit = min(TradeTrailLimit,TradePriceClose);
+  }</pre>
+<h3>Iceberg trade: split a large trade into 10 small trades, one every 30 seconds</h3>
+<pre>for(OrderDelay = 0; OrderDelay &lt; 10*30; OrderDelay += 30)
+  enterLong(Lots/10);</pre>
+<h3>Calculate the value of all open trades with the current asset</h3>
+<pre>var valOpen()<br>{
+  var val = 0;<br>  for(open_trades)<br>        if(strstr(Asset,PrevAsset) &amp;&amp; TradeIsOpen)<br>      val += TradeProfit;<br>  return val;<br>}</pre>
+<h3>Monitoring and modifying a certain trade</h3>
+<pre>
+...
+TRADE* MyTrade = enterlong();
+...<br>ThisTrade = MyTrade; <em>// connect trade variables to MyTrade</em>
+var MyResult = TradeProfit;<em> // evaluate trade variables</em>
+...
+exitTrade(MyTrade,0,TradeLots/2); <em>// exit half the trade</em>
+</pre>
+<h3>Basket trading (creating an artificial asset from a 'basket' of real assets) <a name="basket"></a></h3>
+<pre><em>// generate a snythetic asset "USD" combined from the USD value of EUR, GBP, and AUD</em>
+var priceUSD()
+{
+  var p = 0;
+  asset("GBP/USD"); p += price();
+  asset("AUD/USD"); p += price();
+  asset("EUR/USD"); p += price();
+  return p;
+}
+
+<em>// basket trade function with stop limit</em>
+int tradeUSD(var StopUSD)
+{
+  if((TradeIsLong &amp;&amp; priceUSD() &lt;= StopUSD) 
+    or (TradeIsShort &amp;&amp; priceUSD() &gt;= StopUSD)) 
+      return 1; <em>  // exit the trade</em>
+  else return 0;  <em>// continue the trade</em>
+}
+
+<em>// open a trade with the synthetic asset and a stop loss</em>  
+void enterLongUSD(var StopDistUSD)
+{
+  var StopUSD = priceUSD()-StopDistUSD;
+  asset("GBP/USD"); enterLong(tradeUSD,StopUSD);
+  asset("AUD/USD"); enterLong(tradeUSD,StopUSD);
+  asset("EUR/USD"); enterLong(tradeUSD,StopUSD);
+}
+
+void enterShortUSD(var StopDistUSD)
+{
+  var StopUSD = priceUSD()+StopDistUSD;
+  asset("GBP/USD"); enterShort(tradeUSD,StopUSD);
+  asset("AUD/USD"); enterShort(tradeUSD,StopUSD);
+  asset("EUR/USD"); enterShort(tradeUSD,StopUSD);
+}
+ 
+<em>// plot a price curve of the synthetic asset
+// (the plot command is linked to the last used asset -
+// so &quot;EUR/USD&quot; must be selected in the scrollbox)
+</em>function run() 
+{
+  set(PLOTNOW);
+  plot("USD",priceUSD(),0,RED);
+}</pre>
+<h1>II. Indicators &amp; Signals </h1>
+<h3>Generate an indicator with a different asset, time frame, and shift </h3>
+<pre><em>//extended ATR function with individual asset and timeframe (in minutes</em>)
+var extATR(string symbol,int period,int length,int shift)<br>{
+  ASSET* previous = g-&gt;asset; <em>// store previous asset</em>
+  if(symbol) asset(symbol);   <em>// set new asset</em>
+  if(period) TimeFrame = period/BarPeriod;
+<em>// create price series with the new asset / timeframe</em><br>  vars H = series(priceHigh()), <br>    L = series(priceLow()),<br>    O = series(priceOpen()),
+    C = series(priceClose());
+  TimeFrame = 1; <em>// set timeframe back</em>
+  g-&gt;asset = previous; <em>// set asset back</em><br>  return ATR(O+shift,H+shift,L+shift,C+shift,length);
+}</pre>
+<h3>Calculate the weekend price change for gap trading </h3>
+<pre><em>// use 1-hour bars, wait until Sunday Sunday 5pm ET, <br>// then get the price change from Friday 5pm ET</em>
+if(dow() == SUNDAY &amp;&amp; lhour(ET) == 5) { <br>  int FridayBar = timeOffset(ET,SUNDAY-FRIDAY,5,0);<br>  var PriceChange = priceClose(0) - priceClose(FridayBar);
+  ...<br>}</pre>
+<h3>Use a series to check if something happened within the last n bars</h3>
+<pre><em>// buy if Signal1 crossed over Signal2 within the last 7 bars</em>
+...
+vars crosses = series(0); <em>// generate a series and set it to 0</em>
+if(crossOver(Signal1,Signal2)
+  crosses[0] = 1;<span class="Stil1"><em> </em></span><em>// store the crossover in the series</em>
+if(Sum(crosses,7) &gt; 0) <em>// any crossover within last 7 bars?</em>
+  enterLong();
+...</pre>
+<h3>Use a loop to check if something happened within the last n bars</h3>
+<pre><em>// buy if Signal1 crossed over Signal2 within the last 7 bars</em>
+...
+int i;
+for(i=0; i&lt;7; i++)
+  if(crossOver(Signal1+i,Signal2+i)) { <em>// crossover, i bars ago?</em>
+    enterLong();
+    break; <em>// abort the loop</em>
+  }
+...</pre>
+<h3>Align a time frame to a certain event<a name="align"></a></h3>
+<pre><em>// Return a timeframe aligned to Event == true
+// f.i. TimeFrame = frameAlign(hour() == 0); aligns to midnight</em>
+int frameAlign(BOOL Event)
+{
+  vars Nums = series(0,-1); <em>// 1-element static series for storing the bar counter</em>
+  if(!Event) {
+    Nums[0]++;      <em>  // count skipped bars
+</em>    return 0;         <em>// continue the frame</em>
+  } else {
+    int Skipped = -Nums[0]; <em>// start a new time frame</em>
+    Nums[0] = 0;      <em>// reset the counter</em>
+    return Skipped;
+  }
+}</pre>
+<h3>Shift a series into the future</h3>
+<pre><em>// the future is unknown, therefore fill 
+// all unknown elements with the current value</em>
+vars seriesShift(vars Data,int shift)
+{
+  if(shift &gt;= 0) <em>// shift series into the past</em>
+    return Data+shift;
+  else { <em>// shift series into the future</em>
+    int i;
+    for(i = 1; i &lt;= shift; i++)
+      Data[i] = Data[0];
+    return Data;
+  }
+}</pre>
+<h3>Use a function or indicator from an external DLL</h3>
+<pre><em>// Use the function &quot;foo&quot; from the DLL &quot;bar.dll&quot;
+// Copy bar.dll into the Zorro folder</em>
+int foo(double v1,double v2); <em>// foo prototype</em>
+API(foo,bar) <em>// use foo from bar.dll</em>
+ 
+function run()
+{
+  ...
+  int result = foo(1,2);
+  ...
+}</pre>
+<h1>III. Auxiliary</h1>
+<h3>Find out if you have a standard, mini, or micro lot account </h3>
+<pre><em>// Click [Trade] with the script below<br></em>function run()<br>{
+  asset(&quot;EUR/USD&quot;);<br>  if(Bar &gt; 0) {<br>    if(LotAmount &gt; 99999) 
+      printf(&quot;\nI have a standard lot account!&quot;);<br>    else if(LotAmount &gt; 9999) 
+      printf(&quot;\nI have a mini lot account!&quot;);<br>    else 
+      printf(&quot;\nI have a micro lot account!&quot;);<br>    quit();<br>  }<br>}</pre>
+<h3>Download historic price data</h3>
+<pre><em>// Click [Trade] for downloading/updating the latest &quot;NZD/USD&quot; price data
+</em>function main()
+{
+  NumYears = 6;     <em>// download up to 6 years data</em> <em>
+</em>  assetHistory(&quot;NZD/USD&quot;,1);<em> // update the price history</em>
+}</pre>
+<h3>Export historical price data to a .csv file </h3>
+<pre><em>// Click [Test] for exporting price data to a .csv file in the Data folder<br>// The records are stored in the format: time, open, high, low, close 
+// f.i. &quot;31/12/12 00:00, 1.32205, 1.32341, 1.32157, 1.32278&quot;
+// Dependent on the locale, date and numbers might require a different format</em>
+function run()
+{
+  BarPeriod = 1440;
+  StartDate = 2010;
+  EndDate = 2020;
+  LookBack = 0;
+
+  string Row = strf(
+    "%02i/%02i/%02i %02i:%02i,%.5f,%.5f,%.5f,%.5f\n",
+    day(),month(),year()%100,hour(),minute(),
+    priceO(),priceH(),priceL(),priceC());
+  if(is(INITRUN))
+    file_delete("Data\\export.csv");
+  else
+    file_append("Data\\export.csv",Row);
+}
+</pre>
+<h3>Export historical price data from MT4 to a .csv file </h3>
+<pre><em>// MQL4 EA script. Run it in the Tester.
+// The CSV file is stored in Terminals\Commom\Files.
+</em>int Handle;
+int CurrentTime;
+
+<em>// detect new bar for emulating run()
+</em>int isNewBar()
+{
+  if(CurrentTime != Time[0]){
+    CurrentTime= Time[0];
+    return(1);
+  }
+  return(0);
+}
+
+void OnInit()
+{
+  string Name = StringConcatenate(&quot;MT4_&quot;,Symbol(),&quot;.csv&quot;);
+  Handle = FileOpen( Name,FILE_CSV|FILE_WRITE|FILE_COMMON, ',');
+  if(Handle == INVALID_HANDLE)
+    Print(&quot;Can't open &quot;,Name,&quot;!&quot;); 
+  CurrentTime = Time[0];
+}
+
+void OnTick() 
+{
+  if(isNewBar() &amp;&amp; Handle != INVALID_HANDLE) {
+    FileWrite(Handle,
+      TimeToStr(Time[1],TIME_DATE),
+      iOpen(Symbol(),Period(),1),
+      iHigh(Symbol(),Period(),1),
+      iLow(Symbol(),Period(),1),
+      iClose(Symbol(),Period(),1));
+  }
+}
+
+void OnDeinit()
+{
+  FileClose(Handle);
+}
+</pre>
+<h3>Print the description of a trade (like &quot;<strong>[AUD/USD:CY:S1234]&quot;) </strong>in the log</h3>
+<pre>void printTradeID()<br>{<br>  string ls = &quot;L&quot;, bo = &quot;[&quot;, bc = &quot;]&quot;;<br>  if(TradeIsShort) ls = &quot;S&quot;;<br>  if(TradeIsPhantom) { bo = &quot;{&quot;; bc = &quot;}&quot;; }<br>  printf(&quot;#\n%s%s:%s:%s%04i%s &quot;,<br>    bo,TradeAsset,TradeAlgo,ls,TradeID%10000,bc);<br>}</pre>
+<h3>Plot equity curves of single assets in a multi-asset strategy</h3>
+<pre>char name[40]; <em>// string of maximal 39 characters</em><br>strcpy(name,Asset);<br>strcat(name,&quot;:&quot;);<br>strcat(name,Algo);<br>var equity = EquityShort+EquityLong;<br>if(equity != 0) plot(name,equity,NEW|AVG,BLUE);</pre>
+<h3>Set up strategy parameters from a .ini file at the start </h3>
+<pre>function run()
+{
+  static var Parameter1 = 0, Parameter2 = 0;
+  if(is(INITRUN)) { <em>// read the parameters only in the first run</em>
+    string setup = file_content("Strategy\\mysetup.ini");
+    Parameter1 = strvar(setup,"Parameter1");
+    Parameter2 = strvar(setup,"Parameter2");
+  }
+}
+ 
+<em>// mysetup.ini is a plain text file that contains
+// the parameter values in a format like this:
+Parameter1 = 123
+Parameter2 = 456</em></pre>
+<h3>Check every minute in [Trade] mode if an .ini file was modified</h3>
+<pre>var Parameter1 = 0, Parameter2 = 0;
+ 
+function tock() <em>// run once per minute</em>
+{
+  static int LastDate = 0;
+  if(LastDate &amp;&amp; !Trade) return; <em>// already updated</em>
+  int NewDate = file_date("Strategy\\mysetup.ini");
+  if(LastDate &lt; NewDate) {
+    LastDate = NewDate; <em>// file was modified: update new parameters</em>
+    string setup = file_content("Strategy\\mysetup.ini");
+    Parameter1 = strvar(setup,"Parameter1");
+    Parameter2 = strvar(setup,"Parameter2");
+  }
+}</pre>
+<h1>IV. Get Rich Quick<a name="rich"></a></h1>
+<h3>90% win rate</h3>
+<pre>function run()
+{
+  Stop = 10*ATR(100);
+  TakeProfit = Stop/10;
+<em>// open new trade at random after last trade hit its target</em>
+  if(NumOpenTotal == 0) { 
+    if(random() &lt; 0)
+      enterShort();
+    else 
+      enterLong();
+  }
+}</pre>
+<h3>Martingale</h3>
+<pre>function run()
+{
+  BarPeriod = 1440;
+<em>// set up equal stop and profit limits</em>
+  Stop = TakeProfit = ATR(100);
+<em>// double the stake after every loss</em>
+  Lots = pow(2,LossStreakTotal); <em>// winning guaranteed...</em>
+<em>// open new trade at random after last trade hit its target</em>
+  if(NumOpenTotal == 0) { 
+    if(random() &lt; 0)
+      enterShort();
+    else 
+      enterLong();
+  }
+}</pre>
+<h3>Grid Trading </h3>
+<pre><em>// helper function for finding trades at a grid line
+</em>bool findTrade(var Price,var Grid,bool IsShort) 
+{
+  for(open_trades)
+    if((TradeIsShort == IsShort)
+      and between(TradeEntryLimit,Price-Grid/2,Price+Grid/2))
+        return true;
+  return false;
+}
+  
+function run() 
+{
+  BarPeriod = 1440;
+  Hedge = 2; 
+  EntryTime = ExitTime = 500;  
+  var Price;
+  var Grid = 100*PIP; <em>// grid spacing</em>
+  var Current = priceClose();
+<em>// place pending trades at 5 grid lines  
+// above and below the current price</em>
+  for(Price = 0; Price &lt; Current+5*Grid; Price += Grid) {
+    if(Price &lt; Current-5*Grid)
+      continue;
+    if(Price &lt; Current and !findTrade(Price,Grid,true))
+      enterShort(0,Price,0,Grid);      
+    else if(Price &gt; Current and !findTrade(Price,Grid,false))
+      enterLong(0,Price,0,Grid);
+  }
+}</pre>
+<h3>See also:</h3>
+<a href="strategy.htm"> Strategy</a>, <a href="ta.htm">Indicators</a><p> </p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

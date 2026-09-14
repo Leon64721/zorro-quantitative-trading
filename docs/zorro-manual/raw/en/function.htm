@@ -1,0 +1,164 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+	<head>
+		<title>Functions</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+		<link href="css.css" rel="stylesheet" type="text/css"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/function.htm">
+</head>
+	<body link="#000000" vlink="#333333" alink="#666666">
+		<h1>
+			Functions</h1>
+		<P>
+			
+		  A <strong>function</strong>	      is  simply a list of <strong>commands</strong>. 
+		    
+	      When the function is <strong>called</strong>, the commands are executed one after another.
+	      	
+		  Such a command can  assign	a	value	to	a	variable, or call another user-defined or pre-defined function.
+A function
+			  is  defined this way: </P>
+		<h2 class="Instr">functiontype name (Argument1, Argument2, ...) { ... code ... }</h2>
+		<P><strong>functiontype </strong>is the variable type (such as <strong>var</strong>, <strong>int</strong>...) that the function returns to the caller. If the function returns nothing, write just 
+		<strong>void</strong> for the type. The often used type <strong>function</strong> 
+		can return either nothing, or an <strong>int</strong>.</P>
+		<P><strong>name</strong> is the name of the function. It must follow the same rules as variable names. </P>
+		<P><strong>(Argument1, Argument2, ...)</strong> is a list of parameters, 
+		named 'arguments', that are passed to the function. Each argument is 
+		given with its variable type and name, such as <strong>&quot;var X&quot;</strong>. The function 
+		receives these variables from the caller. For each variable that is passed to the function, the parameter list must contain one entry. This entry 
+	    specifies the type and name with which the variable is referred to inside the function. The parameter list is enclosed in parentheses. If the function expects no 
+		parameters, leave the parentheses empty. </P>
+		<P><strong>{ ... code ... }</strong> is the function body, enclosed in braces. It's a list of commands that do the real work. When a function is called, execution begins at the start of the function body and 
+		  terminates (returns to the calling program) when a <a href="return.htm">return</a> statement is encountered or when execution 
+		  reaches the closing brace.</P>
+		<P> A simple function definition without parameters
+			  looks like this:</P>
+		<pre>function alert() 
+{ 
+  printf(&quot;Warning!&quot;);
+  sound(&quot;beep.wav&quot;);
+} </pre>
+		<P>This function is executed 
+		  
+		  whenever the program calls the command <b>alert()</b>. The next example is
+		  a function that takes two <b>var</b> variables as
+		  parameters: </P>
+		<pre>function alert2(var Value, var Limit)
+{
+  if (Value &gt; Limit)
+    printf(&quot;Warning - value above limit!&quot;);
+}
+</pre>
+		<p> If a global variable or another object of the same name
+		  as the parameter exists, all references within the function refer to
+		  the 'local' parameter
+		  and not to the 
+		'global' variable. Still, to avoid confusion, don't use the same names 
+		for global and local variables. The function may change any of its parameters, as '<strong>value</strong>'
+		  in the example, but the original variable in the calling function
+		remains unchanged. </p>
+		<h3>Return values</h3>
+		A function can return a value to its caller, through the <a href="return.htm">return</a> statement. Example:
+        <pre>var average(var a, var b) 
+{ 
+  return (a+b)/2; 
+} 
+
+
+<em>// this can be called this way</em>:
+...
+x = average(123,456); <i>// calculate the average of 123 and 456, and assign it to x</i></pre>
+
+For returning multiple values, their <a href="apointer.htm">pointers</a> can be given in the parameter list. 
+		Or the function can return a pointer to a static <a href="structs.htm">struct</a> or 
+		<a href="aarray.htm">array</a>.
+
+        <h3>Function prototypes and function pointers </h3>
+        Like all other objects, functions
+		    must be defined before they can be called
+		    by another function. Sometimes this is inconvenient, for instance
+		  if two functions call each other. In that case, a function can be predefined
+		    through a <strong>prototype</strong>. The prototype consists
+		    of the function title with the list of arguments or argument types, followed by a semicolon,
+		    but without the command list in {...}. In the argument list of a prototype, the variable names can be omitted, only the variable types are necessary.Example: 
+	        <pre>var greater_of(var,var); <em>// prototype of function greater_of
+
+</em>var greater_of(var a, var b) <em>// real function greater_of</em>
+{
+  if (a &gt; b) return a;
+  else return b;
+}</pre>
+		    <p><font size="2" face="Arial, Helvetica, sans-serif">
+          
+           In lite-C a function prototype
+          can also be used as a function pointer. Example:</font></p>
+		<pre>long MessageBox(HWND,char*,char*,long); <em>// prototype of function MessageBox</em>
+...
+MessageBox = DefineApi(&quot;user32!MessageBoxA&quot;); <i>// set the MessageBox pointer to a function in the user32.dll</i>
+</pre>
+<h3>Recursive functions </h3>
+	A function can call itself - this is named a <strong>recursive function</strong>. Recursive 
+		functions are useful for solving certain mathematical or AI problems. Example:
+		<pre>int factorial(int X)
+{
+&nbsp;&nbsp;if (X &lt;= 1) return 1;&nbsp;&nbsp;
+  else if (X &gt;= 10) return(0); <em>// number becomes too big...</em>
+&nbsp;&nbsp;else return X*factorial(X-1);
+}</pre>
+        <p>Recursive functions must be used with care.
+  If you make a mistake, like a function that infinitely calls itself, you can
+  easily produce a 'stack overflow' which crashes the computer. The stack size
+  allows a recursion depth of around 1000 nested function calls, dependent on  number and size of local variables inside the function.</p>
+        <h3>Overloaded functions</h3>
+    
+     In lite-C, functions can
+    be <b>overloaded</b>, which means you can define several
+          functions with the same name, but different parameter lists. The compiler
+          knows which function to use depending on the types and numbers of parameters
+          passed. Example:
+          <pre>var square(var x) 
+{ 
+  return pow(x,2); 
+}
+
+int square(int x) 
+{ 
+  return(x*x); 
+}
+...
+var x = square(3.0); <i>// calls the first square function</i>
+int i = square(3);   <i>// calls the second square function</i></pre>
+          <h3>Variable number of parameters</h3>
+          Functions can
+    be called with less or more than given number of parameters when the parameter list has a <strong>&quot;...&quot;</strong> for the last parameter. The function  can then be called with less parameters; the missing parameters at the end are  replaced with <strong>0</strong>. Functions in an external DLL or library, such as <strong>printf</strong>, can also be called with more parameters. C specific macros such as <strong>va_start</strong> and <strong>va_end</strong> then retrieve the additional parameters. Example:
+    <pre>int test(int a,int b,int c,...)
+{
+  return a+b+c; 
+}
+
+void main()
+{
+  printf("\n%d",test(1,2,3)); <em>// 6</em>
+  printf("\n%d",test(1,2));   <em>// 3</em>
+  printf("\n%d",test(1));     <em>// 1</em>
+  printf("\n%d",test());      <em>// 0</em>
+}</pre>
+    <h3 align="left"><font size="2" face="Arial, Helvetica, sans-serif"><b>Calling
+        modifiers</b></font> </h3>
+            In lite-C, C,or C++ the <b>__stdcall</b> calling
+           modifier is used to call Win32 API functions. The called function
+           cleans the stack. The <b>__cdecl</b> calling
+          modifier is  the default calling convention in C-Script, lite-C, C
+           and C++ programs. Because the stack is cleaned up by the caller, it
+           can do variable argument (<b>vararg</b>) functions, like <b>printf(...)</b>.     
+          <h3 align="left">Special functions</h3>
+    If a function named <strong>main()</strong> exists in the script (see above example), it is automatically called at the start of the program. The program terminates when the <strong>main()</strong> function returns.
+This is for using a script for other purposes than for trading.
+    <p>It a function named <strong><a href="run.htm">run()</a></strong> exists in the script, it is automatically called at the start of the program and also after every bar.
+    The program terminates when there are no more bars, or when [<span class="tast">Stop</span>] is clicked. More functions that are automatically called at certain events are listed <a href="funclist.htm">here</a>. </p>
+        <h3>See also:</h3>
+	<span class="links"><A href="aarray.htm">Variables</A>, <A href="apointer.htm">Pointers</A></span>, <a href="structs.htm">Structs</a><a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+version online</a>
+        </body>
+</html>

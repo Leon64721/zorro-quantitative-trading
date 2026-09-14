@@ -1,0 +1,181 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Expressions</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/expressions.htm">
+</head>
+
+<body link="#000000" vlink="#333333" alink="#666666">
+<h1>Expressions</h1>
+		An expression is an arithmetical operation that delivers a result,
+		which can then be assigned to a variable or
+		object parameter. The arithmetic expression may be composed of any numbers,
+		further variables or object parameters, function calls, brackets, and
+		arithmetic operators.
+<br>
+<br>
+The following operators are available in expressions: 
+<table border="0" cellspacing="2" cellpadding="2">
+          <tr>
+            <td valign="top"><b>=</b></td>
+            <td>Assigns the result right of the '=' to the variable
+              left of the '='. </td>
+          </tr>
+          <tr>
+            <td valign="top"><b>+-*/</b></td>
+            <td>The usual mathematical operators. * and / have a higher priority
+              than + and -. </td>
+          </tr>
+  <tr>
+            <td valign="top"><span><b>%</b></span></td>
+            <td>Modulo operator, the integer remainder of a division.</td>
+  </tr>
+          <tr>
+            <td valign="top"><span><b>|</b></span></td>
+            <td>Bitwise OR, can be used to set certains bits in a variable. </td>
+          </tr>
+          <tr>
+            <td valign="top"><span><b>^</b></span></td>
+            <td>Bitwise exclusive OR, can be used to toggle certain bits in a
+              variable. </td>
+          </tr>
+          <tr>
+            <td valign="top">~</td>
+            <td>Bitwise invert, toggles
+              all bits of a variable.</td>
+          </tr>
+          <tr>
+            <td valign="top"><span><b>&amp;</b></span></td>
+            <td>Bitwise AND, can be used to reset certains bits in a variable. </td>
+          </tr>
+          <tr>
+            <td valign="top"><span><b>&gt;&gt;</b></span></td>
+            <td>Bitwise right shift, can be used to divide a positive integer
+              value by 2. </td>
+          </tr>
+          <tr>
+            <td valign="top"><span><b>&lt;&lt;</b></span></td>
+            <td>Bitwise left shift, can be used to multiply a positive integer
+              value by 2. </td>
+          </tr>
+          <tr>
+            <td valign="top"><b>()</b></td>
+            <td>Parentheses for defining the priority of mathematical operations.</td>
+          </tr>
+</table>
+		<h3> Examples:</h3>
+  <pre><i></i>x = (a + 1) * b / c;
+z = 10;
+x = x &gt;&gt; 2; <em>// divides x by 4</em> <i>(integer only)</i>
+x = x &lt;&lt; 3; <em>// multiplies x by 8</em> <i> (integer only)</i>
+x = fraction(x) &lt;&lt; 10; <em>// copies the fractional part of x (10 bits) into the integer part</em>
+</pre>
+  <h3>Assignment operators</h3>
+  
+  The "<strong>=</strong>"-character can be combined with the 
+  basic operators: <br>
+  <br>
+<table border="0" cellspacing="2" cellpadding="2">
+           <tr>
+             <td valign="top"><b>+=</b></td>
+             <td>Adds the result right of the operator to the variable
+               left of the operator. </td>
+           </tr>
+<tr>
+             <td valign="top"><b>-=</b></td>
+             <td>Subtracts  the result right of the operator from the variable
+             left of the operator. </td>
+  </tr>
+           <tr>
+             <td valign="top"><span><b>*</b></span><b>=</b></td>
+             <td>Multiplies  the variable
+             left of the operator by the result right of the operator.</td>
+           </tr>
+           <tr>
+             <td valign="top"><span><b>/</b></span><b>=</b></td>
+             <td>Divides the variable
+             left of the operator by the result right of the operator.</td>
+           </tr>
+           <tr>
+             <td valign="top"><b>%=</b></td>
+             <td> Sets the variable left of the operator to the remainder
+               of the division by the result right of the operator.</td>
+           </tr>
+           <tr>
+             <td valign="top">|=</td>
+             <td> Bitwise OR's the
+             the result right of the operator and the variable
+             left of the operator.</td>
+           </tr>
+           <tr>
+             <td valign="top">&amp;=</td>
+             <td> Bitwise AND's
+               the the result right of the operator and the variable
+             left of the operator.</td>
+           </tr>
+           <tr>
+             <td valign="top">^=</td>
+             <td>  Bitwise exclusive
+               OR's the the result right of the operator and the variable
+             left of the operator.</td>
+           </tr>
+           <tr>
+             <td valign="top">&gt;&gt;=</td>
+             <td> Bitwise right shift
+             the variable left of the operator by the result right of the operator.</td>
+           </tr>
+           <tr>
+             <td valign="top">&lt;&lt;=</td>
+             <td> Bitwise left
+               shift the variable left of the operator by the result right of
+               the operator.</td>
+           </tr>
+</table>
+ <h3>Increment and decrement operators </h3>
+ Variables can be counted up or down by attaching  '<b>++</b>' or '<strong>--</strong>' before or after a variable.<br>
+&nbsp;
+<table border="0" cellpadding="2" cellspacing="2">
+  <tr>
+    <td valign="top"><b>x++</b></td>
+    <td>Increments <strong>x</strong> by <strong>1</strong>; the result is the previous value of <strong>x</strong> (before incrementing).</td>
+  </tr>
+  <tr>
+    <td valign="top"><b>++x</b></td>
+    <td>Increments <strong>x</strong> by <strong>1</strong>; the result is the current (incremented) value of <strong>x</strong>. This is slightly faster than <strong>x++</strong>. </td>
+  </tr>
+    <tr>
+      <td valign="top"><b>x--</b></td>
+      <td>Decrements <strong>x</strong> by <strong>1</strong>; the result is the previous value of <strong>x</strong> (before decrementing).</td>
+  </tr>
+    <tr>
+      <td valign="top"><b>--x</b></td>
+      <td>Decrements <strong>x</strong> by <strong>1</strong>; the result is the current  (decremented) value of <strong>x</strong>. This is slightly faster than <strong>x--</strong>. </td>
+    </tr>
+</table>
+  <h3>Examples:</h3>
+ <pre>x = x + 1; <i>// add 1 to x</i>
+x += 1; <i>// add 1 to x</i>
+++x; <i>// add 1 to x</i>
+</pre>
+ <h3>Remarks:</h3>
+		
+  <ul>
+    <li>For setting and resetting flags through the <strong>&amp;</strong> or <strong>|</strong> operators, use <strong>long</strong> or <strong>int</strong> variables.</li>
+    <li><span class="edition">&nbsp;!!&nbsp;</span>
+      
+The precedence of comparison and expression operators follows the C/C++ standard. Use parentheses in case of doubt. For instance, the expressions <strong>(x &amp; y == z)</strong> and <strong>((x &amp; y) == z)</strong> give different results because the <strong>&amp;</strong> operator has lower precedence than the <strong>==</strong> operator.</li>
+	  <li>Bugs in expressions - for instance, division by zero - generate 
+	  results that are not a number (<strong>NaN</strong>). They are printed 
+	  like <strong>&quot;1.#J&quot;</strong> or <strong>&quot;1.#IND&quot;</strong>. If you see such 
+	  a number in the log, there's a faulty expression somewhere in your script.</li>
+  </ul>
+  <p class="instSub"> See also:</p>
+		<span class="links"> <A href="function.htm">Functions</A>, <A href="aarray.htm">Variables</A>, <A href="apointer.htm">Pointers</A></span>,	<a href="comparisions.htm">Comparisons</a>
+		<p>&nbsp;</p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+version online</a>
+</body>
+</html>

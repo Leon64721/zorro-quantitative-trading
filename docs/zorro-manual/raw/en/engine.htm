@@ -1,0 +1,222 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Zorro Integration</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+.auto-style1 {
+	color: #FFFFFF;
+}
+.auto-style2 {
+	font-weight: bold;
+	color: #FFFFFF;
+}
+</style>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/engine.htm">
+</head>
+
+<body>
+<h1>Zorro processes. Integration in 3rd party software.</h1>
+<p>Zorro can be used for trading, backtests, optimizations, or other 
+computations under control from either a VC++ project, a software application, or a Zorro 'master' 
+instance. For this purpose, a <span class="Highlight"><strong>ZorroControl</strong> 
+DLL</span> provides functions to start, stop, and exchange information with one 
+or several <span class="Highlight">Zorro processes</span> (up to 72). A Zorro 
+process is a single Zorro.exe instance running a given script and returning a result. In 
+this way Zorro scripts can be run from other trading platforms, user interfaces, or 
+software tools.&nbsp; </p>
+<table align="center" border="0">
+	<tr>
+		<td bgcolor="#0000FF" class="auto-style1" valign="middle">
+		<div align="center" class="auto-style1">
+			<strong><br><br>Your<br>&nbsp;Application</strong></div>
+		</td>
+		<td><strong>
+		<br><br>
+		<img class="auto-style2" height="36" src="../images/arrow.gif" width="30"></strong></td>
+		<td align="center" bgcolor="#0000FF" class="Stil2"><strong>
+		<br>
+		<br class="auto-style1">&nbsp;</strong><span class="auto-style1"><strong>Zorro<br>&nbsp;Control</strong></span><strong><br class="auto-style1">
+		</strong></td>
+		<td class="Stil4"><strong><br class="auto-style1">
+		<br class="auto-style1">
+		<img class="auto-style1" height="36" src="../images/arrow.gif" width="30"><br>
+		<br></strong></td>
+		<td align="center" bgcolor="#0000FF" class="Stil4"><strong>
+		<br class="auto-style1">
+		<br class="auto-style1"><span class="auto-style1">&nbsp;Zorro</span><br class="auto-style1">
+		<span class="auto-style1">&nbsp;EXE</span></strong></td>
+		<td class="Stil4"><strong><br class="auto-style1">
+		<br class="auto-style1">
+		<img class="auto-style1" height="36" src="../images/arrow.gif" width="30"><br>
+		<br></strong></td>
+		<td align="center" bgcolor="#0000FF" class="Stil4"><strong>
+		<br class="auto-style1">
+		<br class="auto-style1"><span class="auto-style1">&nbsp;Zorro</span><br class="auto-style1">
+		<span class="auto-style1">&nbsp;Script</span></strong></td>
+	</tr>
+	</table>
+	
+<p>&nbsp;</p>
+	
+<table align="center" border="0">
+	<tr>
+		<td bgcolor="#0000FF" class="auto-style1" valign="middle">
+		<div align="center" class="auto-style1">
+			<strong><br><br>&nbsp;Zorro<br>&nbsp;EXE</strong></div>
+		</td>
+		<td><strong>
+		<br><br>
+		<img class="auto-style2" height="36" src="../images/arrow.gif" width="30"></strong></td>
+		<td align="center" bgcolor="#0000FF" class="Stil2"><strong>
+		<br>
+		<br class="auto-style1">&nbsp;</strong><span class="auto-style1"><strong>Master<br>&nbsp;Script</strong></span><strong><br class="auto-style1">
+		</strong></td>
+		<td class="Stil4"><strong>
+		<br class="auto-style1">
+		<img class="auto-style1" height="36" src="../images/arrow.gif" width="30"><br>
+		<img class="auto-style1" height="36" src="../images/arrow.gif" width="30"><br></strong></td>
+		<td align="center" bgcolor="#0000FF" class="Stil4"><strong>
+		<br class="auto-style1">
+		<br class="auto-style1"><span class="auto-style1">&nbsp;Zorro</span><br class="auto-style1">
+		<span class="auto-style1">&nbsp;Processes</span></strong></td>
+		<td class="Stil4"><strong>
+		<br class="auto-style1">
+		<img class="auto-style1" height="36" src="../images/arrow.gif" width="30"><br><strong>
+		<img class="auto-style1" height="36" src="../images/arrow.gif" width="30"></strong>
+		<br></strong></td>
+		<td align="center" bgcolor="#0000FF" class="Stil4"><strong>
+		<br class="auto-style1">
+		<br class="auto-style1"><span class="auto-style1">&nbsp;Zorro</span><br class="auto-style1">
+		<span class="auto-style1">&nbsp;Scripts</span></strong></td>
+	</tr>
+	</table>
+<p>The following functions are available in the ZorroControl DLL as well as in the 
+Zorro API. They can be called from other 
+programs, or directly from a Zorro 'master' script: </p>
+<h2>zInit (int Num, int Size): int </h2>
+   Initializes the 
+interprocess communication and determines the maximum number of processes and 
+the size of the data area per process. Must be called first from the 
+ZorroControl DLL and from all Zorro processes.
+Returns <strong>0</strong> when no communication channel could be established, 
+otherwiee nonzero.
+<h2>zOpen (int Id, const char* Commandline): HANDLE </h2>
+   Starts a single Zorro process with the given identifier and command line.
+   Must be called from the ZorroControl DLL or the master instance.
+Returns the process handle, or 0 when no process could be started due to an 
+error in the command line, no Zorro S license, no Zorro.exe in the same folder, 
+or a failed <strong>zInit</strong> call.
+For starting the process with no window, use the <strong>-h</strong>
+<a href="command.htm">command line</a> option.
+<h2>zStatus (int Id): int </h2>
+   Returns 1 when the process is still running, 0 otherwise.
+   Must be called from the ZorroControl DLL or master instance.&nbsp;
+   <h2>zClose (int Id) </h2>
+   Closes 
+the Zorro process with the given <strong>Id</strong>. <strong>Id == 0</strong> closes all 
+Zorro processes. 
+Must be called from the ZorroControl DLL or the master instance.
+   <h2>zData (int Id): 
+void*</h2>
+  
+Returns a pointer to a memory area 
+of the previously given <strong>Size</strong> for exchanging data and information with the Zorro 
+process with the given <strong>Id</strong>.&nbsp;Every process has its own data 
+area, but can also read or write to other processes' data areas. For the data area, a 
+byte-aligned struct can be defined that contains the variables to be exchanged 
+(see example).&nbsp;
+  <h3>Parameters:</h3>
+<table border="0">
+    <tr>
+    <td><strong>Num</strong></td>
+    <td>Total number of processes to handle, <strong>2..72</strong>. The master 
+	instance is always process 1.</td>
+    </tr>
+  <tr>
+    <td><strong>Size</strong></td>
+    <td>Size of the data area for information exchange per process, in bytes. 8 bytes per <strong>var</strong>, 4 
+	bytes per <strong>int</strong>.</td>
+  </tr>
+    <tr>
+    <td><strong>Id</strong></td>
+    <td>Process identifier number, <strong>2..Num</strong>, or <strong>1</strong> 
+	for the master instance.</td>
+    </tr>
+	<tr>
+    <td><strong>Commandline</strong></td>
+    <td><a href="command.htm">Command line parameters</a> for the Zorro process. 
+	If no script name is given, the script of the master instance is used.</td>
+    </tr>
+  </table>
+<h3>Returns:</h3>
+Nonzero when successful, <strong>0</strong> otherwise.
+<br>
+<h3>Remarks:</h3>
+<ul>
+	<li>An <span class="Highlight">integration toolkit</span> is included in the 
+	Zorro distribution and can be used with <a href="restrictions.htm">Zorro 
+S</a>. It consists of the ZorroControl DLL and an example project in <strong>Source\ZorroControl</strong>. 
+	It's a simple console application that starts a Zorro process and retrieves 
+	a random number as result. </li>
+	<li>Interprocess communication is handled via memory mapped I/O. </li>
+	<li>A process can read its own Id from the <a href="numcores.htm">Core</a> 
+	variable.</li>
+	<li>When running multiple Zorro processes in parallel with the same script, make sure 
+	that they don't write into the same logs or temporary files. The
+	<a href="script.htm">Script</a> string can be used to let any 
+	process use different file names. Logs are only generated by client 
+	processes when the
+	<a href="numtotalcycles.htm">LogNumber</a> variable is nonzero.</li>
+	<li>If Zorros run on different servers, use <a href="http.htm">http 
+	functions</a> for communication. Data can be exchanged by reading from or 
+	writing into files on a cloud server.</li>
+	<li>The <strong>-h</strong> <a href="command.htm">command line option</a> 
+	runs the process in minimized mode. The <strong>-run</strong> command line 
+	options lets the process automatically terminate after executing the script.</li>
+	<li>No further <span class="Highlight">license fees</span> required when 
+	using the Zorro integration toolkit for private purposes. For redistribution, 
+	or for a 'tighter' integration using a tailored Zorro DLL or the Zorro 
+	source code, please 
+	contact <a href="mailto:info@opgroup.de?subject=Engine API">info@opgroup.de</a>.</li>
+</ul>
+<h3>Example (see also the Process.c script):</h3>
+<pre>
+<em>// data struct that is exchanged between 2 Zorros</em>
+typedef struct INFO { 
+  var Position; 
+} INFO;
+
+INFO *Own, *Other;
+
+void main()
+{
+<em>// initialize IPC</em>
+  if(!zInit(2,sizeof(INFO))) {
+    printf(&quot;Can't initialize process!&quot;); 
+    return;
+  } 
+<em>// if main process, start second Zorro
+</em>  if(Core &lt;= 1) zOpen(2,&quot;-w 320&quot;); <em>// shift window to the side</em>
+<em>// get pointers to own and other data struct</em>
+  Own = zData(Core);
+  Other = zData(3-Core); <em>// Core is 1 or 2</em>
+<em>// define sliders </em>
+  slider(1,1,1,100,&quot;This&quot;,0);
+  slider(2,1,1,100,&quot;Other&quot;,0);
+<em>// permanently replicate the 'Other' slider to the other Zorro
+</em>  while(wait(1)) {
+    slider(1,Own-&gt;Position);
+    Other-&gt;Position = slider(2);
+  }
+  zClose(2);
+}</pre>
+<h3>See also:</h3>
+<a href="restrictions.htm">Licenses</a>, <a href="numcores.htm">Core</a>, 
+<a href="command.htm">command line</a>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+version onlin</a>
+</body>
+</html>

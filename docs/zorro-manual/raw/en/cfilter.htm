@@ -1,0 +1,110 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>filter</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/cfilter.htm">
+</head>
+
+<body link="#000000" vlink="#333333" alink="#666666">
+<h2>filter (var* Data, int Length, var Kernel[6]) : var* </h2>
+Applies a 5-element convolution filter 
+with the given <strong>Kernel</strong> to the <strong>Data</strong> array. Each
+<strong>Data</strong> element is added to its local neighbors, weighted by the
+<strong>Kernel</strong>, using this formula: <strong><em>Data[i] = 
+Kernel[0]*Data[i-2] + Kernel[1]*Data[i-1] + Kernel[2]*Data[i] + 
+Kernel[3]*Data[i+1] + Kernel[4]*Data[i+2] + Kernel[5]</em></strong>.&nbsp; This function 
+can be used for data smoothing, summing up, subtraction, sharpening, edge 
+enhancement, or similar data array manipulation operations. 
+<h3>Parameters:</h3>
+		<table border="0">
+          <tr>
+            <td><strong>Data</strong></td>
+            <td>Array or <a href="series.htm">series</a> to be filtered.</td>
+          </tr>
+          <tr>
+            <td><strong>Length</strong></td>
+            <td>Number of elements to be filtered. </td>
+          </tr>
+          <tr>
+            <td><strong>Kernel</strong></td>
+            <td>Vector of 5 weights plus constant to be 
+			added.</td>
+          </tr>
+        </table>        
+        <h3>Returns</h3>
+ Modified <strong>Data<br>&nbsp;</strong>
+ <h2>renorm (var* Data, int Length, var Sum) : var* </h2>
+Modifies the <strong>Data</strong> array by multiplying all elements with a 
+factor so that they sum up to
+<strong>Sum</strong>. 
+This function can be used to normalize a list of weights to a certain total. 
+<h3>Parameters:</h3>
+		<table border="0">
+          <tr>
+            <td><strong>Data</strong></td>
+            <td>Array or <a href="series.htm">series</a> to be normalized.</td>
+          </tr>
+          <tr>
+            <td><strong>Length</strong></td>
+            <td>Number of elements to be normalized. </td>
+          </tr>
+          <tr>
+            <td><strong>Sum</strong></td>
+            <td>Resulting sum of elements.</td>
+          </tr>
+        </table>        
+        <h3>Returns</h3>
+Modified <strong>Data<br>&nbsp;</strong>
+<h3>Remarks:</h3>
+			<ul>
+		  <li>Use the <a href="renorm.htm">renorm</a> function on the kernel 
+		  when the weight sum must be 1.  </li>
+				<li>For boundary handling, <strong>Data[0]</strong> and <strong>
+				Data[Length-1]</strong> are extended.</li>
+				<li>Some examples of filter kernels:</li>
+	        </ul>
+<p>
+<table>
+	<tr>
+		<td>Identity</td>
+		<td><strong>{ 0, 0, 1, 0, 0, 0 }&nbsp; </strong> </td>
+	</tr>
+	<tr>
+		<td>Sharpen</td>
+		<td><strong>{ -1, -1, 4, -1, -1, 0 }&nbsp;&nbsp;</strong></td>
+	</tr>
+	<tr>
+		<td>Smooth</td>
+		<td><strong>{ 0.2, 0.2, 0.2, 0.2, 0.2, 0 }</strong></td>
+	</tr>
+	<tr>
+		<td>Gaussian</td>
+		<td><strong>{ 0.1, 0.2, 0.4, 0.2, 0.1, 0 }</strong></td>
+	</tr>
+	<tr>
+		<td style="height: 20px">Shift to the right</td>
+		<td style="height: 20px"><strong>{ 0, 1, 0, 0, 0, 0 }</strong></td>
+	</tr>
+	<tr>
+		<td>Mean subtraction</td>
+		<td><strong>{ 0, 0, 1, 0, 0, -mean }&nbsp; </strong></td>
+	</tr>
+	<tr>
+		<td>Fill with constant</td>
+		<td><strong>{ 0, 0, 0, 0, 0, constant }&nbsp; </strong></td>
+	</tr>
+</table>
+<br></p>
+<h3>Example:</h3>
+<pre>var* Filter = { 1,2,3,2,1,0 };
+filter(Data,Length,renorm(Filter,5,1));</pre>
+            <h3>See also:</h3>
+            <a href="predict.htm">predict</a>, <a href="advisor.htm">advise</a>, <a href="polyfit.htm">polyfit</a>, 
+<a href="renorm.htm">distribute</a><p></p>
+			<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+version online</a>
+</body>
+</html>

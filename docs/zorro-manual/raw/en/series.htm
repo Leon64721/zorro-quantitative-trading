@@ -1,0 +1,208 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>series</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/series.htm">
+</head>
+
+<body>
+<h2>series(<em>var Value</em>, <em>int Length</em>): vars</h2>
+Creates a time series of the given <strong>Length </strong>with the given 
+<strong>Value</strong>, 
+and returns the pointer to the series. A series is a <a href="aarray.htm">var array</a> that contains the history of 
+the variable. It is normally used by indicators in algorithmic trading. 
+Series can be <span class="Highlight">static or dynamic</span>. Dynamic series are automatically shifted 
+at every time frame, so 
+that every element corresponds to a certain <a href="bars.htm">bar</a> or time 
+frame; the <strong>[0]</strong> element to the 
+value at the current bar or time frame, the <strong>[1]</strong> element to the 
+value from one bar or time frame ago, and so on. If a series is static by giving 
+a negative <strong>Length</strong>, or if the <a href="mode.htm">NOSHIFT</a> flag is set, the series is not shifted.<BR>
+<h3>Parameters:</h3>
+		<table border="0">
+		  <tr>
+            <td><strong>Value</strong></td>
+            <td>Optional data value of the series. The series is initially 
+			filled with this value, otherwise with <strong>0</strong>. On 
+			dynamic series the value is copied into the first element.</td>
+	      </tr>
+          <tr>
+            <td><strong>Length</strong></td>
+            <td>Optional number of elements of the series; must not change once set. When omitted or <strong>0</strong>, the series gets the length of <strong><a href="nhistory.htm">LookBack</a></strong>. A negative number allocates a static series 
+			that can be shifted by script with the <a href="shift.htm">shift</a> 
+			function. </td>
+          </tr>
+        </table>        
+        <h3>Returns:</h3>
+            Pointer to the <strong>var</strong> array
+(the <strong>vars</strong> type is just a <strong>var*</strong> pointer).
+<h3>Usage:</h3>
+            <strong>vars Prices = series(price());</strong> defines a  series 
+with the length of the <strong>LookBack</strong> period that contains the mean 
+prices of the current asset<br>&nbsp;
+<h2>ref(var Value, int Index): var</h2>
+Convenience macro that generates a series and returns the <strong>Value</strong> 
+from <strong>Index</strong> time frames ago. All macros are defined in <strong>
+variables.h</strong>.<br>&nbsp; 
+<h2>SeriesLength</h2>
+<strong>int</strong>, r/o, containing the number of elements of the date series 
+returned by the last <strong>series()</strong> call.<h2>SeriesBuffer</h2>
+<strong>var*</strong> pointer that can be set to a memory area, and will then be 
+returned by the next <strong>series</strong> call (lite-C only). After a <strong>series</strong> call it is set to the returned 
+pointer. This allows to use static or pre-filled buffers for a series. 
+            For an example, see
+<a href="https://financial-hacker.com/petra-on-programming-truncated-indicators" target="_blank">
+Financial Hacker: Truncated Indicators</a>.<br>&nbsp;&nbsp; 
+            <h3>Remarks:</h3>
+            <ul>
+              <li>Series correspond to serial variables in EasyLanguage&#8482;. The <strong>n</strong>-th element of a series is accessed by adding a <strong>[n]</strong> to the series name, where <strong>n</strong> is a positive integer number. For instance, <strong>myseries[0]</strong> is the 
+			  most recent element, <strong>myseries[1]</strong> is the element of one time frame ago, and so on. <strong>n</strong> must be positive and smaller than the series length. </li>
+				<li><span class="edition">&nbsp;!! </span>&nbsp;The series 
+				function is responsible for allocating 
+				and shifting series. Therefore it must 
+				be called <span class="Highlight">at any bar, </span>either inside the <a href="run.htm">run</a> function or 
+			    from a function that is called from the <strong>run</strong> 
+				function. </li>
+				<li><span class="edition">&nbsp;!! </span>&nbsp;An internal counter determines the pointer to be returned by a
+				<strong>series()</strong> call. For keeping the counter in sync,
+				all
+				<strong>series()</strong> calls must be <span class="Highlight">in the same order</span>. Therefore
+				they must not be skipped by <a href="if.htm">if</a> or 
+			  other conditions that change from bar to bar (see example 
+			  below). If the content of a series shall depend on <strong>if</strong> 
+				conditions, simply set its <strong>[0]</strong> element dependent on
+				<strong>if</strong>. These restrictions also apply to all functions that internally create
+				<strong>series</strong>, such as some <a href="ta.htm">indicator</a> or 
+				<a href="filter.htm">signal processing</a> functions.&nbsp; </li>
+				<li><span class="edition">&nbsp;!! </span>&nbsp;Since the 
+				<a href="lookback.htm">LookBack</a> value is normally only known 
+				after the <a href="is.htm">INITRUN</a>, series are  allocated in the
+				<a href="is.htm">FIRSTRUN</a>. During the <strong>INITRUN</strong> 
+				they are set to a temporary pointer and filled with the initial value. 
+				This <span class="Highlight">temporary content</span> is 
+				overwritten by the series allocation in the <a href="is.htm">FIRSTRUN</a>.
+				Series are only valid during the session and released after the
+				<a href="mode.htm">EXITRUN</a>.</li>
+				<li><span class="Highlight">Dynamic series</span> are 
+				normally shifted by the <strong>series</strong> call at the end 
+				of any bar or time 
+				frame when the <a href="mode.htm">NOSHIFT</a> flag is not set. The 
+				<strong>[0]</strong> element 
+				is then moved to the <strong>[1]</strong> element, the <strong>[1]</strong> element 
+				to the <strong>[2]</strong> element and so on. The current 
+				<strong>Value</strong> becomes the new <strong>[0]</strong> element. Due to this mechanism, 
+				the series contains its elements in reverse chronological order with the most recent element at the start. 
+				For synchronizing series to external events or to longer time frames, 
+				either set the <a href="barperiod.htm">TimeFrame</a> variable accordingly before the 
+				<strong>series()</strong> call, and 
+			  set it back afterwards. Or use the <strong>NOSHIFT</strong> flag. The element 
+				<strong>[n]</strong> then corresponds to the <strong>n</strong>th event or time frame in the past. 
+				</li>
+				<li><span class="Highlight">Static series</span> (defined with a negative 
+				<strong>Length</strong>) are not 
+				automatically shifted, but can be shifted by script with the
+				<a href="shift">shift</a> function. They 
+				can be used for storing arbitrary per-asset or per-algo 
+				variables, for excluding out-of-market time periods from indicators, 
+				or for shifting series by arriving price 
+				ticks in the <a href="tick.htm">tick</a> function. Like any 
+				series, static series are allocated in the <strong>FIRSTRUN</strong>, 
+				so don't initialize them before as those values will be lost. Usage examples can be found in the 
+				<strong>SpecialBars</strong> script or in the SAR code in 
+				<strong>indicators.c</strong>.</li>
+				<li>For <span class="Highlight">offsetting a series into the past</span>, add an offset 
+				<strong>+n</strong>. This creates a pointer onto the <strong>n</strong>-th element of the series. For instance, 
+				<strong>(MySeries+1)</strong> is <strong>MySeries</strong> 
+			  at 1 bar offset into the past, excluding the last element <strong>MySeries[0]</strong>. This allows to access series elements in different ways: for instance,
+				<strong>MySeries[3]</strong> is the same as <strong>(MySeries+2)[1]</strong> and the same as 
+				<strong>(MySeries+3)[0]</strong>. As the offset <strong>+n</strong> lets the series begin at the 
+				<strong>n</strong>th element, it reduces the available length of the series by 
+				<strong>n</strong>. When calling an <a href="ta.htm">indicator</a> with a series with an offset, make sure that 
+				<a href="lookback.htm">LookBack</a> 
+			  is always higher than the required lookback period of the function 
+			  plus the unstable period plus the highest possible offset of the 
+			  series. </li>
+				<li>For <span class="Highlight">adding or subtracting two series</span>, create a series of the sum or difference of the recent elements, f.i. 
+				<strong>vars Sums = series(Data1[0] + Data2[0]);</strong>.</li>
+				<li>Some functions expect a single value, other functions expect a series as parameter. When a function expects a single value from a series,  use 
+				the last element (<strong>MySeries[0]</strong>). When the function expects a whole series, use 
+				<strong>MySeries</strong> or <strong>MySeries+n</strong>. </li>
+				<li>If a series changes slowly, like an EMA, fill it initially with an 
+				average <strong>value</strong>. This prevents
+				<span class="Highlight">initialization effects</span> when an 
+				accumulative indicator needs many bars to 'creep' from 0 to its first value.</li>
+				<li>A value returned by a function can be 
+				<span class="Highlight">converted to a series</span> by using it as the first parameter to the series function. For instance, 
+				<strong>series(price())</strong> is a series that contains the 
+				<strong>price</strong> value; <strong>series(SMA(series(priceClose()),30))</strong> is a series containing the 30-bar Simple Moving Average of the 
+				<strong>Close </strong>value.</li>
+				<li>The <a href="rev.htm">rev</a> function 
+				<span class="Highlight">reverses a series</span> so that the 
+				<strong>[0]</strong> element is the earliest.</li>
+				<li>The <strong>length</strong> parameter should not exceed the 
+				<a href="lookback.htm">LookBack</a> period, at least not when 
+				the series affects trading. Otherwise the script would trade 
+				differently in the fist time after starting..</li>
+				<li>Every series requires memory and CPU resources. Therefore do not create more 
+			  or longer series than needed. The longer a series, the more memory is required and the slower is  script execution due to internal 
+			  shifting the series on every time frame. </li>
+				<li>If you need to create <span class="Highlight">extremely many series</span> and get an 
+				<a href="errors.htm">Error 041</a>, increase 
+				<a href="lookback.htm">TradesPerBar</a>. 
+			  This determines not only the maximum number of trades, but also the 
+			  maximum number of series.</li>
+				<li>For accessing the same series from several 
+				functions, declare a global <strong>vars</strong>, and set it 
+				with a <strong>series</strong> call in the <strong>run</strong> 
+				function.</li>
+</ul>
+            <h3>Examples:</h3>
+<pre><em>// create a series with the high-low price differences</em>
+vars PriceRanges = series(priceH()-priceL());
+ 
+<em>// compare the current range with the range from 3 bars ago
+</em>if(PriceRanges[0] &gt; PriceRanges[3])
+  ...
+ 
+<em>// calculate a 20-bar Simple Moving Average containing the price differences from 5 bars ago</em>
+var Average5 = SMA(PriceRange+5,20);
+
+
+<em>// wrong use of conditional series</em>
+if(priceClose() > Threshold) {
+  vars X = series(priceClose()); <em>// error message!</em>
+  vars Y = series(SMA(X,100)); <em>// error message!</em>
+  ...
+}
+
+<em>// correct use of conditional series</em>
+vars X = series(), Y = series();
+if(priceClose() > Threshold) {
+  X[0] = priceClose(); <em>// ok!</em>
+  Y[0] = SMA(X,100);
+  ...
+}
+
+<em>// exclude out-of-market bars from a series
+</em>if(!market(EST,0)) set(NOSHIFT);
+vars InMarketPrices = series(priceC());
+set(NOSHIFT|OFF);
+
+<em>// use arrays of series</em>
+vars MySeriesArray[3]; <em>// declare an array of series</em> 
+...
+for(i=0; i&lt;3; i++) 
+  MySeriesArray[i] = series(); <em>// fill the array with series</em> 
+...
+(MySeriesArray[0])[0] = 123; <em>// access the first element of the first series. Mind the parentheses!</em>
+</pre>
+            <h3>See also:</h3>
+			<a href="price.htm">price</a>, <a href="sortdata.htm">sort</a>,  <a href="rev.htm">rev</a>, <a href="diff.htm">diff</a>,
+<a href="shift.htm">shift</a>, <a href="frame.htm">sync</a>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+version online</a>
+</body>
+</html>

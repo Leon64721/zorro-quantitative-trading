@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>email</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/email.htm">
+</head>
+
+<body>
+<h2>email (string To, string From, string Subject, string Body, string 
+Server, string User, string Password): int</h2>
+Sends an email to a given recipient. Useful for receiving emails when Zorro 
+opens or closes a trade, or for status reports. <h3>Parameters:</h3>
+<strong>To</strong>  - Recipient address as required by the server. Usually in 
+angular brackets like <strong>&quot;&lt;me@myself.com&gt;&quot;</strong>.<br>
+<strong>From</strong>  - Sender address, usually in angular brackets.<br>
+<strong>Subject</strong> - Subject line of the email, and optionally content 
+types.<br>
+<strong>Body</strong> - Text content of the email, max 16k.<br>
+<strong>Server</strong> - SMTP/SMTPS server with optional port address, f.i. <strong>
+&quot;smtp://smtp.1und1.de&quot;</strong> 
+or <strong>&quot;smtps://smtp.gmail.com:465&quot;</strong>.<br>
+<strong>User</strong> - Login name for the SMTP server, often identical to the 
+sender address.<br><strong>Passwort</strong> - Login password for the SMTP 
+server.
+<h3> Returns:</h3>
+<strong> 0</strong> if the email could not be sent, otherwise nonzero.
+<h3>Remarks:</h3>
+<ul>
+  <li>Check with your email provider about any special requirements for sending 
+  emails from their SMTP server.&nbsp; </li>
+	<li>The following instruction for sending from Gmail accounts was provided 
+	by a user. Log in to your google account. In Google Security turn off &quot;Less 
+	Secure Apps&quot;. Enable 2-Step authentication. Search for &quot;App Passwords&quot;, and 
+	under &quot;Select app&quot; select &quot;Other&quot;, under &quot;Device type&quot; enter &quot;Zorro&quot;, then 
+	press the [Generate] button. This produces a 16-digit passcode that you can 
+	then used in the email function in place of your Gmail account password. For 
+	the server, use &quot;smtps://smtp.gmail.com:465&quot;.</li>
+	<li>For special content types, f.i. HTML, use a new line at the end of the
+	<strong>Subject</strong> line, f.i. <strong>&quot;My subject \nContent-Type: 
+	text/html; charset=UTF-8\n&quot;;</strong>.<br> </li>
+</ul>
+<h3>Example:</h3>
+<pre>void main()
+{
+  string To = &quot;&lt;me@myself.org&gt;&quot;;
+  string From = &quot;&lt;zorro_alert@gmail.com&gt;&quot;;
+  string Subject = &quot;Zorro Message&quot;;
+  string Body = &quot;Zorro has sent you a message!&quot;;
+  string Server = &quot;smtps://smtp.gmail.com:465&quot;;
+  string User = &quot;zorro_alert@gmail.com&quot;;
+  string Password = &quot;zorros_password&quot;;
+  email(To,From,Subject,Body,Server,User,Password);
+}</pre>
+<h3>See also:</h3>
+<a href="http.htm">HTTP functions</a>, <a href="ftp.htm">FTP functions</a>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+version online</a>
+</body>
+</html>

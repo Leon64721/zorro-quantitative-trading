@@ -1,0 +1,130 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Matrix functions</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/matrix.htm">
+</head>
+
+<body link="#000000" vlink="#333333" alink="#666666">
+<h1>Vector and matrix functions</h1>
+<p>The following functions can be used for vector and 2-dimensional matrix algebra. 
+The matrix or vector type <strong>mat</strong> is a pointer to the.<strong>MATRIX</strong> 
+struct.</p>
+<h2>matrix(int rows,<em> int cols</em>): mat </h2>
+Creates a vector or a matrix with the given number of rows and columns. The matrix is initialized to zeros. If <strong>cols</strong> is omitted, an identity matrix with <strong>1</strong>s in the diagonal is created.
+<h3>Parameters:</h3>
+<strong>rows</strong> - number of rows of the matrix, or <strong>1</strong> for defining a row vector. <br>
+<strong>cols</strong> - number of columns, or <strong>1</strong> for defining a column vector. Omit this for a square identity matrix.
+<h2>me(mat X, int row, int col): var </h2>
+Macro for accessing an element of the matrix <strong>X</strong> at a given row and column, with no range check. 
+<h2>ve(mat V, int n): var </h2>
+Macro for accessing the <strong>n</strong>-th element of the row or column vector <strong>V</strong>, with no range check.
+<h3>Parameters:</h3>
+<strong>X, V</strong> - matrix to be accessed. <br>
+<strong>row</strong> - row number of the element, starting with 0. <br>
+<strong>col</strong> - column number of the element, starting with 0. 
+<h2>matSet(mat X, mat A): mat </h2>
+Copies matrix <strong>A</strong> to matrix <strong>X</strong>, and returns <strong>X</strong>. <strong>A</strong> and <strong>X</strong> must have the same number of rows and columns.
+<h3>Parameters:</h3>
+<strong>X</strong> - destination matrix or vector <br>
+<strong>A</strong> - source matrix or vector
+<h2>matSet(mat X, int row, int col, mat A): mat </h2>
+Copies matrix <strong>A</strong> to a sub-range of matrix <strong>X</strong> that starts at the given row and colunm, and returns <strong>X</strong>. <strong>A</strong> and <strong>X</strong> can have different numbers of rows and columns.
+<h3>Parameters:</h3>
+<strong>X</strong> - destination matrix<br>
+<strong>A</strong> - source matrix<br>
+<strong>row</strong> - row number of the block, starting with 0. <br>
+<strong>col</strong> - column number of the block.
+<h2>matSet(mat X, var c): mat </h2>
+Sets all elements of matrix <strong>X</strong> to the value <strong>c</strong>, and returns <strong>X</strong>.
+<h3>Parameters:</h3>
+<strong>X</strong> - destination matrix.<br>
+<strong>c</strong> - value to be set.
+<h2>matTrans(mat X, mat A): mat </h2>
+Copies the transpose of  <strong>A</strong> to <strong>X</strong>, and returns <strong>X</strong>. The number of columns of <strong>X</strong> must be identical to the number of rows of <strong>A</strong>, and vice versa.
+<h3>Parameters:</h3>
+<strong>X</strong> - destination matrix.<br>
+<strong>A</strong> - source matrix.
+<h2>matAdd(mat X, mat A, mat B): mat </h2>
+Adds<strong> A</strong> and <strong>B</strong>, stores the result in <strong>X</strong>, and returns <strong>X</strong>. <strong>A</strong>, <strong>B</strong>, and <strong>X</strong> must have the same number of rows and columns.
+<h3>Parameters:</h3>
+<strong>X</strong> - destination matrix.<br>
+<strong>A,B</strong> - source matrices.
+<h2>matSub(mat X, mat A, mat B): mat </h2>
+Subtracts <strong>B</strong> from <strong> A</strong>, stores the result in <strong>X</strong>, and returns <strong>X</strong>. <strong>A</strong>, <strong>B</strong>, and <strong>X</strong> must have the same number of rows and columns.
+<h3>Parameters:</h3>
+<strong>X</strong> - destination matrix.<br>
+<strong>A,B</strong> - source matrices.
+<h2>matMul(mat X, mat A, mat B): mat </h2>
+Multiplies <strong>A</strong> with <strong>B</strong>, stores the result in <strong>X</strong>, and returns <strong>X</strong>. <strong>X</strong> and <strong>A </strong>must have the same number of rows, <strong>X</strong> and <strong>B</strong> must have the same number of columns, and the  <strong>B</strong> number of <strong></strong>rows must be identical to the <strong>A</strong> number of <strong></strong>columns.
+<h3>Parameters:</h3>
+<strong>X</strong> - destination matrix.<br>
+<strong>A,B</strong> - source matrices.
+<h2>matScale(mat X, var c): mat </h2>
+Multiplies all elements of  <strong>X</strong> with <strong>c</strong>, and returns <strong>X</strong>.
+<h3>Parameters:</h3>
+<strong>X</strong> - destination matrix.<br>
+<strong>c</strong> - multiplication factor.
+<h2>matSort(mat X, int col): mat </h2>
+Sorts all rows of the matrix by the given column in ascending or descending 
+order, and returns the sorted matrix.
+<h3>Parameters:</h3>
+<strong>X</strong> - destination matrix.<br>
+<strong>col</strong> - column number, negative for descending order.<br>
+&nbsp;<h2>matSaveCSV(mat X, string FileName) </h2>
+Saves the matrix <strong>X</strong> to a CSV file for further evaluation with 
+Excel or other programs.<h3>Parameters:</h3>
+<strong>X</strong> - source matrix.<br>
+<strong>FileName</strong> - CSV file name.&nbsp;<br>&nbsp;<br>
+<h3>Remarks:</h3>
+			
+<ul>
+  <li>Matrices are created in the <strong>INITRUN</strong> and released after the <strong>EXITRUN</strong>. Just like  <a href="series.htm">series</a>, <strong>matrix()</strong> creation must happen in 
+  the same order at any bar, preferably at the begin of the <strong>run</strong> function. </li>
+  <li>The <strong>mat</strong> type is a pointer of the <strong>MATRIX</strong> struct defined in <strong>trading.h</strong>. The numbers of rows and columns are stored in the <strong>-&gt;rows</strong> and <strong>-&gt;cols</strong> elements, a pointer to the content is stored in the <strong>-&gt;dat</strong> element. </li>
+  <li>Vectors can be defined as matrices with <strong>rows = 1</strong> or <strong>cols = 1</strong>. The dot product is the multiplication of a row vector with a column vector. </li>
+  <li>If matrix arithmetics is not required and the row/column number is fixed, matrices and vectors can be alternatively defined as  <strong>var</strong> <a href="array.htm">arrays</a>, like <strong>var MyVector[3]</strong> or <strong>var MyMatrix[3][3]</strong>. </li>
+</ul>
+<h3>Example:</h3>
+<pre>void matPrintf(mat X)
+{
+  int i,j;
+  printf("\n");
+  for(i=0; i &lt; X->rows; i++) {
+    for(j=0; j &lt; X-&gt;cols; j++)
+      printf("%.0f ",me(X,i,j));
+    printf("\n");
+  }
+}
+
+void main()
+{
+  int i,j;
+  mat A = matrix(3,4);
+  for(i=0; i &lt; A-&gt;rows; i++)
+    for(j=0; j &lt; A-&gt;cols; j++)
+      me(A,i,j) = i+j;
+  matPrintf(A);
+
+  mat B = matTrans(matrix(A-&gt;cols,A-&gt;rows),A);
+  matPrintf(B);
+
+  mat C = matrix(B-&gt;rows,A-&gt;cols);
+  matMul(C,B,A);
+  matPrintf(C);
+  
+  mat D = matrix(8);
+  matSet(D,4,4,C);
+  matPrintf(D);
+}
+</pre>
+<h3>See also:</h3>
+<a href="series.htm">series</a>
+<p></p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+version online</a>
+</body>
+</html>

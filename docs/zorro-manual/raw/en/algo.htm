@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>algo</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/algo.htm">
+</head>
+
+<body>
+<h2>algo (string name): int </h2>
+Sets the algorithm identifier for identifying trades. Using algorithm identifiers is recommended in portfolio strategies that contain different trade algorithms; they are used to create separate <a href="optimize.htm">strategy parameters</a>, <a href="advisor.htm">rules</a>, and <a href="optimalf.htm">capital allocation factors</a> per algorithm. 
+<h3>Parameters:</h3>
+            <table border="0">
+              <tr>
+                <td><strong>name</strong></td>
+                <td>The algorithm identifier (max. 15 characters, no spaces). If <strong>name</strong> ends with <strong>&quot;:L&quot;</strong>, the algo is for long trades only; if it ends with <strong>&quot;:S&quot;</strong> the algo is for short trades only. </td>
+              </tr>
+            </table>
+            <h3>Returns:</h3>
+            <strong>0</strong> when the <strong>name</strong> string is <strong>NULL</strong> or empty, otherwise nonzero.
+            <h3>Usage:</h3>
+            <strong>algo(&quot;TREND:L&quot;);</strong> sets up the identifier
+<strong>&quot;TREND:L&quot;</strong> for the current algorithm for long trades. 
+Short trades are suppressed.
+            <h3>Remarks:</h3>
+            <ul>
+              <li>The	<a href="asset.htm">assetList</a> (if any) and an	<a href="asset.htm">asset</a> 
+			  must be selected before calling <strong>algo()</strong>. </li>
+				<li>For getting separate factors, parameters, or rules for long and short trades, 
+				call the same algorithm with two algo identifiers that end with <strong>&quot;:L&quot;</strong> 
+				and <strong>&quot;:S&quot;</strong>, like the trade names in the message window and parameter files. Long trades 
+			  are then automatically suppressed on <strong>&quot;:S&quot;</strong> algos and 
+			  short trades on <strong>&quot;:L&quot;</strong> algos, but reverse positions 
+			  are still closed depending on <a href="hedge.htm">Hedge</a>. Don't 
+				use <strong>&quot;:L&quot;</strong> or <strong>&quot;:S&quot;</strong> 
+				for symmetric strategies with the same factors, parameters, or rules for long and short trades, 
+				or for strategies that trade only long or only short. </li>
+              <li>The  algorithm identifier is stored in the <strong>
+			  <a href="script.htm">Algo</a></strong> string variable, and can be evaluated in strategies with the <a href="str_.htm">strstr</a> function.</li>
+              <li>Every <strong>algo</strong> call switches the <a href="winloss.htm">trade statistics parameters</a> and the <a href="optimalf.htm">OptimalF</a> factors to the current statistics and factors of the selected algorithm identifier.  </li>
+              <li>Any algo/asset combination is a <strong>component</strong> in a portfolio strategy. The <a href="performance.htm">performance report</a> lists strategy results separated by components. The <strong>Component</strong> variable is the number of the current component, starting with <strong>0</strong>, and can be used as an array index. </li>
+              <li>Algorithm specific data can be stored in the <a href="algovar.htm">AlgoVar</a> variables.</li>
+              <li>For <a href="optimize.htm">training</a> algo dependent parameters separately, switch algos in a <a href="loop.htm">loop</a>. </li>
+</ul>
+            <h3>Example:</h3>
+<pre>algo(&quot;TREND:L&quot;); <em>// algorithm identifier for a trend trading algorithm with long trades</em>
+...
+if(short_condition) 
+  enterShort(ifelse(strstr(Algo,&quot;:L&quot;),0,Lots)); <em>// suppress short trades when Algo ends with &quot;:L&quot;</em></pre>
+            <h3>See also:</h3>
+			<A href="buylong.htm"><span class="links">enterLong</span></A>,	<a href="buylong.htm">enterShort</a>, <a href="loop.htm">loop</a>, 
+			<a href="aarray.htm">string</a>,	<a href="asset.htm">asset</a>, <a href="script.htm">Algo</a>, <a href="algovar.htm">AlgoVar</a>,	<a href="trade.htm">TradeAlgo</a><p></p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+version online</a>
+</body>
+</html>

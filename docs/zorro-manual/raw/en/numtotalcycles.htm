@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>NumTotalCycles, TotalCycle</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/numtotalcycles.htm">
+</head>
+
+<body>
+<h1>Multiple Test Cycles</h1>
+<h2>NumTotalCycles</h2>
+Repeat the complete simulation in training or test mode in as many cycles as 
+given by this variable (default = <strong>0</strong> = no repetitions). This is normally used for 
+doing reality checks, plotting histograms, running special Montecarlo simulations or evaluating  result statistics dependent on changed parameters or randomized price curves.
+<h2>TotalCycle</h2>
+The number of the current cycle from <strong>1</strong> to <strong>NumTotalCycles</strong>.
+Read/only, automatically set by <strong>NumTotalCycles</strong>.
+<h2>LogNumber</h2>
+If nonzero, any cycle will generate individual log files. When above zero, the given number 
+is appended to the log, trade list, performance report, and chart image files 
+(when <a href="plotmode.htm">PL_FILE</a> 
+is set). By setting <strong>LogNumber = TotalCycle</strong>, different log 
+files, performance reports, and chart images can be generated for any cycle. At <strong>0</strong> (default), 
+no logs, reports, or images are produced when <strong>NumTotalCycles</strong> is 
+set. At <strong>-1</strong>, any cycle will produce log files with 
+no appended number, so individual names can be set with the <a href="script.htm">Script</a> string. Set this variable right at the begin of <strong>run</strong> or <strong>main</strong>, 
+before calling any function that writes something into the log.&nbsp;
+<h3>Type:</h3>
+<strong>int</strong>
+<h3>Remarks:</h3>
+<ul>
+  <li>If <a href="barperiod.htm">BarOffset</a> was changed or the
+  <a href="mode.htm">PRELOAD</a> flag was set, prices are loaded again at the begin of every cycle. This causes a delay, but 
+  allows to run cycles with different bar period or bar mode settings, modified price curves, 
+  shuffled prices, or different assets. 
+  Otherwise prices are only loaded on the first cycle.</li>
+	<li>For training on any cycle, set the <a href="mode.htm">TESTNOW</a> flag 
+	and run the cycles in [<span class="tast">Train</span>] mode.</li>
+	<li>Multiple cycles with <a href="advisor.htm">rules</a> in C code are not 
+	supported by the lite-C compiler. Set either the <a href="mode.htm">VCPP</a> 
+	flag or call <strong>advise()</strong> with the <strong>FAST</strong> flag.</li>
+</ul>
+<h3>Example (see also Detrend.c, MRC.c): </h3>
+<pre>function run()
+{
+  LogNumber = TotalCycle;
+  BarPeriod = 1440;
+  StartDate = 2015;
+  NumYears = 1;
+  LookBack = 0;
+ 
+<em>// run this simulation 1000 times  
+</em>  NumTotalCycles = 1000;
+ 
+<em>// some random trading strategy</em>
+  if(random() > 0)
+    enterLong();
+  else 
+    enterShort();
+ 
+<em>// plot the result of every run in a bar graph  </em>
+  if(is(EXITRUN))
+    plotHistogram("Profits&quot;,Balance/PIPCost,250,1,RED);   
+}</pre>
+
+<h3>See also:</h3>
+<a href="numsamplecycles.htm">NumSampleCycles</a>, <a href="numwfocycles.htm">NumWFOCycles</a>, 
+<a href="log.htm">Log</a>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

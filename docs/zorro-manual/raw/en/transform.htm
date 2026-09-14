@@ -1,0 +1,369 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+<title>Time series statistics</title>
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/transform.htm">
+</head>
+
+<body>
+
+<h1>Time series statistics</h1>
+<p>Library of often used functions for evaluating properties of time series or 
+data arrays. See also <a href="norm.htm">Normalization</a>.</p>
+<h2>correl(vars Data, int Length, function): var</h2>
+Spearman correlation of the <strong>Data</strong> series with an arbitrary 
+<strong>function</strong>. Used for the <a href="ta.htm">CTI</a>,
+<a href="ta.htm">CCYI</a>, and <a href="ta.htm">CCYIR</a> indicators. Source in
+<strong>indicators.c</strong>; usage and description on
+<a href="https://financial-hacker.com/petra-on-programming-the-correlation-cycle-indicator/" target="_blank">
+Financial Hacker</a>.&nbsp;
+<h2>Correlation(vars Data1, vars Data2, int TimePeriod): var</h2>
+Pearson's correlation coefficient between two data series over the given <strong>
+TimePeriod</strong>, in the range between <strong>-1..+1</strong>. A coefficient 
+of +1.0, a &quot;perfect positive correlation,&quot; means that changes in
+<strong>Data2</strong> cause identical changes in <strong>Data1</strong> (e.g., 
+a change in the indicator will result in an identical change in the asset price). 
+A coefficient of -1.0, a &quot;perfect negative correlation,&quot; means that changes 
+in <strong>Data2</strong> cause identical changes in <strong>Data1</strong>, but 
+in the opposite direction. A coefficient of zero means there is no relationship 
+between the two series and that a change in <strong>Data2</strong> will have no 
+effect on <strong>Data1</strong>. This function can be also used to get the autocorrelation 
+of a series by calculating the correlation coefficient between the original series 
+and the same series lagged by one or two bars (<strong>series+1</strong> or
+<strong>series+2</strong>).&nbsp;
+<h2>Covariance(vars Data1, vars Data2, int TimePeriod): var</h2>
+Covariance between two data series. Can be used to generate a covariance matrix 
+f.i. for the <a href="markowitz.htm">markowitz efficient frontier</a> calculation.
+<h2>Fisher(vars Data): var</h2>
+Fisher Transform; transforms a normalized <strong>Data</strong> series to a normal 
+distributed range. The return value has no theoretical limit, but most values are 
+between <strong>-1 .. +1</strong>. All <strong>Data</strong> values must be in the
+<strong>-1 .. +1</strong> range, f.i. by normalizing with the <strong>AGC</strong>,
+<strong>Normalize</strong>, or <a href="cdf.htm">cdf</a> function. The minimum
+<strong>Data</strong> length is <strong>1</strong>; a single <strong>var</strong> 
+can be passed with the <strong>&amp;</strong> operator, f.i. <strong>
+Fisher(&amp;MyVariable).</strong> Source in <strong>
+indicators.c</strong>.
+<h2>FisherInv(vars Data): var</h2>
+Inverse Fisher Transform; compresses the <strong>Data</strong> series to be between
+<strong>-1</strong> and <strong>+1</strong>. The minimum length of the <strong>Data</strong> 
+series is <strong>1</strong>; a single <strong>var</strong> can be passed with 
+the <strong>&amp;</strong> operator, f.i. <strong>FisherInv(&amp;MyVariable)</strong>. Source 
+in <strong>indicators.c</strong>.
+<h2>FisherN(vars Data, int TimePeriod): var</h2>
+Fisher Transform with normalizing; normalizes the <strong>Data</strong> series with 
+the given <strong>TimePeriod</strong> and then transforms it to a normal distributed 
+range. Similar to a <strong>Normalize</strong> filter (see below), but more selective 
+due to the normal distribution of the output. The return value has no theoretical 
+limit, but most values are in the <strong>-1.5 .. +1.5</strong> range. The minimum 
+length of the <strong>Data</strong> series is equal to <strong>TimePeriod</strong>. 
+The function internally creates <a href="series.htm">series</a> (see remarks). Source code in <strong>indicators.c</strong>.
+<h2>FractalDimension(vars Data, int TimePeriod): var</h2>
+Fractal dimension of the <strong>Data</strong> series; normally <strong>1..2</strong>. 
+Smaller values mean more 'jaggies'. Can be used to detect the current market regime 
+or to adapt moving averages to the fluctuations of a price series. Requires a lookback 
+period of twice the <strong>TimePeriod</strong>. Source in <strong>indicators.c</strong>.
+<h2>Gauss(vars Data, int TimePeriod): var</h2>
+Gauss Filter, returns a weighted average of the data within the given time period, 
+with the weight curve equal to the Gauss Normal Distribution. Useful for removing 
+noise by smoothing raw data. The minimum length of the <strong>Data</strong> series 
+is equal to <strong>TimePeriod</strong>, the lag is half the <strong>TimePeriod</strong>.
+Source in <strong>indicators.c</strong>.
+<h2>Hurst (vars Data, int TimePeriod): var</h2>
+Hurst exponent of the <strong>Data</strong> series; between <strong>0..1</strong>. 
+The Hurst exponent measures the 'memory' of a series. It quantifies the autocorrelation, 
+i.e. the tendency either to revert to the mean (<strong>Hurst &lt; 0.5</strong>) 
+or to continue trending in a direction (<strong>Hurst &gt; 0.5</strong>). This way 
+the Hurst exponent can detect if the market is in a trending state. The <strong>
+TimePeriod</strong> window (minimum <strong>20</strong>) must have sufficient length 
+to catch the long-term trend; the lookback period must be at least twice the <strong>TimePeriod</strong>. 
+The function internally creates <a href="series.htm">series</a> (see remarks). Source in <strong>indicators.c</strong>.<h2>LinearReg(vars Data, int TimePeriod): var</h2>
+Linear Regression, also known as the &quot;least squares moving average&quot; 
+(LSMA). Linear Regression attempts to fit a straight trendline between several 
+data points in such a way that the distance between each data point and the trendline 
+is minimized. For each point, the straight line over the specified previous bar 
+period is determined in terms of <strong>y = b + m*x</strong>, where <strong>y</strong> 
+is the price and <strong>x</strong> the number of bars since <strong>
+TimePeriod</strong> bars ago. The formula for calculating <strong>b</strong> and 
+<strong>m</strong> is then<br><br><strong>m = (TimePeriod*&Sigma;xy - &#931;x*&#931;y) / (TimePeriod*&#931;x² - (&#931;x)²)<br>b = (&#931;y - b&#931;x) 
+/ TimePeriod</strong><br><br>where <strong>&#931;</strong> is the summation operator. The <span class="pygments-cm"><strong>LinearReg</strong> function returns <strong>b + m*(TimePeriod-1)</strong>, 
+i.e. the <strong>y</strong> of the current bar. For a previous bar with offset
+<strong>n</strong>, <strong>y</strong> is&nbsp; <strong>y = b + m*(TimePeriod-n)</strong>.<br> </span><br>Source 
+in <strong>ta-lib.zip</strong>. For higher order regression, use <a href="polyfit.htm">polyfit / polynom</a>. 
+For logistic regression with multiple variables, use the <a href="advisor.htm">advise(PERCEPTRON)</a> function.<br>
+<h2>LinearRegPredict(vars Data, int Period, int Offset): var</h2>
+Linear Regression Prediction at <strong>Offset</strong>; returns <strong>
+b + m*(Period-Offset-1)</strong>. Use a negative offset to return the valur for a future bar, a positive offset for a previous bar, and zero for the current bar. Source in <strong>indicators.c</strong>.
+<br>
+<h2>LinearRegAngle(vars Data, int Period): var</h2>
+Linear Regression Angle. <span class="pygments-cm">Returns <strong>m</strong> converted 
+to degrees. Source in <strong>ta-lib.zip</strong>. Due to the arbitrary x and y units of a price chart, </span>the absolute angle is not a useful parameter unless you're on the esoteric side.<br>
+<h2>LinearRegIntercept(vars Data, int Period): var</h2>
+Linear Regression Intercept. <span class="pygments-cm">Returns <strong>b</strong>.</span> 
+Source in <strong>ta-lib.zip</strong>.
+<br>
+<h2>LinearRegSlope(vars Data, int Period): var</h2>
+Linear Regression Slope. Returns <strong>m</strong> as data difference per bar.&nbsp;Source 
+in <strong>ta-lib.zip</strong>.&nbsp;<h2>MAE(vars Data, int Period): var</h2>
+Maximum adverse excursion. <b>rMin </b>has the <strong>Data</strong> value at 
+the maximum drawdown from a preceding peak, <b>rMax </b>the value at the 
+preceding peak, <strong>rMinIdx</strong> and <strong>rMaxIdx</strong> are their 
+indices.
+<span class="pygments-cm">Returns the maximum drawdown depth. The depth in 
+percent is <strong>rMax/MAE*100</strong>.Source in <strong>indicators.c</strong>. </span>
+&nbsp;<h2>MatchIndex(vars Data, var Reference, int Period): int</h2>
+Index of the <strong>Data</strong> value 
+closest to <strong>Reference</strong> over the specified <strong>Period</strong>.&nbsp; <strong>0</strong> = 
+best match is at current bar, <strong>1</strong> = at one bar ago, and so on. If the 
+<strong>Data</strong> series 
+was shifted (<a href="series.htm">+N</a>), add the offset <strong>N</strong> to 
+the returned index for getting the number of bars passed since the best match. 
+Source in <strong>indicators.c</strong>.
+<h2>MaxIndex(vars Data, int Period): int</h2>
+Index of highest <strong>Data</strong> value over the specified <strong>Period</strong>.. <strong>0</strong> = highest value 
+is at current bar, <strong>1</strong> = at one bar ago, and so on. If the series 
+was shifted (<a href="series.htm">+N</a>), add the offset <strong>N</strong> to 
+the returned index for getting the number of bars passed since the lowest
+<strong>Data</strong> value. <span class="pygments-cm">Source in
+<strong>ta-lib.zip</strong>. </span><br>
+<h2>MaxVal(vars Data, int Period): var</h2>
+Highest <strong>Data</strong> value over the specified <strong>Period</strong>.<span class="pygments-cm"> 
+Source in <strong>ta-lib.zip</strong>. </span><br>
+<h2>Median(vars Data, int Period): var</h2>
+Median Filter; sorts the elements of the <strong>Data</strong> series and returns 
+their middle value within the given <strong>Period</strong>. Useful for removing noise spikes 
+by eliminating extreme values. The minimum length of the <strong>Data</strong> series 
+is equal to <strong>Period</strong>, the lag is half the <strong>Period</strong>. 
+<span class="pygments-cm">Source in <strong>ta-lib.zip</strong>. </span>See also <a href="#percentile">Percentile</a>. <br>
+<h2>MinIndex(vars Data, int Period): int</h2>
+Index of the lowest value over a specified period; <strong>0</strong> = lowest value 
+is at current bar, <strong>1</strong> = at one bar ago, and so on. If the series 
+was shifted (<a href="series.htm">+N</a>), add the offset <strong>N</strong> to 
+the returned index for getting the number of bars passed since the lowest
+<strong>Data</strong> value. 
+<span class="pygments-cm">Source in <strong>ta-lib.zip</strong>. </span>&nbsp;<h2>MinVal(vars Data, int Period): var</h2>
+Lowest value over a specified period. <span class="pygments-cm">Source 
+in <strong>ta-lib.zip</strong>. </span><br>
+<h2>MinMax(vars Data, int Period): var</h2>
+Lowest and highest values over a specified period. Result in <b>rMin</b>, <b>rMax</b>.
+<span class="pygments-cm">Source in <strong>ta-lib.zip</strong>. </span>
+<br>
+<h2>MinMaxIndex(vars Data, int Period): int</h2>
+Indexes of lowest and highest values over a specified period. Result in <b>rMinIdx</b>,
+<b>rMaxIdx</b>. <strong>0</strong> = current bar, <strong>1</strong> = one bar ago, 
+and so on. Source in <strong>ta-lib.zip</strong>.
+<h2>Mode(vars Data, int Length, int Steps): var</h2>
+Most frequent <strong>Data</strong> value within <strong>Length</strong>. For 
+this the <strong>Data</strong> range is divided into <strong>Steps</strong> separate 
+ranges, and the number of values that fall into a range is counted. The function 
+returns the value with the highest count.
+Source in <strong>indicators.c</strong>.&nbsp;
+<h2>Moment(vars Data, int Length, int N): var <a name="moment"></a></h2>
+The statistical moment <strong>N</strong> of the <strong>
+Data</strong> series section given by <strong>Length</strong>. The first moment 
+is the mean, second is variance, third is skewness, fourth ist kurtosis.&nbsp;
+<table>
+	<tr>
+		<td><strong>N = 0</strong></td>
+		<td>Standard Deviation</td>
+	</tr>
+	<tr>
+		<td><strong>N = 1</strong></td>
+		<td>Mean</td>
+	</tr>
+	<tr>
+		<td><strong>N = 2</strong></td>
+		<td>Variance</td>
+	</tr>
+	<tr>
+		<td><strong>N = 3</strong></td>
+		<td>Skewness</td>
+	</tr>
+	<tr>
+		<td><strong>N = 4</strong></td>
+		<td>Kurtosis</td>
+	</tr>
+	<tr>
+		<td><strong>N += 8</strong></td>
+		<td>Divide Variance by Length instead of Length-1</td>
+	</tr>
+</table>
+The standard deviation is the square root of the variance. By adding <strong>8</strong>, 
+the population variance instead of sample variance is used.The mean is 
+also stored in <strong>rMean</strong>. See also <strong>SemiMoment</strong>. Source 
+in <strong>indicators.c</strong>.<h2>NumAbove(vars Data, int Length, var Theshold): var</h2>
+Number of <strong>Data</strong> elements above the given
+<strong>Threshold</strong> within the <strong>Length</strong>, from <strong>
+0</strong> to <strong>Length</strong>. Source in <strong>indicators.c</strong>.&nbsp;
+<h2>NumInRange(vars Low, vars High, var Min, var Max, int Length): var</h2>
+Number of data ranges, given by their <strong>Low</strong> and <strong></strong>
+<strong>High</strong> values, that lie completely inside the interval from
+<strong>Min</strong> to <strong>Max</strong> within the given <strong>Length</strong>. 
+Can be used to calculate the distribution of prices or candles. <strong>Low</strong> 
+and <strong></strong><strong>High</strong> can be set to the same value for counting 
+all values in the interval, or swapped for counting all candles that touch the interval. 
+Returns a value of <strong>1..Length</strong>. Source in <strong>indicators.c</strong>. 
+See also <strong>PercentRank</strong>.
+<h2>NumRiseFall(vars Data, int TimePeriod): var</h2>
+Length of the last streak of rising or falling values in the <strong>Data</strong> 
+series, back to the given <strong>TimePeriod</strong>. For a rising sequence its 
+length is returned, for a falling sequence the negative length (f.i. <strong>-3</strong> 
+when <strong>Data[3] &lt; Data[2] &gt; Data[1] &gt; Data[0]</strong>). Range:
+<strong>1..TimePeriod-1</strong>. See the <strong><a href="scripts.htm">RandomWalk</a></strong> 
+script for an example. Source in <strong>indicators.c</strong>.&nbsp;
+<h2>NumUp(vars Data, int TimePeriod, var Theshold): var</h2>
+<h2>NumDn(vars Data, int TimePeriod, var Theshold): var</h2>
+Number of upwards or downwards <strong>Data</strong> changes by more than the given
+<strong>Threshold</strong> within the <strong>TimePeriod</strong>, from <strong>
+0</strong> to <strong>TimePeriod-1</strong>. See also <strong>SumUp</strong>,
+<strong>SumDn</strong>. Source in <strong>indicators.c</strong>.&nbsp;<br>
+<h2>Percentile(vars Data, int Length, var Percent): var <a name="percentile">
+</a></h2>
+Returns the given percentile of the <strong>Data</strong> series with given
+<strong>Length</strong>; f.i. <strong>Percent = 95</strong> returns the <strong>
+Data</strong> value that is above 95% of all other values. <strong>Percent = 50</strong> 
+returns the <strong>Median</strong> of the <strong>Data</strong> series.
+<a name="percentrank"></a><br>
+<h2>PercentRank(vars Data, int Length, var Value): var</h2>
+The opposite of <strong>Percentile</strong>: Returns the percentage of <strong>Data</strong> 
+values within the given <strong>Length</strong> that are smaller or equal than the 
+given <strong>Value</strong>; returns 100 when<strong> Value </strong>is the greatest 
+in the data range. Can transform any series to a range of 0..100. See also
+<strong>NumInRange</strong>.
+<h2>R2(vars Data, int Length): var</h2>
+Coefficient of determination (+1...-1); similarity of the <strong>Data</strong> 
+series with a straight line through its end points. At <strong>1</strong> the 
+data series is equivalent to a straight line, at <strong>0</strong> or below 
+even the mean of the data is a better fit to the straight line than the real 
+data series.
+<h2>SemiMoment(vars Data, int TimePeriod, int N): var <a name="moment0"></a></h2>
+The statistical moment <strong>N</strong> (<strong>1..4</strong>) of the <strong>
+Data</strong> series section given by <strong>TimePeriod</strong>, using only 
+data points at or below the mean. The first moment 
+is the mean, the second is the semivariance, third is downside skew, and fourth is 
+downside kurtosis. 
+The mean is stored in <strong>rMean</strong>. The <strong>semideviation</strong> 
+(downside deviation) is the square root of the semivariance, and is often 
+considered a better measure of risk than the standard deviation. See also
+<strong>Moment</strong>. Source in <strong>indicators.c</strong>.
+<h2>ShannonGain(vars Data, int TimePeriod): var</h2>
+Expected logarithmic gain rate of the <strong>Data</strong> series in the range 
+of about <strong>+/-0.0005</strong>. The gain rate is derived from the Shannon probability
+<strong>P = (1 + Mean(Gain) / RootMeanSquare(Gain)) / 2</strong>, which is the likeliness 
+of a rise or fall of a high entropy data series in the next bar period. A positive 
+gain rate indicates that the series is more likely to rise, a negative gain rate 
+indicates that it is more likely to fall. The zero crossover could be used for a 
+trade signal. Algorithm by <strong>John Conover</strong>. Source in
+<strong>indicators.c</strong>.
+<h2>ShannonEntropy(vars Data, int Length, int PatternSize): var</h2>
+Entropy of patterns in the <strong>Data</strong> series, in bit; can be used to 
+determine the 'randomness' of the data. <strong>PatternSize</strong> (2..8) determines 
+the partitioning of the data into patterns of up to 8 bit. Each <strong>Data</strong> 
+value is either higher than the previous value, or it is not; this is a binary information 
+and constitutes&nbsp;one bit of the pattern. The more random the patterns are distributed, 
+the higher is the Shannon entropy. Totally random data has a Shannon entropy identical 
+to the pattern size. Algorithm explained on the
+<a href="http://www.financial-hacker.com/is-scalping-irrational/" target="_blank">
+Financial Hacker</a> blog; source in <strong>indicators.c</strong>.
+<h2>Spearman(vars Data, int TimePeriod): var</h2>
+Spearman's rank correlation coefficient; correlation between the original
+<strong>Data</strong> series and the same series sorted in ascending order within
+<strong>TimePeriod</strong> (<strong>1..256</strong>). Returns the similarity to 
+a steadily rising series and can be used to determine trend intensity and turning 
+points. Range <strong>= -1..+1</strong>, lag = <strong>TimePeriod/2</strong>. For 
+usage and details, see Stocks &amp; Commodities magazine 2/2011. Source in <strong>indicators.c</strong>. <br>
+<h2>StdDev(vars Data, int TimePeriod): var</h2>
+Standard Deviation of the <strong>Data</strong> series in the time period, from 
+the <strong>ta-lib;</strong> accuracy = <strong>0.0001</strong>. For long time 
+periods, higher accuracy, or for downside deviation, use the square root of the second
+<strong><a href="#moment">Moment</a> or SemiMoment</strong>. <br>
+<h2>Sum(vars Data, int Length): var</h2>
+Sum of all <strong>Data</strong> elements up to the given <strong>Length</strong>.
+Source in <strong>ta-lib.zip</strong>.
+<h2>SumUp(vars Data, int Length): var</h2>
+<h2>SumDn(vars Data, int Length): var</h2>
+Sum of all upwards or downwards <strong>Data</strong> changes up to the given
+<strong>Length</strong>. See also <strong>NumUp</strong>, <strong>NumDn</strong>. Source 
+in <strong>indicators.c</strong>.
+<h2>SumSq(vars Data, int Length): var</h2>
+Sum of the squares of all <strong>Data</strong> elements up to the given <strong>Length</strong>. 
+Source code in <strong>indicators.c</strong>.
+<br>
+<h2>TSF(vars Data, int TimePeriod): var</h2>
+Time Series Forecast. Returns <strong>b + m*(TimePeriod)</strong>, the Linear Regression 
+forecast for the next bar. <br>
+<h2>Variance(vars Data, int TimePeriod): var</h2>
+Variance of the <strong>Data</strong> series in the time period, accuracy = <strong>0.0001.</strong> Source in
+<strong>ta-lib.zip</strong>. For long time 
+periods, higher accuracy, or for downside variance, use the second
+<strong><a href="#moment">Moment</a> or SemiMoment</strong>. <br>&nbsp;<br>
+<h3>Standard parameters:</h3>
+<table border="0">
+	<tr>
+		<td><strong>TimePeriod </strong></td>
+		<td>The number of bars for the time period of the function, if any; or
+		<strong>0</strong> for using a default period. </td>
+	</tr>
+	<tr>
+		<td width="98"><strong>Length </strong></td>
+		<td width="653">The length of the <strong>Data</strong> series.</td>
+	</tr>
+	<tr>
+		<td><strong>Data</strong></td>
+		<td>A data <a href="series.htm">series</a>, in reverse time order, 
+		usually&nbsp; derived from 
+		the price functions <strong><a href="price.htm">price(), priceC()</a></strong> 
+		etc.. Alternatively a user created series or any other double float 
+		array with the given minimum length can be used. If not mentioned 
+		otherwise, the minimum length of the <strong>Data</strong> 
+		series is <strong>TimePeriod</strong>. Some functions require a second data 
+		series <strong>Data2</strong>.&nbsp; </td>
+	</tr>
+</table>
+<h3>Usage example:</h3>
+<strong>Volatility(Prices,20)</strong> calculates the standard volatility of a daily 
+price series over the last 20 days.
+<h3>Remarks:</h3>
+<ul>
+	<li>The <strong>TA-Lib</strong> function prototypes are defined in <strong>include\functions.h</strong>. 
+The C source 
+	code of all included TA-Lib indicators is contained in <strong>Source\ta_lib.zip</strong> 
+	and can be studied for examining the algorithms. Some TA-Lib indicators that 
+	originally didn't work properly - such as Correlation or SAR - have been replaced 
+	by working versions. The C source code of most additional indicators that are 
+	not part the the TA-Lib is contained in <strong>Source\indicators.c</strong>.
+	</li>
+	<li>TA-Lib indicators can only be used between <a href="is.htm">INITRUN</a> 
+	and <a href="is.htm">EXITRUN</a>, since TA-Lib and series management are released at end of the 
+	session. This restriction does not apply when the <a href="mode.htm">
+	STRAIGHT</a> flag is set.
+	</li>
+	<li><a href="barperiod.htm">TimeFrame</a> affects subsequent data
+	<a href="series.htm">series</a> and thus also affects all indicators that use 
+	the data series as input. The <strong>TimePeriod</strong> is then not in Bar 
+	units, but in time frame units. <strong>TimeFrame</strong> has no effect on 
+	indicators that do not use data series.</li>
+</ul>
+<h3>Examples:</h3>
+<pre><em>// plot some indicators</em>
+function run()
+{
+  set(PLOTNOW);<em>
+</em>  var* Prices = series(price());<br>	<br><em>// plot Bollinger bands
+</em>  BBands(Prices,30,2,2,MAType_SMA);<br>  plot(&quot;Bollinger1&quot;,rRealUpperBand,BAND1,0x00CC00);<br>  plot(&quot;Bollinger2&quot;,rRealLowerBand,BAND2,0xCC00FF00);<br>
+<em>// plot some other indicators	</em><br>  plot(&quot;SAR&quot;,SAR(0.02,0.02,0.2),DOT,RED);<br>  ZigZag(Prices,20*PIP,5,BLUE);<br>  plot(&quot;ATR (PIP)&quot;,ATR(20)/PIP,NEW,RED);<br>  plot(&quot;Doji&quot;,CDLDoji(),NEW+BARS,BLUE);<br>  plot(&quot;FractalDim&quot;,FractalDimension(Prices,30),NEW,RED);<br>  plot(&quot;ShannonGain&quot;,ShannonGain(Prices,40),NEW,RED);<br>}</pre>
+<img height="539" src="../images/ta.png" width="769">
+<h3>See also:</h3>
+<a href="filter.htm">Spectral filters</a>, <a href="ta.htm">indicators</a>,
+<a href="norm.htm">normalization</a>, <a href="candle.htm">candle patterns</a>,
+<a href="advisor.htm">machine learning</a>
+<a class="button" href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))">&#9658; 
+latest version online</a>
+
+</body>
+
+</html>

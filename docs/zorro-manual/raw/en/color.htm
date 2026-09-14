@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>color</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/color.htm">
+</head>
+
+<body link="#000000" vlink="#333333" alink="#666666">
+<h2>color (var Value<em>, </em>int Color1, int Color2, <em>int Color3, int Color4</em>) : int </h2>
+Returns the color corresponding to a position within a range of up to 4 colors; used for plotting heatmaps or multiple curves.
+<h3>Parameters:</h3>
+		<table border="0">
+          <tr>
+            <td><strong>Value</strong></td>
+            <td>The color position within the range in percent; from <strong>0</strong> for <strong>color1</strong> until <strong>100</strong> for <strong>color4</strong>. </td>
+          </tr>
+          <tr>
+            <td><strong>Color1..Color4</strong></td>
+            <td>The color range, starting with <strong>color1</strong> and ending with <strong>color4</strong>. For 2-color or 3-color ranges, <strong>color3</strong> and <strong>color4</strong> can be omitted. See <a href="colors.htm">Colors</a> for the color format. </td>
+          </tr>
+        </table>        
+        <h3>Returns</h3>
+ Color within the range<p>&nbsp;</p>
+<h2>colorScale (int Color, var Scale) : int </h2>
+Returns the color 
+multiplied with a scaling factor.
+<h3>Parameters:</h3>
+		<table border="0">
+          <tr>
+            <td><strong>Color</strong></td>
+            <td>The color to be scaled. </td>
+          </tr>
+        	<tr>
+            <td><strong>Scale</strong></td>
+            <td>The scaling factor in percent, &lt; 100 for reducing the brightness 
+			and &gt; 100 for increasing it. </td>
+            </tr>
+        </table>        
+        <h3>Returns</h3>
+ <strong>Color * Factor</strong>. 
+ <h3>Remarks:</h3>
+			<ul>
+		  <li><strong>color(Value,WHITE,BLACK)</strong> produces a greyscale. </li>
+				<li><strong>colorScale(Color,110)</strong> increases the 
+				brightness of <strong>Color</strong> by 10%.</li>
+				<li>For putting a color together from RGB values, use the 
+				expression <strong>(Red&lt;&lt;16)+(Green&lt;&lt;8)+Blue</strong>.<br>&nbsp;</li>
+</ul>
+            <h3>Example:</h3>
+<pre>for(i=0; i&lt;N; i++)<br>  for(j=0; j&lt;N; j++)<br>    plotGraph(&quot;Heatmap&quot;,j+1,-i-1,SQUARE,color(Correlations[i][j]*100,BLUE,RED));
+</pre>
+            <h3>See also:</h3>
+            <a href="plot.htm">plot</a>, <a href="panel.htm"></a><a href="colors.htm">Colors</a>
+            <p></p>
+			<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+version online</a>
+</body>
+</html>

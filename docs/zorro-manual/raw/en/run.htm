@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>run</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/run.htm">
+</head>
+
+<body link="#000000" vlink="#333333" alink="#666666">
+<h2>run()</h2>
+Main strategy function, written by the user. It is automatically started after clicking on the [<span class="tast">Train</span>], [<span class="tast">Test</span>], and [<span class="tast">Trade</span>] buttons. After 
+the first run, it runs again at the end of every bar. This is continued until the end of the 
+simulation or until [<span class="tast">Stop</span>] is hit. The <strong>run</strong> function initializes <a href="slider.htm">sliders</a> and sets up all needed indicators. 
+<h3>Remarks:</h3>
+        <ul>
+          <li>If <a href="date.htm">StartDate</a> is set to <strong>NOW</strong>, 
+		  an extra <strong>run</strong> is executed in live trading mode immediately after the lookback period, regardless whether the current bar has ended. 
+		  If <a href="lookback.htm">LookBack</a> is 0, this extra run is the 
+		  first run. After that extra run, the <strong>run</strong> function is furtherhin executed at the end of every bar. </li>
+          <li>For executing the <strong>run</strong> function several times within a candle, make the <a href="barperiod.htm">BarPeriod</a> shorter and set up the candle width with <a href="barperiod.htm">TimeFrame</a> so that several bars lie within a candle. 
+		  Alternatively, use a <a href="tick.htm">tick</a> function.</li>
+          <li>At the first call of the <strong>run</strong> function, <strong>is(INITRUN)</strong> and <strong>is(FIRSTINITRUN)</strong> are true. 
+		  Since price and bar data are not yet set up at that initial run before the first <a href="asset.htm">asset</a> call, all price functions and indicators return <strong>0</strong>.&nbsp; </li>
+          <li>If the script has both a <strong>main</strong> and a <strong>run</strong> function, the <strong>main</strong> function is executed before the first <strong>run</strong>, and can be used for initializing variables. </li>
+          <li>Local variables 'forget' their values after every call of the <strong>run</strong> function, but <a href="aarray.htm">static</a> and <a href="aarray.htm">global</a> variables keep their values. <span class="edition">&nbsp;!!&nbsp;</span> When <strong><a href="ini.htm">AutoCompile</a></strong> is set, static and global variables really keep their values until the script is compiled again, which happens only when it was modified or when the [<span class="tast">Edit</span>] button was clicked. Therefore make sure to initialize them at every cycle start (<a href="is.htm">is(INITRUN)</a>) to their initial values when this is required.</li>
+          <li>For debugging the <strong>run</strong> function, use the <a href="mode.htm">STEPWISE</a>  flag and  <a href="watch.htm">watch</a> commands. For starting debugging after the lookback period, use <strong>if(!is(LOOKBACK)) set(STEPWISE);</strong>. </li>
+          <li>For immediate script reaction on an incoming price quote, use the <a href="tick.htm">tick</a> function. For repeated actions independent on bars or price quotes, use the <a href="tick.htm">tock</a> function. </li>
+        </ul>
+        <h3>Example:</h3>
+<pre><span>function run()
+{
+  vars SmoothPrice = series(LowPass(<span>series(price())</span>,100));
+
+  if(valley(SmoothPrice)) enterLong();
+  if(peak(SmoothPrice)) exitLong();
+}</span></pre>
+            <h3>See also:</h3>
+			<a href="tutorial_trade.htm">Workshop 4</a>, <a href="bars.htm">Bars and Candles</a>, <a href="numbars.htm">Bar</a>, <a href="barperiod.htm">BarPeriod</a>, <a href="tick.htm">tick</a>, <a href="tick.htm">tock</a>, <a href="funclist.htm">user supplied functions</a>
+			<p></p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+version online</a>
+</body>
+</html>

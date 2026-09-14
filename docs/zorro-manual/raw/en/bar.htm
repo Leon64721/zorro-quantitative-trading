@@ -1,0 +1,265 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>bar</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+.auto-style1 {
+	text-align: center;
+}
+.auto-style2 {
+	font-size: smaller;
+}
+</style>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/bar.htm">
+</head>
+
+<body>
+<h1>User-defined bars</h1>
+Instead of fixed bar periods, bars can also cover fixed price ranges or can be defined by 
+any other criteria. 
+Some traders believe that those special bars help their trading, because they 
+make the chart look more predictive. Zorro supports a user-defined <strong>bar</strong> function 
+for special bars of any kind. Predefined functions for Range, Renko, Haiken Ashi, or 
+Point-and-Figure bars are included. The <strong>bar</strong> function can be used for single-asset or multiple-asset 
+strategies, or for strategies that use multiple bar types simultaneously. In the 
+case of single-asset strategies the individual bars are also plotted in the 
+chart.<p class="auto-style1">
+<img height="412" src="../images/rangebars.png" width="624"><br>
+<span class="auto-style2">Range bars (see code)</span></p>
+<br>
+&nbsp;<h2>bar(var *Open, var *High, var *Low, var *Close, <em>var *Price, DATE Start, DATE Time</em>): int </h2>
+User-supplied function for defining a <a href="bars.htm">bar</a>. Used to create special bar types or to replace the mean price by a different algorithm 
+such as <a href="ta.htm">VWAP</a>. The 
+<strong>bar</strong> function is automatically called whenever a new price quote arrives or a price tick is read from a historical file. It can modify the candle and determine 
+if and when the bar ends.<BR>
+<h3>Parameters:</h3>
+<table border="0">
+  <tr>
+    <td width="94"><strong>Open, High,<br> 
+    Low, Close,<br>Price </strong></td>
+    <td width="659"><p>Arrays with two elements of the corresponding  price; f.i. <strong>Close[1]</strong> is the close price of the previous bar, and <strong>Close[0]</strong> is the most recent price. The prices of the current bar can be modified by the <strong>bar</strong> function. <strong>Price</strong> is the mean price  and can be omitted when not used in the function. </p>
+    </td>
+  </tr>
+  <tr>
+    <td><strong>Start</strong></td>
+    <td>Optional start time of the bar in the OLE DATE format. Can be omitted when not used in the function. </td>
+  </tr>
+  <tr>
+    <td><strong>Time</strong></td>
+    <td>Optional  time of the most recent tick or price quote. Can be omitted when not used in the function.</td>
+  </tr>
+</table>
+<h3 style="left: -5px; top: 0px">Returns:</h3>
+<strong>0</strong> - close the bar at the normal end of the <a href="barperiod.htm">BarPeriod</a>.<strong><br>
+</strong><strong>1&nbsp;</strong>- close the bar now, and call the <strong>bar</strong> function 
+again at the next price tick. <br>
+<strong>4</strong> - keep the bar open, and call the <strong>bar</strong> function 
+again at the next price tick.
+<br>
+<strong>8</strong> - call the <strong>bar</strong> function only at the normal 
+end of the <a href="barperiod.htm">BarPeriod</a>..
+<h3>Remarks:</h3>
+        <ul>
+            <li>The <strong>bar</strong> function in a single asset strategy is 
+			automatically called during the history building process and has access to the current and previous candle. Indicators, series, price, or trade functions cannot be called from inside a <strong>bar</strong> function. 
+			If needed for a very special bar, calculate the candle in the
+			<strong>run</strong> function and pass it to the <strong>bar</strong> 
+			function through global variables.</li>
+          <li>If prices are not otherwise modified by the <strong>bar</strong> function, they are set up as for a normal candle, i.e. <strong>Open[0]</strong> is the first price of the bar, <strong>High[0]</strong> is the highest price so far, <strong>Low[0]</strong> the lowest price and <strong>Price[0]</strong> the current mean price of the bar. </li>
+          <li>Modified prices  also determine the corresponding price functions (<a href="price.htm">priceO</a>, <a href="price.htm">priceH</a>, <a href="price.htm">priceL</a>, <a href="price.htm">priceC</a>, <a href="price.htm">price</a>) 
+		  and all price-dependent indicators. This can cause 
+		  <strong class="Highlight">data-snooping</strong> and therefore unrealistic 
+		  backtests when the bar open price is&nbsp;affected by its close price 
+		  or by the high or low. 
+		  Backtest with the <a href="mode.htm">TICKS</a> flag for making sure 
+		  that the trades open and close at the recent tick instead of the back 
+		  candle,thus eliminating snooping bias.</li>
+			<li>Set <a href="spread.htm">Slippage = 0</a> for backtests with 
+			user defined bars. Slippage simulation works only with normal bars.</li>
+			<li>The price history should have <span class="Highlight">sufficient 
+			resolution</span> so that any special bar covers at least one price 
+			quote. Special bars cannot have higher resolution than the price 
+			history.</li>
+            <li>Most special bars, such as Haiken Ashi or Range/Renko bars, are
+			<strong class="Highlight">affected by any preceding bar</strong> and thus 
+			depend on the time stamp or price at the very 
+			first bar. Their candles therefore depends on start date, lookback period, bar period, bar 
+			offset, time zone, or any other settings that affect the first bar.</li>
+			<li><a href="barperiod.htm">BarPeriod</a> has 
+			<span class="Highlight">no effect on range dependent bars</span> except for the above mentioned start time and the pre-allocation 
+			of bar memory. For allocating enough bars without wasting memory, 
+			set <a href="barperiod.htm">BarPeriod</a> to the approximate average bar 
+			duration that is displayed in the 
+			<a href="performance.htm">performance report</a>. If you don't know 
+			it, set
+			<strong>BarPeriod = 1</strong>. Bar zones and bar offsets should not be set when using special bar types.</li>
+			<li>In <strong class="Highlight">multi-asset strategies</strong>, or in strategies with multiple bar 
+			types, the bar defining function must be called in the script 
+			individually per asset or algo, and thus 
+			needs a different name than <strong>bar</strong> for not being 
+			called automatically. Since any asset has different bars,
+			<a href="series.htm">series</a> must be static and shifted by script. 
+			An example for a multiple asset strategy with Renko bars can be 
+			found in the <strong><a href="scripts.htm">SpecialBars</a></strong> script.</li>
+			<li><strong class="Highlight">Renko bars</strong> are described slightly differently on different websites. 
+			The examples below contain 3 known variants. </li>
+			<li>Traditional price-distance bars, such as Renko, Range, or 
+			Point-and-Figure bars, are not 
+			really recommended for serious trading systems, since they 
+			ignore the time component and have normally a negative effect 
+			on the performance. 
+			This may be different for special bars sampled by other criteria 
+			such as trade volume or tick rate. Experiment with your own bar types!</li>
+        </ul>
+        <h3>Examples (see also SpecialBars.c):</h3>
+<pre>var BarRange = 0.0030; <em>// 0.3 cents bar range
+
+// Range Bars, standard (high-low)</em>
+int bar(var* Open,var* High,var* Low,var* Close)
+{
+  if(Open[0] != Close[1]) {
+    High[0] = max(Open[0],Close[1]);
+    Low[0] = min(Open[0],Close[1]);
+    Open[0] = Close[1];
+  }
+  if(High[0]-Low[0] &gt;= BarRange)
+    return 1; <em>// bar ends</em>
+  return 4;  <em> // bar continues</em>
+}
+
+<em>// Renko Bars, standard</em>
+int bar(var* Open,var* High,var* Low,var* Close)
+{
+  Open[0] = roundto(Close[1],BarRange);
+  if(Close[0]-Open[0] &gt;= BarRange) {
+    Close[0] = Open[0]+BarRange;
+    High[0] = Close[0];
+    Low[0] = Open[0];
+    return 1;
+  }
+  if(Open[0]-Close[0] &gt;= BarRange) {
+    Close[0] = Open[0]-BarRange;
+    High[0] = Open[0];
+    Low[0] = Close[0];
+    return 1;
+  }
+  return 4;
+}
+
+<em>// Renko Bars with wicks
+</em>int bar(var* Open,var* High,var* Low,var* Close)
+{
+  Open[0] = roundto(Close[1],BarRange);
+  if(Close[0]-Open[0] &gt;= BarRange) { 
+    Close[0] = Open[0]+BarRange;
+    return 1;
+  }
+  if(Close[0]-Open[0] &lt;= -BarRange) { 
+    Close[0] = Open[0]-BarRange;
+    return 1;
+  }
+  return 4;
+}
+
+<em>// Renko Bars, variant</em>
+int bar(var* Open, var* High, var* Low, var* Close)
+{
+  var OpenDiff = abs(Close[0]-Open[1]);
+  var CloseDiff = abs(Close[0]-Close[1]);
+  if(OpenDiff &lt; CloseDiff) <em>// we have a valley or peak</em>
+     Open[0] = Open[1];
+  else  <em>// we are moving with the trend</em>
+     Open[0] = roundto(Close[1],BarRange);
+  if(Close[0]-Open[0] &gt;= BarRange) {  <em>// going up</em>
+    Close[0] = Open[0]+BarRange;
+    High[0] = Close[0];
+    Low[0] = Open[0];
+    return 1;
+  }
+  if(Open[0]-Close[0] &gt;= BarRange) { <em>// going down</em>
+    Close[0] = Open[0]-BarRange;
+    High[0] = Open[0];
+    Low[0] = Close[0];
+    return 1;
+  }
+  return 4;
+}
+
+<em>// Mean Renko Bars</em>
+int bar(var* Open, var* High, var* Low, var* Close)<br>{<br>  Open[0] = 0.5*(Close[1]+Open[1]);<br>  if(Close[0] &lt;= Open[0] - BarRange) {<br>    Close[0] = Open[0] - BarRange;<br>    return 1;<br>  } else if(Close[0] &gt;= Open[0] + BarRange) {<br>    Close[0] = Open[0] + BarRange;<br>    return 1;<br>  }<br>  return 4;<br>}<br>
+<em>// Haiken Ashi Bars</em>
+int bar(var* Open,var* High,var* Low,var* Close)
+{
+  Close[0] = (Open[0]+High[0]+Low[0]+Close[0])/4;
+  Open[0] = (Open[1]+Close[1])/2;
+  High[0] = max(High[0],max(Open[0],Close[0]));
+  Low[0] = min(Low[0],min(Open[0],Close[0]));
+  return 8;
+}
+
+<em>// Point-and-Figure Bars</em>
+int bar(var* Open,var* High,var* Low,var* Close)
+{
+  static int direction = 0;
+  if(direction == 1 &amp;&amp; High[0]-Close[0] &gt;= BarRange) {
+    Open[0] = round(Low[0],BarRange);
+    Close[0] = round(High[0],BarRange);
+    Low[0] = Open[0];
+    High[0] = Close[0];
+    direction = 0;
+    return 1;
+  }
+  if(direction == 0 &amp;&amp; Close[0]-Low[0] &gt;= BarRange) {
+    Open[0] = round(High[0],BarRange);
+    Close[0] = round(Low[0],BarRange);
+    High[0] = Open[0];
+    Low[0] = Close[0];
+    direction = 1;
+    return 1;
+  }
+  return 4;
+}
+
+<em>// Point-and-Line Bars</em>
+int bar(var *Open,var *High,var *Low,var *Close)
+{
+  static int gDir = -1; <em>// initially down</em>
+  static var gCF = C, gCR = C;
+
+  var Percentage = 1;
+  int gReverse = 3; <em>// 3 boxes for reversal</em>
+<em>
+// box size = percentage of price</em>
+  var Box = Close[0]*Percentage/100;
+  var CF = ceil(Close[0]/Box)*Box;
+  var CR = floor(Close[0]/Box)*Box;
+
+  if(CF &lt; gCF &amp;&amp; gDir &lt; 0) {
+    gCR = CF-Box; gCF = CF; 
+    return 1; <em>// continue down</em>
+  } 
+  if(gCF+Box*gReverse &lt;= CR &amp;&amp; gDir &lt; 0) {
+    gCR = CR; gCF = CR+Box; 
+    gDir = 1; return 1; <em>// go up
+</em>  }
+  if(gCR &lt; CR &amp;&amp; gDir &gt; 0) {
+    gCR = CR; gCF = CR+Box; 
+    return 1;
+  } 
+  if(gCR-Box*gReverse &gt;= CF &amp;&amp; gDir &gt; 0) {
+    gCF = CF; gCR = CF-Box; 
+    gDir = -1; return 1;
+  }
+  return 4; <em>// keep bar open, call again on next tick 
+</em>}
+</pre>
+            <h3>See also:</h3>
+			<a href="bars.htm">Bars and Candles</a>, <a href="numbars.htm">Bar</a>, <a href="barperiod.htm">BarPeriod</a>,	<a href="tick.htm">tick</a>, <a href="trade.htm">TMF</a>,	<a href="funclist.htm">user	supplied	functions</a>
+			<p></p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+version online</a>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Margin, Risk, Lots, Capital</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/lots.htm">
+</head>
+
+<body>
+<h1>Trade parameters 3 - investment control</h1>
+<p>The trade size - the number of contracts or currency units purchased - can be determined in 
+four different ways. For directly ordering a certain number of contracts, use
+<strong>Amount</strong> or <strong>Lots</strong>. For investing a certain sum of 
+money, use <strong>Margin</strong>. For risking a certain sum of money by determining the worst case loss, use <strong>Risk</strong>. </p>
+<h2>Lots</h2>
+Trade size given by an integer number of lots (default = <strong>1</strong>; max = 
+<a href="pip.htm">LotLimit</a>).  1 lot is defined as the smallest possible 
+order size of the selected asset. Thus, a lot can be a multiple or a fraction of 
+a contract, determined by <a href="pip.htm">LotAmount</a>. Since it's the 
+minimum, the trade size can never be less than 1 lot (see remarks). In binary trading mode (<a href="mode.htm">BINARY</a> flag) or if <strong>Margin</strong> 
+is used  for the trade size, <strong>Lots</strong> determines the minimum number of lots to be opened per trade (normally <strong>1</strong>). 
+If <strong>Lots</strong> is <strong>0</strong>, no trades are opened. <!--If <strong>Lots</strong> is <strong>-1</strong>, trades are executed in
+<a href="trademode.htm">phantom</a> mode.-->
+<h2>Amount</h2>
+Alternative fractional trade size in multiples or fractions of 100,000 units for currencies, and of 1 contract or 1 unit for anything else (default = <strong>0</strong> = trade size given by
+<strong>Lots</strong>).  This number is independent of the broker's minimum order 
+size and is similar to a 'MT4 lot' for currencies (see remarks). If a nonzero
+<strong>Amount</strong> amounts to less than one lot, 1 lot is opened.
+<h2>Margin</h2>
+Alternative trade size by invested margin, in units of the account currency (default = <strong>0.00000001</strong> for always opening at least 1 lot). With no leverage, <strong>Margin</strong> is simply the money invested to purchase the asset.
+On a leveraged account, <strong>Margin</strong> is a  part of the trade size - 
+for instance 1% at 1:100 leverage - deposited for opening a trade. As long as the trade is open, the margin amount is locked on the account and can not be used for further trades. If <strong>Margin</strong> is <strong>0</strong> or negative, no trades are opened. Otherwise the trade 
+size is  <strong>Margin</strong> divided by <a href="pip.htm">MarginCost</a>. <br>
+&nbsp; The <strong>Lots</strong> variable still determines the minimum number of lots to be opened per trade. If the trade 
+size by <strong>Margin</strong> is smaller than <strong>Lots</strong> and the <strong><a href="mode.htm">MARGINLIMIT</a></strong> flag is set, trades are skipped. If the <a href="mode.htm">ACCUMULATE</a> flag is set, the size of skipped trades is accumulated until it reaches the <strong>Lots</strong> amount. Keep <strong>Margin</strong> at its default value for  controlling the number of lots only with the <strong>Lots</strong> variable.
+<br>
+<h2>Risk</h2>
+Alternative trade size given by the trade risk in units of the account currency (default = <strong>0</strong> = no risk limit). The  risk is the theoretical maximum that a trade can lose; it is determined from trade size, <a href="stop.htm">stop loss</a> distance, <a href="spread.htm">commission</a>, and <a href="spread.htm">spread</a> 
+(formula: RiskPerLot = PIPCost /PIP * (Spread + abs(Stop-Price)) + 
+CommissionPerLot; Margin = <strong>Risk</strong>/RiskPerLot * MarginCost). Since risk  is undefined when a trade has no stop loss, the <strong>Risk</strong> parameter must always be given in combination with <a href="stop.htm">Stop</a>. If the risk of a trade at the given <strong>Margin</strong> is higher than the <strong>Risk</strong> variable,  the 
+trade margin is accordingly reduced.  <br>&nbsp; When the <strong><a href="mode.htm">RISKLIMIT</a></strong> flags is set, trades are skipped when even with 
+a trade size of 1 lot the trade risk is still higher than twice the given <strong>Risk</strong> value.  When <strong>Margin</strong> is not set, the trade size is only limited by <strong>Risk</strong>; this can lead to extreme trade sizes and subsequent margin calls when the <a href="stop.htm">Stop</a> distance is tight. Due to 
+minimum lot amounts and/or deviations of entry price and current price, the real 
+trade risk displayed in the <a href="log.htm">trade log</a> can deviate from the set up <strong>Risk</strong> value, especially with tight <a href="stop.htm">Stop</a> 
+distances. &nbsp;
+<h2>Capital</h2>
+Initial invested capital in units of the account currency (default = <strong>0</strong> = no initial capital). This has no 
+direct effect on trading, but on calculating the strategy <a href="performance.htm">performance</a> in the simulation. Set this to the initial capital when the strategy reinvests profits; Zorro then calculates <strong>CAGR</strong> instead of <strong>AR/ROI</strong> and determines performance parameters from the 
+initial invested capital instead of the required capital.  If the free capital (<strong>Capital</strong> 
+minus loss minus total margin on leveraged accounts) becomes negative, Zorro will 
+set the <a href="is.htm">MARGINCALL</a> flag and liquidate trades for reducing 
+the margin. 
+Make sure to set <strong>Capital</strong> well above the <a href="performance.htm#capital">required capital</a> on leveraged accounts, and to reinvest 
+in a way that margin calls are avoided. 
+Setting <strong>Capital</strong> to a negative amount assumes temporary 
+remargining and disables trade liquidation.
+<h2>ScholzBrake</h2>
+<a name="scholz"></a>Global loss limit in units of the account currency (default = <strong>0</strong> = no 
+loss limit). This limit was enforced by a special 2021 German tax law 
+invented by finance minister Olaf Scholz. The law applies taxes on all winning 
+trades, while for losing trades only EUR 10,000 per year can be deducted. It is 
+meanwhile revoked due to its blatant nonsense, but if ever such a law appears 
+again, set
+<strong>ScholzBrake</strong> to the maximum allowed loss at session start and at 
+the begin of any year. All further losses will then decrease it until it reaches 
+zero. Trades are then suspended until <strong>ScholzBrake</strong> is set again. 
+In [<span class="tast">Trade</span>] mode the <strong>ScholzBrake</strong> 
+variable is decreased by all losses of Zorro instances that have set it and are 
+trading on real accounts on the same PC. It is updated once per bar and at any 
+trade. See also <a href="winloss.htm">LossGlobal</a> and
+<a href="performance.htm">Scholz tax</a>. 
+<h3>Type:</h3>
+<strong>var</strong>
+<br>
+&nbsp;
+<h2>MaxLong</h2>
+<h2>MaxShort</h2>
+Maximum number of open and pending long or short trades with the same asset and 
+algo. If the limit is reached, <a href="buyLong.htm">enter</a> calls do not 
+enter more trades, but 
+they still close reverse positions and update 
+the entry, stop, profit target, life time, and entry time parameters of 
+open or pending trades to the values that 
+the new trade would have. If set to a negative number, open or pending trades are not 
+updated. The maximum numbers are ignored in [<span class="tast">Train</span>] mode 
+unless the <a href="opt.htm">LIMITS</a> flag is set.&nbsp;
+<h3>Type:</h3>
+<strong>int<br>&nbsp;</strong>
+<h3>Remarks:</h3>
+<ul>
+  <li><strong>Lot</strong> <a name="lot"></a>has different meanings dependent on 
+  platform and broker. Normally, 1 lot is the smallest  order unit. The trade size is always an integer number of lots, and there is no such thing as a 
+  'fractional' or 'partial' lot. The lot amount - the number of contracts 
+  or units equivalent to one lot, available through the <a href="pip.htm">LotAmount</a> 
+  variable - depends on the broker, the account, and the asset type. Forex brokers 
+  can offer mini lot and micro lot accounts. 1 mini lot is equivalent to    10,000 contracts and about 
+  $100 margin; 1 micro lot is 1000 contracts and about $10 margin. On stock broker accounts,  the lot amounts and margins for 
+  forex trading are usually higher and the leverage is smaller. For CFDs, some brokers offer lot sizes that are a fraction of one contract (f.i.1 lot = 0.1 contracts). For options and futures, the lot size is determined by the <a href="contracts.htm">Multiplier</a>. 
+  Brokers normally 
+  list their trade parameters, including the lot amount per asset, on their 
+  websites or trading platforms.<br>&nbsp; In some platforms, 
+  the term <strong>'lot'</strong> has a special meaning. In the MT4&#8482;/MT5&#8482; platforms, 1 'MT4 
+  Lot' is  100000 Forex contracts, or various amounts of other 
+  contracts (example
+  <a href="https://www.hercules.finance/faq/is-lot-sizecontract-size-different-for-each-cfd-symbol-on-hotforex-mt4/" target="_blank">
+  here</a>). Except for Forex, 1 MT4 Lot can mean a different trade size 
+  dependent on the broker, and is not equivalent to the <strong>Amount</strong> 
+  variable, which is always 1 contract. For entering forex trade volume in MT4 Lot 
+  units, the <strong>Amount</strong> variable can be used. Forex MT4 lots can be converted to real lots with the 
+  formula <strong>Lots = MT4Lots * 100000/LotAmount</strong>. </li>
+  <li>The margin  per lot can be determined with the <strong><a href="pip.htm">MarginCost</a></strong> 
+  variable. The risk of a trade - the maximum possible loss at a given <a href="stop">Stop</a> distance - is <strong>Lots * (Stop</strong>/<strong>PIP) * <a href="pip.htm">PIPCost</a></strong>. The number of lots equivalent to a given margin is 
+  <strong>Lots =&nbsp; Margin/<a href="pip.htm">MarginCost</a></strong>. </li>
+	<li>All parameters that affect subsequent trades, such as <strong>Margin</strong>, 
+	<strong>Risk</strong>, <strong>Lots, </strong>must be set before calling 
+	<a href="buylong.htm">enterLong</a> / <a href="buylong.htm">enterShort</a>. The number of lots, the current price, and the risk is displayed in Zorro's message window when an order is placed (see 
+	<a href="trading.htm">Trading</a>). </li>
+  <li><strong>Margin</strong>, <strong>Risk</strong> or <strong>Lots </strong>could be set up in real time with a slider (see script example). This allows to quickly adapt the trade risk to the market situation, or to disable trades temporarily 
+  in case of a market crash. When either <strong>Margin</strong> or <strong>Lots</strong> are zero, no trade is opened. </li>
+	<li>Because orders can only be placed in a multiples of one lot, the actual  margin can be bigger or smaller than the given
+	<strong>Margin</strong> value. When the <strong><a href="mode.htm">MARGINLIMIT</a></strong> flag is set, trades are not executed when the required margin is more than twice the
+	<strong>Margin</strong> value; increasing <strong>Margin</strong> will then increase both the trade size and the number of trades, while increasing
+	<strong>Lots</strong> only increases the trade size. </li>
+	<li>The <strong>Capital</strong> variable is used for determining the effectivity of the reinvestment algorithm. It calculates performance parameters based on the given capital, not on the equity curve, and thus ignores the setting of the Monte Carlo
+	<strong><a href="montecarlo.htm">Confidence</a></strong> level. </li>
+	<li><strong>ScholzBrake</strong> affects only the opening of trades, so the 
+	loss limit can be exceeded by trades that are still open when it is reached. 
+	For preventing taxes, set <strong>ScholzBrake</strong> to a value slightly 
+	below the EUR 10,000 loss limit. </li>
+	<li>In [<span class="tast">Train</span>] mode, trades always open 1 lot, phantom trades are converted to normal trades, 
+	and <strong>MaxLong</strong>/<strong>MaxShort</strong> have no effect. This 
+	way all trades equally contribute to the training result. This behavior can be modified with the
+	<a href="opt.htm">TrainMode</a> variable. </li>
+</ul>
+<h3>Examples:</h3>
+<pre><em>// set margin from slider
+</em><strong>Margin</strong> = slider(1,500,0,2000,&quot;<strong>Margin</strong>&quot;,&quot;Average margin in $&quot;);
+
+<em>// activate the Scholz Brake</em>
+if(is(INITRUN) || year(0) != year(1))
+  ScholzBrake = 9900;<br></pre>
+<h3>See also:</h3>
+<a href="buylong.htm">enterLong/Short</a>, <a href="stop.htm">Stop</a>, <a href="spread.htm">Spread</a>, <a href="pip.htm">PIP</a>, <a href="pip.htm">PIPCost</a>, <a href="pip.htm">MarginCost</a>, <a href="spread.htm">Win/LossPayout</a>,
+<a href="trademode.htm">TradeMode</a>
+<p>&nbsp;</p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

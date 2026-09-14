@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+<title>Algorithmic Trading in C/C++ | Workshop 7</title>
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/tutorial_pre.htm">
+</head>
+<body>
+<p><a href="tutorial_kelly.htm">Previous: Portfolio Trading </a></p>
+<h1>Workshop 7: Machine Learning</h1>
+<p>Zorro's <strong><a href="advisor.htm">advise</a></strong> function can be used 
+for applying machine learning functions to candle patterns, and using the most profitable 
+patterns for a trade signal. Here's a simple example (<strong>Workshop7.c</strong>):
+</p>
+<pre>function run()
+{
+  StartDate = 2010;
+  EndDate = 2018;
+  BarPeriod = 1440; <em>  // 1 day</em>
+  NumWFOCycles = 5;   <em>// WFO is mandatory for machine learning functions</em>
+ 
+  set(RULES,TESTNOW); <em>// generate rules, test after training</em>
+  if(Train) Hedge = 2; <em>// train with long + short trades</em>
+  if(!Train) MaxLong = MaxShort = 1; <em>// only 1 open trade</em>
+  LifeTime = 1;     <em>   // 1 day prediction horizon</em>
+ 
+  if(adviseLong(PATTERN+2+RETURNS,0,
+    priceH(2),priceL(2),priceC(2),
+    priceH(1),priceL(1),priceC(1),
+    priceH(1),priceL(1),priceC(1),
+    priceH(0),priceL(0),priceC(0)) &gt; 50)
+    enterLong();
+  if(adviseShort() &gt; 50)
+    enterShort();
+}</pre>
+<p>Many lines in this code should be familiar, but there are also some new concepts. 
+The<strong><a href="advisor.htm"> adviseLong</a></strong><strong> </strong>function 
+takes price candles or other data, and generates a trade signal when the return 
+value is above a threshold. It can be called like a normal indicator, but internally 
+uses various machine learning training and prediction algorithms. The function is 
+here called <strong><a href="advisor.htm"></a></strong>with the <strong>PATTERN</strong> 
+classification method and the High, Low, and Close prices of the last 3 candles, 
+split in two groups. The <strong>RETURNS</strong> flag uses the return of the following 
+trade for training. Aside from <strong>PATTERN</strong>, other and more complex 
+machine learning methods can be used, such as a deep learning neural net. A more 
+detailed introduction in pattern detection with <strong>adviseLong</strong>/<strong>Short</strong> 
+can be found in the Black Book. An application for deep learning is described in
+<a href="http://www.financial-hacker.com/build-better-strategies-part-5-developing-a-machine-learning-system" target="_blank">
+this article</a>. </p>
+<p><strong>WFO</strong> or some other out-of-sample test method is mandatory for 
+machine learning or pattern classification strategies. All machine learning systems 
+tend to overfitting, so any in-sample result from price patterns, decision trees, 
+or preceptrons would be far too optimistic and thus meaningless. The number
+<strong>5</strong> is a compromise: higher numbers produce more WFO cycles, ergo 
+less bars for any cycle to train, so less patterns are found and the results deteriorate. 
+Lower numbers produce more bars per cycle and more patterns are found, but they 
+are from a longer time period - above one year - within which the market can have 
+substantially changed. So the results can deteriorate, too. </p>
+<p><!--Normally, daily bars begin and end at UTC midnight. But for price patterns 
+the time zone of the bars is critical. A good time for low EUR/USD volatility is 
+midnight in Western Europe. <strong>BarZone</strong> determines the time zone of 
+a daily bar; <strong>WET</strong> is the Western European Time, the time zone of 
+London, considering daylight saving time. The <strong><a href="barmode.htm">BarMode</a></strong> 
+variable determines how the simulator deals with weekend bars. Normally, no bar 
+is allowed to start or end within a weekend. This means that for daily bars, the 
+bar starting Friday 00:00 midnight would end Monday 00:00 midnight. This is not 
+desired here because this bar would then contain prices from Friday as well as from 
+Sunday evening, and spoil the candle pattern. <strong>BarMode = BR_LEISURE</strong> 
+suppresses trading on weekend, but allows weekend bars, this way causing the Friday 
+bar to end Saturday 00:00 midnight. The week then consists of 6 instead of 5 bars.
+<p></p>
+<p>Because the strategy needs only the last 3 candles for trade decisions, we can 
+set the lookback period from its default 80 down to 3 bars. This gives us three 
+months more for training and testing. -->The <a href="mode.htm">RULES</a> flag is required 
+for generating price patterns with the <strong>advise</strong> function.
+<a href="mode.htm">TESTNOW</a> runs a test automatically after training - this saves 
+a button click when experimenting with different pattern finding methods. </p>
+<p>The next code line behaves differently in training and in test or trade mode:
+</p>
+<p><strong>if(Train)&nbsp;Hedge = 2; </strong></p>
+<p><strong><a href="is.htm">Train</a></strong> is true in [<span class="tast">Train</span>] 
+mode. In this mode we want to determine the profitability of a trade that follows 
+a certain pattern. <a href="hedge.htm">Hedge</a> is set to <strong>2</strong>, which 
+allows long and short positions at the same time. This is required for training 
+the patterns, otherwise the short trade after <strong>adviseShort</strong> would 
+immediately close the long positions that was just opened after <strong>adviseLong</strong>, 
+and thus assign a wrong profit/loss value to its candle pattern. <strong>Hedge</strong> 
+is not set in test and trade mode where it makes sense that positions are closed 
+when opposite patterns appear. </p>
+<p><a href="timewait.htm">LifeTime</a> sets the duration of a trade to 1 bar, 
+i.e. 1 day. The trade results are also used for training the candle patterns and generating the trade rules.
+<strong>MaxLong</strong>/<strong>MaxShort</strong> limit the number of open trades 
+in test or trade mode to 1. </p>
+<h3>The result</h3>
+<p>Click [<span class="tast">Train</span>]. Depending on the PC speed, Zorro will 
+need a few seconds for running through the 5 WFO cycles and finding about 30 profitable 
+long or short patterns in every cycle. Click [<span class="tast">Result</span>] 
+for the equity curve:<br>&nbsp;</p>
+<p><img height="405" src="../images/work7_16.png" width="701"></p>
+<p>The machine learning algorithm with daily candle patterns seems to give us a 
+more or less rising equity curve and symmetric results in long and short trading. 
+But can the same result be achieved in live trading? Or was it just a lucky 
+setup? 
+For finding out, you can apply a <span class="Highlight">Reality Check</span> 
+with a Monte Carlo arlgorithm. There are several 
+methods; a frequently used one is running the test many times (use
+<a href="numtotalcycles.htm">NumTotalCycles</a>) with a randomized price curve (<strong><a href="detrend.htm">Detrend</a> 
+= SHUFFLE</strong>), plotting a histogram of the results, and comparing it with 
+the result from the real price curve. How to do such a reality check is covered 
+in the Black Book. If you do that, you'll find that the system above <strong>
+will not pass the test</strong>.</p>
+<h3>What have we learned in this workshop?</h3>
+<ul>
+	<li>Daily candle patterns can have predictive power under certain circumstances.
+	</li>
+	<li>The <a href="advisor.htm">advise</a> function generates trade rules with 
+	machine learning algorithms. </li>
+	<li>Out of sample testing is mandatory for machine learning strategies.</li>
+	<li><strong>if(<a href="is.htm">Train)</a></strong> can be used for different 
+	setups depending on the mode.</li>
+	<li><a href="timewait.htm">LifeTime</a> limits the duration of a trade.</li>
+</ul>
+<p align="right"><span><a href="tutorial_options.htm">Next: Options Trading</a></span></p>
+<hr>
+<h3>Further reading: &#9658; <a href="advisor.htm">advise</a>,
+<a href="mode.htm">RULES</a> </h3>
+
+</body>
+
+</html>

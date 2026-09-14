@@ -1,0 +1,168 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>BarPeriod, TimeFrame</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/barperiod.htm">
+</head>
+
+<body>
+<h2>BarPeriod</h2>
+The duration of one bar in minutes (default = <strong>60</strong>). The 
+theoretical minimum bar period is one second (<strong>1./60</strong>) for normal scripts, and 1 ms (<strong>0.001/60</strong>) for <a href="fill.htm">HFT simulation</a>. 
+Typical price curve inefficiencies disappear on low time frames, so don't go 
+below <strong>60</strong> for indicators, filters, or analysis functions. Use <strong>1440</strong> for daily and <strong>10080</strong> for weekly bar periods. The bar period is the basic  time frame in the script. It determines the width of a candle in the chart, and the frequency of the <a href="run.htm">run</a> function that is called after every bar. If not explicitly set up in the script, it can be determined with the [<span class="tast">Period</span>] slider. 
+User-defined bars (see <a href="bar.htm">bar</a> function) have no fixed bar period; in that case <strong>BarPeriod</strong> should be set to the average duration of a bar. <br>
+<h3>Type:</h3>
+<strong>var</strong>
+<h2>BarOffset</h2>
+Bar start/end time offset in minutes; <strong>0</strong> or a positive number smaller than <strong>BarPeriod </strong>
+(default = <strong>940</strong> with daily bars, otherwise <strong>0</strong>). Bars and frames normally start at a date/time boundary; f.i. 60-minute bars start at every full hour, and daily bars  
+normally start at UTC midnight when <strong>BarOffset</strong> is <strong>0</strong>. For daily bars, 
+use <strong>BarOffset</strong> to shift the bar begin to the desired trading time 
+of the day; the <strong>940</strong> default sets it to 15:40 in the bar
+<a href="assetzone.htm">time zone</a>. <strong>BarOffset</strong> is also automatically set by <strong><a href="numsamplecycles.htm">NumSampleCycles</a></strong> 
+for dividing a bar into equal time intervals and decreasing the offset by one interval per cycle; on the last cycle, <strong>BarOffset</strong> 
+is 0. &nbsp;
+<h2>TimeFrame</h2>
+Time frame in bars (default = <strong>1</strong>) used for all subsequent <a href="price.htm">price</a>, <a href="month.htm">time</a>, <a href="series.htm">series</a>, <a href="advisor.htm">advise</a>, and <a href="buylong.htm">trade</a> calls. This variable can be set within a strategy for using multiple time frames, 
+for skipping bars, for synchronizing time frames to external events, or for for 
+emulating special bars such as Range or Renko Bars. For instance, with a bar period of 5 minutes (<strong>BarPeriod = 5</strong>) and a time frame of 12 bars (<strong>TimeFrame = 12</strong>), series and trade signals use a one hour time frame (5*12 = 60 minutes). <br>
+&nbsp;&nbsp;For <span class="Highlight">synchronizing time frames</span> to a 
+certain event, time, or date, skip the bars inbetween by setting <strong>TimeFrame</strong> to <strong>0</strong>. 
+Count the skipped bars, and set <strong>TimeFrame</strong> to the negative number of skipped bars 
+when the event happens. The time frame synchronizing mechanism only affects the 
+shifting of <a href="series.htm">series</a>; price and other functions are 
+unaffected. See remarks and example; see also <a href="frame.htm">frameSync</a> 
+and <a href="assetzone.htm">AssetFrame</a>.
+<h2>FrameOffset</h2>
+Time frame offset in bars (default = <strong>0</strong> = no offset) used for all subsequent <a href="price.htm">price</a>, <a href="month.htm">time</a>, <a href="series.htm">series</a>, and <a href="buylong.htm">trade</a>  calls; must be smaller than <strong>TimeFrame</strong>. When fixed time frames are used, this variable determines  the bar number within a time frame when series are shifted and trades are executed.
+This variable allows to generate trade signals at different times dependent on the asset.
+<h3>Type:</h3>
+<strong>int</strong>
+<h3>Remarks:</h3>
+<ul>
+  <li>Use the <a href="bar.htm">bar</a> function for <span class="Highlight">special bars</span> that are not bound to a certain bar period. </li>
+  <li><strong>BarPeriod</strong> can be set by script from one second (<strong>1./60</strong>) 
+  to one week (<strong>7*24*60 = 10080</strong>). Bar periods above <strong>1</strong> are rounded to a multiple of minutes. The [<span class="tast">Period</span>] slider moves in fixed steps corresponding to the 
+  standard bar periods of trading platforms; directly setting <strong>BarPeriod</strong> places the slider at the position closest to the <strong>BarPeriod</strong> value. If <strong>BarPeriod</strong> 
+  is set directly in the script, the slider is locked. </li>
+  <li>In [<span class="tast">Test</span>] mode, bar generation is based on the 
+  <span class="Highlight">UTC time stamps of ticks</span> in the historical price data. 
+  All ticks that fall in the bar period contribute to the bar. For instance, a 
+  10-minute bar ending at 12:00 contains all ticks with timestamps from 
+  11:50:00.000 until 11:59:59.999. If the tick covers several prices, its time stamp 
+  should be from its close price. If historical time stamps are from the open or 
+  the middle price instead, you can use the <a href="ticktime.htm">TickFix</a> 
+  variable for adjusting them. In [<span class="tast">Trade</span>] mode, bar generation is based on UTC time from the PC clock, not on the broker's server time for avoiding sync problems by connection interruptions and Internet lag.</li>
+  <li>On <span class="Highlight">short bar periods</span> it is recommended to set the <a href="mode.htm">TICKS</a> flag and use high resolution <a href="testing.htm#m1t1">.t1 price data</a>. It's mandatory on bar periods of less than a minute 
+  - not only for the backtest, but also for filling the lookback period in live 
+  trading. For this, set <a href="script.htm">History</a> to <strong>&quot;.t1&quot;</strong> and <strong>BarPeriod</strong> to the number of seconds divided by 60, f.i. <strong>BarPeriod = 5./60.</strong> for 5 seconds. Mind the decimal; <strong>5/60</strong> would be considered an <strong>int</strong> and thus evaluate to <strong>0</strong>. For extremely short bar periods, make sure that <a href="ticktime.htm">TickTime</a> is always less than a bar period. </li>
+  <li>For bar periods <span class="Highlight">longer than a week</span>, set <strong>BarPeriod = 1440</strong> and use <strong>TimeFrame</strong> 
+  for setting up monthly or quarterly time periods.&nbsp; </li>
+    <li><strong>BarPeriod</strong> and <strong>BarOffset</strong> affect the 
+	<span class="Highlight">sampling of price data.</span> Therefore they must be set in the first run 
+	before selecting the 
+	<a href="asset.htm">asset</a>, must not change afterwards, and must not be 
+	optimized. <strong>TimeFrame</strong> and <strong>FrameOffset</strong> can be set anytime and can be optimized without restrictions.</li>
+	<li>Historical price data should have sufficient resolution so 
+	that any <strong>BarPeriod</strong> contains at least one historical tick 
+	during market hours. If <strong>BarOffset</strong> is nonzero, historical 
+	and lookback data need accordingly higher resolution. For instance, with a 
+	daily bar period price data should have at least 10-minutes resolution when <strong>
+	BarOffset</strong> is set so that bars end at 15:40.&nbsp; 
+	</li>
+	<li>If <strong>BarOffset</strong> is <strong>0</strong>, bars  begin and end at day/hour boundaries. 
+	For preventing that daily bars would begin and end at 00:00 
+	midnight (and thus reflect the prices from the previous, not 
+	from the current day), <strong>BarOffset</strong> has a 
+	default value of <strong>940</strong> (equivalent to 15:40) on daily and 
+	weekly bars. Alternatively, set <strong>BarOffset</strong> to the 
+	time when you want the script to trade; for example, <strong>BarOffset 
+	= 60*9+30;</strong> for trading at market open at 9:30. Witb the default bar 
+	offset, weekly bars end on Friday 15:40.</li>
+	<li>All time zone settings assume UTC time for price history. If price 
+	history is in local time and the time of day is relevant for the system, 
+	either convert the timestamps to UTC or use <a href="assetzone.htm">BarZone</a>.<br></li>
+  </ul>
+  <h3>TimeFrame vs. BarPeriod:</h3>
+  <ul>
+  <li><strong>TimeFrame</strong> is <span class="Highlight">not the same </span>
+  as a longer <strong>BarPeriod</strong>. The differences are listed below. If multiple time frames or time offsets are not required, set the time frame with <strong>BarPeriod</strong> only. This uses the lowest possible number of bars and results in the highest speed for testing and training.&nbsp;
+	  <li><strong>Barperiod</strong> determines the bar chart and the frequency of the 
+	  <a href="run.htm">run</a> function, while <strong>TimeFrame</strong> affects the 
+	  <a href="price.htm">price</a> functions, the shifting of 
+	  data 
+	  <a href="series.htm">series</a>, and the bars at which 
+	  <a href="advisor.htm">advise</a> and <a href="buylong.htm">trade</a> calls are executed. </li>
+	  <li>Commands to enter or exit trades in the <a href="run.htm">run</a> 
+	  function are only executed when the 
+	  <strong>TimeFrame</strong> has ended at the current bar. But trade entry, 
+	  stop, or profit targets are observed at any bar period. The
+	  <a href="run.htm">run</a> function itself is executed at any bar period, 
+	  but the <a href="frame.htm">frame</a> function can be used for restricting 
+	  code execution to the end of the current time frame.</li>
+	  <li> 
+	  <strong>TimeFrame</strong> is normally <span class="Highlight">not 
+	  synchronized</span> to day/hour boundaries, while <strong>BarPeriod</strong> 
+	  is. For synchronizing time frames to days or hours, use the 
+	  <a href="frame.htm">frameSync()</a> function. For aligning daily time 
+	  frames to a certain market hour in a certain time zone, use the <a href="assetzone.htm">AssetFrame</a> 
+	  variable. </li>
+	  <li><strong>TimeFrame</strong> has no effect on variables in bar period units, f.i. 
+	  <a href="lookback.htm">LookBack</a>, <a href="lookback.htm">UnstablePeriod</a>, <a href="timewait.htm">LifeTime</a>, or 
+	  <a href="timewait.htm">WaitTime</a>. For extending those time periods, multiply the variable value with the number of bars per time frame. 
+	  </li>
+	  <li><strong>TimeFrame</strong> does not affect indicators that do not use a 
+	  <strong>Data</strong> series, but directly the current asset price series. This is mentioned in the description of the indicator.</li>
+	  <li>Recursive indicators from the TA-Lib such as <strong>EMA</strong> or <strong>ATR</strong> require
+	  <a href="lookback.htm">UnstablePeriod</a> to be adapted to their maximum 
+	  time frame.&nbsp; </li>
+  </ul>
+<h3>Examples:</h3>
+<pre>#define H24 (1440/BarPeriod)
+#define H4 (240/BarPeriod)
+#define H1 (60/BarPeriod)
+... 
+BarPeriod = 60; <em>// 1 hour (60 minutes) bars</em>
+...
+<em>// create a 4-hour price series</em><em> ///////////////////////////////////</em>
+TimeFrame = H4;
+vars PriceH4 = series(price());
+ 
+<em>
+// create a 24-hour price series /////////////////////////////////</em>
+TimeFrame = H24;
+vars PriceH24 = series(price());
+<em>
+// skip bars outside market hours</em>
+static int SkippedBars = 0;<br>if(!market(ET,0)) {<br>   TimeFrame = 0;<br>   SkippedBars--; <em>// count negative number of bars outside market hours</em><br>} else if(TimeFrame == 0) {<br>   TimeFrame = SkippedBars;<br>   SkippedBars = 0;<br>} else<br>  TimeFrame = 1;<br>vars PriceInMarketHours = series(price());
+
+<em>// create a daily price series</em><em> (equivalent to AssetZone) ////////</em>
+static int BarsPerDay = 0;
+if(hour(0) &lt; hour(1)) { <em>// day change</em>  
+  TimeFrame = BarsPerDay; <em>// end the frame</em>
+  BarsPerDay = 0;
+} else {
+  TimeFrame = 0; <em>// inside the frame</em>
+  BarsPerDay--; <em> // count negative number of bars per day</em>
+}
+vars PriceD1 = series(price());
+<em>
+// alternative: a midnight-aligned price series using frameSync()</em>
+StartWeek = 10000;
+TimeFrame = frameSync(H24);
+vars PriceD1 = series(price());
+
+<em>// back to 1-hour time frames</em>
+TimeFrame = 1;					
+...</pre>
+<h3>See also:</h3>
+<a href="bars.htm">Bars and Candles</a>, <a href="numbars.htm">NumBars</a>, 
+<a href="numsamplecycles.htm">SampleOffset</a>, <a href="lookback.htm">LookBack</a>, <a href="day.htm">dayHigh</a>, <a href="date.htm">Date</a>, <a href="barmode.htm">BarMode</a>, <a href="assetzone.htm">AssetFrame</a>, <a href="frame.htm">frameSync</a>, <a href="bar.htm">bar</a>
+<p>&nbsp;</p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

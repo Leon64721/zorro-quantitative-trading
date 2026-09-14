@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>season</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+.auto-style1 {
+	background-color: #EEEEEE;
+}
+</style>
+<link rel="canonical" href="https://zorro-project.com/manual/en/season.htm">
+</head>
+
+<body link="#000000" vlink="#333333" alink="#666666">
+<h1>Seasonal and directional strength</h1>
+<h2>predictMove (vars Data, int Length, int Horizon, var Percentile): var </h2>
+Predicts the magnitude of a price movement, based on statistical analysis of 
+price changes in the <strong>Data</strong> series. Returns the given <strong>Percentile</strong> of 
+<strong>Data</strong> changes within the given time <strong>Horizon</strong>. 
+Example: if the function returns <strong>10</strong> at <strong>Horizon = 20</strong> and <strong>Percentile = 95</strong>, then  in <strong>95%</strong> of all cases the <strong>Data</strong> value 
+moved by <strong>10</strong> or less in any direction within <strong>20</strong> bars (and therefore 
+moved by more than <strong>10</strong> only in <strong>5%</strong> of all cases). For 
+statistical significance <strong>Length</strong> should be large compared to
+<strong>Horizon</strong>.&nbsp;The minimum length of the <strong>Data</strong> 
+series is <strong>Length+Horizon</strong>.
+<h2>predictSeason (vars Data, int Length, int Horizon, int Season): var </h2>
+Predicts the expected price movement within a given time <strong>Horizon</strong>, 
+based on the current time and seasonal movement in the <strong>Data</strong> series. 
+Example: if the function returns <strong>1.5</strong> at <strong>Horizon = 20</strong> and <strong>Season = 4</strong>, then the <strong>Data</strong> series 
+is expected to rise by <strong>1.5</strong> within 20 bars from now, based on 
+the annual movement at the same date in previous years. If <strong>Horizon == 0</strong>, 
+the function returns no price move, but the average seasonal <strong>Data</strong> 
+value at the current date. For statistical significance the <strong>Data</strong> 
+series should cover at least 3 or 4 seasons.&nbsp;
+<h3>Returns:</h3>
+Predicted data change / average seasonal data.
+<h3>Parameters:</h3>
+		<table border="0">
+		  <tr>
+            <td><strong>Data</strong></td>
+		    <td> A data <a href="series.htm">series</a>, usually from price functions <strong><a href="price.htm">price(), priceClose()</a></strong>,&nbsp; </td>
+	      </tr>
+          <tr>
+            <td><strong>Length</strong></td>
+            <td>The length of the data series, normally the <a href="lookback.htm">LookBack</a> period. </td>
+          </tr>
+          <tr>
+            <td><strong>Horizon</strong></td>
+            <td>Price movement duration in bars.</td>
+          </tr>
+          <tr>
+            <td><strong>Percentile</strong></td>
+            <td>Price movement percentile to return, f.i. <strong>5</strong> for the lowest 5% or <strong>95</strong> for the highest 5%. </td>
+          </tr>
+          <tr>
+            <td><strong>Season</strong></td>
+            <td><strong>1</strong> for daily, <strong>2</strong> for weekly, <strong>3</strong> for monthly, or <strong>4</strong> for annual 
+			seasons. </td>
+          </tr>
+        </table>        
+ <h3>Remarks:</h3>
+			<ul>
+		  <li>Source code in <strong>indicators.c</strong>. </li>
+				<li>Use <a href="profile.htm">plotDay</a>, <a href="profile.htm">
+				plotWeek</a>, <a href="profile.htm">plotMonth</a>, or
+				<a href="profile.htm">plotYear</a> for displaying seasonal 
+				dependence in a histogram.</li>
+            </ul>
+            <h3>Example:</h3>
+<pre>function run()
+{
+  StartDate = 2010;
+  BarPeriod = 1440;
+  LookBack = <span class="auto-style1">300</span>;	
+ 
+  vars Prices = series(price());
+  if(!is(LOOKBACK)) {
+    LifeTime = 1;
+    var WeeklyMove = predictSeason(Prices,LookBack,LifeTime,2);
+    if(WeeklyMove &gt; 0)
+      enterLong();
+    else if(WeeklyMove &lt; 0)
+      enterShort();
+  }
+}</pre>
+            <h3>See also:</h3>
+            <a href="asset.htm">asset</a>, <a href="ta.htm#roc">ROC</a>,
+<a href="predict.htm">predict</a> 
+            <p></p>
+			<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+version online</a>
+</body>
+</html>

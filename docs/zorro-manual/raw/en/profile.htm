@@ -1,0 +1,289 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>plotPriceProfile, plotWeek, plotMAEGraph</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+<!--
+.Stil1 {font-size: smaller}
+.Stil2 {
+	font-family: sans-serif;
+	font-size: 13px;
+	color: rgb(0, 0, 0);
+	background-color: rgb(255, 255, 255);
+}
+-->
+</style>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/profile.htm">
+</head>
+<body>
+<h1>profile.c - price, trade, correlation, and seasonal analysis</h1>
+The <strong>profile.c</strong> library contains  functions for generating price or trade profiles, MAE charts, or seasonal analysis charts in [<span class="tast">Test</span>] mode. The functions are normally used during strategy development for analyzing trade profits or for finding seasonal effects. They can also be used as templates for building user-specific profile charts. <br>
+<h2>plotPriceProfile (int bars, int type)</h2>
+Generates a price difference profile starting at the current bar. 
+This function is normally called by a trade signal for checking its predictive 
+power. It produces a histogram of 
+the mean price movement following the signal. The red bars in the histogram are the averaged 
+mean price difference to the 
+entry point in pips, the blue/grey bars are their standard deviations, divided by 4 for better scaling.
+<p align="center"><img src="../images/profile1.png" width="560" height="321"><br>
+  <span class="Stil1">Price difference profile at entering a trade with the workshop 4 system. Note the small adverse excursion after 24 hours. </span></p>
+<h3>Parameters:</h3>
+<table border="0">
+  <tr>
+    <td><strong>bars</strong></td>
+    <td>Number of bars to plot in the price profile..</td>
+  </tr>
+  <tr>
+    <td><strong>type</strong></td>
+    <td><p>Type of the plot. <br>
+        <strong>0</strong> = plot price difference in pips to the first bar.<br>
+        <strong></strong><strong>1</strong> = plot price change in pips from the previous bar.<br>
+        <strong>2</strong> = plot negative price difference to the first bar (for short trades). <br>
+        <strong>3</strong> = plot negative price change from the previous bar. </p></td>
+  </tr>
+</table>
+<br>
+&nbsp;<br>
+<h2>plotTradeProfile (int bars)</h2>
+Generates a profit distribution chart after the test run. The distribution shows the frequency of trades dependent on their profit or loss. The blue bars in the chart are the number of trades (right y axis), the red bars are the sum of their returns in pips (left y axis). The x axis is the trade profit or loss in pips. The example chart below shows a system with about 100 trades that hit their profit target at 100 pips, and about 30 trades that hit their stop at 100 pips loss. Inbetween there's a distibution of trades with mostly small losses. Note that the shown profit/loss is not exactly 100 pips due to spread and slippage.
+<p align="center"><img src="../images/profile3.png" width="780" height="321"><br>
+    <span class="Stil1">Profit distribution of a system with <a href="stop.htm">Stop</a> and <a href="stop.htm">TakeProfit</a> distances both at 100 pips. </span></p>
+<h3>Parameters:</h3>
+<table border="0">
+  <tr>
+    <td><strong>bars &gt; 0 </strong></td>
+    <td>Number of bars to plot in the profit distribution. The more bars, the finer the resolution.</td>
+  </tr>
+  <tr>
+    <td><strong>bars &lt; 0 </strong></td>
+    <td>Step width of the profit distribution in pips per bar. The smaller the step width, the finer the resolution.</td>
+  </tr>
+</table>
+<br>
+&nbsp;
+<h2>plotMAEGraph (int Type)</h2>
+<h2>plotMAEPercentGraph (int Type)</h2>
+<h2>plotMFEGraph (int Type)</h2>
+<h2>plotMFEPercentGraph (int Type)</h2>
+Generates a Maximum Adverse Excursion / Maximum Favorable Excursion graph after the test run. The Maximum Adverse Excursion 
+(MAE) is the worst drawdown of an individual trade, the difference of its highest interim profit to its worst interim loss. 
+The Maximum Favorable Excursion (MFE) is the opposite. The graph displays any trade as a dot in a chart showing its MAE 
+or MFE on the x axis and its profit on the y axis in pip units or in percent of 
+the price. Winning trades are green, losing trades are red. This graph can be used for analyzing the exit behavior of the trades and finding the optimal stop or take profit distances.
+<p align="center"><img src="../images/profile4.png" width="624" height="301"><br>
+<span class="Stil1">MAE graph of the Workshop 5 system. </span></p>
+<h3>Parameters:</h3>
+<table border="0">
+  <tr>
+    <td><strong>Type</strong></td>
+    <td>Not used yet - always <strong>0</strong>.</td>
+  </tr>
+  </table>
+<br>&nbsp;<br>
+<h2>plotDay (var value, int type)</h2>
+<h2>plotWeek (var value, int type)</h2>
+<h2>plotMonth (var value, int type)</h2>
+<h2>plotYear (var value, int type)</h2>
+Seasonal analysis; generates a day, week, month or year distribution of a given value in a histogram (see also <a href="season.htm">seasonal strength</a>). This way seasonal effects of a trading system, a variable, or a price curve can be found. The red bars in the chart are the average value at a certain hour or day, the blue bars are their standard deviations divided by 4 for better scaling.
+<p align="center"><img src="../images/profile2.png" width="794" height="321"><br>
+  <span class="Stil1">Week statistics with hourly returns of the workshop 4 EUR/USD system. Note the seasonal oscillation of the standard deviation - a  price curve effect known as <strong>heteroskedasticity</strong>.</span></p>
+ &nbsp;
+<h2>plotWFOCycle (var value, int type)</h2>
+Analyzes the development of the value over a WFO cycle (x axis = trading days since cycle start). Can be used to determine if the profit deteriorates towards the end of the cycle, thus suggesting shorter cycles.
+<h3>Parameters:</h3>
+<table border="0">
+  <tr>
+    <td><strong>value</strong></td>
+    <td>Value to be evaluated, for instance <a href="price.htm">price(0)</a>,
+	<strong>Spread</strong>, <a href="balance.htm">Equity</a>, etc.. </td>
+  </tr>
+  <tr>
+    <td><strong>type</strong></td>
+    <td><p><strong>0 </strong>= evaluate value difference to the season begin.<strong><br>
+        1</strong> = evaluate value difference to the previous bar.<br><strong>4</strong> 
+	= evaluate absolute value.<br>
+      </p></td>
+  </tr>
+</table>
+<br>
+&nbsp;<br>
+<h2>plotDayProfit ()</h2>
+<h2>plotWeekProfit ()</h2>
+<h2>plotMonthProfit ()</h2>
+<h2>plotQuarterProfit ()</h2>
+<h2>plotWFOProfit ()</h2>
+Plots bars equivalent to the gain or loss of the previous day, week, month,  quarter, or WFO cycle in a new window in the price chart (thus, clicking [<span class="tast">Result</span>] is required). The blue bars are the profit in units of the account currency, the red bars are the loss.
+Since the bars represent the previous period, they are shifted by one period.
+<p align="center"><img src="../images/profil3.png" width="742" height="111"><br>
+    <span class="Stil1">Quarterly profit/loss of the Workshop 4 EUR/USD system.<br>
+&nbsp;</span><br>
+&nbsp; </p>
+<h2>plotCorrelogram(var Value, int Lag) <a name="correlogram"></a></h2>
+<h2>plotCorrelogram(var Value1, var Value2, int Lag)</h2>
+Generates in the <strong>EXITRUN</strong> a histogram of the  correlation of a variable with itself, or with another variable, for sequential values of lag.
+On random data, such autocorrelations should be near zero for all time lags. But if the data is non-random, one or more of the autocorrelations will be significantly non-zero.
+<p align="center"><img src="../images/correlogram.png" width="716" height="301"></p>
+<p>The above correlogram displays a significant correlation (0.14) of the variable with its value from the previous bar. The correllations with earlier bars (2...49) are not as significant. </p>
+<h3>Parameters:</h3>
+<table border="0">
+  <tr>
+    <td><strong>Value1</strong></td>
+    <td>First variable to be evaluated, for instance <a href="price.htm">price(0)-price(1)</a>.</td>
+  </tr>
+  <tr>
+    <td><strong>Value2</strong></td>
+    <td>Second variable to be evaluated.</td>
+  </tr>
+  <tr>
+    <td><strong>Lag</strong></td>
+    <td><p>Maximum autocorrelation lag.<br>
+    </p>
+	  </td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<p align="center"><a name="heatmap"></a></p>
+<h2>plotHeatmap(string name, var* Data, int Rows, int Cols)</h2>
+<h2>plotHeatmap(string name, mat Matrix)</h2>
+Plots a heatmap in the <strong>EXITRUN</strong> from the given <strong>Matrix</strong> 
+or the <strong>Data</strong> array of size  <strong>Rows*Cols</strong>, usually a correlation matrix. The matrix elements must be in the<strong> 0..1</strong> range, and are displayed as  squares with a color range from blue (<strong>0</strong>) to red (<strong>1</strong>). 
+Since the heatmap is simulated with colored dots, you might need to scale the 
+chart before exporting so 
+that it looks nice. Examples of heatmap usage can be found on
+<a href="https://financial-hacker.com/get-rich-slowly/" target="_blank">
+Financial Hacker</a>. A different type of heatmap - a contour chart - can be 
+plotted with the <a href="data.htm">dataChart</a> function. 
+<p align="center"><img src="../images/heatmap.png" width="376" height="371"></p>
+<h3>Parameters:</h3>
+<table border="0">
+  <tr>
+    <td><strong>Data</strong></td>
+    <td>Pointer of a <strong>var</strong> array with <strong>Rows</strong> * <strong>
+	Cols</strong> elements.</td>
+  </tr>
+  <tr>
+    <td><strong>Rows, Cols</strong></td>
+    <td>Array size.<br>&nbsp;</td>
+  </tr>
+</table>
+<h2>plotBuyHold(string Benchmark, int Color)</h2>
+Compares the equity curve with a benchmark. Call this function at any 
+<a href="run.htm">run</a> for plotting the buy-and-hold profit curve of the given <strong>
+Benchmark</strong> asset - for instance, <strong>&quot;SPY&quot;</strong> - in the given 
+<strong>Color</strong>. The position size is detemined by <a href="pip.htm">Leverage</a> 
+and <a href="lots.htm">
+Capital</a>. If <strong>Capital</strong> is zero, the position size is given by
+<a href="lots.htm">Lots</a>. The equity curve is displayed with a blue line for better comparison.<br>&nbsp;
+<h2>plot2(string Name,var Value,int Type,int Select,int Color1,int Color2)</h2>
+Like <a href="plot.htm">plot</a>, but plots a two-color curve. <strong>Select</strong> 
+can be a boolean expression; at <strong>true</strong> (nonzero) the curve is 
+plotted in <strong>Color1</strong>, otherwise in <strong>Color2</strong>.<br>&nbsp; 
+<h3>Remarks:</h3>
+<ul>
+  <li>All profile functions are contained in source code in <strong>include\profile.c</strong>, and can be used as templates for writing other chart plotting or analysis functions of any kind. </li>
+  <li>For adding the profile functions, the line <strong>#include &lt;profile.c&gt;</strong> must be added at the begin of the script. </li>
+  <li>Price profile or distribution <span class="Stil2">histograms </span>should 
+  normally only be plotted for a single asset and algorithm, since every market and every system will generate a different profile. In a portfolio strategy, temporarily disable the other assets and algos for plotting a profile of a component. </li>
+  <li>Only one histogram can be plotted, not several at the same time;  unused plot commands must be commented out for not interfering with the active chart. 
+  Histograms are only plotted in [<span class="tast">Test</span>] mode, not in [<span class="tast">Train</span>] and [<span class="tast">Trade</span>] mode.&nbsp; </li>
+	<li>The size and resolution of the histogram can be set up with the <a href="plotbars.htm">plot parameters</a>. 
+	Label spacing at the x axis can be set up with <strong>PlotLabels</strong>.</li>
+  <li> Week, month, and year analysis is based on trading days, not calendar days. Therefore the week has 5 days, the month 22 days, and the year 252 days. Due to the different number of trading days   (20..23) in a month, they are normalized to 22, so day 22 is always the last trading day of the month.</li>
+  <li>The standard deviations (blue bars in the chart) show how much the values differ from their average, and thus indicate the significance of a nonzero average. The smaller the blue bar and the bigger the red bar, the more significant is the seasonal effect. In the case of prices or returns, the standard deviation is a measure of volatility. </li>
+  <li>When developing a strategy, it is  helpful to examine the price difference profile at every trade 
+  entry bar for verifying the trade entry rules and for determining the exit rules. </li>
+</ul>
+<h3>Examples:</h3>
+<pre>#include &lt;profile.c&gt;<em>
+// Price difference profile</em>
+function run()
+{
+  vars Trend = series(LowPass(series(price()),500));
+  if(valley(Trend)) {
+    plotPriceProfile(40,0);
+    enterLong();
+  } else if(peak(Trend)) {
+    plotPriceProfile(40,2);
+    enterShort();
+  }
+}</pre>
+<pre>#include &lt;profile.c&gt; 
+<em>// Trade distribution or quarterly profit/loss</em>
+function run()
+{
+  vars Trend = series(LowPass(series(price()),500));
+  Stop = 100*PIP;
+  TakeProfit = 100*PIP;
+  if(valley(Trend))
+    enterLong();
+  else if(peak(Trend))
+    enterShort();
+
+  PlotHeight1 = 320;
+  PlotScale = 4;
+  plotTradeProfile(50);
+}</pre>
+<pre>#include &lt;profile.c&gt;
+<em>// Weekly return analysis </em><em>or quarterly profit/loss</em>
+function run()
+{
+  vars Trend = series(LowPass(series(price()),500));
+
+  if(valley(Trend))
+    enterLong();
+  else if(peak(Trend))
+    enterShort();
+
+  PlotHeight1 = 320;
+  PlotScale = 3;
+  set(PLOTNOW);
+  plotWeek(Equity,1);<br>  //plotQuarterProfit();
+}</pre>
+<pre>#include &lt;profile.c&gt;
+<em>// Correlogram of High-to-High differences of selected asset</em>
+function run()
+{
+  PlotHeight1 = 320;
+  PlotScale = 10;
+  plotCorrelogram(priceHigh(0)-priceHigh(1),50);
+}</pre>
+<pre>#define DAYS  252 <em>// 1 year</em>
+#define NN    30  <em>// max number of assets</em>
+#include &lt;profile.c&gt;
+<em>// plot a heatmap of asset correlations</em>
+function run()
+{
+  BarPeriod = 1440;
+  StartDate = NOW;
+  LookBack = DAYS;
+
+  vars Returns[NN];
+  var Correlations[NN][NN]; <em>// NN*NN matrix
+</em>  int N=0;
+  while(asset(loop(&quot;USD/CAD&quot;,&quot;EUR/USD&quot;,&quot;GBP/USD&quot;,&quot;USD/JPY&quot;))) 
+    Returns[N++] = series(RET(1));
+
+  int i,j;
+  if(is(EXITRUN)) {
+    for(i=0; i&lt;N; i++)
+      for(j=0; j&lt;N; j++)
+        Correlations[N*i+j] = Correlation(Returns[i],Returns[j],DAYS);
+    plotHeatmap(&quot;Correlation&quot;,Correlations,N,N);
+  }
+}</pre>
+<pre><em>// Plot a 2-color RSI</em>
+var RSI2(vars Data,int TimePeriod)
+{
+  var RSIVal = RSI(Data,RSIPeriod);
+  plot2("RSI2",RSIVal,BARS,RSIVal &gt; 50.,GREEN,RED);
+  return RSIVal;
+}</pre>
+<h3>See also:</h3>
+<A href="plot.htm"><span class="links">plot</span></A>, <a href="plotbars.htm">plot parameters</a>, <a href="colors.htm">colors</a>, <a href="season.htm">season</a>
+<p></p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

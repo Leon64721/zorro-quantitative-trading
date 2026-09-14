@@ -1,0 +1,278 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+<title>loop</title>
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/loop.htm">
+</head>
+
+<body>
+
+<h2>loop(string Name1, string Name2, ... ) : string</h2>
+<h2>loop(Assets) : string</h2>
+<h2>loop(Algos) : string</h2>
+Enumerate assets or algos for training their parameters 
+or rules separately. The <strong>loop</strong> function gets many strings, 
+such as asset or algo names, as arguments. In [<span class="tast">Test</span>] 
+and [<span class="tast">Trade</span>] mode it returns the first pointer on the first 
+call, the next pointer on the next call and so on. It returns <strong>0</strong> 
+after the last pointer of its arguments. In [<span class="tast">Train</span>] mode it returns 
+the first pointer in the first component training cycle, the next one in the next cycle and so on. 
+Component training cycles end after the last pointer. Alternatively the single
+<a href="script.htm">Assets</a> or <a href="script.htm">Algos</a> pointer can be given for enumerating 
+asset or algo names.
+<h2>of(string Name1, string Name2, ... ) : string</h2>
+<h2>of(int N1, int N2, ... ) : intptr_t</h2>
+<h2>of(Assets) : string</h2>
+<h2>of(Algos) : string</h2>
+Enumerate pointers as above, but for general purposes and without the special behavior in [<span class="tast">Train</span>] 
+mode. 
+<strong>of(0)</strong> resets all open <strong>of()</strong> calls to their 
+first element. 
+<h3>Returns</h3>
+<strong>Name1</strong> on the first call, <strong>Name2</strong> on 
+the next call, and so on. The last call returns <strong>0</strong>.
+<h3>Parameters:</h3>
+<table border="0" cellpadding="2" cellspacing="2">
+	<tr valign="top">
+		<td><strong>Name1, Name2 ...</strong></td>
+		<td>
+		<p>Up to 40 arguments, usually <strong>strings</strong> with 
+		asset or algo names. </p>
+		</td>
+	</tr>
+	<tr>
+		<td><strong>N1, N2 ...</strong></td>
+		<td>
+		<p>Up to 40 integers. </p>
+		</td>
+	</tr>
+	<tr>
+		<td><strong>Assets</strong></td>
+		<td>
+		<p><a href="script.htm">Predefined array</a> with the asset names from 
+		the selected <a href="account.htm">asset list</a>.
+		</p>
+		</td>
+	</tr>
+	<tr valign="top">
+		<td><strong>Algos</strong></td>
+		<td>
+		<p><a href="script.htm">Predefined array</a>, to be set up by script to a list 
+		of all algo names.
+		</p>
+		</td>
+	</tr>
+</table>
+<p>&nbsp;<br>The following variables are valid after a <strong>loop</strong> 
+call (not for <strong>of</strong>): </p>
+<h2>Loop1</h2>
+<h2>Loop2</h2>
+Current return value of the first and second <strong>loop</strong>, normally the current 
+asset/algo name.
+<h2>Itor1</h2>
+<h2>Itor2</h2>
+Current cycle number of the first and second <strong>loop</strong>, starting with <strong>
+0</strong>.
+<h2>NumLoops1</h2>
+<h2>NumLoops2</h2>
+Total number of cycles of the first and second <strong>loop</strong>.<br>&nbsp;
+
+<h3>Remarks:</h3>
+<ul>
+	<li>In [<span class="tast">Train</span>] mode the <strong>loop</strong> function 
+	is handled in a special way. A complete training cycle is executed for every
+	<strong>loop</strong> pointer. This ensures that parameters, rules, and factors 
+	are generated separately for every strategy component. The
+	<a href="algo.htm">algo</a> function can be used to identify the strategy component 
+	in the parameter, factor, or rule file (see the example in
+	<a href="tutorial_kelly.htm">Workshop 6</a>). </li>
+	<li>Up to two <strong>loop</strong> calls in fixed order can be placed in the
+	<a href="run.htm">run</a> function, 
+	usually either an asset <strong>loop</strong>, or an algo <strong>loop</strong>, or an algo <strong>loop</strong> nested in the asset 
+	<strong>loop</strong>. For multiple loops through 
+	assets or algos, or for enumerating components outside the <strong>run</strong> 
+	function, use either <strong>of()</strong> 
+	or <a href="fortrades.htm">for(...assets)</a> / <a href="fortrades.htm">for(...algos)</a>.</li>
+	<li>The <strong>loop</strong> and <strong>of</strong> functions enumerate 
+	all elements up to the end. Therefore do not abort a <strong>loop</strong>/<strong>of</strong> 
+	loop with <strong>break</strong> or
+	<strong>return</strong>; use <strong>continue</strong> for skipping 
+	elements. Call <strong>of(0)</strong> for resetting all <strong>of</strong> 
+	functions to their first element. </li>
+	<li>Do not enumerate assets in a <strong>loop</strong> call when you only 
+	want to train common parameters, such as the holding time for a portfolio 
+	rotation. Use <strong>of</strong> insteead. </li>
+	<li>The returned string or pointer remains valid until the next <strong>loop</strong> 
+	or <strong>of</strong> 
+	call. For storing asset or algo specific information in a loop, use a
+	<a href="algovar.htm">AlgoVar</a>, or a <a href="series.htm">series</a>, or 
+	global arrays.</li>
+</ul>
+<h3>Examples (see also Workshop 6):</h3>
+<pre><em>// of() nesting</em>
+string Str1,Str2,Str3;
+while(Str1 = of("AA","BB","CC"))
+while(Str2 = of("XX","YY","ZZ"))
+while(Str3 = of("11","22","33"))
+  printf("\n %s %s %s",Str1,Str2,Str3);
+
+<em>// filling a string array
+</em>string Strings[5];
+for(i=0; Strings[i]=of(&quot;A&quot;,&quot;B&quot;,&quot;C&quot;,&quot;D&quot;,&quot;E&quot;); i++);</pre>
+<pre><em>// portfolio strategy with 3 assets and 3 trade algos, 
+// all components separately trained, using loop()</em>
+ 
+function tradeTrendLong()
+{
+  var MyParameter = optimize(...);
+  ...
+}
+ 
+function tradeTrendShort()
+{
+  var MyParameter = optimize(...);
+  ...
+}
+
+function tradeBollinger()
+{
+  var MyParameter = optimize(...);
+  ...
+}
+ 
+function run()
+{
+  while(asset(loop("EUR/USD","USD/CHF","GBP/USD"))) <em>// loop through 3 assets</em>
+  while(algo(loop(&quot;TRL&quot;,&quot;TRS&quot;,&quot;BOL&quot;))) <em>// and 3 different trade algorithms</em>
+  { 
+    if(Algo == &quot;TRL&quot;) tradeTrendLong();
+    else if(Algo == &quot;TRS&quot;) tradeTrendShort();
+    else if(Algo == &quot;BOL&quot;) tradeBollinger();   
+  }
+}</pre>
+<!--pre><em>// portfolio strategy with 3 assets and 3 trade algos, 
+// with one common and one separately trained </em>p<span class="question">arameter</span>
+ 
+var MyCommonParameter;
+
+function tradeTrendLong()
+{
+  var MyOwnParameter = optimize(...);
+  ...
+}
+ 
+function tradeTrendShort()
+{
+  var MyOwnParameter = optimize(...);
+  ...
+}
+
+function tradeBollinger()
+{
+  var MyOwnParameter = optimize(...);
+  ...
+}
+ 
+function run()
+{
+  while(asset(loop("EUR/USD","USD/CHF","GBP/USD"))) <em>// loop through 3 assets</em>
+  while(algo(loop(&quot;TRL&quot;,&quot;TRS&quot;,&quot;BOL&quot;))) <em>// and 3 different trade algorithms</em>
+  { 
+    if(Itor1 == 0 &amp;&amp; Itor2 == 0) <em>{// first loop only
+</em>       MyCommonParameter = optimize(...);<em>
+</em>    if(Algo == &quot;TRL&quot;) tradeTrendLong();
+    if(Algo == &quot;TRS&quot;) tradeTrendShort();
+    if(Algo == &quot;BOL&quot;) tradeBollinger();   
+  }
+}
+</pre-->
+<pre><em>// portfolio strategy with 3 assets and 3 trade algos, 
+// with common trained </em>p<span class="question">arameters
+</span> 
+var CommonParameter;
+
+function tradeTrendLong()
+{
+  ...
+}
+ 
+function tradeTrendShort()
+{
+  ...
+}
+
+function tradeBollinger()
+{
+  ...
+}
+ 
+function run()
+{
+  asset("EUR/USD"); <em>// select one of the assets for the common parameter</em>
+  CommonParameter = optimize(...);<em>
+
+</em>  while(asset(of("EUR/USD","USD/CHF","GBP/USD"))) <em>// loop through 3 assets witrh no specific optimization</em>
+  {
+    algo(&quot;TRL&quot;); tradeTrendLong();
+    algo(&quot;TRS&quot;); tradeTrendShort()
+    algo(&quot;BOL&quot;); tradeBollinger()
+  }<em>
+</em>}</pre>
+<pre><em>// portfolio strategy with 3 assets and 3 trade algos, 
+// with a combination common and separately trained </em>p<span class="question">arameters, 
+// using of()
+</span> 
+var CommonParameter,MyParameter1,MyParameter2,MyParameter3;
+
+function tradeTrendLong()
+{
+<em>  // uses CommonParameter,MyParameter1;
+</em>  ...
+}
+ 
+function tradeTrendShort()
+{
+<em>  // uses CommonParameter,MyParameter2;
+</em>  ...
+}
+
+function tradeBollinger()
+{
+<em>  // uses CommonParameter,MyParameter3;
+</em>  ...
+}
+ 
+function run()
+{
+  ...
+  asset("EUR/USD");<em> // select asset for optimize()</em>
+
+  CommonParameter = optimize(...);<em>
+</em>  MyParameter1 = optimize(...);
+  MyParameter2 = optimize(...);
+  MyParameter3 = optimize(...);
+<em>
+</em>  while(asset(of("EUR/USD","USD/CHF","GBP/USD"))) <em>// loop through 3 assets
+</em>  while(algo(of(&quot;TRL&quot;,&quot;TRS&quot;,&quot;BOL&quot;))) <em>// and 3 different trade algorithms
+</em>  { 
+    if(Algo == &quot;TRL&quot;) tradeTrendLong();
+    else if(Algo == &quot;TRS&quot;) tradeTrendShort();
+    else if(Algo == &quot;BOL&quot;) tradeBollinger();   
+  }
+}</pre>
+
+<h3>See also:</h3>
+<a href="optimize.htm">optimize</a>, <a href="while.htm">while</a>,
+<a href="algo.htm">algo</a>, <a href="asset.htm">asset</a>, <a href="script.htm">
+Assets</a>
+<p>
+<a class="button" href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))">&#9658; 
+latest version online</a></p>
+
+</body>
+
+</html>

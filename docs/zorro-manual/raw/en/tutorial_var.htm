@@ -1,0 +1,294 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+<title>Algorithmic Trading in C/C++ | Workshop 1</title>
+<link href="css.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+.style1 {color: #000000}
+</style>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/tutorial_var.htm">
+</head>
+<body>
+<h1> Learn To Code Algo Trading Strategies in C / C++</h1>
+<p>Although there are tools to create simple algo trading systems without 
+coding, there's normally no way around code for serious algo trading 
+development. Strategy coding (or programming) is the act of writing the rules of an 
+algorithmic trading 
+system in <strong>code</strong> - a sort of simplified language. The simplest 
+way to code is applying artificial intelligence. Youi can use the
+<a href="https://chat.openai.com/g/g-04NbRXbVh-zorro-trader-lite-c-coding-mentor-1-0" target="_blank">
+ChatGPT</a> coding mentor with the follwing propt:</p>
+<pre><span style="color: rgb(15, 15, 15); font-family: Söhne, ui-sans-serif, system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, &quot;Helvetica Neue&quot;, Arial, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: pre-wrap; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none;"><strong>&quot;Write a strategy that uses two moving averages (SMA) of the Close price. 
+When the SMA(30) crosses over the SMA(100), open a long position.
+When the SMA(30) crosses under the SMA(100), open a short position. 
+Ue a stop at 10 pips distance.&quot;</strong></span></pre>
+This creates the following code (or similar):
+<pre>function run()
+{
+  vars Prices = series(priceC());
+  vars SMA100 = series(SMA(Prices,100));
+  vars SMA30 = series(SMA(Prices,30));
+  Stop = 10*PIP;
+
+  if(crossOver(SMA30,SMA100))
+    enterLong();
+  if(<span>crossUnder(SMA30,SMA100)</span>)
+    enterShort();
+}</pre>
+<p>But just as with visual coding tools, ChatGPT is only suited for rather 
+simple strategies. If you wanr to write a system that exploits a particular 
+market inefficiency, you have to write 
+code yourself. Zorro uses C or C++ for algorithmic trading, because they are the fastest and 
+most widely used high-level languages. 
+A script in C/C++ will need only a few seconds for a 10 years backtest. The 
+same script in R or Python would need hours for the same task. Most software today is written in C 
+or C++, and most trading platforms use C or a C variant for automated trading. Zorro gives you the choice to develop strategy scripts either in <strong>lite-C</strong>, a 'lightweight' version of the <strong>C</strong> programming language, 
+or in 'full grown' <strong>C++</strong>.&nbsp; </p>
+<p>The <strong>lite-C</strong> compiler does not require a linkage process and 
+thus compiles and starts a script 'on the fly'. It also includes a framework that hides 
+away the complex stuff - like API 
+calls, pointers, structs, etc. - that is difficult to beginners. It was originally developed for the computer game company <strong>Atari</strong> for controlling the artificial intelligence of 
+agents in computer games. As you can imagine, a language powerful enough to control simultaneously ten thousands of 
+agents in a virtual world is an excellent choice for trading strategies. Since 
+most languages have a similar structure, after learning lite-C you'll also be able to understand 
+simple code in Python, Pascal, or Tradestation's EasyLanguage, even though the latter 
+declares a variable not with <strong>var x = 7</strong>, but with <strong>Vars: x(7)</strong>. </p>
+<p>The following workshops give a quick introduction into coding algorithmic 
+trading strategies and indicators. They are for the language C, but the same 
+scripts in C++ would look almost identical. The differences are listed under
+<a href="dlls.htm">Coding in C++</a>. For a more in-depth introduction to 
+the Zorro platform, the C language, and algorithmic trading methods, get the
+<a href="links.htm#black">Black Book</a>. </p>
+<ul>
+  <li><strong>Workshop 1-3: Variables, Functions, Branches, Loops</strong>. The 
+  basic elements of C, all on a single page.</li>
+	<li><span><a href="tutorial_trade.htm">Workshop 4: Trend Trading</a>. Your first strategy - an unusual trend trading system. 
+	</span></li>
+	<li><a href="tutorial_lowpass.htm">Workshop 4a: Indicator Development</a>. 
+	Implementing a spectral filter as used in workshop 4.</li>
+	<li><span><a href="tutorial_fisher.htm">Workshop 5: Strategy Optimizing</a>. Counter trend trading - more difficult and more lucrative. 
+	</span></li>
+	<li><strong><a href="tutorial_kelly.htm">Workshop 6: Portfolio Strategies</a></strong>. A robust compound system with multiple time frames and money management.</li>
+	<li><strong><a href="tutorial_pre.htm">Workshop 7: Machine Learning</a></strong>. Using a machine learning algorithm for price action trading. 
+	</li>
+	<li><strong><a href="tutorial_options.htm">Workshop 8: Options trading</a></strong>. 
+	Get steady profits by selling call and put contracts. 
+	</li>
+</ul>
+<p>The  example strategies are for educational purposes only and designed for simplicity, not for maximum 
+profit and minimum risk. For trading with real money, better  develop your own strategies. </p>
+<h1>Workshop   1: Variables</h1>
+<p>A <strong>script</strong> (or <strong>program</strong>) is a list of instructions in plain text format that tell the computer what to do under which circumstances. It consists of two types of objects, <STRONG>variables</STRONG> and <STRONG>functions</STRONG> 
+(C++ has a third object type, <strong>classes</strong>, that are a combination 
+of both). A <strong>variable</strong> is used to store numbers, text, or other information. 
+It must be <strong>defined</strong> before it can be used, like this:</p>
+<p><strong>var Price;<em><br>
+</em>int Days = 7;<em><br>
+</em>string Wealth = &quot;I am rich!&quot;;</strong></p>
+<p>Variables can have  different types for different purposes, such as <strong>var</strong> 
+(or <strong>double</strong>) for prices, <strong>vars</strong> for a time 
+series, <strong>int</strong> for counting, or <strong>string</strong> for text. 
+You can find details about the different types <a href="aarray.htm">here</a>. Any variable can receive an initial value at start. </p>
+<p>A language that controls a certain platform, such as Zorro, has normally also
+<strong>predefined variables</strong> that affect the behavior of the platform. 
+For instance, the <strong>Stop</strong> variable in the above SMA crossing 
+example is used for setting up the stop loss distance. Predefined variables need 
+not be defined by the user.</p>
+<p>We can add <strong>comments</strong> to explain our code, using two slashes:</p>
+<p><strong>int CandleHeight; <em>// the height of a candle in PIP</em></strong></p>
+<p>Often in testing a script we temporarily disable a line by placing two slashes in front of it. This is 
+&quot;<strong>commenting out</strong>&quot; a line, and  is used so frequently in programming that the script editor has two extra buttons for commenting out and commenting in. </p>
+<p>Every definition or any command in C needs to end with a semicolon. If you forget to add <strong>&quot;;&quot;</strong> at the end of the line of code, you'll see an error message - not for the line with the missing semicolon, but for the following line! 
+</p>
+<h3>The first script </h3>
+<p>Start Zorro, select <strong>Workshop1</strong> in the <strong>Script</strong> dropdown menu, then press [<span class="tast">Edit</span>]. The script editor  opens up and shows you this script:</p>
+<pre><em>// Tutorial Workshop 1: Variables
+////////////////////////////////////////</em>
+
+function main()
+{
+  var a = 1;
+  var b = 2;
+  var c;
+
+  c = a + b;
+  printf(&quot;Result = %.f&quot;,c);
+}</pre>
+<p>The script begins with a comment (the lines beginning with <strong>//</strong>). Then we have a <strong>function</strong> named <strong>main</strong> - 
+anything that happens in a program 
+must be inside a function - and three variables <strong>a, b, c</strong>. The action happens in the following line:</p>
+<p><strong>c = a + b;</strong></p>
+<p>This tells the computer to add the content of the variables <strong>a</strong> and <strong>b</strong>, and store the result in the variable <strong>c</strong>. The last line 
+displays the content of <strong>c</strong> in the message window: </p>
+<p><strong>printf(&quot;Result = %.f&quot;,c);</strong></p>
+<p>Now press [<span class="tast">Test</span>] on Zorro's panel and watch  the script running.</p>
+<h1>Workshop 2: Functions</h1>
+<p>Functions can be defined using the word <strong>function</strong> (or <strong>
+void</strong>, or a variable type, more about that later) followed by the name of the function and a pair of parentheses <strong>( )</strong>. The parentheses are used to pass additional variables to the function, if required. The <strong>body</strong> of the function is written inside a pair of 
+curly brackets <strong>{ }</strong>. 
+The body consists of one or more lines of C code that end with a semicolon. 
+Programmers usually indent the code in the function body by some spaces or a 
+tab, for making clear that it is inside something. </p>
+<p>Zorro scripts often use the convention of lowercase names for functions (except 
+for common indicators such as <strong>EMA</strong>), 'CamelCase' for variables 
+(except for 1-letter variables with no particular meaning like <strong>a</strong>,
+<strong>b</strong>, <strong>c</strong>, or indices like <strong>i</strong>,
+<strong>j</strong>, <strong>k</strong>), and 
+UPPERCASE for #defines and flags (which we'll explain later). An example of a function that computes the number of days spent by me (or you) on Earth:</p>
+<pre>function compute_days()
+{
+  var MyAge = 33;
+  var DaysPerYear = 365.25;
+  var NumberOfDays = MyAge * DaysPerYear;
+  printf(&quot;I am %.0f days old!&quot;,NumberOfDays);
+}</pre>
+<p>Enter this code in a new empty script, and save it (<span class="tast">File / Save As</span>) into the <strong>Strategy</strong> folder under a name like <strong>Myscript.c</strong> (don't forget the &quot;<strong>.c</strong>&quot; at the end - it means that this file contains <strong>C</strong> code). You should now find <strong>Myscript</strong> in the <span class="tast">Script</span> scrollbox. When you now select it and click [<span class="tast">Test</span>], you 'll get an error message <strong>&quot;No main or run function!&quot;</strong>.</p>
+
+<p>If a function is named <strong>main</strong>, it will automatically start when we start the script. 
+Just like predefined variables, there are also predefined functions. The most 
+often used is <strong>
+<a href="run.htm">run</a></strong> that normally contains the trade strategy and is automatically run once for every bar period. If a script has neither a <strong>main</strong> nor a <strong>run</strong> function, Zorro assumes that you made a mistake and will give you this error message.</p>
+<p>So  enter a <strong>main</strong> function at the end of the script:</p>
+<p><strong>function main()<br>
+  {<br>
+&nbsp;&nbsp; compute_days();<br>
+  }</strong></p>
+<p>This code <strong>calls</strong> (meaning it executes) our <strong>compute_days</strong> function. 
+Any function can be called from another function, here from the <strong>main</strong> 
+function. For calling a function, we write its name followed by a pair of parenthesis and the 
+ubiquitous semicolon. 
+Write the code for your functions first and and the code that calls them later. The computer reads code from the top of the script down to the bottom,  line by line. Don't call or refer to something that was not defined before, 
+or else you will get an error message. The <strong><a href="printf.htm">printf</a></strong> 
+function is a special function that displays something in the message window.</p>
+<p>You will likely encounter <strong>compiler errors</strong>  when you write scripts - even experienced programmers make 
+little mistakes all the time. Sometimes it's a forgotten definition, sometimes a missing semicolon or bracket. Get used to compiler errors and don't be helpless when you see one. The computer usually tells you what's wrong and at which line in the script, so you won't need rocket science for fixing it. </p>
+<h3>Passing variables to and from functions </h3>
+<p>A function can also get variables or values from the calling function, use them for its calculation, and give the resulting value back in return. Example:</p>
+<p><strong>var compute_days(var Age)<br>
+{<br>
+&nbsp;&nbsp; return Age * 356.25;<br>
+}</strong> </p>
+<p>The <strong>var age</strong> between the parentheses is for passing a value 
+to the function. This is our new script with passing variables to and from functions:</p>
+<pre>var compute_days(var Age)
+{
+  return Age * 365.25;
+}
+ 
+function main()
+{
+  var MyAge = 33;
+  var NumberOfDays = compute_days(MyAge);
+  printf(&quot;I am %.f days old!&quot;,NumberOfDays);
+}</pre>
+<p>The <strong>&quot;I am %.f days old!&quot;,NumberOfDays</strong> are the two variables that we pass to the <strong>printf</strong> function. The first variable is a <strong>string</strong>, used for displaying some text: <strong>&quot;I am %.f days old!&quot;</strong>. The second variable is a <strong>var</strong>: <strong>
+NumberOfDays</strong>. 
+Check out the <a href="printf.htm">printf</a> function in the manual. </p>
+<p>When a function returns a <strong>var</strong>, we can just place a call to this function in stead of the <strong>var</strong> itself - even inside the parentheses of another function. We'll save one variable and one line of script this way::</p>
+<pre>function main()
+{
+  var MyAge = 33;
+  printf(&quot;I am %.f days old!&quot;,compute_days(MyAge));
+}</pre>
+<p><span class="edition">&nbsp;!!&nbsp;</span> Important tip when you call functions in your code that return something. Do not forget the parentheses - especially when the parameter list is empty! In C, a function name without parentheses means the address of that function in the computer memory. <strong>
+x = add_numbers;</strong> and <strong>x = add_numbers();</strong> are both valid 
+syntax and normally won't give an error message! But they are something entirely different.  </p>
+
+
+<h1><span>Workshop 3: Branches and Loops </span></h1>
+
+
+<p><span>You will use "</span><strong>if</strong><span>" statements when you want your script to make decisions - meaning that it behaves 
+differently depending on some conditions, like  user input, a random number, the 
+result of a mathematical operation, a crossing of two indicators, etc. Here's the 
+simplest form of the 
+"if" statement:</span></p>
+
+
+<p><strong>if(some condition is true)<br>
+&nbsp;&nbsp;&nbsp; do_something(); <em>// execute this 
+command (a single command!)</em></strong></p>
+
+
+<p>or<span>:</span></p>
+
+
+
+
+
+
+
+
+
+<p><strong>if(some condition is true)<br>
+
+{<br>
+<em>&nbsp;&nbsp;&nbsp; // execute one or several commands that are placed inside the curly brackets</em><br>
+
+} 
+
+else 
+
+{<br>
+<em>&nbsp;&nbsp;&nbsp; // execute one or several commands that are placed inside these curly brackets</em><br>
+
+}</strong></p>
+
+
+<p><span>A practical example:</span></p>
+
+
+
+
+
+<pre>
+function main()
+{
+  <span class="cscript style1">var MyProfit = slider(3,50,0,200,&quot;Profit&quot;,0);</span>
+  if(MyProfit &gt; 100)
+    printf("Enough!");
+  else
+    printf("Not enough!");
+}</pre>
+<p>When you click [<span class="tast">Test</span>]<span> </span>to run that script, you'll notice that the bottom slider gets the label &quot;Profit&quot;. Move it all the way to the right, so that <strong>200</strong> appears in the small window, and click [<span class="tast">Test</span>]<span> again</span>. You can see that the result is now different. The <strong>slider()</strong> function has put its return value - which is the value from the bottom slider - into the <strong>
+MyProfit</strong> variable, and thus the <strong>if(..)</strong> condition became true as the value was bigger than <strong>100</strong>. You can see details of the slider function in the manual. </p>
+<h3>While loops</h3>
+<p>A<span>n example of a &quot;<strong>while</strong> loop&quot;:</span></p>
+<p><strong>while(MyMoney &lt; 1000000)<br>
+&nbsp;&nbsp;&nbsp; trade(MyMoney);</strong></p>
+<p><span>The <strong>while</strong> statement has the same syntax as the <strong>if</strong> statement. A &quot;loop&quot; is called so because the program runs in a circle. Here's the form of 
+a <strong>while</strong> loop:</span></p>
+<p><strong>while (some condition is true)<br>
+  {<br>
+&nbsp;&nbsp;&nbsp; <em>// execute all commands inside the curly brackets repeatedly</em> <em>until the condition becomes false </em><br>
+  }</strong></p>
+<p><span>Whatever those commands do, they must somehow affect the <strong>while</strong> condition, because when the condition never changes, we have an &quot;infinite loop&quot; that never ends! Run this in Zorro:</span></p>
+<pre>function main()
+{
+&nbsp;&nbsp;int n = 0; 
+&nbsp;&nbsp;while(n &lt; 10) { 
+&nbsp;&nbsp;&nbsp;&nbsp;n = n + 1;
+&nbsp;&nbsp;&nbsp; printf(&quot;%i &quot;,n);
+&nbsp;&nbsp;}
+} </pre>
+<p><span>This little program adds <strong>1</strong> to the variable <strong>n</strong>, prints the variable to the message window, and repeats this until <strong>n</strong> is <strong>10</strong>. </span></p>
+<p>Loops are very useful when something has to be done repeatedly. For instance, when we want to execute the same trade algorithm several times, each time with a different asset. This way we can create a strategy that trades with a portfolio of assets. </p>
+<h3>And there's more... </h3>
+<p>We are now at the end of the basic workshops that teach general coding. 
+But we haven't 
+touched yet concepts such as macros, pointers, arrays, structs, classes, or the 
+Windows API. You can learn 'real' programming beyond the scope of trade strategies 
+with a C book or a free online C tutorial, such as Sam's <a 
+href="http://aelinik.free.fr/c/" target="_blank" class="weblink">Teach Yourself C in 24 Hours</a>. You can also join the <a href="http://www.opserver.de/ubb7">Gamestudio community</a> that uses the lite-C language for programming small or large computer games. Check out how a 'real' C program looks like: open and run the 
+included script&nbsp;<strong>Mandelbrot</strong>. It has  nothing to do with trading and you will probably not understand yet much of the code inside. It is a normal Windows graphics program. Don't worry, trading strategies won't be  this complicated - it just shows that programming can be a lot more fun even without earning money with it.  </p>
+<p><img height="240" src="../images/mandelbrot.jpg" width="320"></p>
+<p>In the next workshops we'll begin developing trading strategies.</p>
+<p align="right"><a href="tutorial_trade.htm">Next: Trading</a></p>
+<hr>
+<h3>Further reading: &#9658; <a href="aarray.htm">Variables</a>. <a href="expressions.htm">Expressions</a>. 
+<a href="function.htm">Functions</a>, <a href="return.htm">return</a>, <a href="printf.htm">printf</a>. <a href="if.htm">if</a>, <a href="for.htm">for</a>, <a href="slider.htm">slider</a>.</h3>
+<p align="right">&nbsp;</p>
+</body>
+</html>

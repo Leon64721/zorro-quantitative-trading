@@ -1,0 +1,959 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Format codes and tables</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/format.htm">
+</head>
+<body link="#000000" vlink="#333333" alink="#666666">
+<h1>Format Codes - C Programmer's Cheat Sheet</h1>
+<h3>DATE format codes, for <a href="month.htm">wdate</a>, <a href="month.htm">strdate</a>, <strong>
+<a href="data.htm">dataParse</a></strong>,
+	etc:</h3>
+<table width="0%" border="0" cellpadding="0">
+  <tr>
+    <td><strong>%a</strong></td>
+    <td>Abbreviated weekday name</td>
+  </tr>
+  <tr>
+    <td><strong>%A</strong></td>
+    <td>Full weekday name</td>
+  </tr>
+  <tr>
+    <td><strong>%b</strong></td>
+    <td>Abbreviated month name</td>
+  </tr>
+  <tr>
+    <td style="height: 18px"><strong>%B</strong></td>
+    <td style="height: 18px">Full month name</td>
+  </tr>
+  <tr>
+    <td><strong>%d</strong></td>
+    <td> Day of month as decimal number (01..31)</td>
+  </tr>
+  <tr>
+    <td><strong>%H</strong></td>
+    <td>Hour in 24-hour format (00..23) </td>
+  </tr>
+  <tr>
+    <td><strong>%j</strong></td>
+    <td>Day of year as decimal number (001..366)</td>
+  </tr>
+  <tr>
+    <td><strong>%m</strong></td>
+    <td>Month as decimal number (01..12)</td>
+  </tr>
+  <tr>
+    <td><strong>%M</strong></td>
+    <td>Minute as decimal number (00..59)</td>
+  </tr>
+  <tr>
+    <td><strong>%S</strong></td>
+    <td>Second (00..59) or second with decimals (<strong>dataParse</strong>,
+	<strong>wdatef</strong>, 00.000000 .. 59.999999) </td>
+  </tr>
+  <tr>
+    <td><strong>%S.</strong></td>
+    <td>Second with milliseconds (<strong>strdate</strong> only)</td>
+  </tr>
+  <tr>
+    <td><strong>%t</strong></td>
+    <td>Unix time stamp in seconds, milliseconds, or microseconds since 1/1/1970 (<strong>dataParse</strong>,
+	<strong>wdatef</strong>)</td>
+  </tr>
+  <tr>
+    <td><strong>%U</strong></td>
+    <td>Week of year as decimal number, with Sunday as first day of week (00..53) </td>
+  </tr>
+  <tr>
+    <td><strong>%W</strong></td>
+    <td>Week of year as decimal number, with Monday as first day of week (00..53)</td>
+  </tr>
+  <tr>
+    <td><strong>%y</strong></td>
+    <td> Year without century, as decimal number (00..99)</td>
+  </tr>
+  <tr>
+    <td><strong>%Y</strong></td>
+    <td>Year with century, as decimal number (1900..2999) </td>
+  </tr>
+  <tr>
+    <td><strong>%%</strong></td>
+    <td>Percent sign</td>
+  </tr>
+</table>
+<p>The <strong>DATE</strong> format is equivalent to a <strong>double</strong> / <strong>var</strong> 
+variable and counts the number of days since 12-31-1899 with a resolution of 1 &micro;sec.</p>
+<h3>Variable / string format codes, for <a href="printf.htm">printf</a>, <a href="printf.htm">print</a>, <a href="str_.htm">strf</a>, etc:</h3>
+<table>
+  <tbody>
+    <tr>
+      <td colspan="2">Format specifiers:</td>
+    </tr>
+    <tr>
+      <td><strong>%c</strong></td>
+      <td>ANSI character (int, char) </td>
+    </tr>
+    <tr>
+      <td><strong>%d</strong></td>
+      <td>Decimal  number (int,  char)</td>
+    </tr>
+    <tr>
+      <td><strong>%e</strong></td>
+      <td>Exponential  floating-point number (var, double) </td>
+    </tr>
+    <tr>
+      <td><strong>%f</strong></td>
+      <td>Floating-point number (var, double) </td>
+    </tr>
+    <tr>
+      <td><strong>%g</strong></td>
+      <td>Either <strong>%e</strong> or <strong>%f</strong>, whichever is more compact</td>
+    </tr>
+    <tr>
+      <td><strong>%i</strong></td>
+      <td>Decimal  number (int,  char)</td>
+    </tr>
+    <tr>
+      <td><strong>%o</strong></td>
+      <td>Octal number (int,  char)</td>
+    </tr>
+    <tr>
+      <td><strong>%p</strong></td>
+      <td>Hexadecimal pointer (void*) </td>
+    </tr>
+    <tr>
+      <td><strong>%s</strong></td>
+      <td>Null-terminated text (string, char*, char[]) </td>
+    </tr>
+    <tr>
+      <td><strong>%u</strong></td>
+      <td>Unsigned decimal number (int,  char)</td>
+    </tr>
+    <tr>
+      <td><strong>%x</strong></td>
+      <td>Hexadecimal number (int,  char), lowercase </td>
+    </tr>
+    <tr>
+      <td><strong>%X</strong></td>
+      <td>Hexadecimal number (int,  char), uppercase </td>
+    </tr>
+    <tr>
+      <td><strong>%%</strong></td>
+      <td>Percent sign</td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td colspan="2">Format modifiers (optional, after the %) : </td>
+    </tr>
+    <tr>
+      <td><strong>n</strong></td>
+      <td>Field width, minimum number of digits.</td>
+    </tr>
+    <tr>
+      <td><strong>.m</strong></td>
+      <td>Precision, maximum number of digits after the decimal.</td>
+    </tr>
+    <tr>
+      <td><strong>-</strong></td>
+      <td><p>Left align the result within the given field width.</p></td>
+    </tr>
+    <tr>
+      <td><strong>+</strong></td>
+      <td><p>Prefix the output value with a sign (+ or &ndash;).</p></td>
+    </tr>
+    <tr>
+      <td><strong>0</strong></td>
+      <td>Add zeros until the number of digits is reached.</td>
+    </tr>
+    <tr>
+      <td><strong>' ' </strong></td>
+      <td>Add a blank ' ' if the output value is signed and positive.</td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td colspan="2">Special characters</td>
+    </tr>
+    <tr>
+      <td><strong>\a</strong></td>
+      <td>Audible alert</td>
+    </tr>
+    <tr>
+      <td><strong>\b</strong></td>
+      <td>Backspace</td>
+    </tr>
+    <tr>
+      <td><strong>\f</strong></td>
+      <td>Form feed</td>
+    </tr>
+    <tr>
+      <td><strong>\n</strong></td>
+      <td>New line, or linefeed</td>
+    </tr>
+    <tr>
+      <td><strong>\r</strong></td>
+      <td>Carriage return</td>
+    </tr>
+    <tr>
+      <td><strong>\t</strong></td>
+      <td>Tab</td>
+    </tr>
+    <tr>
+      <td><strong>\v</strong></td>
+      <td>Vertical tab</td>
+    </tr>
+    <tr>
+      <td><strong>\\</strong></td>
+      <td>Backslash</td>
+    </tr>
+    <tr>
+      <td><strong>#...</strong></td>
+      <td>Print to log only </td>
+    </tr>
+  </tbody>
+</table>
+<h3>Regular expressions, for the <a href="npp.htm">Npp</a> search functions</h3>
+<table border="0" summary="table" responsive="true">
+  <tbody>
+    <tr>
+      <td>Code</td>
+      <td>Matches</td>
+      <td>Example</td>
+    </tr>
+    <tr>
+      <td><p><strong>*</strong></p></td>
+      <td><p>Preceding item zero or more times; like <strong>{0,}</strong>.</p>          </td>
+      <td><p>zo* matches "z" and "zoo".</p></td>
+    </tr>
+    <tr>
+      <td><p><strong>+</strong></p></td>
+      <td><p>Preceding item  one or more times; like <strong>{1,}</strong>.</p>        </td>
+      <td><p>zo+ matches "zo" and "zoo", but not "z".</p></td>
+    </tr>
+    <tr>
+      <td><p><strong>?</strong></p></td>
+      <td><p>Preceding item  zero or one time; like <strong>{0,1}</strong>.</p>        </td>
+      <td><p>zo? matches "z" and "zo", but not "zoo".</p>        </td>
+    </tr>
+    <tr>
+      <td><p><strong>^</strong></p></td>
+      <td><p>The position at  string start. </p>          </td>
+      <td><p>^\d{3} matches 3 numeric digits at the start of the searched string.
+      </p>          </td>
+    </tr>
+    <tr>
+      <td><p><strong>$</strong></p></td>
+      <td><p>The position at  string end.</p></td>
+      <td><p>\d{3}$ matches 3 numeric digits at the end of the searched string.</p></td>
+    </tr>
+    <tr>
+      <td><p><strong>.</strong></p></td>
+      <td><p>Any single character except newline <strong>\n</strong>. </p></td>
+      <td><p>a.c matches "abc", "a1c", and "a-c".</p></td>
+    </tr>
+    <tr>
+      <td><p><strong>|</strong></p></td>
+      <td><p>Choice between two or more items.</p></td>
+      <td><p>z|food matches "z" or "food". (z|f)ood matches "zood" or "food".</p></td>
+    </tr>
+    <tr>
+      <td><strong>\* </strong></td>
+      <td>The <strong>*</strong> character; similar with <strong>\+</strong>, <strong>\?</strong>, <strong>\.</strong>, <strong>\[</strong>, <strong>\(</strong>, etc. </td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td><p><strong>\b</strong></p></td>
+      <td><p>Word boundary.</p></td>
+      <td><p>er\b matches the "er" in "never" but not the "er" in "verb".</p></td>
+    </tr>
+    <tr>
+      <td><p><strong>\B</strong></p></td>
+      <td><p>Word non-boundary.</p></td>
+      <td><p>er\B matches the "er" in "verb" but not the "er" in "never".</p></td>
+    </tr>
+    <tr>
+      <td><p><strong>\d</strong></p></td>
+      <td><p>Digit character; equivalent to <strong>[0-9]</strong>.</p>          </td>
+      <td><p>In "12 345", \d{2} matches "12" and "34". \d matches "1", 2", "3", "4",  "5".</p></td>
+    </tr>
+    <tr>
+      <td><p><strong>\D</strong></p></td>
+      <td><p>Nondigit character; equivalent to <strong>[^0-9]</strong>.</p>          </td>
+      <td><p>\D+ matches "abc" and " def" in "abc123 def".</p></td>
+    </tr>
+    <tr>
+      <td><strong>\s</strong></td>
+      <td>Any white-space character; like <strong>[ \f\n\r\t\v]</strong>.</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td><strong>\S</strong></td>
+      <td>Any non-white-space character; like <strong>[^ \f\n\r\t\v]</strong>.</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td><p><strong>\w</strong></p></td>
+      <td><p><strong>A-Z</strong>, <strong>a-z</strong>, <strong>0-9</strong>, and  
+      underscore, like <strong>[A-Za-z0-9_]</strong>.</p>          </td>
+      <td><p>In "The quick brown fox…", \w+ matches "The", "quick", "brown",  "fox".</p></td>
+    </tr>
+    <tr>
+      <td><p><strong>\W</strong></p></td>
+      <td><p>Any character except <strong>A-Z</strong>, <strong>a-z</strong>, <strong>0-9</strong>,  underscore.</p>          </td>
+      <td><p>In "The quick brown fox…", \W+ matches "…" and all of the spaces.</p></td>
+    </tr>
+    <tr>
+      <td><p><strong>()</strong></p></td>
+      <td><p>Start and end of a subexpression.</p></td>
+      <td><p>A(\d) matches "A0" to "A9". (f|b)*oo matches foo, boo, and oo. </p></td>
+    </tr>
+    <tr>
+      <td><p><strong>[abc]</strong></p></td>
+      <td><p>A character set; matches any specified character.</p></td>
+      <td><p>[abc] matches the "a" in "plain".</p></td>
+    </tr>
+    <tr>
+      <td><p><strong>[^abc]</strong></p></td>
+      <td><p>Negative character set;  any  not specified character.</p></td>
+      <td><p>[^abc] matches the "p", "l", "i", and "n" in "plain".</p></td>
+    </tr>
+    <tr>
+      <td><p><strong>[a-z]</strong></p></td>
+      <td><p>A range of characters;  any character in the  range.</p></td>
+      <td><p>[a-z] matches any lowercase  character in the range "a" through "z".</p></td>
+    </tr>
+    <tr>
+      <td><p><strong>[^a-z]</strong></p></td>
+      <td><p>Negative range; any character not in the range.</p></td>
+      <td><p>[^a-z] matches any character that is not in the range "a" through "z".</p></td>
+    </tr>
+    <tr>
+      <td><p><strong>[a,b]</strong></p></td>
+      <td><p>All items separated with commas.</p></td>
+      <td><p>[a-z,-] matches all characters in "my-file".</p></td>
+    </tr>
+    <tr>
+      <td><p><strong>{n}</strong></p></td>
+      <td><p>Preceding item  exactly <strong>n</strong> times. </p></td>
+      <td><p>o{2} does not match the "o" in "Bob", but the two "o"s in "food".</p></td>
+    </tr>
+    <tr>
+      <td><p><strong>{n,}</strong></p></td>
+      <td><p>Preceding item  at least <strong>n</strong> times. </p>        </td>
+      <td><p>o{2,} does not match the "o" in "Bob" but all the "o"s in "foooood".</p></td>
+    </tr>
+    <tr>
+      <td><p><strong>{n,m}</strong></p></td>
+      <td><p>Preceding item  at least <strong>n</strong> and at most <strong>m</strong> times. </p>          </td>
+      <td><p>In "1234567", \d{1,3} matches "123", "456", and "7".</p></td>
+    </tr>
+    <tr>
+      <td><p><strong>\cx</strong></p></td>
+      <td><p>The control character indicated by <strong>x</strong>. </p></td>
+      <td><p>\cM matches a CTRL+M or carriage return character.</p></td>
+    </tr>
+    <tr>
+      <td><p><strong>\xnn</strong></p></td>
+      <td><p>A 2 digits hexadecimal character. </p></td>
+      <td><p>\x41 matches "A". (\x041 is wrong!)</p></td>
+    </tr>
+    <tr>
+      <td><p><strong>\unnnn</strong></p></td>
+      <td><p>A 4 digits Unicode character.</p></td>
+      <td><p>\u00A9 matches the copyright symbol (©).</p></td>
+    </tr>
+  </tbody>
+</table>
+<h3>ANSI table (ISO 8859), for special characters in <a href="aarray.htm">
+strings</a></h3>
+<TABLE cellpadding=0 cellspacing=0 bordercolor="#999999" class="t0">
+<!--TR>
+	<TD>0</TD>
+	<TD><strong> </strong></TD>
+	<TD>1</TD>
+	<TD><strong> </strong></TD>
+	<TD>2</TD>
+	<TD><strong> </strong></TD>
+	<TD>3</TD>
+	<TD><strong> </strong></TD>
+	<TD>4</TD>
+	<TD><strong> </strong></TD>
+	<TD>5</TD>
+	<TD><strong> </strong></TD>
+	<TD>6</TD>
+	<TD><strong> </strong></TD>
+	<TD>7</TD>
+	<TD><strong> </strong></TD>
+  </TR>
+<TR>
+	<TD>8</TD>
+	<TD><strong> </strong></TD>
+	<TD>9</TD>
+	<TD><strong> </strong></TD>
+	<TD>10</TD>
+	<TD><strong> </strong></TD>
+	<TD>11</TD>
+	<TD><strong> </strong></TD>
+	<TD>12</TD>
+	<TD><strong> </strong></TD>
+	<TD>13</TD>
+	<TD><strong> </strong></TD>
+	<TD>14</TD>
+	<TD><strong> </strong></TD>
+	<TD>15</TD>
+	<TD><strong> </strong></TD>
+  </TR>
+<TR>
+	<TD>16</TD>
+	<TD><strong> </strong></TD>
+	<TD>17</TD>
+	<TD><strong> </strong></TD>
+	<TD>18</TD>
+	<TD><strong> </strong></TD>
+	<TD>19</TD>
+	<TD><strong> </strong></TD>
+	<TD>20</TD>
+	<TD><strong> </strong></TD>
+	<TD>21</TD>
+	<TD><strong> </strong></TD>
+	<TD>22</TD>
+	<TD><strong> </strong></TD>
+	<TD>23</TD>
+	<TD><strong> </strong></TD>
+  </TR>
+<TR>
+	<TD>24</TD>
+	<TD><strong> </strong></TD>
+	<TD>25</TD>
+	<TD><strong> </strong></TD>
+	<TD>26</TD>
+	<TD><strong> </strong></TD>
+	<TD>27</TD>
+	<TD><strong> </strong></TD>
+	<TD>28</TD>
+	<TD><strong> </strong></TD>
+	<TD>29</TD>
+	<TD><strong> </strong></TD>
+	<TD>30</TD>
+	<TD><strong> </strong></TD>
+	<TD>31</TD>
+	<TD><strong> </strong></TD>
+  </TR-->
+<TR>
+	<TD bgcolor="#ADD8E6">32</TD>
+	<TD bgcolor="#ADD8E6"><strong>[ ]</strong></TD>
+	<TD bgcolor="#ADD8E6">33</TD>
+	<TD bgcolor="#ADD8E6"><strong>!</strong></TD>
+	<TD bgcolor="#ADD8E6">34</TD>
+	<TD bgcolor="#ADD8E6"><strong>"</strong></TD>
+	<TD bgcolor="#ADD8E6">35</TD>
+	<TD bgcolor="#ADD8E6"><strong>#</strong></TD>
+	<TD bgcolor="#ADD8E6">36</TD>
+	<TD bgcolor="#ADD8E6"><strong>$</strong></TD>
+	<TD bgcolor="#ADD8E6">37</TD>
+	<TD bgcolor="#ADD8E6"><strong>%</strong></TD>
+	<TD bgcolor="#ADD8E6">38</TD>
+	<TD bgcolor="#ADD8E6"><strong>&</strong></TD>
+	<TD bgcolor="#ADD8E6">39</TD>
+	<TD bgcolor="#ADD8E6"><strong>'</strong></TD>
+  </TR>
+<TR>
+	<TD bgcolor="#ADD8E6">40</TD>
+	<TD bgcolor="#ADD8E6"><strong>(</strong></TD>
+	<TD bgcolor="#ADD8E6">41</TD>
+	<TD bgcolor="#ADD8E6"><strong>)</strong></TD>
+	<TD bgcolor="#ADD8E6">42</TD>
+	<TD bgcolor="#ADD8E6"><strong>*</strong></TD>
+	<TD bgcolor="#ADD8E6">43</TD>
+	<TD bgcolor="#ADD8E6"><strong>+</strong></TD>
+	<TD bgcolor="#ADD8E6">44</TD>
+	<TD bgcolor="#ADD8E6"><strong>,</strong></TD>
+	<TD bgcolor="#ADD8E6">45</TD>
+	<TD bgcolor="#ADD8E6"><strong>-</strong></TD>
+	<TD bgcolor="#ADD8E6">46</TD>
+	<TD bgcolor="#ADD8E6"><strong>.</strong></TD>
+	<TD bgcolor="#ADD8E6">47</TD>
+	<TD bgcolor="#ADD8E6"><strong>/</strong></TD>
+  </TR>
+<TR>
+	<TD bgcolor="#ADD8E6">48</TD>
+	<TD bgcolor="#ADD8E6"><strong>0</strong></TD>
+	<TD bgcolor="#ADD8E6">49</TD>
+	<TD bgcolor="#ADD8E6"><strong>1</strong></TD>
+	<TD bgcolor="#ADD8E6">50</TD>
+	<TD bgcolor="#ADD8E6"><strong>2</strong></TD>
+	<TD bgcolor="#ADD8E6">51</TD>
+	<TD bgcolor="#ADD8E6"><strong>3</strong></TD>
+	<TD bgcolor="#ADD8E6">52</TD>
+	<TD bgcolor="#ADD8E6"><strong>4</strong></TD>
+	<TD bgcolor="#ADD8E6">53</TD>
+	<TD bgcolor="#ADD8E6"><strong>5</strong></TD>
+	<TD bgcolor="#ADD8E6">54</TD>
+	<TD bgcolor="#ADD8E6"><strong>6</strong></TD>
+	<TD bgcolor="#ADD8E6">55</TD>
+	<TD bgcolor="#ADD8E6"><strong>7</strong></TD>
+  </TR>
+<TR>
+	<TD bgcolor="#ADD8E6">56</TD>
+	<TD bgcolor="#ADD8E6"><strong>8</strong></TD>
+	<TD bgcolor="#ADD8E6">57</TD>
+	<TD bgcolor="#ADD8E6"><strong>9</strong></TD>
+	<TD bgcolor="#ADD8E6">58</TD>
+	<TD bgcolor="#ADD8E6"><strong>:</strong></TD>
+	<TD bgcolor="#ADD8E6">59</TD>
+	<TD bgcolor="#ADD8E6"><strong>;</strong></TD>
+	<TD bgcolor="#ADD8E6">60</TD>
+	<TD bgcolor="#ADD8E6"><strong>&lt;</strong></TD>
+	<TD bgcolor="#ADD8E6">61</TD>
+	<TD bgcolor="#ADD8E6"><strong>=</strong></TD>
+	<TD bgcolor="#ADD8E6">62</TD>
+	<TD bgcolor="#ADD8E6"><strong>&gt;</strong></TD>
+	<TD bgcolor="#ADD8E6">63</TD>
+	<TD bgcolor="#ADD8E6"><strong>?</strong></TD>
+  </TR>
+<TR>
+	<TD bgcolor="#ADD8E6">64</TD>
+	<TD bgcolor="#ADD8E6"><strong>@</strong></TD>
+	<TD bgcolor="#ADD8E6">65</TD>
+	<TD bgcolor="#ADD8E6"><strong>A</strong></TD>
+	<TD bgcolor="#ADD8E6">66</TD>
+	<TD bgcolor="#ADD8E6"><strong>B</strong></TD>
+	<TD bgcolor="#ADD8E6">67</TD>
+	<TD bgcolor="#ADD8E6"><strong>C</strong></TD>
+	<TD bgcolor="#ADD8E6">68</TD>
+	<TD bgcolor="#ADD8E6"><strong>D</strong></TD>
+	<TD bgcolor="#ADD8E6">69</TD>
+	<TD bgcolor="#ADD8E6"><strong>E</strong></TD>
+	<TD bgcolor="#ADD8E6">70</TD>
+	<TD bgcolor="#ADD8E6"><strong>F</strong></TD>
+	<TD bgcolor="#ADD8E6">71</TD>
+	<TD bgcolor="#ADD8E6"><strong>G</strong></TD>
+  </TR>
+<TR>
+	<TD bgcolor="#ADD8E6">72</TD>
+	<TD bgcolor="#ADD8E6"><strong>H</strong></TD>
+	<TD bgcolor="#ADD8E6">73</TD>
+	<TD bgcolor="#ADD8E6"><strong>I</strong></TD>
+	<TD bgcolor="#ADD8E6">74</TD>
+	<TD bgcolor="#ADD8E6"><strong>J</strong></TD>
+	<TD bgcolor="#ADD8E6">75</TD>
+	<TD bgcolor="#ADD8E6"><strong>K</strong></TD>
+	<TD bgcolor="#ADD8E6">76</TD>
+	<TD bgcolor="#ADD8E6"><strong>L</strong></TD>
+	<TD bgcolor="#ADD8E6">77</TD>
+	<TD bgcolor="#ADD8E6"><strong>M</strong></TD>
+	<TD bgcolor="#ADD8E6">78</TD>
+	<TD bgcolor="#ADD8E6"><strong>N</strong></TD>
+	<TD bgcolor="#ADD8E6">79</TD>
+	<TD bgcolor="#ADD8E6"><strong>O</strong></TD>
+  </TR>
+<TR>
+	<TD bgcolor="#ADD8E6">80</TD>
+	<TD bgcolor="#ADD8E6"><strong>P</strong></TD>
+	<TD bgcolor="#ADD8E6">81</TD>
+	<TD bgcolor="#ADD8E6"><strong>Q</strong></TD>
+	<TD bgcolor="#ADD8E6">82</TD>
+	<TD bgcolor="#ADD8E6"><strong>R</strong></TD>
+	<TD bgcolor="#ADD8E6">83</TD>
+	<TD bgcolor="#ADD8E6"><strong>S</strong></TD>
+	<TD bgcolor="#ADD8E6">84</TD>
+	<TD bgcolor="#ADD8E6"><strong>T</strong></TD>
+	<TD bgcolor="#ADD8E6">85</TD>
+	<TD bgcolor="#ADD8E6"><strong>U</strong></TD>
+	<TD bgcolor="#ADD8E6">86</TD>
+	<TD bgcolor="#ADD8E6"><strong>V</strong></TD>
+	<TD bgcolor="#ADD8E6">87</TD>
+	<TD bgcolor="#ADD8E6"><strong>W</strong></TD>
+  </TR>
+<TR>
+	<TD bgcolor="#ADD8E6">88</TD>
+	<TD bgcolor="#ADD8E6"><strong>X</strong></TD>
+	<TD bgcolor="#ADD8E6">89</TD>
+	<TD bgcolor="#ADD8E6"><strong>Y</strong></TD>
+	<TD bgcolor="#ADD8E6">90</TD>
+	<TD bgcolor="#ADD8E6"><strong>Z</strong></TD>
+	<TD bgcolor="#ADD8E6">91</TD>
+	<TD bgcolor="#ADD8E6"><strong>[</strong></TD>
+	<TD bgcolor="#ADD8E6">92</TD>
+	<TD bgcolor="#ADD8E6"><strong>\</strong></TD>
+	<TD bgcolor="#ADD8E6">93</TD>
+	<TD bgcolor="#ADD8E6"><strong>]</strong></TD>
+	<TD bgcolor="#ADD8E6">94</TD>
+	<TD bgcolor="#ADD8E6"><strong>^</strong></TD>
+	<TD bgcolor="#ADD8E6">95</TD>
+	<TD bgcolor="#ADD8E6"><strong>_</strong></TD>
+  </TR>
+<TR>
+	<TD bgcolor="#ADD8E6">96</TD>
+	<TD bgcolor="#ADD8E6"><strong>`</strong></TD>
+	<TD bgcolor="#ADD8E6">97</TD>
+	<TD bgcolor="#ADD8E6"><strong>a</strong></TD>
+	<TD bgcolor="#ADD8E6">98</TD>
+	<TD bgcolor="#ADD8E6"><strong>b</strong></TD>
+	<TD bgcolor="#ADD8E6">99</TD>
+	<TD bgcolor="#ADD8E6"><strong>c</strong></TD>
+	<TD bgcolor="#ADD8E6">100</TD>
+	<TD bgcolor="#ADD8E6"><strong>d</strong></TD>
+	<TD bgcolor="#ADD8E6">101</TD>
+	<TD bgcolor="#ADD8E6"><strong>e</strong></TD>
+	<TD bgcolor="#ADD8E6">102</TD>
+	<TD bgcolor="#ADD8E6"><strong>f</strong></TD>
+	<TD bgcolor="#ADD8E6">103</TD>
+	<TD bgcolor="#ADD8E6"><strong>g</strong></TD>
+  </TR>
+<TR>
+	<TD bgcolor="#ADD8E6">104</TD>
+	<TD bgcolor="#ADD8E6"><strong>h</strong></TD>
+	<TD bgcolor="#ADD8E6">105</TD>
+	<TD bgcolor="#ADD8E6"><strong>i</strong></TD>
+	<TD bgcolor="#ADD8E6">106</TD>
+	<TD bgcolor="#ADD8E6"><strong>j</strong></TD>
+	<TD bgcolor="#ADD8E6">107</TD>
+	<TD bgcolor="#ADD8E6"><strong>k</strong></TD>
+	<TD bgcolor="#ADD8E6">108</TD>
+	<TD bgcolor="#ADD8E6"><strong>l</strong></TD>
+	<TD bgcolor="#ADD8E6">109</TD>
+	<TD bgcolor="#ADD8E6"><strong>m</strong></TD>
+	<TD bgcolor="#ADD8E6">110</TD>
+	<TD bgcolor="#ADD8E6"><strong>n</strong></TD>
+	<TD bgcolor="#ADD8E6">111</TD>
+	<TD bgcolor="#ADD8E6"><strong>o</strong></TD>
+  </TR>
+<TR>
+	<TD bgcolor="#ADD8E6">112</TD>
+	<TD bgcolor="#ADD8E6"><strong>p</strong></TD>
+	<TD bgcolor="#ADD8E6">113</TD>
+	<TD bgcolor="#ADD8E6"><strong>q</strong></TD>
+	<TD bgcolor="#ADD8E6">114</TD>
+	<TD bgcolor="#ADD8E6"><strong>r</strong></TD>
+	<TD bgcolor="#ADD8E6">115</TD>
+	<TD bgcolor="#ADD8E6"><strong>s</strong></TD>
+	<TD bgcolor="#ADD8E6">116</TD>
+	<TD bgcolor="#ADD8E6"><strong>t</strong></TD>
+	<TD bgcolor="#ADD8E6">117</TD>
+	<TD bgcolor="#ADD8E6"><strong>u</strong></TD>
+	<TD bgcolor="#ADD8E6">118</TD>
+	<TD bgcolor="#ADD8E6"><strong>v</strong></TD>
+	<TD bgcolor="#ADD8E6">119</TD>
+	<TD bgcolor="#ADD8E6"><strong>w</strong></TD>
+  </TR>
+<TR>
+	<TD bgcolor="#ADD8E6">120</TD>
+	<TD bgcolor="#ADD8E6"><strong>x</strong></TD>
+	<TD bgcolor="#ADD8E6">121</TD>
+	<TD bgcolor="#ADD8E6"><strong>y</strong></TD>
+	<TD bgcolor="#ADD8E6">122</TD>
+	<TD bgcolor="#ADD8E6"><strong>z</strong></TD>
+	<TD bgcolor="#ADD8E6">123</TD>
+	<TD bgcolor="#ADD8E6"><strong>{</strong></TD>
+	<TD bgcolor="#ADD8E6">124</TD>
+	<TD bgcolor="#ADD8E6"><strong>|</strong></TD>
+	<TD bgcolor="#ADD8E6">125</TD>
+	<TD bgcolor="#ADD8E6"><strong>}</strong></TD>
+	<TD bgcolor="#ADD8E6">126</TD>
+	<TD bgcolor="#ADD8E6"><strong>~</strong></TD>
+	<TD bgcolor="#ADD8E6">127</TD>
+	<TD bgcolor="#ADD8E6">&nbsp;</TD>
+  </TR>
+<TR>
+	<TD>128</TD>
+	<TD><strong>€</strong></TD>
+	<TD>129</TD>
+	<TD><strong>•</strong></TD>
+	<TD>130</TD>
+	<TD><strong>‚</strong></TD>
+	<TD>131</TD>
+	<TD><strong>ƒ</strong></TD>
+	<TD>132</TD>
+	<TD><strong>„</strong></TD>
+	<TD>133</TD>
+	<TD><strong>…</strong></TD>
+	<TD>134</TD>
+	<TD><strong>†</strong></TD>
+	<TD>135</TD>
+	<TD><strong>‡</strong></TD>
+  </TR>
+<TR>
+	<TD>136</TD>
+	<TD><strong>ˆ</strong></TD>
+	<TD>137</TD>
+	<TD><strong>‰</strong></TD>
+	<TD>138</TD>
+	<TD><strong>Š</strong></TD>
+	<TD>139</TD>
+	<TD><strong>‹</strong></TD>
+	<TD>140</TD>
+	<TD><strong>Œ</strong></TD>
+	<TD>141</TD>
+	<TD>&nbsp;</TD>
+	<TD>142</TD>
+	<TD><strong>Ţ</strong></TD>
+	<TD>143</TD>
+	<TD>&nbsp;</TD>
+  </TR>
+<TR>
+	<TD>144</TD>
+	<TD><strong>•</strong></TD>
+	<TD>145</TD>
+	<TD><strong>Ř</strong></TD>
+	<TD>146</TD>
+	<TD><strong>ř</strong></TD>
+	<TD>147</TD>
+	<TD><strong>Ŗ</strong></TD>
+	<TD>148</TD>
+	<TD><strong>ŗ</strong></TD>
+	<TD>149</TD>
+	<TD><strong>•</strong></TD>
+	<TD>150</TD>
+	<TD><strong>Ŕ</strong></TD>
+	<TD>151</TD>
+	<TD><strong>ŕ</strong></TD>
+  </TR>
+<TR>
+	<TD>152</TD>
+	<TD><strong>˜</strong></TD>
+	<TD>153</TD>
+	<TD><strong>™</strong></TD>
+	<TD>154</TD>
+	<TD><strong>š</strong></TD>
+	<TD>155</TD>
+	<TD><strong>›</strong></TD>
+	<TD>156</TD>
+	<TD><strong>œ</strong></TD>
+	<TD>157</TD>
+	<TD><strong>•</strong></TD>
+	<TD>158</TD>
+	<TD><strong>ţ</strong></TD>
+	<TD>159</TD>
+	<TD><strong>Ÿ</strong></TD>
+  </TR>
+<TR>
+	<TD>160</TD>
+	<TD>&nbsp;</TD>
+	<TD>161</TD>
+	<TD><strong>¡</strong></TD>
+	<TD>162</TD>
+	<TD><strong>¢</strong></TD>
+	<TD>163</TD>
+	<TD><strong>£</strong></TD>
+	<TD>164</TD>
+	<TD><strong>¤</strong></TD>
+	<TD>165</TD>
+	<TD><strong>¥</strong></TD>
+	<TD>166</TD>
+	<TD><strong>¦</strong></TD>
+	<TD>167</TD>
+	<TD><strong>§</strong></TD>
+  </TR>
+<TR>
+	<TD>168</TD>
+	<TD><strong>¨</strong></TD>
+	<TD>169</TD>
+	<TD><strong>©</strong></TD>
+	<TD>170</TD>
+	<TD><strong>ª</strong></TD>
+	<TD>171</TD>
+	<TD><strong>«</strong></TD>
+	<TD>172</TD>
+	<TD><strong>¬</strong></TD>
+	<TD>173</TD>
+	<TD>&nbsp;</TD>
+	<TD>174</TD>
+	<TD><strong>®</strong></TD>
+	<TD>175</TD>
+	<TD><strong>¯</strong></TD>
+  </TR>
+<TR>
+	<TD>176</TD>
+	<TD><strong>°</strong></TD>
+	<TD>177</TD>
+	<TD><strong>±</strong></TD>
+	<TD>178</TD>
+	<TD><strong>²</strong></TD>
+	<TD>179</TD>
+	<TD><strong>³</strong></TD>
+	<TD>180</TD>
+	<TD><strong>´</strong></TD>
+	<TD>181</TD>
+	<TD><strong>µ</strong></TD>
+	<TD>182</TD>
+	<TD><strong>¶</strong></TD>
+	<TD>183</TD>
+	<TD><strong>·</strong></TD>
+  </TR>
+<TR>
+	<TD>184</TD>
+	<TD><strong>¸</strong></TD>
+	<TD>185</TD>
+	<TD><strong>¹</strong></TD>
+	<TD>186</TD>
+	<TD><strong>º</strong></TD>
+	<TD>187</TD>
+	<TD><strong>»</strong></TD>
+	<TD>188</TD>
+	<TD><strong>¼</strong></TD>
+	<TD>189</TD>
+	<TD><strong>½</strong></TD>
+	<TD>190</TD>
+	<TD><strong>¾</strong></TD>
+	<TD>191</TD>
+	<TD><strong>¿</strong></TD>
+  </TR>
+<TR>
+	<TD>192</TD>
+	<TD><strong>À</strong></TD>
+	<TD>193</TD>
+	<TD>&nbsp;</TD>
+	<TD>194</TD>
+	<TD><strong>Â</strong></TD>
+	<TD>195</TD>
+	<TD><strong>Ã</strong></TD>
+	<TD>196</TD>
+	<TD><strong>Ä</strong></TD>
+	<TD>197</TD>
+	<TD><strong>Å</strong></TD>
+	<TD>198</TD>
+	<TD><strong>Æ</strong></TD>
+	<TD>199</TD>
+	<TD><strong>Ç</strong></TD>
+  </TR>
+<TR>
+	<TD>200</TD>
+	<TD><strong>È</strong></TD>
+	<TD>201</TD>
+	<TD><strong>É</strong></TD>
+	<TD>202</TD>
+	<TD><strong>Ê</strong></TD>
+	<TD>203</TD>
+	<TD><strong>Ë</strong></TD>
+	<TD>204</TD>
+	<TD><strong>Ì</strong></TD>
+	<TD>205</TD>
+	<TD>&nbsp;</TD>
+	<TD>206</TD>
+	<TD><strong>Î</strong></TD>
+	<TD>207</TD>
+	<TD>&nbsp;</TD>
+  </TR>
+<TR>
+	<TD>208</TD>
+	<TD><strong>�?</strong></TD>
+	<TD>209</TD>
+	<TD><strong>Ñ</strong></TD>
+	<TD>210</TD>
+	<TD><strong>Ò</strong></TD>
+	<TD>211</TD>
+	<TD><strong>Ó</strong></TD>
+	<TD>212</TD>
+	<TD><strong>Ô</strong></TD>
+	<TD>213</TD>
+	<TD><strong>Õ</strong></TD>
+	<TD>214</TD>
+	<TD><strong>Ö</strong></TD>
+	<TD>215</TD>
+	<TD><strong>×</strong></TD>
+  </TR>
+<TR>
+	<TD>216</TD>
+	<TD><strong>Ø</strong></TD>
+	<TD>217</TD>
+	<TD><strong>Ù</strong></TD>
+	<TD>218</TD>
+	<TD><strong>Ú</strong></TD>
+	<TD>219</TD>
+	<TD><strong>Û</strong></TD>
+	<TD>220</TD>
+	<TD><strong>Ü</strong></TD>
+	<TD>221</TD>
+	<TD>&nbsp;</TD>
+	<TD>222</TD>
+	<TD><strong>Þ</strong></TD>
+	<TD>223</TD>
+	<TD><strong>ß</strong></TD>
+  </TR>
+<TR>
+	<TD>224</TD>
+	<TD><strong>à</strong></TD>
+	<TD>225</TD>
+	<TD><strong>á</strong></TD>
+	<TD>226</TD>
+	<TD><strong>â</strong></TD>
+	<TD>227</TD>
+	<TD><strong>ã</strong></TD>
+	<TD>228</TD>
+	<TD><strong>ä</strong></TD>
+	<TD>229</TD>
+	<TD><strong>å</strong></TD>
+	<TD>230</TD>
+	<TD><strong>æ</strong></TD>
+	<TD>231</TD>
+	<TD><strong>ç</strong></TD>
+  </TR>
+<TR>
+	<TD>232</TD>
+	<TD><strong>è</strong></TD>
+	<TD>233</TD>
+	<TD><strong>é</strong></TD>
+	<TD>234</TD>
+	<TD><strong>ê</strong></TD>
+	<TD>235</TD>
+	<TD><strong>ë</strong></TD>
+	<TD>236</TD>
+	<TD><strong>ì</strong></TD>
+	<TD>237</TD>
+	<TD><strong>í</strong></TD>
+	<TD>238</TD>
+	<TD><strong>î</strong></TD>
+	<TD>239</TD>
+	<TD><strong>ï</strong></TD>
+  </TR>
+<TR>
+	<TD>240</TD>
+	<TD><strong>ð</strong></TD>
+	<TD>241</TD>
+	<TD><strong>ñ</strong></TD>
+	<TD>242</TD>
+	<TD><strong>ò</strong></TD>
+	<TD>243</TD>
+	<TD><strong>ó</strong></TD>
+	<TD>244</TD>
+	<TD><strong>ô</strong></TD>
+	<TD>245</TD>
+	<TD><strong>õ</strong></TD>
+	<TD>246</TD>
+	<TD><strong>ö</strong></TD>
+	<TD>247</TD>
+	<TD><strong>÷</strong></TD>
+  </TR>
+<TR>
+	<TD>248</TD>
+	<TD><strong>ø</strong></TD>
+	<TD>249</TD>
+	<TD><strong>ù</strong></TD>
+	<TD>250</TD>
+	<TD><strong>ú</strong></TD>
+	<TD>251</TD>
+	<TD><strong>û</strong></TD>
+	<TD>252</TD>
+	<TD><strong>ü</strong></TD>
+	<TD>253</TD>
+	<TD><strong>ý</strong></TD>
+	<TD>254</TD>
+	<TD><strong>þ</strong></TD>
+	<TD>255</TD>
+	<TD><strong>ÿ</strong></TD>
+  </TR>
+</TABLE>
+<h3>&nbsp;</h3>
+<a href="content.htm">Zorro Manual</a>
+<p><a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a> </p>
+</body>
+</html>

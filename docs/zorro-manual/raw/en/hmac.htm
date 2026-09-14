@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>hmac</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/email.htm">
+</head>
+
+<body>
+<h2>hmac(string Content, int Size, string Secret, int Mode): string</h2>
+Generates a cryptographic hash from the string <strong>Content</strong> with an 
+optional <strong>Secret</strong> for authentication purposes. <h3>Parameters:</h3>
+<strong>Content</strong>  - Message or data to be hashed.<br>
+<strong>Size</strong>  - <strong>Content</strong> size in bytes, or <strong>0</strong> 
+for using the string length of <strong>Content</strong>.<br>
+<strong>Secret</strong> - Secret string for generating a cryptographic hash, or
+<strong>0</strong> for a simple SHA512 or SHA256 hash.<br>
+<strong>Mode</strong> - <strong>512</strong> for a HMAC512 hash, <strong>256</strong> 
+for a HMAC256 hash.
+<strong>+64</strong> when <strong>Secret</strong> is base64 encoded.
+<h3> Returns:</h3>
+Hash string of the given <strong>Content</strong>, or <strong>0</strong> when 
+something was wrong.<h3>Remarks:</h3>
+<ul>
+  <li>This function is often used for signing REST API headers. If can be 
+  accessed in a broker plugin either by adding Zorro functions with the
+  <a href="dlls.htm#project">ZorroDll.cpp</a>, or with the <a href="brokercommand.htm">SET_FUNCTIONS</a> 
+  command.<br> </li>
+</ul>
+<h3>Example:</h3>
+<pre>char Header[1024]M
+strcpy(Header,&quot;Content-Type:application/json&quot;);
+strcat(Header,&quot;\nAccept:application/json&quot;);
+strcat(Header,&quot;\nApi-Key: &quot;);
+strcat(Header,MyKey);
+strcat(Header,&quot;\nApi-Signature: &quot;);
+strcat(Header,hmac(MyContent,0,MySecret,512));</pre>
+<h3>See also:</h3>
+<a href="http.htm">HTTP functions</a>, <a href="ftp.htm">FTP functions</a>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+version online</a>
+</body>
+</html>

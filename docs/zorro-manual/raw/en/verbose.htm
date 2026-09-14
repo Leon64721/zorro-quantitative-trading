@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Verbose</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/verbose.htm">
+</head>
+
+<body>
+<h2>Verbose</h2>
+Determines the verbosity of trade,  error, and diagnostics messages (see
+<a href="log.htm">Log</a>).
+The more verbose, the slower the execution of large backtests.
+<h3>Range:</h3>
+<table border="0">
+  <tr>
+    <td><strong>0</strong></td>
+    <td>Few messages. Less important <a href="errors.htm">warnings</a> are suppressed. Bars are only printed to the log in [<span class="tast">Trade</span>] mode or when trades are open. </td>
+  </tr>
+  <tr>
+    <td><strong>1</strong></td>
+    <td>More messages (default). All bars and all major events, such as entering 
+	or closing a trade, are printed to the log and in [<span class="tast">Trade</span>] mode 
+	also displayed in the window..</td>
+  </tr>
+  <tr>
+    <td><strong>2</strong></td>
+    <td>Even more messages, including the trade parameters at any trade entry 
+	and exit. In [<span class="tast">Trade</span>] mode the daily profit, 
+	drawdown, and <a href="ddscale.htm">CBI</a> is printed once per day. In [<span class="tast">Test</span>] mode with <a href="ticks.htm">TICKS</a> flag 
+	the tick preceding a trade is displayed.  The prices of the selected asset are printed 
+	at any bar in the form <strong>Open/High\Low/Close</strong>. Critical error 
+	messages in any mode are also appended to the file <strong>Log\Errors.txt</strong>.</td>
+  </tr>
+  <tr>
+    <td><strong>3</strong></td>
+    <td>Even more messages, including skipped trades, possible price outliers, 
+	and function parameter errors. Prices are displayed with more digits. In [<span class="tast">Trade</span>] mode all open trades are listed once per day. </td>
+  </tr>
+  <tr>
+    <td><strong>7</strong></td>
+    <td>Extensive diagnostics messages, including all memory allocations that 
+	exceed 2 MB, all <strong>BrokerTrade</strong> calls, 
+	and API execution times.</td>
+  </tr>
+  <tr>
+    <td><strong>+DIAG</strong></td>
+    <td>(<strong>+8</strong>) Additional flag to activate a 'black box recorder' for diagnostics. 
+	A <strong>...diag.txt</strong> file is created in the <strong>Log</strong> 
+	folder. It contains a list with the 4000 last events and can be used to determine the reason of a crash or other problem that leads to the termination of the script. For details see <a href="errors.htm#diag">troubleshooting</a>.
+Black box recording strongly affects the program speed, so do not use this flag unnecessarily.</td>
+  </tr>
+  <tr>
+    <td><strong>+ALERT</strong></td>
+    <td>(<strong>+16</strong>) Additional flag to display errors and critical messages, such as suspicious asset 
+	parameters, possibly orphaned trades, broker API errors, or <a href="printf.htm">print(TO_ALERT,..)</a> calls, in a separate alert box. <strong>DIAG</strong> recording is stopped at the first critical event, so the details leading to the situation can be evaluated from the black box log (<strong>Log\...diag.txt</strong>). Recording continues when the alert box is closed. </td>
+  </tr>
+  <tr>
+    <td><strong>+SILENT</strong></td>
+    <td>(<strong>+32</strong>) Suppresses all <a href="printf.htm">printf</a> messages. Messages by
+	<strong>print(TO_WINDOW,...)</strong> are still printed.</td>
+  </tr>
+  <tr>
+    <td><strong>+LOGMSG</strong></td>
+    <td>(<strong>+512</strong>) Prints the log also to the message window. </td>
+  </tr>
+</table>
+<br>
+<h3>Type:</h3>
+<strong>int</strong>
+<h3>Remarks:</h3>
+<ul>
+  <li>In the daily trade list at <strong>Verbose</strong> &gt;= 2, the state of any trade is printed in the form <strong>[Trade ID] -  Profit/Loss - Stop - Current price - Entry</strong>, f.i. <strong>[AUD/USD:CY:S4400] +116$ s0.8733</strong> <strong>c0.8729 e0.8731</strong>. The same list is printed on a click on the [<span class="tast">Result</span>] button. </li>
+	<li>If <strong>Verbose</strong> &gt;= 2 and the system is in a drawdown from a 
+	previous equity peak (&quot;Adverse Excursion&quot;), its depth and width, as well as 
+	the <a href="ddscale.htm">Cold Blood Index</a> are once per day printed to the log in 
+  the form <strong>Last DD: xx% in yy days, CBI zz%</strong>.</li>
+  <li>In &quot;black box recorder&quot; mode a file ending with &quot;<strong>..diag.txt</strong>&quot; is generated in the <strong>Log</strong> folder. It contains a list with the last events and <a href="printf.htm">printf</a> 
+  format strings, and can be used to determine the reason of a crash or other problem that leads to the termination of the script. 
+  It is normally locked during a running trade session, but can be viewed while 
+  the [<span class="tast">Stop</span>] messagebox is active. For details see <a href="errors.htm#diag">troubleshooting</a>.</li>
+  <li>Verbosity and black box recording can heavily reduce the training and test speed, so do not use this feature unnecessarily. </li>
+</ul>
+<h3>Example:</h3>
+<pre>function run()
+{
+  Verbose = 7+DIAG; <em>// extensive messages plus black box recorder</em> 
+  ...
+}</pre>
+<h3>See also:</h3>
+<a href="mode.htm">LOGFILE</a>, <a href="numtotalcycles.htm">LogNumber</a>, <a href="command.htm">-diag</a>,  
+<a href="log.htm">log</a>,  <a href="errors.htm#diag">troubleshooting</a>
+<p>&nbsp;</p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

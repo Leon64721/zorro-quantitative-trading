@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>order</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/order.htm">
+</head>
+
+<body link="#000000" vlink="#333333" alink="#666666">
+<h2>order (int type): int </h2>
+User-supplied function that is called by the trade engine every time when Zorro enters or exits a trade. Can be used to access external broker APIs, control external trade 
+platforms by sending <a href="keys.htm">key strokes</a> or mouse clicks, or just pop up a <a href="printf.htm">message</a> for manually entering or exiting a trade.
+<h3>Parameters:</h3>
+<strong>type</strong> - <strong>1</strong> for entering, <strong>2</strong> for exiting a trade. <strong><br>
+</strong>
+<h3>Returns:</h3>
+        <strong>0</strong> when the trade could not be opened or closed, <strong>1</strong> otherwise. 
+        <h3>Remarks:</h3>
+        <ul>
+          <li>If an <strong>order</strong> function is defined in the script, it 
+		  replaces the trade functions of the selected broker plugin.</li>
+          <li>All <a href="trade.htm">trade variables</a> f.i. for determining the asset and algo are available in the order function.</li>
+        </ul>
+        <h3>Example:</h3>
+<pre>int order(int type)
+{
+  string bs = &quot;Buy&quot;;
+  if(type == 2) bs = &quot;Sell&quot;;
+  string ls = &quot;Long&quot;;
+  if(TradeIsShort) ls = &quot;Short&quot;;
+  play(&quot;alert.wav&quot;);
+  return msg(&quot;%s %s!&quot;,bs,ls);
+}</pre>
+            <h3>See also:</h3>
+			<a href="brokers.htm">Brokers</a>, <a href="buylong.htm">enterShort/Long</a>, <a href="selllong.htm">exitShort/Long</a>, <a href="printf.htm">msg</a>, <a href="login.htm">login</a>,	<a href="litec_api.htm">API</a>, <a href="brokerplugin.htm">broker plugin</a>,	<a href="funclist.htm">user supplied functions</a>
+			<p></p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+version online</a>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+<title>Zorro command line</title>
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/command.htm">
+</head>
+
+<body>
+
+<h1>Automatization with the command line (Zorro S)</h1>
+<p>Zorro S can be started directly from an external program, a shortcut, 
+a batch file, the Windows command shell, or a PHP <strong>exec</strong> call on 
+a Windows server. In this way, Zorro training or tests can be automatized. The command line looks like this:</p>
+<p><strong>&quot;C:\Users\YourName\Zorro\Zorro.exe&quot; <em>[filename]</em>
+</strong><strong><em>[options]</em></strong></p>
+<p>For starting it manually with command line options,
+<span style="mso-ascii-font-family: Calibri; mso-ascii-theme-font: minor-latin; mso-hansi-font-family: Calibri; mso-hansi-theme-font: minor-latin; mso-bidi-font-family: Arial; mso-bidi-theme-font: minor-bidi">
+use the Windows command prompt, navigate to your Zorro folder (<strong>cd</strong> 
+command), type in a command line, for instance <strong>Zorro -run MyScript</strong>, and 
+hit the [<strong>Enter</strong>] key.</span></p>
+<p>If only a script name is given with no further options, Zorro will select it 
+in the <strong>[Script]</strong> scrollbox. <strong>filename</strong> 
+(without blanks or special characters) must be either an existing script in the
+<strong>StrategyFolder</strong> given in <a href="ini.htm">Zorro.ini</a>, or a historical 
+data file in <strong>.t1</strong>, <strong>.t6</strong>, or <strong>.t8</strong> 
+format. If a historical data file is given, the <a href="scripts.htm">Chart</a> 
+or <a href="scripts.htm">History</a> 
+script is started with that file. When a script is started from the command line, the
+<a href="is.htm">COMMAND</a> status flag is set. Several Zorro functions use this way to start other Zorro processes, 
+f.i. for <a href="numcores.htm">multicore training</a>, <a href="retraining.htm">
+retraining</a>, or <a href="retraining.htm">retesting</a>. External tools can also use the command line.</p>
+<p>You can give a command line option either directly in the Windows command prompt, 
+or with the Windows [<span class="tast">Run</span>] function, or by editing the properties of a Zorro shortcut 
+on the Windows desktop. For this, right click the shortcut icon and select Properties 
+(for icons in the task bar you need to hold the [Shift] key). Under the shortcut 
+tab you'll see the Target field containing the exact location of Zorro.exe within 
+quotation marks. Add command line options, such as '<strong>-diag</strong>', after 
+the last quotation mark, and save the modified shortcut with [<span class="tast">Apply</span>].</p>
+<p>Besides the file name, the following command line options can be given (<a href="restrictions.htm">Zorro 
+S</a> only): </p>
+<h3>-run</h3>
+Run the given script in [<span class="tast">Test</span>] mode, and exit afterwards.
+<h3>-train</h3>
+Run the given script in [<span class="tast">Train</span>] mode, and exit afterwards.
+<h3>-trade</h3>
+Run the given script in [<span class="tast">Trade</span>] mode.<h3>-edit</h3>
+Select the script and open it in the editor.
+<h3>-h</h3>
+In combination with <strong>-run</strong>, <strong>-train</strong>, or <strong>-trade</strong>: 
+run with minimized Zorro window.
+<h3>-stay</h3>
+In combination with <strong>-run</strong>, <strong>-train</strong>, or <strong>-trade</strong>: 
+don't close Zorro afterwards.
+<h3>-quiet</h3>
+Don't open a message box when Zorro encounters a fatal <a href="errors.htm">error</a>; 
+print the error in the message window instead. Don't wait 4 seconds after a command 
+line run before closing the Zorro window.
+<h3>-a assetname </h3>
+Select the given asset from the [<span class="tast">Assets</span>] scrollbox.
+<h3>-c accountname </h3>
+Selects the account with the given name from a user defined
+<a href="account.htm">account list</a>.&nbsp;
+<h3>-d string </h3>
+Stores the given string (no blanks or special characters) in the
+<a href="cmd.htm">Define</a> string. In lite-C, it also generates a <a href="define.htm">#define</a>  statement. This way, a script started 
+with the command line can get file names or other text based information, and in 
+case of lite-C compile differently.
+<h3>-u string </h3>
+Allows to enter more strings or other content that can be parsed from the command 
+line with the <a href="report.htm">report</a> funcrion.
+<h3>-i number</h3>
+Passes an integer number to the script that can be read through the
+<a href="cmd.htm">Command</a> variable. Up to 4 numbers can be transferred to the 
+script, each preceded by <strong>&quot;-i&quot;</strong>. This way, the same script 
+started with the command line can behave in different ways.<h3>-x&nbsp; </h3>
+Compiles the selected script to an executable, like the <a href="mode.htm">EXE</a> 
+flag, and exit afterwards.<br>
+<h3>-diag</h3>
+Starts Zorro in 'black box' mode, as if the <a href="verbose.htm">DIAG</a> flag 
+was set. Used for debugging the startup behavior. A message &quot;diagnostics mode&quot; 
+will appear in the message window at startup, and the <a href="verbose.htm">DIAG</a> 
+flag is automatically set in subsequent scripts. Startup events are recorded to 
+a file <strong>&quot;diag.txt&quot;</strong> in the Zorro main folder. Black box 
+recording strongly reduces the program speed, so do not use this feature unnecessarily.
+<h3>-w offset</h3>
+Shift the Zorro window by the given number of pixels to the right.<br><br><br>The command line can be 
+evaluated with the <a href="report.htm">report</a> function, so arbitrary 
+user-defined command line options can be added. Use the <a href="exitcode.htm">
+ExitCode</a> variable for returning with a script-defined exit code or error 
+level.<br>&nbsp;&nbsp;&nbsp;
+<h3>Examples</h3>
+<p>Start a re-training run with a strategy. </p>
+<pre><strong>Zorro.exe -train MyStrategy</strong></pre>
+<p>From outside the Zorro folder, run the script <strong>pricedownload.c</strong> with the selected asset
+<strong>&quot;USD/CAD&quot;</strong>  in test mode.</p>
+<pre><strong>&quot;c:\Users\MyName\Zorro\Zorro.exe&quot; -run pricedownload -a USD/CAD </strong></pre>
+<p>Start Zorro in diagnostics mode. A file <strong>diag.txt</strong>  is generated 
+in the Zorro folder.</p>
+<pre><strong>Zorro.exe -diag</strong></pre>
+<p>A <strong>.bat</strong>  file in the Zorro folder that 
+trains 3 scripts when clicked on.</p>
+<pre><strong>Zorro -train MyStrategy1
+Zorro -train MyStrategy2
+Zorro -train MyStrategy3</strong></pre>
+
+A <strong>.bat</strong>  file that runs a Zorro script 50 times in 2 nested loops and passes the 
+loop numbers to <strong><a href="cmd.htm">Command[0]</a></strong> and <strong>
+<a href="cmd.htm">Command[1]</a></strong>.<pre><strong>for /l %%x in (1, 1, 5) do (
+for /l %%y in (1, 1, 10) do (
+  @echo Loop %%x %%y
+  Zorro -run MyScript -i %%x -i %%y
+</strong>)<strong>
+</strong>)<strong>
+pause</strong> 
+</pre>
+<p>A <strong>.bat</strong> file that executes a script with any
+<strong>.csv</strong> file name in a certain directory passed to the <a href="cmd.htm">
+Define</a> string:</p>
+<pre><strong>for %%f in (Data\MyFolder\*.csv) do Zorro -run MyScript -d %%f</strong></pre>
+<h3>See also: </h3>
+<a href="testing.htm">Testingg</a>, <a href="training.htm">Training</a>,
+<a href="trading.htm">Trading</a>, <a href="ini.htm">Zorro.ini</a>,
+<a href="exitcode.htm">ExitCode</a>, <a href="report.htm">report</a>,
+<a href="cmd.htm">Command</a> 
+<p>
+<a class="button" href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))">&#9658; 
+latest version online</a></p>
+
+</body>
+
+</html>

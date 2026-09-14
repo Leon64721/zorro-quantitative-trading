@@ -1,0 +1,318 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+<title>asset, assetType</title>
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/asset.htm">
+</head>
+
+<body>
+
+<h2>asset (string Name) : int</h2>
+Selects an asset from the <a href="account.htm">asset list</a>, and loads its price 
+history in the initial run from the broker or historical data. On subsequent 
+script starts, price data is not loaded again unless <a href="mode.htm">PRELOAD</a> 
+was set or the [<span class="tast">Edit</span>] button was clicked.
+<a href="price.htm">Price</a> and trade functions, and all asset related variables (<a href="spread.htm">Spread</a>,
+<a href="script.htm">Symbol</a>, <a href="algovar.htm">AssetVar</a> etc.) are automatically 
+switched to the new asset. Sets <a href="script.htm">AssetPrev</a> to the 
+previous asset name. Must be called in the first run (<strong><a href="is.htm">INITRUN</a></strong>) 
+for any asset used in the script.<br>
+<h3>Parameters:</h3>
+<table border="0">
+	<tr>
+		<td><strong>Name</strong></td>
+		<td>The name of the asset, as in the <a href="account.htm">asset list</a> 
+		or the [<span class="tast">Asset</span>] selector. An empty string
+		<strong>&quot;&quot;</strong> or a name beginning with
+		<strong>'#'</strong> creates a dummy asset with flat price history. Up to 15 characters, 
+		uppercase, with no blanks and no special characters except for slash '/' and underline 
+		'_'.</td>
+	</tr>
+</table>
+<h3>Returns:</h3>
+<strong>0</strong> when the <strong>Name</strong> string is <strong>NULL</strong> 
+or empty, or when the asset or its prices are not available; otherwise nonzero.
+<h3>Usage:</h3>
+<strong>asset(&quot;EUR/USD&quot;);</strong> selects the EUR/USD pair. <br>&nbsp;
+<h2>assetAdd (string Name)</h2>
+<h2>assetAdd (string Name, string Symbol)</h2>
+<h2>assetAdd (string Name, var Price, var Spread, var RollLong, var RollShort, var 
+PipVal, var PipCost, var MarginCost, var Leverage, var LotAmount, var Commission, 
+string Symbol)</h2>
+Selects an asset and optionally updates its parameters in the
+<a href="status.htm">INITRUN</a>. If the asset was not yet in the
+<a href="account.htm">asset list</a>, it is added and also appears in the [<span class="tast">Asset</span>] 
+scrollbox. Unlike <strong>asset()</strong>, the asset history is not yet loaded 
+and the asset is not yet subscribed. For creating a dummy asset for test purposes, let <strong>Name</strong> 
+begin with a <strong>'#'</strong> hash - this will generate artificial bars with a flat 
+price history. Selecting an asset before loading its price history can be useful 
+when asset specific parameters like <a href="contracts.htm">Centage</a> affect the 
+subsequent history download or its <a href="symbol.htm">Symbol</a>, price 
+source, or assigned account has to be set up by script. <br>
+<h3>Parameters:</h3>
+<table border="0">
+	<tr>
+		<td><strong>Name</strong></td>
+		<td>Name of the asset. A name beginning with
+		<strong>'#'</strong> creates a dummy asset that will also appear in the 
+		scrollbox.</td>
+	</tr>
+	<tr>
+		<td><strong>Symbol</strong></td>
+		<td>Symbol of the asset, with optional source, in the format described under
+		<a href="account.htm">asset list</a>. </td>
+	</tr>
+	<tr>
+		<td><strong>Price, ... </strong></td>
+		<td>Optional asset parameters as described under <a href="account.htm">asset 
+		list</a>. When at <strong>0</strong>, the parameter is not changed.</td>
+	</tr>
+</table>
+<h3>Usage:</h3>
+<strong>assetAdd(&quot;AAPL&quot;,150,0.01,0,0,0.01,0.01,0,2,1,0.02,&quot;STOOQ:AAPL.US&quot;);</strong><br>&nbsp;
+<h2>assetList (string Filename,<em> string Select</em>): int </h2>
+Loads an alternative <a href="account.htm">asset list</a>, adds its assets to 
+the [<span class="tast">Asset</span>] scrollbox, and selects an asset from the 
+new list. Any asset used in the script must be either in that list, or added 
+by script with <strong>assetAdd</strong>. The asset list must be loaded in the first 
+run (<strong><a href="is.htm">INITRUN</a></strong>) of the script.before its assets 
+can be selected. If this function is not called, the default list of the 
+currently selected <a href="account.htm">account</a> is used; if no such list 
+exists, it's the <strong>
+AssetsFix.csv</strong> list with some Forex pairs and CFDs. If <strong>Select</strong> is omitted 
+or <strong>0</strong>, a default asset - usually the first asset in the list - is selected. <br>
+<h3>Parameters:</h3>
+<table border="0">
+	<tr>
+		<td><strong>FileName</strong></td>
+		<td>File name of the asset list, f.i. <strong>&quot;AssetsIB&quot;</strong>. 
+		The <strong>.csv</strong> extension and the path can be omitted for asset 
+		lists in the <strong>History</strong> folder. </td>
+	</tr>
+	<tr>
+		<td><strong>Select</strong></td>
+		<td>Name of the asset to be selected in the scrollbox at first run, f.i.
+		<strong>&quot;EUR/USD&quot;</strong>. <strong>0</strong> for selecting 
+		a default asset. </td>
+	</tr>
+</table>
+<h3>Returns:</h3>
+Number of loaded assets, or <strong>0</strong> when no assets were loaded. The number 
+of assets is also available through <a href="numassets.htm">NumAssetsListed</a>.
+<h3>Usage:</h3>
+<strong>assetList(&quot;Strategy<a href="file://MyNewAssets.csv%22,0">\\MyNewAssets.csv&quot;,0</a>);</strong>&nbsp;<br>&nbsp;
+<h2>assetSelect () </h2>
+Sets the [<span class="tast">Asset</span>] scrollbox to the current asset.<br>&nbsp;
+
+<h2>assetType (string Name) : int</h2>
+Attempts to determine the type of an asset from its name. If the name begins and 
+ends with 
+the 3-letter abbreviation of a currency, it is identified as Forex; if it ends with 
+a number, it is identified as an index. <br>
+<h3>Parameters:</h3>
+<table border="0">
+	<tr>
+		<td><strong>Name</strong></td>
+		<td>Name of the asset </td>
+	</tr>
+</table>
+<h3>Returns:</h3>
+<strong>0 </strong>when the type can not be identified; otherwise <strong>FOREX</strong> 
+(1) or <strong>INDEX</strong> (2).<br>&nbsp;
+<h3>Remarks:</h3>
+<ul>
+	<li>The place of an <strong>asset</strong> call (if any) in the script 
+	matters. All variables and flags that affect the creation of bars, such as
+	<strong><a href="barperiod.htm">BarPeriod</a></strong>,
+	<a href="assetzone.htm">BarZone</a>, <a href="lookback.htm">LookBack</a>,
+	<a href="detrend.htm">Detrend</a>, <strong><a href="date.htm">StartDate</a></strong>,
+	<strong><a href="date.htm">EndDate</a></strong>, <span class="txtel">
+	<a href="mode.htm">TICKS</a></span>, <a href="barmode.htm">BarMode</a>,
+	<a href="date.htm">UpdateDays</a>, <a href="script.htm">AssetList</a>,
+	<a href="script.htm">History</a> etc. <span class="Highlight">must be set before</span> 
+	calling <strong>asset()</strong>. Otherwise the script will produce 
+	an <a href="errors.htm">Error 030</a> message. All parameters specific to an 
+	asset, such as <a href="spread.htm">Spread</a>, <a href="spread.htm">
+	Commission</a>, etc., as well as all functions that use asset parameters or 
+	prices, such as <a href="price.htm">price()</a>, <a href="optimize.htm">
+	optimize()</a>, <a href="advisor.htm">advise()</a>, etc.
+	<span class="Highlight">must be used after</span> calling <strong>asset()</strong>.</li>
+	<li>If the script contains no <strong>asset</strong> call, the scroll 
+	box asset is selected _after_ the <a href="is.htm">INITRUN</a>, and its name 
+	is appended to the <a href="training.htm">training</a> files for being able 
+	to train different assets separately. Call <strong>asset(Asset)</strong> for 
+	loading the asset selected by the Scrollbox already in the <a href="is.htm">
+	INITRUN</a>.</li>
+	<li>In multi-asset strategies the <span class="Highlight">order of asset() 
+	calls matters</span>. When <a href="barmode.htm">BR_FLAT</a> is not set, 
+	bars are created from the historical ticks of the first asset. This means 
+	tha gaps in the price history of the first asset are therefore reflected in 
+	the price data of all further assets. So 
+	select first the asset with the most complete price history; for 
+	instance, a currency pair or a cryptocurrency that is traded 24 hours. When 
+	a subsequent asset has a gap where the first asset has none, the gap is 
+	filled from the price data of previous bar. </li>
+	<li>Every <strong>asset</strong> call switches the <a href="spread.htm">asset 
+	parameters</a>, <a href="algovar.htm">asset variables</a>,
+	<a href="winloss.htm">trade statistics</a> and <a href="optimalf.htm">OptimalF</a> 
+	factors to the values of the selected asset. At begin of the simulation,
+	<a href="spread.htm">asset parameters</a> are loaded from the
+	<a href="account.htm">asset list</a>. If the asset is not found in the list, 
+	an error message will be displayed and defaults are substituted for the asset 
+	parameters.</li>
+	<li>If an <strong>asset</strong> call fails, the failed asset is not 
+	selected and <strong>0</strong> is returned. Check the return value to make 
+	sure that only valid and available assets are traded.</li>
+	<li>Any asset can have up to <span class="Highlight">3 different broker symbols</span> 
+	and 3 different sources for trading, for retrieving live prices, and for 
+	downloading historical prices. 
+	The symbols can be given in the <strong>Symbol</strong> field in the
+	<a href="account.htm">asset list</a>, or by script in the
+	<a href="script.htm">SymbolTrade</a>, <a href="script.htm">SymbolLive</a>,
+	<a href="script.htm">SymbolHist</a> parameters. The current asset name is stored 
+	in the <strong><a href="script.htm">Asset</a></strong> string.</li>
+	<li>The <a href="script.htm">Assets</a> array contains the names of all available 
+	assets. For <span class="Highlight">selecting all assets</span> of the
+	<a href="account.htm">asset list</a> in a <a href="loop.htm">loop</a>, use
+	<strong>while(asset(loop(Assets)))</strong>. For enumerating assets without
+	<strong>loop</strong> call, use <a href="fortrades.htm">for(used_assets)</a> 
+	or <a href="fortrades.htm">for(listed_assets)</a>. </li>
+	<li>The trading time zone of an asset can be set up with <a href="assetzone.htm">
+	AssetMarketZone</a> and
+	<a href="assetzone.htm">AssetFrameZone</a>. Trading can be restricted to market 
+	times with the <a href="barmode.htm">BR_LEISURE</a> flag.</li>
+	<li><span class="Highlight">Artificial assets</span> can be created by combining 
+	the prices from a 'basket' of several real assets (see example)<a href="tips.htm"></a>.
+	</li>
+	<li>When the asset name is an empty string or begins with a hash - like
+	<strong>asset(&quot;&quot;)</strong> or <strong>asset(&quot;#USD&quot;)</strong> - a
+	<span class="Highlight">dummy asset</span> is created with default 
+	parameters and flat price history (usually with all prices at 50). This is useful when a real asset is not needed, 
+	like for 
+	testing filters or indicators with artificial price curves. The price 
+	history can be modified with <a href="price.htm">priceSet</a> or
+	<a href="price.htm">priceQuote</a>. For viewing the price curve of a dummy 
+	asset, use <strong>assetAdd()</strong> for adding it to the scrollbox.</li>
+	<li>When loading price data, the prices are checked for plausibility dependent 
+	on the <a href="outlier.htm">Outlier</a> parameter. Invalid prices, 
+	such as extreme outliers, are automatically corrected or removed. Setting
+	<strong><a href="detrend.htm">Detrend</a> = NOPRICE;</strong> before calling
+	<strong>asset()</strong> prevents that asset and price data is checked and outliers 
+	are removed. </li>
+	<li>If only a single asset is selected in the script, the [<span class="tast">Asset</span>] 
+	scrollbox is automatically set to that asset. If multiple assets are selected, 
+	the [<span class="tast">Asset</span>] scrollbox is unchanged and determines the 
+	price in the [<span class="tast">Status</span>] window and the price curve in the resulting chart. </li>
+	<li>For <span class="Highlight">adding new assets</span> to the available asset 
+	set, see the description under <a href="account.htm#step">Asset List</a>.
+	</li>
+	<li>Assets must be subscribed before their prices are available. The <strong>
+	asset</strong> function subscribes the asset automatically, but some brokers 
+	have a limit to the number of subscribed assets. Some platforms, for instance
+	<a href="mt4plugin.htm">MT4</a>, need a long time after subscribing an asset 
+	before prices are available.</li>
+	<li>Any asset allocates computer memory (see also
+	<a href="memory.htm">memory</a>). This is normally uncritical in training or 
+	live trading, which is restricted to single assets and short lookback 
+	periods. But it can become critical in high resolution backtests with large 
+	portfolios. The <span class="Highlight">memory requirement</span> 
+	per asset 
+	in bytes can be estimated with the formula <strong>Years / BarPeriod * 15 MB</strong>, 
+	where <strong>Years</strong> is the number of backtest years (use <strong>1</strong> 
+	for live trading). The <a href="mode.htm">LEAN</a> and <a href="mode.htm">LEANER</a> 
+	flags reduce the memory requirement by about 50%, the <strong>TICKS</strong> 
+	flag increases it by 32 bytes per historical price quote. <a href="plot.htm">
+	plot </a>commands allocate 8..24 bytes per bar and asset. When the total 
+	memory requirement for backtesting large time periods exceeds ~3 GB, use
+	<strong>Zorro64</strong> with a <a href="dlls.htm">C++ script</a> for the 
+	backtest. Alternatively, split the portfolio in separate 
+	smaller sub-portfolios, or split the time period in separate shorter tests.&nbsp; </li>
+</ul>
+<h3>Examples:</h3>
+<pre><em>// trade multiple strategies and assets in a single script</em>
+function run()
+{
+  BarPeriod = 240;
+  StartDate = 2010;
+  set(TICKS); <em>// set relevant variables and flags before calling asset()</em>
+  
+<em>// call different strategy functions with different assets</em>
+  asset("EUR/USD");
+  tradeLowpass();
+  tradeFisher();
+  
+  asset("GBP/USD");
+  tradeAverage();
+  
+  asset("SPX500");
+  tradeBollinger();  
+}</pre>
+<pre><em>// set all asset symbols to a new source</em>
+if(Init) {
+  assetList(&quot;MyAssetList.csv&quot;);
+  for(listed_assets)
+    assetAdd(Asset,strf("MyNewSource:%s",SymbolLive));
+}
+</pre>
+<pre><em>// Basket trading - generate a snythetic asset "USD" 
+// combined from the USD value of EUR, GBP, and AUD</em>
+var priceUSD()
+{
+  var p = 0;
+  asset("GBP/USD"); p += price();
+  asset("AUD/USD"); p += price();
+  asset("EUR/USD"); p += price();
+  return p;
+}
+
+<em>// basket trade function with stop limit</em>
+int tradeUSD(var StopUSD)
+{
+  if((TradeIsLong &amp;&amp; priceUSD() &lt;= StopUSD) 
+    or (TradeIsShort &amp;&amp; priceUSD() &gt;= StopUSD)) 
+      return 1; <em>  // exit the trade</em>
+  else return 0;  <em>// continue the trade</em>
+}
+
+<em>// open a trade with the synthetic asset and a stop loss</em>  
+void enterLongUSD(var StopDistUSD)
+{
+  var StopUSD = priceUSD()-StopDistUSD;
+  asset("GBP/USD"); enterLong(tradeUSD,StopUSD);
+  asset("AUD/USD"); enterLong(tradeUSD,StopUSD);
+  asset("EUR/USD"); enterLong(tradeUSD,StopUSD);
+}
+
+void enterShortUSD(var StopDistUSD)
+{
+  var StopUSD = priceUSD()+StopDistUSD;
+  asset("GBP/USD"); enterShort(tradeUSD,StopUSD);
+  asset("AUD/USD"); enterShort(tradeUSD,StopUSD);
+  asset("EUR/USD"); enterShort(tradeUSD,StopUSD);
+}
+ 
+<em>// plot a price curve of the synthetic asset
+// (the plot command is linked to the last used asset -
+// so &quot;EUR/USD&quot; must be selected in the scrollbox)
+</em>function run() 
+{
+  set(PLOTNOW);
+  plot("USD",priceUSD(),0,RED);
+}</pre>
+<h3>See also:</h3>
+<a href="buylong.htm"><span class="links">enterLong/</span></a><a href="buylong.htm">Short</a>,
+<a href="loop.htm">loop</a>, <a href="algo.htm">algo</a>, <a href="script.htm">Asset</a>,
+<a href="assetzone.htm">AssetZone</a>, <a href="algovar.htm">AssetVar</a>,
+<a href="detrend.htm">Detrend</a>, <a href="loadhistory.htm">assetHistory</a>,
+<a href="price.htm">price</a>
+<p></p>
+<a class="button" href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))">&#9658; 
+latest version online</a>
+
+</body>
+
+</html>

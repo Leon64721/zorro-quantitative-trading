@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Mode</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/setf.htm">
+</head>
+
+<body>
+<h1>Helper macros</h1>
+<h2>setf (int Mode, int Flag)</h2>
+Identical to <strong>Mode |= (Flag)</strong>. Sets a <strong>Flag</strong> or flag combination in the variable
+<strong>Mode</strong> without affecting the other flags.&nbsp;For 
+instance, <strong>setf(TradeMode,TR_PHANTOM)</strong> sets the <strong>TR_PHANTOM</strong> 
+flag for the <a href="trademode.htm">TradeMode</a> variable.
+<h2>resf (int Mode, int Flag)</h2>
+Identical to <strong>Mode &amp;= ~(Flag)</strong>. Resets a <strong>Flag</strong> or flag combination in the variable
+<strong>Mode</strong>.
+<h2>isf (int Mode, int Flag): int</h2>
+Identical to <strong>(Mode&amp;(Flag))</strong>. Evaluates to nonzero when the a <strong>Flag</strong> in the <strong>Mode</strong> 
+variable is set.&nbsp; For instance, <strong>if(isf(TrainMode,PEAK))</strong> 
+... checks if the <strong>PEAK</strong> flag is set in the <a href="opt.htm">
+TrainMode</a> variable.
+<h2>swap (var a, var b)</h2>
+Macro that sets <strong>a</strong> to <strong>b</strong> and <strong>b</strong> 
+to <strong>a</strong>.<h3>Remarks</h3>
+<ul>
+	<li><strong>setf(a,b)</strong> is equivalent to <strong>a |= b</strong>; and
+	<strong>resf(a,b)</strong> is equivalent to <strong>a &amp;= ~b</strong>.</li>
+	<li>The difference of <strong>setf(Mode,Flag)</strong> and <strong>Mode = 
+	Flag</strong> 
+	is that the latter resets all other flags in <strong>Mode</strong>.</li>
+	<li>After <strong>if</strong>, use winged brackets for <strong>swap</strong>, 
+	f.i. <strong>if(some_condition) { swap(A,B); }</strong>.</li>
+	<li>The macros are defined in <strong>variables.h</strong>.</li>
+</ul>
+<h3>Example:</h3>
+<pre>function run()
+{
+  setf(TrainMode,PEAK);
+  setf(Detrend,SHUFFLE); 
+  ...
+}</pre>
+<h3>See also:</h3>
+<a href="mode.htm">set</a>, <a href="plotmode.htm">PlotMode</a>,
+<a href="opt.htm">TrainMode</a>, <a href="trademode.htm">TradeMode</a>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

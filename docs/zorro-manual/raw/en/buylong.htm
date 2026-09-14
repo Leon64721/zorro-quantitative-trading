@@ -1,0 +1,266 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>enterLong, enterShort</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/buylong.htm">
+</head>
+<body>
+<h2>enterLong (<em>int Lots, var Entry, var Stop, var TakeProfit, var Trail, var TrailSlope, var TrailLock, var TrailStep</em>): TRADE* </h2>
+<h2>enterShort (<em>int Lots, var Entry, var Stop, var TakeProfit, var Trail, var TrailSlope, var TrailLock, var TrailStep</em>): TRADE*</h2>
+Enters a long or short trade with optional parameters. Entry and exit conditions are handled by Zorro.
+<h2>enterLong (<em>function, var V0, ... var V7</em>): TRADE* </h2>
+<h2>enterShort (<em>function, var V0, ... var V7</em>): TRADE*</h2>
+Enters a long or short script-managed trade with optional user-defined parameters.
+ Entry and exit conditions are handled by a user-provided algorithm in the given trade management function (<a href="trade.htm">TMF</a>) dependent on the variables <strong>v0</strong> .. <strong>v7</strong>.
+<h2>enterTrade (TRADE*): TRADE*</h2>
+Enters an open, pending, or closed trade from a <strong>TRADE</strong> 
+struct. Inserts the trade only in the internal trade list; does not send any order to the broker. The asset name 
+can be given through
+<a href="trade.htm">TradeStr[0]</a> resp. the <strong>Skill</strong> element of 
+the <strong>TRADE</strong> struct; if it is not set, the current asset is used. 
+The position size (<strong>nLots</strong>) and the <strong>TR_SHORT</strong> and
+<strong>TR_OPEN</strong> flags must be set in the <strong>TRADE</strong> struct; 
+other elements are optional. The algo identifier is taken from the <strong>TRADE</strong> 
+struct; if it has none, it is set to the 
+current <a href="algo.htm">algo</a>. This function can be used for running 
+backtests from a list of trades (see <a href="scripts.htm">Simulate</a> script) 
+or for reading positions from the broker API and converting them to trades.&nbsp;<br>&nbsp;<h3>Parameters:</h3>
+<table border="0">
+  <tr>
+    <td><strong>Lots</strong></td>
+    <td>Optional number of lots when nonzero; overrides the global <a href="stop.htm"></a><a href="lots.htm">Lots</a>,
+	<a href="lots.htm">Amount</a>, <a href="lots.htm">Margin</a>, and <a href="lots.htm">Risk</a> 
+	variables. A 
+	negative number reverses the trade direction: <strong>enterLong</strong> 
+	then 
+	opens a short trade and <strong>enterShort</strong> opens a long trade.</td>
+  </tr>
+  <tr>
+    <td><strong>Entry</strong></td>
+    <td>Optional entry stop when &gt; 0, entry limit when &lt; 0 (overrides the global <a href="stop.htm">Entry</a>). </td>
+  </tr>
+  <tr>
+    <td><strong>Stop</strong></td>
+    <td>Optional stop loss when nonzero (overrides the global <a href="stop.htm"></a><a href="stop.htm">Stop</a>). </td>
+  </tr>
+  <tr>
+    <td><strong>TakeProfit</strong></td>
+    <td>Optional profit target when nonzero (overrides the global <a href="stop.htm"></a><a href="stop.htm">TakeProfit</a>). </td>
+  </tr>
+  <tr>
+    <td><strong>Trail</strong></td>
+    <td>Optional trail limit when nonzero (overrides the global <a href="stop.htm"></a><a href="stop.htm">Trail</a>). </td>
+  </tr>
+  <tr>
+    <td><strong>TrailSlope</strong></td>
+    <td>Optional trailing speed when nonzero (overrides the global <a href="stop.htm"></a><a href="stop.htm">TrailSlope</a>). </td>
+  </tr>
+  <tr>
+    <td><strong>TrailLock</strong></td>
+    <td>Optional profit lock percentage when nonzero (overrides the global <a href="stop.htm"></a><a href="stop.htm">TrailLock</a>). </td>
+  </tr>
+  <tr>
+    <td><strong>TrailStep</strong></td>
+    <td>Optional autotrailing step width when nonzero (overrides the global <a href="stop.htm"></a><a href="stop.htm">TrailStep</a>). </td>
+  </tr>
+  <tr>
+    <td><strong>function</strong></td>
+    <td>Optional pointer of an <strong>int</strong> function for micro-managing the trade (see <a href="trade.htm">TMF</a>). </td>
+  </tr>
+  <tr>
+    <td><strong>V0 ... V7 </strong></td>
+    <td>Up to 8 optional numerical variables as further arguments to the TMF. </td>
+  </tr>
+  </table>
+<h3>Returns:</h3>
+<strong>TRADE*</strong> - a pointer to the created trade struct (see <strong>include\trading.h</strong> for the definition of the <strong>TRADE</strong> struct), or <strong>
+0</strong> when no trade could be entered because the trade volume was zero, trading was disabled (f.i. weekend, 
+time frame, or lookback period), or the trade was rejected by the broker. For pending trades a nonzero pointer is always returned.
+<h3>Remarks:</h3>
+<ul>
+  <li>In the backtest, the result of entering a trade can be either a 
+  <span class="Highlight">pending</span> trade, an <span class="Highlight">opened
+  </span>trade, or a 
+  <span class="Highlight">skipped </span>trade. If no <a href="stop.htm">Entry</a> 
+  limit is given, trades are opened at the current price or at the next open 
+  price, dependent on <a href="fill.htm">Fill</a> 
+  mode. If a trade is pending, Zorro continues to attempt opening the trade within the time period given by <a href="timewait.htm">EntryTime</a>. </li>
+	<li>In live trading, <span class="Highlight">order filling</span> depends on the broker API 
+	and the market situation. Normally the order is cancelled when not filled 
+	within a wait time given by  <a href="brokercommand.htm">SET_WAIT</a> 
+	(default: about 30-60 seconds dependent on broker API). This behavior can be changed with the <a href="brokercommand.htm">
+	SET_ORDERTYPE</a> command. Partial fills are allowed for IOC 
+	(&quot;immediate-or-cancel&quot;) or GTC (&quot;good-till-cancelled&quot;) orders. A GTC order 
+	stays active in the background until it is either complete, or is cancelled 
+	by expiration or by an <a href="selllong.htm">exit</a> command.</li>
+	<li>Long trades open at the best ask price, short trades at the best bid 
+	price from the order book or the historical data. But the real <span class="Highlight">fill price</span> - the price at which the trade is entered - 
+normally differs to the current ask or bid price. The difference is the <strong>
+slippage</strong>. It can be simulated in the backtest with the
+<a href="spread.htm">Slippage</a> variable. To prevent an unfavorable fill price in 
+	live trading, 
+	you can use limit orders 
+instead of market orders. Some broker plugins, f.i. the IB plugin, support limit 
+orders. They are normally guaranteed to be filled at the price set up through the
+<a href="stop.htm">OrderLimit</a> variable.</li>
+	<li>When function parameters are 
+	<strong>0</strong> or omitted in the parameter list, <a href="stop.htm">global trade parameters</a> are used. When no trade management function and only global  parameters are used, the parentheses can be empty.</li>
+  <li>If a <a href="contract.htm">contract</a> is selected and the <a href="contracts.htm"> Multiplier</a> is set, the function opens an 
+  <span class="Highlight">option or future position</span> instead of a position of the underlying. </li>
+  <li>Trades are automatically <span class="Highlight">skipped</span> during <a href="barmode.htm">weekends</a> 
+  or outside market hours, during the <a href="lookback.htm">LookBack</a> period, in the inactive period of <a href="mode.htm"><strong>SKIP</strong></a> or <strong><a href="dataslope.htm">DataSplit</a></strong>, or  when the current bar is not the end of a <a href="barperiod.htm">TimeFrame</a>. 
+  For trading inside a time frame, set <strong>TimeFrame = 1</strong>, enter the 
+  trade, then set <strong>TimeFrame</strong> back to its previous value.</li>
+  <li>Trades are also <span class="Highlight">not opened</span> when
+  <a href="lots.htm">Lots</a> is <strong>0</strong>, or <strong><a href="lots.htm">Margin</a></strong> or <strong><a href="lots.htm">Risk</a></strong> are too low, or the <a href="lots.htm">MaxLong</a> / <a href="lots.htm">MaxShort</a> limits are reached in [<span class="tast">Test</span>] and [<span class="tast">Trade</span>] mode, 
+  or when the <a href="algo.htm">Algo</a> name ends with <strong>&quot;:L&quot;</strong> 
+  for short trades or with <strong>&quot;:S&quot;</strong> for long trades. 
+  However reverse positions are then still closed and the stop limits, profit targets, and life times of open trades with the same asset and algo are 
+  <span class="Highlight">updated</span> to the current values. This way, 
+  already open trades behave as if they were just opened by the recent signal. 
+  If this mechanism is not desired, limit the number of trades with 
+  negative <a href="lots.htm">MaxLong</a> / <a href="lots.htm">MaxShort</a> 
+  limits.</li>
+    <li>If a trade is <span class="Highlight">rejected by the broker</span>, the reason by the broker API - such as<strong> &quot;Outside market hours&quot;</strong> - is 
+	normally printed to the log. 
+  When trading with the <a href="mt4plugin.htm">MT4/5 bridge</a>, the reason can be seen in the 
+  MT4/5 Experts Log. The number of rejected orders is stored in the 
+	<a href="winloss.htm">NumRejected</a> variable. There can be 
+  many reasons for 
+  the broker API to reject a trade, for instance not enough capital on the account, 
+  not enough free margin, a wrong asset name, a closed or illiquid market, an 
+  asset that cannot be shorted, or a stop loss that is too tight, too far, or not an 
+  integer multiple of a pip. Zorro will not attempt to open the trade again 
+	unless either enforced by script, or when it's a <a href="hedge.htm">pool 
+	trade</a>. Pool trades will be rebalanced at any bar until they match the 
+	virtual trades. </li>
+	<li>A returned nonzero <strong>TRADE*</strong> pointer means that the trade is processed, but is no guarantee that the position is really opened - it could still be pending or is rejected later by the broker. This is indicated by flags in the 
+	<strong>TRADE</strong> struct. The returned <strong>TRADE*</strong> pointer can be assigned to 
+	<a href="trade.htm">ThisTrade</a> (f.i. <strong>ThisTrade = enterLong();</strong>). If 
+	<strong>ThisTrade</strong> is nonzero, all 
+  its trade variables - for instance, <a href="trade.htm">TradeIsOpen</a> - are 
+  available for checking the state of the trade.</li>
+	<li>A <strong><a href="trade.htm">trade management function</a></strong> (<strong>TMF</strong>) is automatically called every tick - i.e. whenever the price changes - with the the optional variables (<strong>V0</strong> .. 
+	<strong>V7</strong>) as arguments. It can evaluate the current price and other 
+	<a href="trade.htm">trade variables</a> for 
+  managing the position or adjusting stop and profit limits. Note that <strong>V0</strong> .. 
+	<strong>V7</strong> are for numbers only; they internally stored as
+    <a href="aarray.htm">float</a> variables with 32-bit precision.</li>
+	<li>Open, pending, and closed trades can be <span class="Highlight">enumerated
+	</span>with the <a href="fortrades.htm">for(open_trades)</a> and 
+	<a href="fortrades.htm">for(all_trades)</a> macros. </li>
+	<li>Every trade is linked to an <span class="Highlight">algorithm identifier</span> that can be set up through the
+	<strong><a href="algo.htm">Algo</a></strong> string. Identifiers are useful when the script trades with several different algorithms; they are then used for selecting 
+	<a href="optimize.htm">strategy parameters</a> or <a href="optimalf.htm">capital allocation factors</a> belonging to a certain trade algorithm, or to exit or identifiy particular trades. The 
+	<a href="performance.htm">performance report</a> lists strategy results separated by their algorithm identifiers. 
+	</li>
+	<li>Entry and exit conditions can be either set individually per trade, or set up globally through the 
+	<a href="stop.htm">Entry</a>, <strong><a href="stop.htm">Stop</a></strong>, 
+	<strong><a href="stop.htm">TakeProfit</a></strong>, and <strong>
+	<a href="stop.htm">Trail</a></strong> variables for all subsequent trades. If the stop loss is too close, too far, to or on the wrong side of the price, the trade can be rejected by the broker. Make sure that the stop loss has sufficient distance to the current price (<a href="price.htm">priceClose()</a>). A timed exit can be set up with 
+	<a href="timewait.htm">LifeTime</a>.</li>
+	<li>If <a href="mode.htm">TICKS</a> is not set and the price hits the entry 
+  limit, the profit target, and/or the stop loss in the same bar, the simulation assumes a pessimistic outcome. 
+  The limits are evaluated in the order entry - stop - profit target. If <strong>TICKS</strong> is set, the price curve inside the bar is evaluated for determining which limit is met first. 
+	</li>
+	<li>Opening a trade automatically closes opposite trades when 
+	<a href="hedge.htm">Hedge</a> is <strong>0</strong> or <strong>1</strong>  (i.e. 
+	<strong>enterLong</strong> can automatically close short positions and 
+	<strong>enterShort</strong> can automatically close long positions). If the trade was not opened because the 
+	<a href="stop.htm">Entry</a> limit was not met within <a href="timewait.htm">EntryTime</a>, opposite trades are not closed; if the trade was not opened because 
+	<a href="lots.htm">Lots</a> is <strong>0</strong> or <strong>
+	<a href="lots.htm">Margin</a></strong> or <strong><a href="lots.htm">Risk</a></strong> are too low, opposite trades are still closed. 
+	</li>
+	<li>The <span class="Highlight">trade size</span>  is determined by the
+	<a href="lots.htm">Margin</a>, <a href="lots.htm">Risk</a>, 
+	<a href="lots.htm">Amount</a>, or <strong><a href="lots.htm">Lots</a></strong> variables. 
+	</li>
+	<li>The <a href="trademode.htm">TR_PHANTOM</a> flag causes the trade to be executed in &quot;phantom mode&quot;. 
+	<span class="Highlight">Phantom trades</span> are not sent to the broker and do not contribute to the
+	<a href="winloss.htm">Total</a> statistics, but their projected wins and losses contribute to the 
+	<a href="winloss.htm">Short</a> and <a href="winloss.htm">Long</a> statistics. This can be used to filter trades based on the current win/loss situation (&quot;equity curve trading&quot;). 
+	</li>
+	<li>If an <a href="order.htm">order</a> function is defined in the script, it is called with 
+	<strong>1</strong> for the first argument and the <strong>TRADE*</strong> pointer for the second argument at the moment when the buy order is sent to the broker. This function can f.i. open a message box for manually entering the trade, or control another broker's user interface. 
+	</li>
+	<li>When <span class="Highlight">converting </span>scripts from other trading software, keep in mind that other trading programs use sometimes different names for trade functions. For instance, TradeStation&reg; uses &quot;Sell Short&quot; for entering a short position and &quot;Buy To Cover&quot; for exiting a short position.</li>
+	<li>In [<span class="tast">Trade</span>] mode, all open trades are stored in a 
+	<strong>.trd</strong> file in the <strong>Data</strong> folder. The stored trades are automatically continued when the strategy is started again, for instance after a computer crash. 
+	</li>
+</ul>
+<h3>Example: Send a limit order at 5 pip distance to the broker</h3>
+<pre>function run()
+{
+  BarPeriod = 1;
+  asset(&quot;EUR/USD&quot;);
+  OrderLimit = priceC() - 5*PIP;
+  enterLong();
+  quit(&quot;Order sent!&quot;);  
+}</pre>
+
+<h3>Example: Strategy that trades on SMA crossing</h3>
+<pre>function run()
+{
+  vars SMA100 = series(SMA(seriesC(),100));
+  vars SMA30 = series(SMA(seriesC(),30));
+ 
+  if(crossOver(SMA30,SMA100))
+    enterLong();
+  else if(crossUnder(SMA30,SMA100))
+    enterShort();
+}</pre>
+<h3>Example: Grid trading script </h3>
+<pre><em>// helper function for finding trades at a grid line
+</em>bool noTradeAt(var Price,var Grid,bool IsShort) 
+{
+  for(open_trades)
+    if((TradeIsShort == IsShort)
+      and between(TradeEntryLimit,Price-Grid/2,Price+Grid/2))
+        return false; <em>// trade found</em>
+  return true; <em>// no open/pending trade at that price</em>
+}
+  
+function run() 
+{
+  BarPeriod = 1440;
+  Hedge = 2; 
+  EntryTime = LifeTime = 500;  
+  var Price;
+  var Grid = 100*PIP; <em>// grid spacing</em>
+  var Current = priceClose();
+<em>// place pending trades at 5 grid lines above and below the current price</em>
+  for(Price = 0; Price &lt; Current+5*Grid; Price += Grid) {
+    if(Price &lt; Current-5*Grid)
+      continue;
+    if(Price &lt; Current and noTradeAt(Price,Grid,true))
+      enterShort(0,Price,0,Grid);      
+    else if(Price &gt; Current and noTradeAt(Price,Grid,false))
+      enterLong(0,Price,0,Grid);
+  }
+}</pre>
+<h3>Example: Using a trade management function</h3>
+<pre><em>// TMF that adjusts the stop in a special way</em> 
+int TrailingStop()<br>{<br><em>// adjust the stop only when the trade is in profit</em><br>  if(TradeProfit &gt; 0)<br><em>// place the stop at the lowest bottom of the previous 3 candles</em>
+    TradeStopLimit = max(TradeStopLimit,LL(3));<br><em>// plot a line to make the stop limit visible in the chart</em><br>  plot(&quot;Stop&quot;,TradeStopLimit,MINV,BLACK);
+<em>// return 0 for checking the limits</em><br>  return 0;<br>}
+
+<em>// using the trade function</em>
+function run()
+{
+  ...
+  Lots = 1;
+  Stop = 10*PIP;
+  Algo = &quot;SIG&quot;;
+  if(crossOver(MySignal,MyThreshold))
+    enterLong(TrailingStop);
+  ...
+}</pre>
+<h3>See also:</h3>
+<a href="selllong.htm">exitLong</a>/<a href="selllong.htm">Short</a>, 
+<a href="tradeupdate.htm">tradeUpdate</a>, <a href="lots.htm">Lots</a>, <a href="lots.htm">Risk</a>, <a href="stop.htm">Entry</a>, <strong><a href="stop.htm">Stop</a></strong>, <a href="timewait.htm">EntryTime</a>, <a href="timewait.htm">ExitTime</a>, <a href="barmode.htm">BarMode</a>, <a href="trade.htm">TMF</a>, <a href="fill.htm">Fill</a>, <a href="hedge.htm">Hedge</a>
+<p> <a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a> </p>
+</body>
+</html>

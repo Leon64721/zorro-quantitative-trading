@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>watch</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/watch.htm">
+</head>
+
+<body link="#000000" vlink="#333333" alink="#666666">
+<h2>watch (string text, ...)</h2>
+Prints the given text and up to 8 following <strong>bool</strong>, <strong>int</strong>, <strong>var</strong>, <strong>float</strong>, or <strong>string</strong> variables 
+to the message window or the log, or add text to exception or crash messages 
+(lite-C only). Can enter <a href="chart.htm">single step</a> debugging mode. Allows to quickly debug into functions and watch variable behavior.
+<h3>Parameters:</h3>
+		<table border="0" cellpadding="2" cellspacing="2">
+          <tr valign="top">
+            <td><strong>text</strong></td>
+            <td><p>Text string to be displayed, followed by the variables. If the string begins with an exclamation mark <strong>&quot;!...&quot;</strong>, script execution stops at that line and Zorro changes to 
+			<a href="chart.htm">debugging</a> mode. This way the behavior of variables inside a loop or function can be debugged step by step. If the string begins with a <strong>&quot;#&quot;</strong> character, the text is not displayed in the message window, but printed 
+			in all modes to the log or - in diagnostics mode - to the   <strong>diag.txt</strong> file (see <a href="verbose.htm">Verbose</a>). 
+			If the string begins with a <strong>&quot;?&quot;</strong>, the text is 
+			displayed together with the next exception or crash message. If the 
+			string contains a decimal point <strong>'.'</strong>, <strong>float</strong>,
+			<strong>double</strong>, or <strong>var</strong> variables are 
+			printed in higher precision.</p>            </td>
+          </tr>
+          <tr valign="top">
+            <td><strong>...</strong></td>
+            <td>Up to 8<strong> </strong>variables, function calls, or expressions to be watched. Supported are <strong>bool</strong>, <strong>int</strong>, <strong>var</strong>, <strong>double</strong>, <strong>float</strong>, or <strong>string</strong>. Floating point types are displayed with 5 decimals. </td>
+          </tr>
+        </table>
+		<h3>
+    
+    
+  Remarks:</h3> 
+  <ul>
+    <li><strong>watch(&quot;!...&quot;, ...)</strong> can be used as a 
+	breakpoint in the code for debugging variables in loops or between commands.</li>
+	  <li><strong>watch(&quot;#...&quot;, ...)</strong> can be used to examine variables 
+	  while training.</li>
+	  <li><strong>watch(&quot;?...&quot;)</strong> can be used 
+	  to determine the position of a script crash.</li>
+    <li>Take care to either remove or out-comment all <strong>watch</strong> statements, 
+	or disable them with <a href="mode.htm">NOWATCH</a> before releasing or live trading the strategy. </li>
+  </ul>
+<h3>Examples:</h3>
+  <pre>int i;
+for(i=0; i&lt;10; i++)
+  watch(&quot;!i&quot;,i,&quot;twice&quot;,2*i,&quot;square&quot;,i*i);
+</pre>
+  <h3>See also:</h3>
+  
+  <a href="verbose.htm">Verbose</a>, 
+<a href="chart.htm">debugging</a>, <a href="printf.htm">printf</a>, <a href="trouble.htm">troubleshooting</a>
+  <p>     <a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+  version online</a>
+</p>
+</body>
+</html>

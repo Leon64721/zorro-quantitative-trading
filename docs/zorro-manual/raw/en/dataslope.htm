@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>DataSlope, DataSkip, DataSplit</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/dataslope.htm">
+</head>
+
+<body>
+<h2>DataSplit</h2>
+Splits the <a href="numwfocycles.htm">WFO</a> simulation in a training period (given in percent) and a following test period. F.i. when set at <strong>60</strong>, the training period has a length of <strong>60%</strong> and the test period has a length of <strong>40%</strong>. This 
+works with WFO (<a href="numwfocycles.htm">NumWFOCycles</a> &gt; 1) or without WFO 
+(<a href="numwfocycles.htm">NumWFOCycles</a> == 1) and ensures that the test uses out-of-sample data.
+<h3>Typical range:</h3>
+<strong>50..90</strong> (default = <strong>0</strong> = no separate training / test period).
+<h3>Type:</h3>
+<strong>int</strong>
+<h2>DataSkip</h2>
+Gives the number of bars to skip with the <a href="mode.htm">SKIP1...SKIP3</a> flags (default: number of bars corresponding to one week).
+<h3>Type:</h3>
+<strong>int</strong>&nbsp;
+<h2>DataHorizon</h2>
+Prevents trading for the given number of bars at the begin of a WFO test phase (default: 
+<strong>0</strong>). This avoids test bias by future-peeking training f.i. with 
+a machine learning algorithm. To avoid artificial triggers by parameter changes, 
+set <strong>DataHorizon = 2</strong>; to avoid peeking bias when training uses prices from 5 bars in the 
+future, set <strong>DataHorizon = 5</strong>. See also <a href="mode.htm">
+RECALCULATE</a>.
+<h3>Type:</h3>
+<strong>int</strong><h2>DataSlope</h2>
+Applies a moving weight factor to the  trade results in the training period. F.i. at <strong>DataSlope = 2</strong> the last trades have twice the weight than the first trades. This generates  parameters that are better fitted to the most recent part of the price curve, and thus takes care of slow market changes.
+<h3>Typical range:</h3>
+<strong>1..3</strong> (default = <strong>1</strong> = equal weight for all trades)
+<h3>Type:</h3>
+<strong>var</strong><br>
+&nbsp;
+<h3>Remarks:</h3>
+<ul>
+  <li>On long training periods, f.i. with <a href="numwfocycles.htm">anchored WFO</a>, It is recommended to set <strong>DataSlope</strong> at <strong>1.5</strong> .. <strong>2.0</strong> for giving the last part of the price curve more weight. </li>
+</ul>
+<h3>Example:</h3>
+<pre>function run()
+{
+  DataSlope = 2;
+  DataSplit = 80;
+  NumWFOCycles = -10; <em>// anchored WFO</em>
+  ...
+}</pre>
+<h3>See also:</h3>
+<a href="mode.htm">Mode</a>, <a href="opt.htm">TrainMode</a>, <a href="numwfocycles.htm">WFO</a><p>&nbsp;</p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

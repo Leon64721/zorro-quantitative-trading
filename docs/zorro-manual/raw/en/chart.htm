@@ -1,0 +1,249 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Chart Viewer and Debugger | The Zorro Project</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+<!--
+.ms-contemp-top {
+	font-weight: bold;
+	color: black;
+	border-left-style: none;
+	border-right: 2.25pt solid white;
+	border-top: 2.25pt solid white;
+	border-bottom-style: none;
+}
+.ms-contemp-even {
+	font-weight: normal;
+	color: black;
+	border-left-style: none;
+	border-right: 2.25pt solid white;
+	border-top: 2.25pt solid white;
+	border-bottom-style: none;
+	background-color: #CCCCCC;
+}
+.ms-contemp-odd {
+	font-weight: normal;
+	color: black;
+	border-left-style: none;
+	border-right: 2.25pt solid white;
+	border-top: 2.25pt solid white;
+	border-bottom-style: none;
+	background-color: #F2F2F2;
+}
+.ms-contemp-main {
+	border-style: none;
+}
+.Stil1 {font-size: smaller}
+.auto-style1 {
+	text-align: left;
+}
+-->
+</style>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/chart.htm">
+</head>
+
+<body>
+<h1>Chart Viewer and Debugger</h1>
+<p>A click on the [<span class="tast">Result</span>] button after a test run opens the 
+chart viewer and debugger. It allows to zoom and scroll from an overview of the whole simulation 
+down to a single day or hour, and can replay or single step 
+through the strategy for debugging purposes. Charts can be exported and stored 
+as images, or already generated as images.. </p>
+<p><img src="../images/chartviewer.png" height="411" width="797"></p>
+<p>The chart runs from the begin of the first test cycle (not identical to the
+<a href="date.htm">StartDate</a>) to the end of the last test cycle. By default 
+it displays equity and drawdown profiles (blue and red),  the price curve 
+(black), and the trades of the   asset selected with the [<span class="tast">Asset</span>] 
+scrollbox.
+For displaying a different asset, select it with the scrollbox and click [<span class="tast">Result</span>] 
+again.</p>
+<p>The chart uses the same <a href="assetzone.htm">time zone</a> as the historical 
+data, normally UTC. The left axis is the asset price, the right axis is the 
+profit or loss in account currency units. Any axis runs from the minimum to the 
+maximum value within the chart. Trade entry and exit points are connected with green or red lines for winning or 
+losing trades. A falling green line or a rising red line indicates a short 
+position. For option trades the lines connect the strike prices with underlying exit prices. </p>
+<p>Equity 
+and drawdown profiles are summed up from the whole portfolio and averaged over all <a href="numsamplecycles">oversampling</a> cycles. If <a href="lots.htm">Capital</a> is invested, it adds to the equity curve 
+dependent on <a href="plotmode.htm">PlotMode</a> settings. In <a href="mode.htm">
+BALANCE</a> mode the blue profile displays the balance rather than the equity, 
+in <a href="mode.htm">PIPRETURN</a> mode it's the volume-independent profit in 
+pips. The red &quot;underwater 
+profile&quot; is normally the <a href="performance.htm">drawdown</a>, the equity distance from a preceding 
+balance peak. In <a href="mode.htm">MAECAPITAL</a> mode it's the adverse 
+excursion from a preceding equity peak and thus 'mirrors' the top of the equity 
+curve. In <a href="plotmode.htm">PL_BENCHMARK</a> 
+mode the equity curve is plotted as a blue line rather than bars, for comparison 
+with buy-and-hold or market profit lines. Additional curves appear 
+either on or below the main chart, depending on <a href="plot.htm">plot</a> 
+settings.</p>
+<p>Candles are displayed when zooming in; otherwise the price 
+curve is a black line. In the chart below, a short trade was opened on 
+16 at market open and closed intraday on Aug 8, probably by a trailing stop. A close at 
+bar end by an exit command would have placed the end dot next to the close of 
+the candle.</p>
+<p><img src="../images/chartdetail.png" height="411" width="797"></p>
+<p>Chart elements can be switched off either with the buttons on the left side, 
+or by setting their <a href="colors.htm">Color</a> to 0.<br>&nbsp;</p>
+        <table border="0">
+          <tr>
+            <td valign="top">              <table border="0">
+              <tr>
+                <td colspan="2"><div align="center">
+                    <h3 class="auto-style1">Chart Buttons</h3>
+                </div></td>
+              </tr>
+              <tr>
+                <td class="tast"><div align="left">Date</div></td>
+                <td>Jump to a particular date in the chart</td>
+              </tr>
+              <tr>
+                <td class="tast"><div align="left">Move</div></td>
+                <td>Move mode. Drag the chart with the mouse.</td>
+              </tr>
+              <tr>
+                <td class="tast"><div align="left">Zoom</div></td>
+                <td>Zoom mode. Click on a position in the chart for zooming in.</td>
+              </tr>
+              <tr>
+                <td class="tast">Total</td>
+                <td>Zoom out to the total view.</td>
+              </tr>
+              <tr>
+                <td class="tast" style="height: 12px"><div align="left">Equity</div></td>
+                <td style="height: 12px"><p>Toggle the equity and underwater 
+				curves.</p>
+                </td>
+              </tr>
+                <tr>
+                <td class="tast" style="height: 12px"><div align="left">Trades</div></td>
+                <td style="height: 12px"><p>Toggle the trades.</p>
+                </td>
+                </tr>
+                <tr>
+                <td class="tast" style="height: 12px"><div align="left">Candles</div></td>
+                <td style="height: 12px"><p>Toggle the price curve.</p>
+                </td>
+                </tr>
+              <tr>
+                <td class="tast"><div align="left">Export</div></td>
+                <td>Export the current chart to a <strong>.png</strong> image.</td>
+              </tr>
+              <tr>
+                <td colspan="2"><div align="center">
+                  <h3 class="auto-style1">Debugger Buttons</h3>
+                </div></td>
+              </tr>
+              <tr>
+                <td class="tast"><div align="left">Step</div></td>
+                <td>Restart the script in single step mode. Step forward 1 bar. </td>
+              </tr>
+              <tr>
+                <td class="tast">Skip</td>
+                <td>Restart the script in single step mode. Jump to the begin of 
+				the next trade.</td>
+              </tr>
+              <tr>
+                <td class="tast">Replay</td>
+                <td>Replay the script, one bar per second. Gives some sort of live 
+				trading experience in fast-forward mode.</td>
+              </tr>
+                                        </table></td></tr>
+        </table>
+<p>The price curve with the displayed 
+trades can be selected with the [<span class="tast">Assets</span>] scrollbox; 
+afterwards click [<span class="tast">Result</span>] again for refreshing the 
+chart. 
+The equity or balance curve results from the sum of all trades of the portfolio. The underlying datasets 
+of a chart can be <a href="export.htm">exported</a> and further evaluated with third party 
+charting software, f.i. an <a href="rbridge.htm">R data analysis</a> package. </p>
+<p>In <a href="plotmode.htm">PL_FILE</a> mode, the chart is initally generated 
+as a <strong>.png</strong> image in the <strong>Log</strong> folder and 
+displayed with the <strong>ZView</strong> image viewer. Elements can be removed from the chart 
+image by 
+setting their corresponding <a href="colors.htm">Color</a><strong> </strong>parameters to <strong>
+0.</strong> The size, scale, and resolution of the chart image can be set up with <a href="plotbars.htm">plot parameters</a>. The number of bars per chart can be limited with the <a href="plotbars.htm">PlotBars</a> 
+variable.</p>
+  <h3>Remarks</h3>
+  <ul>
+	  <li>In [<span class="tast">Trade</span>] mode a chart image is part of the 
+	  <strong>.htm</strong> status page. It can be displayed in a web browser and is updated 
+	  after every <a href="plotbars.htm">PlotPeriod</a> (default: 1 hour). It is not a live 
+	  chart, but a snaphot of the last update point.</li>
+	  <li>In [<span class="tast">Train</span>] mode parameter charts are 
+	  exported to image files and displayed on the training result page.</li>
+	  <li>The start point of a trade triggered at the end of a bar is displayed 
+	  in the chart on the next bar, regardless of the selected
+	  <a href="fill.htm">Fill</a> mode.</li>
+	  <li>For bar charts the last position and zoom factor are preserved until 
+	  the [<span class="tast">Edit</span>] button is clicked or a different 
+	  script is selected.</li>
+	  <li>
+	  On zooming horizontally, the vertical zoom is 
+	  automatically adjusted so that it covers all plot elements inside the 
+	  range. This can cause 'flat' candles when plot elements, f.i. by
+	  <a href="plot.htm">plotGraph</a>, are far away from the price line.	  
+	  </li>
+	  <li>Charts with many sub-charts (more than 15) can be difficult to 
+	  view even with a large window size. If required, generate them 
+	  as images with <strong>setf(PlotMode,PL_FILE);</strong> and display them 
+	  in the <strong>ZView</strong> image viewer that is included in the Zorro 
+	  distribution.</li>
+	  <li>The text in the caption bar of the current chart can be changed with
+	  <a href="printf.htm">print(TO_CHART,...)</a>.</li>
+	  <li>For comparing charts or histograms of different strategy variants, export them 
+	  as images and open them with <strong>ZView</strong> in horizontal split 
+	  mode.<br>&nbsp;</li>
+</ul>
+
+
+<h1>Debugging a strategy<a name="step" id="step"></a></h1>
+<p>You can replay or single step through a strategy for examining the trade behavior in detail. 
+Use the [<span class="tast">Asset</span>] 
+scrollbox to select the asset to be observed, then click [<span class="tast">Step</span>] 
+or [<span class="tast">Replay</span>] for stepping through the backtest or 
+replaying it in reduced speed. [<span class="tast">Step</span>] moves one bar forward, [<span class="tast">Skip</span>] 
+moves to the next bar at which a trade opens or closes. The two buttons also 
+appear on the Zorro main window.</p>
+<p>Debugging opens the chart window at the current position, and another window 
+with a list of open trades:</p>
+<p>
+<img src="../images/debugging2.png" alt="Single Step Debugging" width="565" height="387"></p>
+<p>The trade list has the same format as on the <a href="trading.htm">live 
+status page</a>.</p>
+<p>The stepwise change of variables and indicators can be visualized either with a 
+<a href="watch.htm">watch</a> 
+statement, or by displaying them in a <a href="panel.htm">panel</a> as with the
+<a href="shell.htm">Evaluation Shell</a>, or by <a href="plot.htm">plotting</a> them in the chart. For debugging single loops or function calls, 
+place <strong>watch (&quot;!...&quot;, ...)</strong> statements inside. 
+[<span class="tast">Step</span>] will then not proceed to the next bar, but to 
+the next <strong>watch</strong> statement. Stepwise debugging normally begins at the end of the <a href="lookback.htm">LookBack</a> period. For beginning at a certain date or bar number, 
+call <a href="printf.htm">watch</a> dependent on a condition, f.i. <strong>if(date() &gt;= 20150401) 
+watch(&quot;!...&quot;, ...);</strong>. The <a href="mode.htm">STEPWISE</a> 
+flag is set during debugging; if you set it by script, the backtest starts already in debugging mode. </p>
+<ul>
+	<li>For suggestions about <span class="Highlight">writing clean code</span> and 
+	dealing with bugs and errors in 
+your script, read <a href="trouble.htm">troubleshooting</a>.</li>
+	<li>For testing the behavior of a strategy under <span class="Highlight">
+	simulated market conditions</span>, such as extreme drops, use an artificial 
+	price curve (see <a href="detrend.htm">SHAPE)</a>.</li>
+	<li>For quickly testing the <span class="Highlight">robustness</span> of 
+	your strategy, run it with a detrended or inverted price curve (see
+	<a href="detrend.htm">Detrend</a>).</li>
+	<li>For testing the live trading behavior at 
+	a <span class="Highlight">certain date</span> or in <span class="Highlight">'fast forward'</span> mode, use <a href="date.htm">DayOffset</a>.</li>
+</ul>
+
+
+<h3>See also:</h3>
+<a href="testing.htm">Testing</a>, <a href="colors.htm">Colors</a>, 
+<a href="plot.htm">plot</a>, <a href="watch.htm">watch</a>, 
+<a href="trouble.htm">Troubleshooting</a>, <a href="performance.htm">Performance 
+Report</a><p><a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</p>
+</body>
+</html>

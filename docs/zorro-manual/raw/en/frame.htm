@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>frame, frameSync</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/frame.htm">
+</head>
+<body>
+<h2>frame(int Offset): bool</h2>
+Returns <strong>true</strong> when the current <a href="barperiod.htm">TimeFrame</a> ends at the given bar, 
+and <strong>false</strong> when inside a time frame.
+<h2>frameSync(int Period): int</h2>
+Returns a synchronized <a href="barperiod.htm">TimeFrame</a> that is aligned to 
+the begin of an hour, a 4 hours period, a day, or a week. 
+Returns <strong>0</strong> inside the time frame, and the negative number of 
+skipped bars at the end of the time frame. Periods that are higher than one week or are no 
+divisor of a full hour are not synchronized. <a href="barperiod.htm">FrameOffset</a> 
+can be used to shift the synchronized time frame to a particular time or 
+workday.
+<h3>Parameters:</h3>
+<table border="0">
+  <tr>
+    <td><strong>Offset</strong></td>
+    <td><a href="bars.htm">Bar</a> distance to the current bar. Must be <strong>0</strong> when <strong>TimeFrame</strong> is synchronized to a fixed time period or to an external event. </td>
+  </tr>
+  <tr>
+    <td><strong>Period</strong></td>
+    <td>Time period to be synchronized, in bars; an integer fraction of a hour, a 4 
+	hours period, a day, or 7 days for a week. </td>
+  </tr>
+</table>
+ <h2>sync(vars Data, int Type, int Period) : var</h2>
+Selects a value of the <strong>Data</strong> series using a synchronized time 
+frame given by <strong>Period</strong>. Can be used to generate 
+higher time frames of price series or indicators.
+Dependent on <strong>Type</strong>, the first, maximum, minimum, or last element&nbsp; 
+within the time frame, or the previous value is selected. The function 
+internally creates <a href="series.htm">series</a> (see remarks). Source code in <strong>indicators.c</strong>.
+<h3>Parameters:</h3>
+<table border="0">
+  <tr>
+    <td style="height: 23px"><strong>Data</strong></td>
+    <td style="height: 23px">Data series, for instance prices or indicator 
+	values.</td>
+  </tr>
+  <tr>
+    <td><strong>Type</strong></td>
+    <td><strong>1</strong> first, <strong>2</strong> highest, <strong>3</strong> 
+	lowest, <strong>4</strong> last element, <strong>+8</strong> for the 
+	previous value. </td>
+  </tr>
+  <tr>
+    <td><strong>Period</strong></td>
+    <td>Synchronized time period, in bars; an integer fraction of a hour, a 4 
+	hours period, a day, or 7 days. </td>
+  </tr>
+</table>
+<h3>Remarks:</h3>
+<ul>
+  <li><strong>TimeFrame = 24 </strong> is different to <strong>TimeFrame = frameSync(24)</strong>. In the former case the time frame changes every 24 bars, in the latter case every day 
+  on a 1-hour bar period, even if there 
+  are less than 24 bars per day.</li>
+	<li>The <strong>Period</strong> parameter to be synchronized on must not 
+	change from bar to bar.</li>
+	<li>Not all functions support synchronized time frames, but
+	<a href="series.htm">series</a> do. For synchonizing <strong>TimeFrame</strong> to arbitrary events, look up 
+	the <strong>frameAlign</strong> helper function under <a href="tips.htm">Tips&amp;Tricks</a>.</li>
+	<li> <strong>TimeFrame = frameSync(...)</strong> will not automatically set
+	<a href="lookback.htm">LookBack</a>, so if required, set it manually to the needed 
+	maximum value.</li>
+</ul>
+<h3>Examples:</h3>
+<pre><em>// let a time frame change daily at 3:00</em>
+BarPeriod = 60;
+FrameOffset = 3;
+TimeFrame = frameSync(24);
+...
+
+<em>// shift a series every 24 hours</em>
+BarPeriod = 60;
+if(0 == frameSync(24)) set(NOSHIFT);
+vars MySeries = series(MyValue);
+set(NOSHIFT|OFF);
+...
+
+<em>// return OHLC prices from synchronized higher time frames</em>
+var priceSyncOpen(int Period) { return sync(seriesO(),1,Period); }
+var priceSyncClose(int Period) { return sync(seriesC(),4,Period); }
+var priceSyncHigh(int Period) { return sync(seriesH(),2,Period); }
+var priceSyncLow(int Period) { return sync(seriesL(),3,Period); }
+</pre>
+<h3>See also:</h3>
+<a href="bars.htm">Bar</a>, <a href="barperiod.htm">TimeFrame</a>, <a href="assetzone.htm">BarZone</a>, <a href="barmode.htm">BarMode</a>,
+<a href="suspended.htm">suspended</a>, <a href="series.htm">series</a>
+<p></p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

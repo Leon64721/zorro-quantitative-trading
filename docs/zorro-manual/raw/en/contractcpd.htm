@@ -1,0 +1,109 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Market Sentiment: The Price Probability Distribution</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/contractcpd.htm">
+</head>
+
+<body>
+<h1>Market Sentiment: What's the price next month?</h1>
+Suppose a stock trades at $250. You want to know its price in 30 days. Or 
+rather, which price is expected in 30 days by most market participants. For this 
+purpose, Zorro analyzes the chain of 30-day options contracts and calculates a <span class="Highlight">price probability 
+distribution</span>. The result is the probability of any 
+future price between $200 and $300 at the option expiration day, based on the 
+expectations of option buyers and sellers. The most likely price is at the top of 
+the distribution. The underlying algorithm and usage examples are 
+described on
+	<a href="https://www.financial-hacker.com/the-mechanical-turk">
+	financial-hacker.com/the-mechanical-turk</a>.<br>&nbsp;
+<br>
+The following functions estimate<span class="auto-style1">
+a</span> future price from the current ask, bid, and strike prices of all option 
+contracts at a determined expiration date. They generate a distribution of the cumulative price probability 
+at their expiration. The height of a bar in the image below is the probability 
+that the underlying price will end up at or below the given price level on the x 
+axis, in the 
+implied opinion of option traders.<br><br>
+
+<img height="241" src="../images/ContractCPD.png" width="469"><br>SPY January 2018, 
+cumulative price probability distribution&nbsp;<h2>contractCPD (int Days): int </h2>
+Generates a cumulative probabililty distribution of the current asset price at 
+the given number of days in the future, and stores it internally. Returns the 
+number of option contracts used for the distribution. The
+<a href="contract.htm">contractUpdate</a> function must be called before.
+<strong>&nbsp;</strong>
+<h2>cpd(var Price): var</h2>
+Returns the cumulative probability of the given price in <strong>0..100</strong> 
+range. <span class="auto-style1">
+T</span>he future price will be at or below the given 
+value with the returned probability in percent. The <strong>contractCPD</strong> 
+function must be called before.
+<h2>cpdv(var Percentile): var</h2>
+Returns the price at the given percentile of the distribution. F.i. <strong>cpdv(50)</strong> 
+returns the median of the price distribution, with equal probability of a higher 
+or lower price. The <strong>contractCPD</strong> 
+function must be called before.<br>
+<br>
+<h3>Parameters:</h3>
+<table border="0">
+  <tr>
+    <td><strong>Days</strong></td>
+    <td>Minimum number of calendar days for which the price distribution is 
+	estimated. Determines the expiration date of the used options. </td>
+  </tr>
+  <tr>
+    <td><strong>Price</strong></td>
+    <td>Underlying asset price to be estimated.</td>
+  </tr>
+  <tr>
+    <td><strong>Percentile </strong></td>
+    <td>Probability that the future price is at or below the returned value. </td>
+  </tr>
+  </table>
+<h3>Remarks:</h3>
+<ul>
+	<li>For comparing price predictions with the current price in the backtest, 
+	make sure to use the unadjusted price. If in doubt, use underlying prices 
+	from the historical options chain by setting <strong>History = &quot;.t8&quot;;</strong> 
+	before selecting the asset.</li>
+	<li><strong>contractCPD</strong> loads the prices of all contract with the 
+	given expiration and can be very slow with some brokers (up to 30 minutes 
+	with IB). For speeding up price requests, call <strong>
+	brokerCommand(SET_PRICETYPE,8);</strong> when supported by the broker. <br></li>
+</ul>
+<h3>Example:</h3>
+<pre>void main() 
+{
+  StartDate = 20170101;
+  BarPeriod = 1440;
+  PlotScale = 10;
+
+  assetList("AssetsIB");
+  assetHistory("SPY",FROM_STOOQ|UNADJUSTED);
+  asset("SPY");
+  Multiplier = 100;
+
+<em>// load today's contract chain</em>
+  contractUpdate(Stock,0,CALL|PUT);
+  var PriceCurrent = Contracts-&gt;fUnl;
+  printf("\nCurrent price %.2f",PriceCurrent);
+
+<em>// what's the SPY price in 45 days?</em>
+  contractCPD(45);
+  var Price = 0.;
+  int i;
+  for(i = 0; i &lt; 150; i++) {
+    Price += 0.01*PriceCurrent;
+    plotBar("CPD",i,Price,cpd(Price),BARS|LBL2,RED);
+  }
+  printf(", projected price %.2f",cpdv(50));
+}</pre>
+<h3>See also:</h3>
+<a href="contract.htm">contract</a>, <a href="cdf.htm">cdf</a>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

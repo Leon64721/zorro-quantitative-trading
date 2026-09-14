@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>slider</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/slider.htm">
+</head>
+
+<body>
+<h2>slider(int number, int pos, int min, int max, string name<em>, string tooltip</em>): var </h2>
+Sets up an initial position, range, name, and tooltip for one of the three customizable sliders. Returns the current position of the slider. Depending on the selected asset or other conditions, different slider positions can be preset at the beginning. 
+<h2>slider(int number): var </h2>
+Returns the position of the slider with the given <strong>number</strong>. 
+The slider must have been set up before. 
+<h2>slider(int number, int pos) </h2>
+Sets the slider with the given <strong>number</strong> to a new position. 
+ This way the script can display numerical values to the user while running. 
+The slider must have been set up before. 
+<p><img src="../images/sliders.png" width="288" height="167"> </p>
+<h3>Parameters:</h3>
+		<table border="0">
+          <tr>
+            <td style="width: 70px"><strong>number</strong></td>
+            <td>Slider number: <strong>0</strong> for the <strong>Period</strong> slider, <strong>1..3</strong> for the 3 user-specific sliders. </td>
+          </tr>
+          <tr>
+            <td style="width: 70px"><strong>pos</strong></td>
+            <td>Slider position. The initial position is set when the script is run the first time. </td>
+          </tr>
+          <tr>
+            <td style="width: 70px"><strong>min, max </strong></td>
+            <td>Minimum (left) and maximum (right) position of the slider, 
+			positive integers,<strong> min</strong> &lt; <strong>max</strong>.</td>
+          </tr>
+          <tr>
+            <td style="width: 70px"><strong>name</strong></td>
+            <td>Text displayed next to the slider (like 
+			&quot;Margin&quot;). If the name begins with a dot (like &quot;.Panic&quot;), a 
+			decimal point is displayed in front of the last 3 digits in the edit 
+			window.</td>
+          </tr>
+          <tr>
+            <td style="width: 70px"><strong>tooltip</strong></td>
+            <td>Tool tip text to describe the slider function, or <strong>0</strong> for no tool tip. </td>
+          </tr>
+        </table>        
+        <h3>Returns</h3>
+ Current value of the slider. <br>
+&nbsp;
+<h3>Remarks:</h3>
+			<ul>
+		  <li>For setting up a slider name and range, the <strong>slider</strong> function must be called in the 
+		  initial run of the script. The <strong>Period</strong> slider has fixed parameters and is hard-wired to the <strong><a href="barperiod.htm">BarPeriod</a></strong> variable. The other sliders can be freely set and defined. </li>
+				<li>For displaying fractional values, put a dot at the begin of 
+				the slider name, and multiply the <strong>pos</strong>, <strong>
+				min</strong>, <strong>max</strong> parameters with 1000. The value in the edit window is then displayed with 3 decimals. 
+				The returned value must be divided by 1000.&nbsp; </li>
+              <li>  The sliders are initialized to their default positions (<strong>pos</strong> parameter) when the script is started the first time, or when 
+			  the script was edited or a new [<span class="tast">Script</span>] was 
+			  selected. On subsequent starts of the same script the sliders keep their previous position. For testing a script with a 
+			  manually set slider position, click [<span class="tast">Test</span>], wait until the slider 
+			  names appear on the GUI, then click [<span class="tast">Stop</span>], put the sliders to the desired position and click [<span class="tast">Test</span>] again. </li>
+				<li>  In [<span class="tast">Trade</span>] mode the slider 
+			  positions are stored in the <strong>.trd</strong> file and thus 'remember' their last position. 
+				The <strong>.trd</strong> file is automatically updated at any 
+				trade entry or exit, or in <a href="ticktime.htm#">TickTime</a> 
+				intervals when the sliders were moved.</li>
+				<li>  The <a href="is.htm">SLIDERS</a> fllag is set whenever a 
+				slider is moved or the number in the field is edited. It can be 
+				reset by script.</li>
+				<li>Aside from the sliders, a <a href="panel.htm">panel</a> with entry fields can also be used for user input.</li>
+</ul>
+            <h3>Example:</h3>
+<pre><em>// Investment calculator</em>
+void main()
+{
+  slider(1,10000,1,20000,&quot;Capital&quot;,&quot;Initial capital&quot;);
+  slider(2,10000,0,20000,&quot;Profit&quot;,&quot;Profit so far&quot;);
+  slider(3,2000,1000,2000,&quot;.Root&quot;,&quot;Root&quot;); <em>// 1.000 = linear, 2.000 = square root</em>
+  while(wait(100))
+    print(TO_INFO,&quot;\rInvestment: $%.0f&quot;,
+      slider(1)*pow(1+slider(2)/slider(1),1./(slider(3)/1000.)));
+}
+</pre>
+            <h3>See also:</h3>
+            <a href="optimize.htm">optimize</a>, <a href="panel.htm">panel</a>
+<p></p>
+			<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+version online</a>
+</body>
+</html>

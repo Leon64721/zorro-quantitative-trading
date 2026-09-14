@@ -1,0 +1,159 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>printf, print, msg</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/printf.htm">
+</head>
+
+<body>
+<h2>printf (string format, ...)</h2>
+Prints text and variables in a log file and the message window in [<span class="tast">Test</span>] 
+and [<span class="tast">Trade</span>] modes. This is a standard C function. It allows to display messages and  variables.<br>
+<h2>print (int to, string format, ...)</h2>
+Similar to <strong>printf</strong>, but prints text and variables to a target channel given by the <strong>to</strong> parameter, such as the log file, a .csv spreadsheet file,   the HTML status page, or the performance report.
+<h2>msg (string format, ...): int </h2>
+Displays  text and variables in a modal or nonmodal message box with [<span class="tast">Yes</span>] and [<span class="tast">No</span>] buttons, and  waits for the user to click one of the buttons. 
+Format strings beginning with '#' open a nonmodal box. 
+<h3>Returns</h3>
+<strong>0</strong> when [<span class="tast">No</span>] was clicked, <strong>1</strong> when [<span class="tast">Yes</span>] was clicked.  
+<h3>Parameters:</h3>
+		<table border="0" cellpadding="2" cellspacing="2">
+          <tr valign="top">
+            <td><strong>to</strong></td>
+            <td><p><strong>TO_WINDOW</strong> - print to the message window and the log file (default for <strong>printf</strong>).<br>
+                <strong>TO_LOG</strong> - print  in [<span class="tast">Test</span>] mode only to the log file, in [<span class="tast">Trade</span>] and in <a href="mode.htm">STEPWISE</a> mode also to the message window.<br>
+                <strong>TO_FILE</strong> -
+                print  in [<span class="tast">Test</span>] and   [<span class="tast">Trade</span>] mode to the log file. <br>
+                <strong>TO_ANY</strong> - 
+                print in all modes  to the message window and log file (= <strong>TO_WINDOW+TRAINMODE</strong>). <br>
+                <strong>TO_DIAG</strong> - print to the  <strong>diag.txt</strong> file (see <a href="verbose.htm">Verbose</a>). Note that log files and <strong>diag.txt</strong> file are not yet open in the <a href="is.htm">INITRUN</a>.<br>
+                <strong>TO_ALERT</strong> - print to an alert box and stop black box recording when the <strong>ALERT</strong> flag is set for <a href="verbose.htm">Verbose</a>.<br><strong>
+			TO_OUT</strong> - print to a file with the script name plus <strong>&quot;out.txt&quot;</strong> 
+			in the <strong>Log</strong> folder. <br>
+                <strong></strong><strong>TO_CSV</strong> - print to a file 
+                with the script name and extension <strong>&quot;.csv&quot;</strong> 
+			in the <strong>Data</strong> folder, for exporting data. <br>
+    <strong>TO_CSVHDR</strong> - print to the first line of the CSV file; for writing a header before writing the data.. <br>
+                <strong>TO_REPORT</strong> - print in the <a href="is.htm">EXITRUN</a> to the <a href="performance.htm">performance report</a>, for displaying additional performance parameters.<br>
+                <strong>TO_HTML</strong> - print in [<span class="tast">Trade</span>] or in <a href="mode.htm">STEPWISE</a> mode to the HTML file that displays the live trading status. HMTL format codes can be included in the text. <br>
+                <!--strong>8</strong> -  print to a modal message box with [<span class="tast">Yes</span>] and [<span class="tast">No</span>] buttons, and  wait for the user to click one of the buttons. <br>
+                <strong>9</strong> - print to a nonmodal message box with  [<span class="tast">Ok</span>] and [<span class="tast">Cancel</span>] buttons, and  continue with the script. When the user later clicks [<span class="tast">Ok</span>], the <a href="is.htm">AFFIRMED</a> flag is set (see example). An empty format string - <strong>print(9,&quot;&quot;);</strong> -  lets the nonmodal box disappear. <br-->
+                <strong>TO_TITLE</strong> - print to the title bar.<br>
+                <strong>TO_INFO</strong> - print to the info field. <strong>print(TO_INFO, 0)</strong> displays the current account or simulation state in the info field.<br>
+                <strong>TO_PANEL</strong> - print to the caption bar of the 
+			current <a href="panel.htm">control panel</a>. <br>
+                <strong>TO_CHART</strong> - print to the caption bar and - if
+			<a href="plotmode.htm">PL_TITLE</a> is set - to the title of the 
+			current <a href="chart.htm">chart</a>.<br>
+                <strong>+TRAINMODE</strong> - print also in [<span class="tast">Train</span>] mode. </p>
+              </td>
+          </tr>
+          <tr valign="top">
+            <td><strong>format</strong></td>
+            <td><p>C-style format string, containing arbitrary text with placeholders for subsequent variables (see <a href="format.htm">format codes</a>). The placeholders begin with a percent sign <strong>'%'</strong> and define the format of the displayed number. Examples:
+			<strong>&quot;$%.2f&quot;</strong> prints a <strong>var</strong> with a dollar 
+			symbol and 2 decimals; <strong>&quot;%i&quot;</strong> prints an <strong>int</strong>; <strong>&quot;%+4.1f&quot;</strong> prints a <strong>var</strong> with +/- sign, 4 digits, and one decimal. For printing <strong>float</strong> variables, use the <strong>%f</strong> placeholder and typecast them to <strong>(var)</strong>.<br>
+                <b> </b><b></b></p></td>
+          </tr>
+          <tr valign="top">
+            <td><strong>...</strong></td>
+            <td>Expressions or variables, one for each placeholder in the <strong>format</strong> text. </td>
+          </tr>
+        </table>
+		<h3>
+    
+    
+  Remarks:</h3> 
+  <ul>
+    <li><span class="edition">&nbsp;!! </span>&nbsp;Since the above functions accept 
+	any number and type of parameters, <span class="Highlight">variable types are not checked</span>  
+	and not 
+	automatically converted. A wrong variable type in a <strong>printf</strong> call 
+	will produce wrong output - not only of the 
+	variable, but also of all subsequent variables - and can even cause a program crash. 
+	So make sure that variables match the <strong>format</strong> string 
+	precisely. 
+	If you print a predefined variable, use the correct placeholder for <strong>var</strong>,
+	<strong>float</strong>, <strong>int</strong>,<strong> </strong>or <strong>
+	string</strong>. For <span class="Highlight">printing <strong>float</strong> variables</span>, typecast them to <strong>(var)</strong> or <strong>(double)</strong>, 
+	like this: <strong>printf(&quot;Profit: $%.2f&quot;,(var)TradeProfit)</strong>. 
+	The <strong>printf</strong> function will not automatically promote a <strong>float</strong> to 
+	a <strong>double</strong>. </li>
+    <li>For printing a <span class="Highlight">percent sign</span> in the text, use <strong>&quot;%%&quot;</strong>; for a 
+	<span class="Highlight">backslash</span>, use <strong>&quot;\\&quot;</strong>. A 
+	short list of C-style format strings can be found under <a href="format.htm">format codes</a>, 
+	a more detailed description in any C/C++ book. </li>
+      <li>For printing on a <span class="Highlight">new line</span> in the log or message window, begin the text with the linefeed symbol 
+	  <strong>&quot;\n&quot;</strong>. Otherwise <strong>printf</strong> appends the text to the end of the current line. For printing on a new line in a HTML file, begin the text with the tag 
+	  <strong>&quot;&lt;br&gt;&quot;</strong>.</li>
+	  <li>For deleting the current line in the message window and replacing it with new content, begin the text with the carriage-return symbol 
+	  <strong>&quot;\r&quot;</strong>. This way running counters or similar effects can be realized. 
+	  </li>
+	  <li>The <span class="Highlight">maximum text size</span> depends on the print channel. For the message window it's 
+	  about 2000 characters, for a file 20000 characters. Longer texts are 
+	  clipped.</li>
+	  <li>For printing into a string, use the <a href="str_.hmt">sprintf</a> or 
+	  <a href="str_.hmt">strf</a> functions. For printing into a file, use the 
+	  <a href="file_.htm">file_append</a> function. </li>
+	  <li>For printing with <strong>printf</strong> <span class="Highlight">only to the log file</span> and not to the window, add a 
+	  <strong>&quot;#&quot;</strong> at the begin of the text (<strong>printf(&quot;#\n...&quot;,...);</strong>). 
+	  In [<span class="tast">Trade</span>] mode log messages are also printed to 
+	  the window.</li>
+	  <li>For temporarily suppressing all <strong>printf</strong> messages, set
+	  <strong><a href="verbose.htm">Verbose</a> |= SILENT</strong>. </li>
+	  <li>For opening a nonmodal message box with the <strong>msg</strong> function, add a 
+	  <strong>&quot;#&quot;</strong> at the begin of the text (<strong>msg(&quot;#...&quot;,...);</strong>). A nonmodal message box has an [<span class="tast">Ok</span>] and a [<span class="tast">Cancel</span>] button and does not wait for the user to click a button; the script just continues. When the user later clicks  [<span class="tast">Ok</span>], the 
+	  <a href="is.htm">AFFIRMED</a> flag is set (see example). An empty message (<strong>msg(&quot;#&quot;);</strong>) lets the nonmodal box disappear. 
+	  </li>
+	  <li>For refreshing the GUI so that printed messages are updated in the window, use the 
+	  <a href="sleep.htm">wait</a> function. </li>
+	  <li>For <span class="Highlight">debugging</span> purposes, the <a href="watch.htm">watch</a> function is often more convenient  than the 
+	  <strong>printf</strong> function. It allows breakpoints, needs no format string, 
+	  and prevents errors by printing wrong variable types.</li>
+	  <li>For displaying or editing a text file, use <strong>exec(&quot;Editor&quot;,...)</strong>.</li>
+  </ul>
+<h3>Examples:</h3>
+  <pre><em>// printf example</em>
+var vPrice = 123.456;
+float fDiscount = 1.5;
+int nNumber = 77;
+...
+printf(&quot;\nPrice %.3f for %d items, total %.3f, discount %.1f%%&quot;,
+  vPrice, nNumber, nNumber*vPrice, (var)fDiscount);</pre>
+  <pre><em>// HTML status message example</em>
+if(ATR(30) &lt; Threshold)
+  print(TO_HTML,&quot;&lt;br&gt;Low volatility - ATR30 = %.3f&quot;,ATR(30));
+</pre>
+<pre><em>// nonmodal box example</em>
+function run()
+{
+  if(is(INITRUN))
+    msg("#Nonmodal message box.\nClick [Ok] to exit script!");
+  if(is(AFFIRMED))
+    quit("Ok!");
+  Sleep(10);
+}</pre>
+<pre><em>// CSV file output example</em>
+function run()
+{
+  LookBack = 100;
+  asset(Asset);
+  print(TO_CSVHDR,&quot;Date,Price,SMA,EMA\n&quot;);
+  print(TO_CSV,&quot;%s,%.4f,%.4f,%.4f\n&quot;,
+    strdate(<strong>YMDHMS,0</strong>),
+    priceC(),
+    SMA(seriesC(),50),
+    EMA(seriesC(),50));
+}</pre>
+<h3>See also:</h3>
+  
+  <a href="sound.htm">sound</a>, <a href="aarray.htm#string">string</a>, 
+<a href="exec.htm">Editor</a>, <a href="keys.htm">keys</a>, <a href="str_.htm">sprintf</a>, <a href="str_.htm">strf</a>, <a href="progress.htm">progress</a>, <a href="watch.htm">watch</a>, <a href="format.htm">format codes</a>
+<p>     <a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+  version online</a>
+</p>
+</body>
+</html>

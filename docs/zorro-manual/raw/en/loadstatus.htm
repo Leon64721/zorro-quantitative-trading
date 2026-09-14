@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>loadStatus</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/loadstatus.htm">
+</head>
+
+<body link="#000000" vlink="#333333" alink="#666666">
+<h2>saveStatus(string FileName)</h2>
+<h2>loadStatus(string FileName)</h2>
+Saves and loads the current trading status to a <strong>.trd</strong> file in 
+the <strong>Data</strong> folder. The file contains the 
+status of open real and phantom trades, the status of the sliders, and component specific variables (<a href="algovar.htm">AlgoVar</a>). 
+This function can be used to resume trading at the last stored state in case of 
+a server crash or reboot, or to let a fallback server take over the trading in 
+case of a hardware failure. <BR>
+<h3>Parameters:</h3>
+		<table border="0">
+		  <tr>
+            <td><strong>FileName</strong></td>
+            <td><p>Name and path of the file, or <strong>0</strong> for a default name like <strong>&quot;Data\\scriptname.trd&quot;</strong>. </p>
+            </td>
+	      </tr>
+</table> <br>      
+
+<!--p>The following system flags determine what's saved or loaded:</p>
+<p>
+<strong>SAV_SLIDERS</strong>&nbsp; - slider positions (default).<br>
+<strong>SAV_ALGOVARS</strong>&nbsp; - all <a href="algovar.htm">AlgoVars</a>  
+and <a href="algovar.htm">AlgoVars2</a>  (default).&nbsp; <br>
+<strong>SAV_TRADES</strong>&nbsp; - all open trades  (default). <br>
+<strong>SAV_STATS</strong>&nbsp; - trade <a href="winloss.htm">statistics data</a>, 
+to be continued in the next session<strong>.<br>SAV_BACKUP</strong>&nbsp; - after loading, save a backup of the <strong>.trd</strong> file (default). <br>
+<strong>SAV_HTML</strong>&nbsp; - after loading trades in [<span class="tast">Test</span>] mode, generate a HTML file with the list of open trades.</p--> 
+<h2>SaveMode</h2>
+This variable determines by several flags what's saved or loaded in the <strong>.trd</strong> file in [<span class="tast">Trade</span>] mode or when calling the <a href="loadstatus.htm">saveStatus</a>/<a href="loadstatus.htm">loadStatus</a> functions.
+<h3>Flags:</h3>
+<strong>SV_SLIDERS</strong>&nbsp; - save/load slider positions (default).<br>
+<strong>SV_ALGOVARS</strong>&nbsp; - save/load all <a href="algovar.htm">AlgoVars</a>  (default). 
+<br>
+<strong>SV_ALGOVARS2</strong>&nbsp;- save/load all <a href="algovar.htm">AlgoVars2</a>. <br>
+<strong>SV_TRADES</strong>&nbsp; - save/load all open trades  (default). <br>
+<strong>SV_STATS</strong>&nbsp; - save/load <a href="winloss.htm">statistics data</a>, 
+to be continued in the next session<strong>.<br>SV_BACKUP</strong>&nbsp; - after loading, save a backup of the <strong>.trd</strong> file (default). <br>
+<strong>SV_HTML</strong>&nbsp; - after loading trades in [<span class="tast">Test</span>] mode, generate a HTML file with the list of open trades.
+<h3>Type:</h3>
+<strong>int</strong>
+        <h3>Remarks:</h3>
+            <ul>
+              <!--li>System flags can be set with the <a href="mode.htm">set</a> 
+			  command and reset with <strong>set(Flag|OFF)</strong>. The <strong>
+			  SAV_</strong> flags replace the previous <strong>SaveMode</strong> 
+			  that is still supported, but should not be used anymore for new 
+			  scripts.</li-->
+				<li>Depending on <strong>SaveMode</strong>, the system status is automatically 
+				loaded in [<span class="tast">Trade</span>] mode 
+				at session start from a <strong>Data\*.trd</strong> file.The 
+				file is updated at any trade or at the end of a
+				<a href="trading.htm">trading</a> session. Set
+				<strong>SaveMode = 0</strong> for preventing the automatic 
+				saving and loading. In [<span class="tast">Test</span>] 
+				mode the <strong>saveStatus</strong>/<strong>loadStatus</strong> 
+				functions can be used for saving or loading.</li>
+				<li>The flags can be combined by adding (see example), and 
+				can be separately set or reset with the <strong>setf</strong> 
+				and <strong>resf</strong> macros.</li>
+              <li>For properly resuming statistics from the previous session, 
+			  the end of that session must be within the <a href="lookback.htm">
+			  LookBack</a> period of the current session.</li>
+              <li>All needed assets and algos must have been selected in the 
+			  initial run for loading 
+			  their
+			  <strong>AlgoVars</strong>; slider ranges must have been set in the 
+			  initial run for loading slider positions. Static variables that 
+			  have an effect on trade handling must be restored with
+			  <a href="putvar.htm">putvar</a> / <a href="putvar.htm">getvar</a>.</li>
+				<li>Trades can be alternatively loaded directly from the broker 
+				account with the <a href="brokercommand.htm">brokerTrades</a> 
+				function. In that case make sure that the <strong>SV_TRADES</strong> 
+				flag is not set. The broker API must support the <strong>
+				GET_TRADES</strong> command. </li>
+</ul>
+            <h3>Example:</h3>
+<pre>function run()
+{
+  if(Bar &gt;= 1) { <em>// default asset is selected after first run</em>
+    AlgoVar[0] = 123;
+    SaveMode = SV_ALGOVARS+SV_ALGOVARS2; 
+    saveStatus("Data\\Test.trd");
+    AlgoVar[0] = 456;
+    printf("\n %.0f",AlgoVar[0]);
+    loadStatus("Data\\Test.trd");
+    printf("\n %.0f",AlgoVar[0]);
+    quit(&quot;ok!&quot;);
+  }
+}</pre>
+            <h3>See also:</h3>
+			<a href="algovar.htm">AlgoVar</a>,	<a href="loadhistory.htm">assetHistory</a>,	<a href="trading.htm">Trading</a><p></p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+version online</a>
+</body>
+</html>

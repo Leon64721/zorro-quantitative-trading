@@ -1,0 +1,103 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>ccyStrength</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/ccy.htm">
+</head>
+
+<body link="#000000" vlink="#333333" alink="#666666">
+<h1>Currency strength functions</h1>
+<h2>ccySet(var Strength)</h2>
+Adds the given <strong>Strength</strong> value to the currency and subtracts it 
+from the counter currency of the current Forex pair. The <strong>Strength</strong> value can be any indicator or other price function that 
+indicates a &quot;strength&quot; or &quot;weakness&quot; of a currrency, for 
+instance ROC or RSI.&nbsp;
+<h2>ccyReset() </h2>
+Resets the stored  strengths of all currencies. Usually called at the begin of every bar before the strengths are summed up by <strong>ccySet</strong>.
+<h2>ccyStrength(string Currency): var </h2>
+Returns the  average strength of the given <strong>Currency</strong> (3 letters, f.i. <strong>&quot;USD&quot;</strong>). 
+The average strength is the strength sum of all Forex pairs beginning with
+<strong>Currency</strong>, minus the strength sum of all Forex pairs ending with
+<strong>Currency</strong>, divided by the number of Forex pairs. If a currency pair 
+is given (7 letters, f.i. <strong>&quot;EUR/USD&quot;</strong>), the function 
+returns the difference of both average strengths.
+<h2>ccyMax(): string </h2>
+Returns the currency pair with the strongest currency and the weakest counter currency.
+<h2>ccyMin(): string </h2>
+Returns the currency pair with the weakest currency and the strongest counter currency.
+<h3>Parameters:</h3>
+		<table border="0">
+          <tr>
+            <td><strong>Strength</strong></td>
+            <td>Strength value, for instance the price <a href="ta.htm#roc">rate of change</a>. Must be in the same range for all currency pairs. </td>
+          </tr>
+          <tr>
+            <td><strong>Currency</strong></td>
+            <td>Either a single currency (<strong>&quot;USD&quot;</strong>) or a currency pair (<strong>&quot;EUR/USD&quot;</strong>).</td>
+          </tr>
+        </table>        
+ <h3>Remarks:</h3>
+			<ul>
+		  <li>Currency strength functions can be used to detect currency price shocks that affect several Forex markets simultaneously (see example). </li>
+				<li>The forex pair name matters: Use the standard names like
+				<strong>&quot;EUR/USD&quot;</strong>, not variants like <strong>&quot;EURUSD&quot;</strong>,
+				<strong>&quot;EUR-USD&quot;</strong> etc.</li>
+				<li>Parameters passed to <strong>ccySet</strong> should be 
+				normalized or a percentage or probablitly value so that they are directly 
+				comparable for all currencies.</li>
+            <li>The source code of the currency strength functions is contained in <strong>Source\indicators.c</strong>. </li>
+			</ul>
+            <h3>Example:</h3>
+<pre><em>// Currency Strength Strategy /////////////////////</em>
+<em>// Exploits price shocks f.i. by CHF cap and Brexit</em>
+
+function run()
+{
+  BarPeriod = 60;
+  ccyReset();<em>	// reset strengths at begin of any bar</em>
+  string Name;
+  while(Name = (loop(Assets)))
+  {
+    if(assetType(Name) != FOREX) 
+      continue; <em>// Currency pairs only</em>
+    asset(Name);
+    vars Prices = series(priceClose());
+    ccySet(ROC(Prices,1)); <em>// store price change as strength</em>
+  }
+  
+<em>// get currency pairs with highest and lowest strength difference</em>
+  string Best = ccyMax(), Worst = ccyMin();
+  var Threshold = 1.0;
+
+  static char OldBest[8], OldWorst[8];	<em>// static for keeping contents between runs</em>
+  if(*OldBest && !strstr(Best,OldBest)) { <em>// new strongest asset?</em>
+    asset(OldBest);
+    exitLong();
+    if(ccyStrength(Best) > Threshold) {
+      asset(Best);
+      enterLong();
+    }
+  } 
+  if(*OldWorst && !strstr(Worst,OldWorst)) { <em>// new weakest asset?</em>
+    asset(OldWorst);
+    exitShort();
+    if(ccyStrength(Worst) < -Threshold) {
+      asset(Worst);
+      enterShort();
+    }
+  }
+
+<em>// store previous strongest and weakest asset names  </em>
+  strcpy(OldBest,Best);
+  strcpy(OldWorst,Worst);
+}</pre>
+            <h3>See also:</h3>
+            <a href="asset.htm">asset</a>, <a href="ta.htm#roc">ROC</a> 
+            <p></p>
+			<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+version online</a>
+</body>
+</html>

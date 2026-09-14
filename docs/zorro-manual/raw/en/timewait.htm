@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>EntryTime, LifeTime, EntryDelay</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/timewait.htm">
+<style type="text/css">
+.auto-style1 {
+	background-color: #FFFFFF;
+}
+</style>
+</head>
+
+<body>
+<h1>Trade parameters 2 - time limits </h1>
+<h2>LifeTime</h2>
+Trade time limit in bars. After the given number of bars (default: <strong>0</strong> for no time limit), 
+the trade closes at the open of the next bar. Trades are only closed when the market is open. If the entry 
+happens intrabar due to an <a href="stop.htm">Entry</a> or <strong>OrderDelay</strong> setting, <strong>LifeTime </strong>= <strong>1</strong> causes a trade duration of 1 bar plus the remainder of the opening bar.
+The life time of open trades is extended by <a href="buylong.htm">enter</a> 
+commands that do not open 
+a trade due to <a href="lots.htm">
+MaxLong/MaxShort</a> or due to a margin or risk limit. Open trades of the same component 
+get then automatically 
+the life time that the new trade would have.&nbsp;
+<h2>EntryTime</h2>
+Pending order lifetime in bars. When an <a href="buylong.htm">enter</a> command is given, wait the given number of bars (default: <strong>1</strong>) until the <a href="stop.htm">entry limit</a> is met. If that does not happen during that time, the trade 
+is removed and a &quot;Missed Entry&quot; message is printed to the log file.
+The entry time of pending trades is extended by <a href="buylong.htm">enter</a> 
+commands that do not open 
+a trade due to <a href="lots.htm">
+MaxLong/MaxShort</a><span class="auto-style1"><a href="lots.htm">.</a></span><h3>Range:</h3>
+Number of bars.
+<h3>Type:</h3>
+<strong>int<br>&nbsp;</strong>
+<h2>OrderDelay</h2>
+Order entry delay in seconds. Open the trade either after the given delay time   (default: <strong>0</strong> - no delay), or when the <a href="stop.htm">entry limit</a> is met, whatever happens first. 
+The delay can be given in high resolution (0.000001 = 1 microsecond). Useful for splitting a large order into smaller portions (&quot;iceberg trades&quot;), 
+for an adaptive entry/exit algorithm or for simulating latency in <a href="fill.htm">HFT fill mode</a>. 
+<h2>OrderDuration</h2>
+<a href="trademode.htm">GTC order</a> duration in seconds. The order is automatically cancelled after the 
+given time even when the trade is not completely filled. The broker API must 
+support the <a href="brokercommand.htm">SET_ORDERTYPE</a> and
+<a href="brokercommand.htm">DO_CANCEL</a> commands. 
+This variable affects all open GTC trades. 
+<h3>Range:</h3>
+Second units, f.i. <strong>1.23 == 1230 ms</strong>.
+<h3>Type:</h3>
+<strong>var</strong>
+<h3>Remarks:</h3>
+<ul>
+  <li>All time limits must be set before calling <a href="buylong.htm">enterLong</a>/<a href="buylong.htm">enterShort</a>, 
+  except for <strong>OrderDuration</strong>, which can be changed anytime. The life time 
+  of a trade can be modified afterwards either directly by setting <a href="trade.htm">TradeExitTime</a> 
+  in a TMF, or indirectly by updating the life time of open trades with the
+  <a href="lots.htm">MaxLong/Short</a> mechanism. </li>
+  <li><strong>LifeTime</strong> and <strong>EntryTime</strong> units are bar periods and not affected by <a href="barperiod.htm">TimeFrame</a>.</li>
+  <li><strong>OrderDelay</strong> can prevent that orders are entered on minute/hour boundaries when many automated systems open their positions and cause high slippage. This 
+  can achieve a better entry price, especially when combined with an <a href="stop.htm">entry limit</a>. 
+  <strong>OrderDelay</strong> can also be used for inserting artificial 
+  delays between trades that are opened at the same bar. A delay of about 30 
+  seconds between trades is often required by trade copy services such as 
+  ZuluTrade&#8482;, or useful for opening large positions in several steps ('iceberg 
+  trades'). </li>
+  <li><strong>OrderDelay</strong> is not recommended in combination with <a href="hedge.htm#">Virtual Hedging</a>.  As it opens and closes trades not at bar boundaries, it can cause trades to be opened and closed shortly afterwards by another trade in opposite direction after the given delay. This causes loss of spread and commission. </li>
+  <li>The effect of <strong>OrderDelay</strong> on the performance is simulated in <a href="mode.htm">TICKS</a> mode only. 
+  For simulating <strong>OrderDuration</strong>, use <strong>TICKS</strong> mode 
+  and pending trades in the backtest.</li>
+</ul>
+<h3>Examples (see also Grid.c and Hacks&amp;Tricks):</h3>
+<pre><em>// Use an entry limit and an entry delay for not entering trades at the same time
+// Call this function before entering a trade
+</em>void setDelay(var Seconds)
+{
+	static int PrevBar = 0;
+	static var Delay = 0;
+	if(Bar != PrevBar) { <em>// reset delay at any new bar</em>
+		Delay = 0;
+		PrevBar = Bar;
+	}
+	Delay += Seconds; <em>// increase delay within the bar</em>
+	OrderDelay = Delay;
+	Entry = -0.2*PIP * sqrt(Delay); <em>// entry limit for additional profit</em>
+}</pre>
+<h3>See also:</h3>
+<a href="bars.htm">bar</a>, <a href="buylong.htm">enterLong/</a><a href="buylong.htm">Short</a>, <a href="stop.htm">Stop</a>, <a href="stop.htm">Entry</a>, <a href="ticktime.htm">TickTime</a><p>&nbsp;</p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

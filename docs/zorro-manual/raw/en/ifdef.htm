@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>#ifdef, #ifndef, #else, #endif</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/ifdef.htm">
+</head>
+
+<body link="#000000" vlink="#333333" alink="#666666">
+<h2>#ifdef  name</h2>
+<h2>#ifndef  name</h2>
+<h2>#else</h2>
+<h2>#endif</h2>
+
+Defined names can be used to to skip certain script lines dependent on previous <span class="links"><a href="define.htm">#define</a></span>s.
+All script lines between <strong>#ifdef</strong> and <strong>#endif</strong> are
+		skipped if <b>name</b> was not <span class="links">define</span>d. Likewise,
+		all lines between <strong>#ifndef</strong> and <strong>#endif</strong> are
+		skipped if <b>name</b> was  <span class="links">#define</span>d. The		<strong>#else</strong> statement
+		reverses the line skipping or non-skipping.
+		<h3>Example: </h3>
+			<pre>#define SCALPING<br>... <br>#ifdef SCALPING<br>  aut.nBarMinutes = 0;<br>#endif</pre>
+		    <h3>See also:</h3>
+		<span class="links"><a href="define.htm">#define</a></span>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+version online</a>
+</body>
+</html>

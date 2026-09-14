@@ -1,0 +1,169 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Bars and Candles | Zorro Project</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/bars.htm">
+</head>
+
+<body>
+<h1>Bars, Ticks, Candles. Glossary of Terms.</h1>
+<p>  
+  
+  The behavior of an algorithmic trading strategy is determined by <span class="Highlight">bars
+  </span>or 
+  by <span class="Highlight">ticks </span>- often by both. A 
+  <span class="Highlight">bar </span>is normally a fixed time period, like one minute or one day. In the chart below 
+  that displays the EUR/USD price curve in summer 2009, every bar is represented 
+  by a red or green 
+  <span class="Highlight">candle</span>. The horizontal width of the candle is the 
+  <span class="Highlight">bar period</span>  - here one day - and its vertical height is the price movement of the asset during that period. On green candles the price went up during the bar period; on red candles it went down. 
+  By default, Zorro displays up and down candles in white and black colors. The thin lines above and below the candles - the 'wicks' - represent the highest and the lowest price during the bar period. </p>
+<p>For example, when you look at the candle of June 1 (at the vertical line below marked <strong>Jun</strong>), you see that the day started at a price of 1.4125. During the day the price went as high as 1.4225, and as low as 1.4110. The day ended with the price at 1.4135.</p>
+<p><img src="../images/chart.png" width="540" height="419"></p>
+<p>In past times, a bar was really equal to a day. The closing price was the price of the asset 
+in the afternoon when the market closed, and the opening price was the first 
+price next morning at 9:30 after the traders had contemplated their strategies all night. In modern times, 
+many assets are 
+traded online 24 hours a day, and some, such as digital coins, even at weekends 
+and holidays. Due to the trading around the clock, you can see that in the above chart the closing price of one bar is almost identical with the opening price of the next bar. This 
+is different when an asset is traded at a single stock exchange and has little 
+or no trading volume outside its business hours. In that case, daily candles have a 
+<span class="Highlight">gap </span>between the close of a bar and the open of the next bar. </p>
+<p>The same price curve can
+<span class="Highlight">look very different</span> depending on the used trading platform 
+or charting program 
+- especially with forex pairs or CFDs that are traded around the clock. The 
+reason are different time conventions. The open, 
+high, low, and close price of any candle depends on the <span class="Highlight">time zone</span> 
+of the charting software and of the open/close time of the bars. The EUR/USD chart above is based on 
+<span class="Highlight">Greenwich Mean Time</span> 
+(GMT, UTC). The same chart in New York local time (EST) had quite different 
+candles. By Zorro convention, charts and logs are always in UTC time, and the 
+time stamp of any bar is the current time at bar end. Thus, a 12:00 bar
+<span class="Highlight">ends at 12:00 UTC</span>. This avoids 'peeking bias' when the close price of a bar lies in the future. Some trading platforms stamp the bar with the time from its begin or 
+center, and some use local time or EST time. Be aware of that when comparing logs or 
+charts of different platforms.</p>
+<p>In charts a candle is usually printed <span class="Highlight">centered</span> 
+about its timestamp, not in front of it as would be correct. And indicators are 
+usually printed with smooth lines, not with discrete steps at any candle as 
+would be correct. Therefore, the begin and end of candles and the crossings of 
+indicators normally look slightly off in charts. This can confuse 
+beginners. For getting the exact position of indicator crossings, don't use a 
+magnifying glass on the chart, but look in the backtest or trading log.</p>
+<h3>Bar periods and time frames</h3>
+<p>Trading algorithms can be based on <strong class="Highlight">ticks</strong>, 
+<span class="Highlight">bar periods</span>, 
+and <strong class="Highlight">time frames</strong>. The main strategy
+<a href="run.htm">runs</a> at any bar, but it can also have a <a href="tick.htm">tick</a> 
+function that runs at any incoming tick. In live trading, a tick is the arrival of a new price quote; 
+in the backtest, a tick is a single record in a historical <a href="history.htm">price data</a> file. Any 
+tick got a <span class="Highlight">timestamp</span> from the exchange or broker 
+where it originated. Any <span class="Highlight">bar</span> contains all ticks 
+whose timestamps fall into the bar period. When one bar ends, the next bar 
+begins; there are <span class="Highlight">no 'gaps'</span> between bars. A 1-hour bar ending at 12:00 contains 
+all ticks with timestamps greater than 11:00:00 and less or equal to 12:00:00. A 
+tick with the timestamp 12.00:00.001 already belongs to the 13:00 bar, even 
+though it might display in a spreadsheet or history editor as 12:00:00. Zorro timestamps have a precision of 
+100 microseconds.</p>
+<p>Since 
+ticks arrive rarely or not at all during weekends or holidays, and since Zorro allows bar periods down to 
+1 millisecond for HFT simulation, 
+a <a href="barperiod.htm">bar period</a> can be 
+shorter than the time between two subsequent ticks. The bar is then 
+normally extended by a multiple of the bar period until it contains at least one tick. 
+Consequently, bars are normally also extended by weekends, holidays, or 
+market closure. Different behavior can be set up with <a href="barmode.htm">BarMode</a> 
+flags. </p>
+<p>A <a href="barperiod.htm">time frame</a> 
+can cover several bars, and is used as a time basis for technical 
+indicators and for price series. A strategy has only one bar period, but can 
+use any number of different time frames. For instance, <strong>TimeFrame = 4</strong> merges 
+4 subsequent bars to a single time frame, and <strong>TimeFrame = framesync(24)</strong> 
+merges all 1-hour bars that belong to a full day. Bars be be merged by any 
+criteria or condition set up in the script, allowing time frames to be 
+synchronized to certain events. Since many assets are traded in 
+sessions and have no or infrequent price quotes outside their market hours, it 
+is normally desired to merge out-of-market bars to a single bar. Alternatively, <a href="series.htm">time series</a> can 
+ignore out-of-market bars when the <a href="mode.htm">NOSHIFT</a> flag is set 
+during that time.</p>
+<p>Some traders believe that they get a better insight into the market with bars that cover not a fixed time period, but a fixed price 
+movement. With a focus on price movement, long periods of consolidation are condensed into just a few bars, thus highlighting "real" price trends. There are many special bar types: 
+<span class="Highlight"> <strong>Tick Bars, Renko Bars</strong>, <strong>Range Bars</strong>, <strong>Momentum Bars</strong>, <strong>Point-and-Figure Bars</strong></span>, or 
+<strong class="Highlight">Haiken Ashi Bars</strong>. Their usefulness for 
+algorithmic trading is doubtful, but Zorro allows any imaginable combination of price and time for constructing user-defined bars with the <a href="bar.htm">bar</a> function.</p>
+<h3>Prices and how to get them</h3>
+<p>Strategy development involves <a href="testing.htm">testing</a> the strategy 
+with historical price data. The prices are read from files in Zorro's <strong>
+History</strong> folder. For keeping the files at a reasonable size, they 
+normally do not contain all the price quotes, but only one-minute candles (<a href="history.htm">M1 data</a>) or 
+daily candles (<strong>D1 data</strong>). Files containing no candles, but direct price 
+quotes (<a href="history.htm">T1 data</a>), can also be used for special purposes, 
+like testing scalping or HFT strategies. 
+Historical data should have at least the same resolution as the
+<a href="barperiod.htm">bar period</a>, but preferably higher resolution.</p>
+<p>Historical M1 data for main currencies, indices, and commodities is available on the <a href="http://zorro-project.com/download.php" target="_blank">
+Zorro Download Page</a>. Data that is not found there can be downloaded (usually 
+free) from 
+brokers or from Internet data providers (Google&#8482;, Quandl&#8482;, etc.). Data in high resolution or with 
+special content - for instance, <a href="contract.htm">option chains</a> - is 
+normally not free. It can be purchased from data vendors; we also provide M1 
+price data and EOD options data for US stocks and ETFs in the Zorro data format. 
+Other vendors specialize on certain data types or exchanges - for instance, iVolatility&trade; on 
+options and futures, Nanotick&#8482; on Chicago traded assets, or Nanex&#8482; on New York traded assets. 
+Most have data in CSV format that can be convert to 
+Zorro's data formats using the <a href="data.htm">dataParse</a> 
+function with a special format string. Examples for conversion scripts can be 
+found in the <strong>Strategy</strong> folder. </p>
+<h3>Glossary of terms </h3>
+<p>Bars, candles, ticks, or quotes are often confused, and the meanings of those terms  can also vary from platform to platform. Throughout this manual the following terms are used:</p>
+<p><strong class="Highlight">Asset</strong> - the traded financial product. Multiple synonyms are used in 
+the trading literature, such as <span class="Highlight">Instrument</span>, 
+<span class="Highlight">Ticker</span>,
+<span class="Highlight">Symbol</span>,
+<span class="Highlight">Issue</span>, <span class="Highlight">Market</span>, or
+<span class="Highlight">Security</span>.</p>
+<p><span class="Highlight">Quote </span>-  online offer by a market participant to sell or buy an asset at a certain price. The most recent price quote 
+is the current bid or ask price of an asset. Sometimes other methods are used to define the current price, for instance the best recent quote 
+or the last traded price. </p>
+<p><span class="Highlight">Tick </span>-  a price in combination with a
+<span class="Highlight">time stamp</span>. In live trading, 
+a tick is generated by an incoming new <span class="Highlight">price quote</span>. In historical data files, a 
+tick is a <span class="Highlight">price sample</span> with its associated time. If a tick is sampled together from several quotes, 
+as in most historical data files, its time stamp is the time of its 
+<span class="Highlight">most 
+recent</span> quote.</p>
+<p><span class="Highlight">Candle </span>-   price info covering a time interval with an 
+<span class="Highlight">open</span>, <span class="Highlight">close</span>, 
+<span class="Highlight">high</span>, and <span class="Highlight">low </span>price. 
+<span class="Highlight">T1 data</span> contains only a single price quote per tick, 
+so its open, close, high and low is the same price. Price ticks in historical 
+files are usually candles with the first, last, highest, and lowest price  of all 
+quotes they are sampled from. Forex, CFD, 
+or cryptocurrency candles from different brokers often differ strongly.</p>
+<p><span class="Highlight">Bar </span>- basic time interval. The
+<span class="Highlight">bar period</span> determines the width of a
+<span class="Highlight">candle</span>, the time resolution of the price curve, and the execution  interval of a trading strategy. The time scale on a chart is divided into bars that cover at least one 
+<span class="Highlight">tick</span>, but normally many ticks. The bar time can vary 
+from bar to bar when <a href="bar.htm">special bar types</a>, such as Range, 
+Renko, or Point-and-Figure bars, are used, or when bars are extended due to 
+weekends, holidays, or market closure. </p>
+<p><span class="Highlight">Intrabar </span>- inside a <span class="Highlight">bar</span>. 
+Simulating intrabar events in test/train mode requires the <a href="mode.htm">
+TICKS</a> flag. The <a href="tick.htm">tick</a> or <a href="tick.htm">tock</a> 
+functions or <a href="trade.htm">trade management</a> functions can run at any 
+time inside a bar.</p>
+<p><span class="Highlight">Time frame</span> -   basic time unit of algorithms and indicators in a trading strategy. It is 
+often identical to a <span class="Highlight">bar</span>, but can also cover multiple bars in multi-timeframe strategies. 
+A time frame can be <a href="frame.htm">synchronized</a> to a full hour, day, or 
+week. In that case the number of bars per time frame can vary. </p>
+<h3>Read on:</h3>
+<a href="https://zorro-project.com" target="_blank">Zorro software</a>,
+<a href="strategy.htm">algo trading strategies</a>,  <a href="barperiod.htm">BarPeriod</a>, <a href="numbars.htm">NumBars</a>,
+<a href="history.htm">historical data</a>
+<p>  <a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; atest version online</a>
+</p>
+</body>
+</html>

@@ -1,0 +1,940 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>brokerCommand</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+.ms-contemp-main {
+	border-style: none;
+}
+.ms-contemp-top {
+	font-weight: bold;
+	color: black;
+	border-left-style: none;
+	border-right: 2.25pt solid white;
+	border-top: 2.25pt solid white;
+	border-bottom-style: none;
+}
+.ms-contemp-even {
+	font-weight: normal;
+	color: black;
+	border-left-style: none;
+	border-right: 2.25pt solid white;
+	border-top: 2.25pt solid white;
+	border-bottom-style: none;
+	background-color: #CCCCCC;
+}
+.ms-contemp-odd {
+	font-weight: normal;
+	color: black;
+	border-left-style: none;
+	border-right: 2.25pt solid white;
+	border-top: 2.25pt solid white;
+	border-bottom-style: none;
+	background-color: #F2F2F2;
+}
+</style>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/brokercommand.htm">
+</head>
+
+<body>
+<h2>brokerCommand (int Command, <strong>intptr_t </strong>Parameter): var</h2>
+<h2>brokerCommand (int Command, string Text)</h2>
+<h2>brokerCommand (int Command, var* Parameters)</h2>
+        Sets various broker plugin parameters or retrieves asset specific data for special purposes in a script 
+in [<span class="tast">Trade</span>] mode.
+The functions can be optionally provided by the <a href="brokerplugin.htm">broker plugin</a>; they return <strong>0</strong> when they are not supported or no broker connection is established.
+The number and types of parameters depend on <strong>Command</strong>. User 
+specific commands to the broker API can be added.The 
+following commands are predefined:<br>
+&nbsp;<br>        
+<table border="0" class="ms-contemp-main">
+            <!-- fpstyle: 34,011111000 -->
+            <tr align="center" bgcolor="lightgrey">
+              <th width="161" class="ms-contemp-top"><b>
+              <div align="left"><strong> Command</strong></div>
+              </b></th>
+              <th class="ms-contemp-top"><div align="left"><b> Parameter</b></div></th>
+              <th class="ms-contemp-top">Internal</th>
+              <th width="522" class="ms-contemp-top"><div align="left"><b>Returns</b></div></th>
+            </tr>
+            <tr bgcolor="white">
+              <td class="ms-contemp-even" style="height: 23px"><strong>GET_TIME</strong></td>
+              <td class="ms-contemp-even" style="height: 23px;">0  </td>
+              <td class="ms-contemp-even" style="height: 23px;"></td>
+              <td class="ms-contemp-even" style="height: 23px">Last incoming quote time in the  server time zone, OLE DATE format.</td>
+            </tr>
+            <tr bgcolor="lightgrey">
+              <td class="ms-contemp-odd"><strong>GET_DIGITS</strong></td>
+              <td class="ms-contemp-odd">Symbol  </td>
+              <td class="ms-contemp-odd">&nbsp;</td>
+              <td class="ms-contemp-odd">Number of relevant digits after decimal point in the price quotes. </td>
+            </tr>
+            <tr bgcolor="white">
+              <td class="ms-contemp-even"><strong>GET_STOPLEVEL</strong></td>
+              <td class="ms-contemp-even">Symbol  </td>
+              <td class="ms-contemp-even">&nbsp;</td>
+              <td class="ms-contemp-even">The 'safety net' <a href="stop.htm">stop level</a> of the last order (non-NFA accounts only). </td>
+            </tr>
+            <tr bgcolor="lightgrey">
+              <td class="ms-contemp-odd"><strong>GET_TRADEALLOWED</strong></td>
+              <td class="ms-contemp-odd">Symbol  </td>
+              <td class="ms-contemp-odd">&nbsp;</td>
+              <td class="ms-contemp-odd">Trade is allowed for the asset.</td>
+            </tr>
+            <tr bgcolor="white" style="font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size: 1em;">
+              <td class="ms-contemp-even"><strong>GET_MINLOT</strong></td>
+              <td class="ms-contemp-even">Symbol  </td>
+              <td class="ms-contemp-even">&nbsp;</td>
+              <td class="ms-contemp-even">Minimum permitted amount of a lot.</td>
+            </tr>
+            <tr bgcolor="lightgrey">
+              <td class="ms-contemp-odd"><strong>GET_LOTSTEP</strong></td>
+              <td class="ms-contemp-odd">Symbol  </td>
+              <td class="ms-contemp-odd">&nbsp;</td>
+              <td class="ms-contemp-odd">Step for changing lots.</td>
+            </tr>
+            <tr bgcolor="white" style="font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size: 1em;">
+              <td class="ms-contemp-even"><strong>GET_MAXLOT</strong></td>
+              <td class="ms-contemp-even">Symbol  </td>
+              <td class="ms-contemp-even">&nbsp;</td>
+              <td class="ms-contemp-even">Maximum permitted amount of a lot.</td>
+            </tr>
+            <tr bgcolor="lightgrey" style="font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size: 1em;">
+              <td class="ms-contemp-odd"><strong>GET_MARGININIT</strong></td>
+              <td class="ms-contemp-odd">Symbol  </td>
+              <td class="ms-contemp-odd">&nbsp;</td>
+              <td class="ms-contemp-odd">Initial margin requirements for 1 lot.</td>
+            </tr>
+            <tr bgcolor="white">
+              <td class="ms-contemp-even"><p><strong>GET_MARGINMAINTAIN</strong></p>              </td>
+              <td class="ms-contemp-even">Symbol  </td>
+              <td class="ms-contemp-even">&nbsp;</td>
+              <td class="ms-contemp-even">Margin to maintain open positions calculated for 1 lot.</td>
+            </tr>
+            <tr bgcolor="lightgrey" style="font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size: 1em;">
+              <td class="ms-contemp-odd"><strong>GET_MARGINHEDGED</strong></td>
+              <td class="ms-contemp-odd">Symbol  </td>
+              <td class="ms-contemp-odd">&nbsp;</td>
+              <td class="ms-contemp-odd">Hedged margin calculated for 1 lot.</td>
+            </tr>
+            <tr bgcolor="white">
+              <td class="ms-contemp-even"><strong>GET_COMPLIANCE</strong></td>
+              <td class="ms-contemp-even">0</td>
+              <td class="ms-contemp-even">&nbsp;</td>
+              <td class="ms-contemp-even">Account restrictions, a combination of the following flags: <strong>1</strong> - no partial closing; <strong>2</strong> - no hedging; <strong>
+			  4</strong> - FIFO compliance; <strong>8</strong> - no closing of trades;  <strong>15</strong> - full NFA compliant account.</td>
+            </tr>
+            <tr>
+              <td class="ms-contemp-odd"><strong>GET_SERVERSTATE</strong></td>
+              <td class="ms-contemp-odd">0</td>
+              <td class="ms-contemp-odd">&nbsp;</td>
+              <td class="ms-contemp-odd">State of the broker server: <strong>1</strong> 
+			  - server connected; <strong>2</strong> - server disconnected;
+			  <strong>3</strong> - server was temporarily disconnected since the 
+			  last <strong>GET_SERVERSTATE</strong> command.</td>
+            </tr>
+            <tr bgcolor="lightgrey">
+              <td class="ms-contemp-even"><strong>GET_NTRADES</strong></td>
+              <td class="ms-contemp-even">0</td>
+              <td class="ms-contemp-even">&nbsp;</td>
+              <td class="ms-contemp-even">Number of all open trades in this account. </td>
+            </tr>
+            <tr bgcolor="white">
+              <td class="ms-contemp-odd"><strong>GET_POSITION</strong></td>
+              <td class="ms-contemp-odd">Symbol</td>
+              <td class="ms-contemp-odd">&#10004;</td>
+              <td class="ms-contemp-odd">Net open amount (<a href="brokerplugin.htm">as 
+			  in BrokerBuy2</a>) of the given symbol; negative values for short 
+			  positions. 
+			  For brokers with varying lot amounts, call <strong>SET_AMOUNT</strong> 
+			  before.</td>
+            </tr>
+            <tr>
+              <td class="ms-contemp-even"><strong>GET_AVGENTRY</strong></td>
+              <td class="ms-contemp-even">0</td>
+              <td class="ms-contemp-even">&nbsp;</td>
+              <td class="ms-contemp-even">Average entry price for the preceding
+			  <strong>GET_POSITION</strong> command, or <strong>0</strong> when 
+			  no position was open. The raw entry price from the broker is 
+			  returned; in case of options it might be required to divide it by 
+			  the Multiplier.</td>
+            </tr>
+            <tr>
+              <td class="ms-contemp-odd" style="height: 23px"><strong>GET_FILL</strong></td>
+              <td class="ms-contemp-odd">
+			  Trade ID</td>
+              <td class="ms-contemp-odd">
+			  &nbsp;</td>
+              <td class="ms-contemp-odd" style="height: 23px">Deprecated; 
+			  replaced by <a href="brokerplugin.htm">BrokerTrade</a>.&nbsp; Returned the 
+			  current fill amount of the open order, or <strong>-1</strong> when 
+			  the order was not found or was not open anymore. </td>
+            </tr>
+            <tr bgcolor="lightgrey">
+              <td class="ms-contemp-even"><strong>GET_ACCOUNT</strong></td>
+              <td class="ms-contemp-even">String</td>
+              <td class="ms-contemp-even">&nbsp;</td>
+              <td class="ms-contemp-even">Fills the string  with the account name. </td>
+            </tr>
+            <tr>
+              <td class="ms-contemp-odd"><strong>GET_DATA</strong></td>
+              <td class="ms-contemp-odd">String</td>
+              <td class="ms-contemp-odd">&nbsp;</td>
+              <td class="ms-contemp-odd">General request to a REST API. The 
+			  string contains the request, usually a JSON object. It can 
+			  optionally begin with a '#' hash character and the last part of the post address 
+			  ending with a blank, 
+			  f.i. <strong>&quot;#data &quot;</strong>). The string is then filled with the 
+			  response from the API. Returns the response size in characters, or 
+			  0 when no valid response was returned.</td>
+            </tr>
+            <tr>
+              <td class="ms-contemp-even"><strong>GET_PRICE</strong></td>
+              <td class="ms-contemp-even">4 ... 6</td>
+              <td class="ms-contemp-even">&nbsp;</td>
+              <td class="ms-contemp-even">Returns a particular price after a
+			  <strong><a href="brokerplugin.htm">BrokerAsset</a></strong> call. 
+			  The price type can be given in the argument<strong>:<br>
+			  4</strong> - last traded price<br><strong>5</strong> - last ask 
+			  price <strong>
+			  <br>6</strong> - last bid price </td>
+            </tr>
+			<tr>
+              <td class="ms-contemp-odd"><strong>GET_VOLUME</strong></td>
+              <td class="ms-contemp-odd">2 ... 7</td>
+              <td class="ms-contemp-odd">&#10004;</td>
+              <td class="ms-contemp-odd">Returns a particular volume after a
+			  <strong><a href="brokerplugin.htm">BrokerAsset</a></strong> call. 
+			  The volume type can be given in the argument<strong>:</strong><br> 
+			  <strong>2</strong> - tick frequency, if supported<strong><br>4</strong> - trade 
+			  volume, often accumulative <strong><br>5</strong> - last ask 
+			  size <strong><br>6</strong> - last bid size <strong><br>7</strong> - open interest, for options&nbsp; </td>
+            </tr>
+            <tr bgcolor="lightgrey">
+              <td class="ms-contemp-even"><strong>GET_BOOK</strong></td>
+              <td class="ms-contemp-even">T2*</td>
+              <td class="ms-contemp-even">&#10004;</td>
+              <td class="ms-contemp-even">Fills the given T2 array with current quotes 
+			  from the order book. The asset is set with <strong>SET_SYMBOL</strong>; 
+			  bid prices are negative, the <strong>time</strong> field is 
+			  optional. The last T2 element is set to 0 for indicating the end 
+			  of the array. Returns the number of quotes.</td>
+            </tr>
+            <tr>
+              <td class="ms-contemp-odd"><strong>GET_TRADES</strong></td>
+              <td class="ms-contemp-odd">TRADE*</td>
+              <td class="ms-contemp-odd">&#10004;</td>
+              <td class="ms-contemp-odd">Fill the given <strong>TRADE</strong> 
+			  array with the parameters of all open positions from the current account 
+			  (see remarks). Return the number of positions.</td>
+            </tr>
+            <tr bgcolor="white">
+              <td class="ms-contemp-even"><strong>GET_OPTIONS</strong></td>
+              <td class="ms-contemp-even">CONTRACT*</td>
+              <td class="ms-contemp-even">&#10004;</td>
+              <td class="ms-contemp-even">Fill the given <strong>CONTRACT</strong> 
+			  array with the option chain of the underlying set with <strong>SET_SYMBOL</strong> 
+			  (see remarks). </td>
+            </tr>
+            <tr bgcolor="lightgrey">
+              <td class="ms-contemp-odd"><strong>GET_FUTURES</strong></td>
+              <td class="ms-contemp-odd">CONTRACT*</td>
+              <td class="ms-contemp-odd">&#10004;</td>
+              <td class="ms-contemp-odd">Fill the given <strong>CONTRACT</strong> 
+			  array with the futures chain of the underlying set with <strong>SET_SYMBOL</strong> 
+			  (see remarks). </td>
+            </tr>
+            <tr>
+              <td class="ms-contemp-even"><strong>GET_FOP</strong></td>
+              <td class="ms-contemp-even">CONTRACT*</td>
+              <td class="ms-contemp-even">&#10004;</td>
+              <td class="ms-contemp-even">Fill the given <strong>CONTRACT</strong> 
+			  array with the options of futures chain of the underlying set with <strong>SET_SYMBOL</strong> 
+			  (see remarks). </td>
+            </tr>
+            <tr>
+              <td class="ms-contemp-odd"><strong>GET_CHAIN</strong></td>
+              <td class="ms-contemp-odd">int[5000]</td>
+              <td class="ms-contemp-odd">&#10004;</td>
+              <td class="ms-contemp-odd">Fill the given <strong>int </strong>array with the 
+			  options chain parameters of the underlying symbol previously set 
+			  with <strong>SET_SYMBOL</strong>:<br>The first element gets the 
+			  number of expirations, second the number of strikes, followed by 
+			  the list of expirations in the YYYYMMDD format, followed by the 
+			  list of strikes cast to <strong>float</strong>. Used by the
+			  <a href="contract.htm">contractChain</a> function.</td>
+            </tr>
+            <tr bgcolor="white">
+              <td class="ms-contemp-even"><strong>GET_UNDERLYING</strong></td>
+              <td class="ms-contemp-even">0</td>
+              <td class="ms-contemp-even">&#10004;</td>
+              <td class="ms-contemp-even">Get the underlying price for the preceding
+			  <a href="brokerplugin.htm">brokerAsset</a> call when the asset was an option. </td>
+            </tr>
+            <tr>
+              <td class="ms-contemp-odd" ><strong>GET_GREEKS</strong></td>
+              <td class="ms-contemp-odd">var[5]</td>
+              <td class="ms-contemp-odd">&nbsp;</td>
+              <td class="ms-contemp-odd">Get the greeks for a preceding
+			  <a href="brokerplugin.htm">brokerAsset</a> or
+			  <a href="contract.htm">contractPrice</a> call. 
+			  Fills the parameter array with <strong>P[0]</strong> = Implied 
+			  Volatility; <strong>P[1]</strong> = Delta; <strong>P[2]</strong> = 
+			  Gamma; <strong>P[3]</strong> = Vega; <strong>P[4]</strong> = 
+			  Theta. Greeks cannot be retrieved with 'fast' price type.0</td>
+            </tr>
+            <!--tr bgcolor="lightgrey">
+              <td class="ms-contemp-odd"><strong>GET_DELAY</strong></td>
+              <td class="ms-contemp-odd">0</td>
+              <td class="ms-contemp-odd">&nbsp;</td>
+              <td class="ms-contemp-odd">Return  delay in ms between commands sent to the broker. </td>
+            </tr-->
+            <tr bgcolor="white">
+              <td class="ms-contemp-even"><strong>SET_DELAY</strong></td>
+              <td class="ms-contemp-even">Time in ms</td>
+              <td class="ms-contemp-even">&nbsp;</td>
+              <td class="ms-contemp-even">Set delay in ms between commands sent to the broker 
+			  (normally 20).</td>
+            </tr>
+            <!--tr bgcolor="lightgrey">
+              <td class="ms-contemp-odd" style="height: 20px"><strong>GET_WAIT</strong></td>
+              <td class="ms-contemp-odd">0</td>
+              <td class="ms-contemp-odd">&nbsp;</td>
+              <td class="ms-contemp-odd" style="height: 20px">Return maximum wait time for confirmation after a command was sent to the broker, in ms. </td>
+            </tr-->
+            <tr bgcolor="white">
+              <td class="ms-contemp-odd"><strong>SET_WAIT</strong></td>
+              <td class="ms-contemp-odd">Time in ms</td>
+              <td class="ms-contemp-odd">&nbsp;</td>
+              <td class="ms-contemp-odd">Set maximum wait time in ms for confirmation after a command was sent to the broker. 
+			  Default depends on the broker plugin; normally 60000. Increase the 
+			  time when trades need longer than 1 minute to open.</td>
+            </tr>
+            <tr>
+              <td class="ms-contemp-even"><strong>GET_MAXTICKS</strong></td>
+              <td class="ms-contemp-even">0</td>
+              <td class="ms-contemp-even">&#10004;</td>
+              <td class="ms-contemp-even">Return the maximum number of ticks to 
+			  be filled by <a href="brokerplugin.htm">BrokerHistory2</a>. If this 
+			  command is not supported, it's 300 ticks. This command is called 
+			  at login to set the <a href="ticktime.htm">MaxTicks</a> variable.</td>
+            </tr>
+            <tr>
+              <td class="ms-contemp-odd"><strong>GET_MAXREQUESTS</strong></td>
+              <td class="ms-contemp-odd">0</td>
+              <td class="ms-contemp-odd">&#10004;</td>
+              <td class="ms-contemp-odd">Return the maximum number of requests 
+			  per second allowed by the broker API. Sets up
+			  <a href="ticktime.htm">MaxRequests</a> if supported.</td>
+            </tr>
+            <tr>
+              <td class="ms-contemp-even"><strong>GET_HEARTBEAT</strong></td>
+              <td class="ms-contemp-even">0</td>
+              <td class="ms-contemp-even">&#10004;</td>
+              <td class="ms-contemp-even">Return the maximum time in ms that the 
+			  API tolerates without a request. Sets up <a href="ticktime.htm">
+			  TickTime</a> if supported.</td>
+            </tr>
+            <tr>
+              <td class="ms-contemp-odd"><strong>GET_BROKERZONE</strong></td>
+              <td class="ms-contemp-odd">0</td>
+              <td class="ms-contemp-odd">&#10004;</td>
+              <td class="ms-contemp-odd">Return the <a href="month.htm">time 
+			  zone</a> of the timestamps set by the <strong>BrokerHistory2</strong> 
+			  function. Return <strong>0</strong> for UTC. Used for setting
+			  <a href="assetzone.htm">BrokerZone</a>.</td>
+            </tr>
+            <tr bgcolor="lightgrey">
+              <td class="ms-contemp-even"><strong>SET_DIAGNOSTICS</strong></td>
+              <td class="ms-contemp-even">0..4 </td>
+              <td class="ms-contemp-even">&nbsp;</td>
+              <td class="ms-contemp-even">0 disables  diagnostics output, higher 
+			  values enable diagnostics - the higher, the more messages. When enabled, communication between plugin and API 
+			  and other plugin messages will be recorded in the log for diagnostic purposes.</td>
+            </tr>
+            <tr>
+              <td class="ms-contemp-odd"><strong>GET_LOCK</strong></td>
+              <td class="ms-contemp-odd">0</td>
+              <td class="ms-contemp-odd">&nbsp;</td>
+              <td class="ms-contemp-odd">Returns 1 if broker API calls must be 
+			  locked for synchonizing them among several connected Zorros; 
+			  returns -1 if broker API need not be locked. In this case the
+			  <strong>NOLOCK</strong> flag is automatically set.</td>
+            </tr>
+            <tr bgcolor="white">
+              <td class="ms-contemp-even"><strong>SET_LOCK</strong></td>
+              <td class="ms-contemp-even">0, 1</td>
+              <td class="ms-contemp-even">&nbsp;</td>
+              <td class="ms-contemp-even">Set (1) or release (0) a lock for synchonizing commands among several connected Zorros (see remarks). Returns 0 if the lock was already set, otherwise 1. </td>
+            </tr>
+            <tr bgcolor="lightgrey">
+              <td class="ms-contemp-odd"><strong>SET_SLIPPAGE</strong></td>
+              <td class="ms-contemp-odd">Pips</td>
+              <td class="ms-contemp-odd">&nbsp;</td>
+              <td class="ms-contemp-odd">Set the maximum allowed slippage (<strong>default = 5 pips</strong>) in adverse direction for subsequently opening or closing trades.  Higher allowed slippage causes less requotes, but allows trades to be entered at a worse price. Note that the allowed slippage is not guaranteed; trades can be still entered at higher slippage dependent on the brokerm, market access method, and server setup. </td>
+            </tr>
+            <tr bgcolor="white">
+              <td class="ms-contemp-even"><strong>SET_SYMBOL</strong></td>
+              <td class="ms-contemp-even">Symbol</td>
+              <td class="ms-contemp-even">&#10004;</td>
+              <td class="ms-contemp-even">Set the symbol for subsequent commands.</td>
+            </tr>
+            <tr bgcolor="lightgrey">
+              <td class="ms-contemp-odd"><strong>SET_MAGIC</strong></td>
+              <td class="ms-contemp-odd">Number</td>
+              <td class="ms-contemp-odd">&nbsp;</td>
+              <td class="ms-contemp-odd">Set a &quot;magic number&quot; for identifying trades opened by the current script.</td>
+            </tr>
+            <tr bgcolor="white">
+              <td class="ms-contemp-even"><strong>SET_MULTIPLIER</strong></td>
+              <td class="ms-contemp-even">Number</td>
+              <td class="ms-contemp-even">&#10004;</td>
+              <td class="ms-contemp-even">Set the multiplier for retrieving option and future chains.</td>
+            </tr>
+            <tr bgcolor="lightgrey">
+              <td class="ms-contemp-odd"><strong>SET_CLASS</strong></td>
+              <td class="ms-contemp-odd">Name</td>
+              <td class="ms-contemp-odd">&nbsp;</td>
+              <td class="ms-contemp-odd">Set the name of the trading class. Call this before setting the symbol for  option and future chains; use an empty string (<strong>&quot;&quot;</strong>) for  all trading classes. </td>
+            </tr>
+			<tr>
+              <td class="ms-contemp-even"><strong>SET_AMOUNT</strong></td>
+              <td class="ms-contemp-even">var pointer </td>
+              <td class="ms-contemp-even">&#10004;</td>
+              <td class="ms-contemp-even">Set the lot size for buy/sell 
+			  orders; for assets with arbitrary lot sizes. Automatically 
+			  sent before any order if the current
+			  <a href="account.htm">LotAmount</a> is less than 1. </td>
+            </tr>
+            <tr>
+              <td class="ms-contemp-odd"><strong>SET_LEVERAGE</strong></td>
+              <td class="ms-contemp-odd">Number </td>
+              <td class="ms-contemp-odd">&#10004;</td>
+              <td class="ms-contemp-odd">Set the leverage for buy/sell 
+			  orders; for assets with adjustable leverage. Automatically sent 
+			  before any order with the current <a href="lots.htm">Leverage</a> 
+			  value.</td>
+            </tr>
+            <tr bgcolor="white">
+              <td class="ms-contemp-even"><strong>SET_PATCH</strong></td>
+              <td class="ms-contemp-even">Patch value </td>
+              <td class="ms-contemp-even">&nbsp;</td>
+              <td class="ms-contemp-even">Work around  broker API issues that 
+			  cause wrong account or asset parameters. Retrieve the following parameters 
+			  in trade mode not from the broker 
+			  API, but 
+			  from the <a href="account.htm">asset list</a> or by calculating them 
+			  on the Zorro side 
+			  (numbers can be combined by addition):<br> 
+              <strong>1</strong>&nbsp; - <a href="balance.htm">Balance</a> and <a href="balance.htm">Equity</a>;<br>
+			  <strong>2</strong>&nbsp; - <a href="trade.htm">TradeProfit</a> of open trades;<br>
+			  <strong>4</strong>&nbsp; - <a href="trade.htm">TradeProfit</a> of all trades;<br>
+			  <strong>8</strong>&nbsp; - Server time;<br><strong>16</strong> -
+			  <a href="spread.htm">Rollover</a> and <a href="spread.htm">
+			  Commission</a>;<br><strong>32</strong> - <a href="pip.htm">
+			  Leverage</a> and <a href="pip.htm">MarginCost</a>;<br>
+			  <strong>64</strong> - <a href="pip.htm">PIP</a>, <a href="pip.htm">PIPCost</a>, 
+			  <a href="pip.htm">LotAmount</a>. </td>
+            </tr>
+            <tr>
+              <td class="ms-contemp-odd"><strong>SET_HWND</strong></td>
+              <td class="ms-contemp-odd">HWND</td>
+              <td class="ms-contemp-odd">&#10004;</td>
+              <td class="ms-contemp-odd">Called before login with Zorro's <a href="hwnd.htm">window handle</a>. The window handle can be used to 
+			  trigger asynchronous events and send messages to Zorro with the <b>
+			  PostMessage</b> function. </td>
+            </tr>
+            <tr>
+              <td class="ms-contemp-even"><strong>SET_FUNCTIONS</strong></td>
+              <td class="ms-contemp-even">Function pointer</td>
+              <td class="ms-contemp-even">&#10004;</td>
+              <td class="ms-contemp-even">Called before login with a pointer to Zorro's
+			  <a href="funclist.htm">function list</a>, an array of function 
+			  pointers in the order given by <strong>include\func_list.h</strong>. 
+			  This allows the plugin to call Zorro functions, such as HTTP 
+			  or hash functions for REST APIs, by their number (see example).&nbsp; </td>
+            </tr>
+            <tr>
+              <td class="ms-contemp-odd"><strong>GET_CALLBACK</strong></td>
+              <td class="ms-contemp-odd">Address<br>pointer</td>
+              <td class="ms-contemp-odd">&#10004;</td>
+              <td class="ms-contemp-odd">Get the address of a plugin-supplied 
+			  callback function that is called at any <strong>WM_APP+3</strong> 
+			  message; automatically called after login. </td>
+            </tr>
+            <tr>
+              <td class="ms-contemp-even"><strong>SET_BROKER</strong></td>
+              <td class="ms-contemp-even">Text</td>
+              <td class="ms-contemp-even">&nbsp;</td>
+              <td class="ms-contemp-even">Set the broker or exchange name when 
+			  a plugin supports multiple brokers or exchanges. Returns 0 when 
+			  the name did not match any, otherwise nonzero.</td>
+            </tr>
+            <tr>
+              <td class="ms-contemp-odd"><strong>SET_SERVER</strong></td>
+              <td class="ms-contemp-odd">Text</td>
+              <td class="ms-contemp-odd">&#10004;</td>
+              <td class="ms-contemp-odd">Send the optional URL in the account 
+			  list <strong>Server</strong> field to the broker API. Automatically 
+			  called before login. Can be used to set a different URL for REST 
+			  endpoints. </td>
+            </tr>
+			<tr>
+              <td class="ms-contemp-even"><strong>SET_CCY</strong></td>
+              <td class="ms-contemp-even">Text</td>
+              <td class="ms-contemp-even">&#10004;</td>
+              <td class="ms-contemp-even">Send the currency part of the account 
+			  list CCY field to the broker API. Automatically called before any
+			  <strong>BrokerAccount</strong> call.</td>
+            </tr>
+            <tr bgcolor="lightgrey">
+              <td class="ms-contemp-odd"><strong>SET_COMMENT</strong></td>
+              <td class="ms-contemp-odd">Text</td>
+              <td class="ms-contemp-odd">&nbsp;</td>
+              <td class="ms-contemp-odd">Display the given text (255 characters max) in the broker platform, usually at the top of the chart window.</td>
+            </tr>
+            <tr bgcolor="white">
+              <td class="ms-contemp-even"><strong>SET_COMBO_LEGS</strong></td>
+              <td class="ms-contemp-even">2, 3, 4 </td>
+              <td class="ms-contemp-even">&#10004;</td>
+              <td class="ms-contemp-even">Declare the given number of following <a href="contract.htm">option trades</a> as a combo order. 
+                Most brokers offer reduced margin and commission on  combos. To use, set the combo leg number and  immediately call the <a href="buylong.htm">enter</a> commands for the contracts. The order will be processed after the last <strong>enter</strong> command is received.
+                If the order fails, the last <strong>enter</strong> will return <strong>0</strong>. The script must then <a href="selllong.htm">cancel</a> the prior trades.
+              All combo trades must have matching&nbsp;expiration dates &nbsp;and&nbsp;underlying symbols; otherwise the order will not be accepted.</td>
+            </tr>
+            <tr>
+              <td class="ms-contemp-odd"><strong>SET_ORDERTYPE</strong></td>
+              <td class="ms-contemp-odd">0 ... 11</td>
+              <td class="ms-contemp-odd">&#10004;</td>
+              <td class="ms-contemp-odd">Switch between order types and 
+			  return the type if supported by the broker plugin, otherwise 0. 
+			  Automatically called at any order entry depending on
+			  <a href="trademode.htm">TradeMode</a> and <a href="stop.htm">StopFactor</a>.<br><strong>0</strong>&nbsp; - 
+			  Broker default 
+			  (highest fill probability)<br><strong>1</strong>&nbsp; - AON (all.or-none); 
+			  prevents partial fills<br>
+			  <strong>2</strong>&nbsp; - GTC (good-till-cancelled); order stays 
+			  open until completely filled <br><strong>3</strong> -&nbsp; 
+			  AON+GTC <br><strong>4</strong> - Broker specific special order 
+			  type<br><strong>+8</strong> 
+			  - STOP; add a stop 
+			  order at distance <a href="stop.htm">Stop*StopFactor</a> on NFA 
+			  accounts (see 
+			  remarks).&nbsp; </td>
+            </tr>
+            <tr>
+              <td class="ms-contemp-even"><strong>SET_ORDERTEXT</strong></td>
+              <td class="ms-contemp-even">Text</td>
+              <td class="ms-contemp-even">&nbsp;</td>
+              <td class="ms-contemp-even">Set an arbitrary order comment for the 
+			  next order (255 characters max). Often also used for special orders, f.i. for trading binary options 
+			  with MT4, or for special order types like &quot;STP LMT&quot; with IB. Reset 
+			  with an empty string.</td>
+            </tr>
+            <!--tr>
+              <td class="ms-contemp-even"><strong>GET_PRICETYPE</strong></td>
+              <td class="ms-contemp-even">0</td>
+              <td class="ms-contemp-even">&nbsp;</td>
+              <td class="ms-contemp-even">Returns the price type (see below) for
+			  <strong>BrokerAsset</strong> and <strong>BrokerHistory2.</strong>&nbsp; </td>
+            </tr-->
+			<tr>
+              <td class="ms-contemp-odd"><strong>SET_ORDERGROUP</strong></td>
+              <td class="ms-contemp-odd">Text</td>
+              <td class="ms-contemp-odd">&nbsp;</td>
+              <td class="ms-contemp-odd">Set an order group name for the 
+			  next orders (255 characters max). Often used for grouping orders 
+			  together, f.i. for One-Cancels-Another (OCA) orders, depending in 
+			  the broker. Reset with an empty string.</td>
+            </tr>
+			<tr>
+              <td class="ms-contemp-even"><strong>SET_PRICETYPE</strong></td>
+              <td class="ms-contemp-even">0 ... 8 </td>
+              <td class="ms-contemp-even">&nbsp;</td>
+              <td class="ms-contemp-even">Set the 
+			  type of prices returned by <strong>BrokerAsset</strong> and
+			  <strong>BrokerHistory2</strong>, if applicable. 
+			  Return the type if supported by the broker plugin, otherwise
+			  <strong>0.<br>0</strong> - Broker default (normally ask or last trade price);<strong><br>1</strong> - enforce ask/bid quotes; <strong>
+			  <br>2</strong> - enforce last trade price; 
+			  <strong><br>3</strong> - special (broker specific); <strong><br>4</strong> 
+			  - suppress price requests; <strong><br>5</strong> - enforce ask 
+			  prices<strong>,<br>6</strong> - enforce bid prices,<strong><br>7</strong> - adjusted last 
+			  trade price (for historical data);<strong><br>8</strong> - fast price requests: 
+			  ask, bid, or trade, whatever received first.
+			  <br>The <a href="spread.htm">spread</a> is normally only 
+			  updated when ask/bid quotes are returned.</td>
+            </tr>
+			<!--tr>
+              <td class="ms-contemp-even"><strong>GET_VOLTYPE</strong></td>
+              <td class="ms-contemp-even">0</td>
+              <td class="ms-contemp-even">&nbsp;</td>
+              <td class="ms-contemp-even">Returns the volume type (see below) for
+			  <strong>BrokerAsset</strong> and <strong>BrokerHistory2</strong>.
+			    </td>
+            </tr-->
+			<tr>
+              <td class="ms-contemp-odd"><strong>SET_VOLTYPE</strong></td>
+              <td class="ms-contemp-odd">0 ... 7</td>
+              <td class="ms-contemp-odd">&nbsp;</td>
+              <td class="ms-contemp-odd">Set the type of volume data 
+			  returned by <strong>BrokerAsset</strong> and <strong>BrokerHistory2</strong>, 
+			  if applicable. Return the type if supported by the broker plugin, 
+			  otherwise <strong>0.</strong><br> 
+			  <strong>0</strong> - Broker default, usually quote size;
+			  <strong><br>1</strong> - no volume; <strong><br>2</strong> - tick 
+			  frequency; <strong><br>3</strong> - quote size (ask+bid); <strong>
+			  <br>4</strong> - 
+			  trade volume; <strong><br>5</strong> - ask size; <strong><br>6</strong> - 
+			  bid size; <strong><br>7</strong> - open interest.&nbsp; </td>
+            </tr>
+			<!--tr>
+              <td class="ms-contemp-even"><strong>GET_VALTYPE</strong></td>
+              <td class="ms-contemp-even">0</td>
+              <td class="ms-contemp-even">&nbsp;</td>
+              <td class="ms-contemp-even">Returns the type 
+			  (see below) of <a href="price.htm">marketVal</a> data returned by <strong>
+			  BrokerAsset</strong> and <strong>BrokerHistory2</strong>. </td>
+            </tr-->
+			<tr>
+              <td class="ms-contemp-even"><strong>SET_VALTYPE</strong></td>
+              <td class="ms-contemp-even">0 .. 3 </td>
+              <td class="ms-contemp-even">&nbsp;</td>
+              <td class="ms-contemp-even">Set the type of
+			  <a href="price.htm">marketVal</a> data returned by <strong>
+			  BrokerAsset</strong> and <strong>BrokerHistory2, </strong>if 
+			  applicable. Return the type if supported by the broker plugin, 
+			  otherwise <strong>0.<br>1</strong> 
+			  - no data;<br><strong>2</strong> - spread;<br><strong>3</strong> - WAP.</td>
+            </tr>
+            <tr>
+              <td class="ms-contemp-odd"><strong>SET_RESTART</strong></td>
+              <td class="ms-contemp-odd">0000..2359 </td>
+              <td class="ms-contemp-odd">&nbsp;</td>
+              <td class="ms-contemp-odd">Set a restart time of the broker 
+			  plugin. The API is released and restarted at the given HHMM time.</td>
+            </tr>
+            <tr>
+              <td class="ms-contemp-even"><strong>GET_UUID</strong></td>
+              <td class="ms-contemp-even">String</td>
+              <td class="ms-contemp-even">&#10004;</td>
+              <td class="ms-contemp-even">Copies the UUID of the last opened 
+			  trade to the given string.</td>
+            </tr>
+			<tr>
+              <td class="ms-contemp-odd"><strong>SET_UUID</strong></td>
+              <td class="ms-contemp-odd">String</td>
+              <td class="ms-contemp-odd">&#10004;</td>
+              <td class="ms-contemp-odd">Sets the UUID for the next command from 
+			  the given string.</td>
+            </tr>
+            <tr bgcolor="lightgrey">
+              <td class="ms-contemp-even"><strong>DO_EXERCISE</strong></td>
+              <td class="ms-contemp-even">Lots</td>
+              <td class="ms-contemp-even">&#10004;</td>
+              <td class="ms-contemp-even">Exercise the given number of contracts of the option type set with <strong>SET_SYMBOL</strong>. </td>
+            </tr>
+            <tr>
+              <td class="ms-contemp-odd" style="height: 23px"><strong>DO_CANCEL</strong></td>
+              <td class="ms-contemp-odd">
+			  Trade ID</td>
+              <td class="ms-contemp-odd">
+			  <strong>&#10004;</strong></td>
+              <td class="ms-contemp-odd" style="height: 23px">Cancel the 
+			  remaining unfilled amount of the order with the given trade ID. If 
+			  ID == <strong>0</strong>, all open orders are cancelled. 
+			  If ID == <strong>-1</strong>, cancel the order with the UUID set 
+			  before by <strong>SET_UUID</strong>.&nbsp; Otherwise, use a valid 
+			  ID of an open position. Returns <strong>1</strong> 
+			  when the order was cancelled, or <strong>0</strong> when the order 
+			  was not found or could not be cancelled.</td>
+            </tr>
+            <tr bgcolor="white">
+              <td class="ms-contemp-even"><strong>PLOT_HLINE</strong></td>
+              <td class="ms-contemp-even">var[5]</td>
+              <td class="ms-contemp-even">&nbsp;</td>
+              <td class="ms-contemp-even">Place a horizontal line at a given price in the chart window of the broker platform. 5 parameters are used: <strong>P[0]</strong> = always 0; <strong>P[1]</strong> = price position; <strong>P[2]</strong> = line color; <strong>P[3]</strong> = line width; <strong>P[4]</strong> = line style. Return the identfier number of the line. </td>
+            </tr>
+            <tr bgcolor="lightgrey">
+              <td class="ms-contemp-odd"><strong>PLOT_TEXT</strong></td>
+              <td class="ms-contemp-odd">var[4]</td>
+              <td class="ms-contemp-odd">&nbsp;</td>
+              <td class="ms-contemp-odd">Place a text element at a price position at the right border of the  chart window. 5 parameters are used: <strong>P[0]</strong> = always 0; <strong>P[1]</strong> = price position; <strong>P[2]</strong> = text color; <strong>P[3]</strong> = text size in points. Return the identfier number of the text element.</td>
+            </tr>
+            <tr bgcolor="white">
+              <td class="ms-contemp-even"><strong>PLOT_MOVE</strong></td>
+              <td class="ms-contemp-even">var[3]</td>
+              <td class="ms-contemp-even">&nbsp;</td>
+              <td class="ms-contemp-even">Move the graphical element with the identifier given by the 
+			  first parameter <strong>P[0],</strong> the horizontal position given by <strong>P[1]</strong> and the vertical position given by <strong>P[2]</strong>.</td>
+            </tr>
+            <tr bgcolor="lightgrey">
+              <td class="ms-contemp-odd"><strong>PLOT_STRING</strong></td>
+              <td class="ms-contemp-odd">Text</td>
+              <td class="ms-contemp-odd">&nbsp;</td>
+              <td class="ms-contemp-odd">Set or modify the text content for the last created or moved text element.</td>
+            </tr>
+            <tr bgcolor="white">
+              <td class="ms-contemp-even"><strong>PLOT_REMOVE</strong></td>
+              <td class="ms-contemp-even">Identifier</td>
+              <td class="ms-contemp-even">&nbsp;</td>
+              <td class="ms-contemp-even">Delete the graphical element with the given identifier.</td>
+            </tr>
+            <tr bgcolor="lightgrey">
+              <td class="ms-contemp-odd"><strong>PLOT_REMOVEALL</strong></td>
+              <td class="ms-contemp-odd">0</td>
+              <td class="ms-contemp-odd">&nbsp;</td>
+              <td class="ms-contemp-odd">Remove all graphical elements from the chart.</td>
+            </tr>
+            <tr bgcolor="white">
+              <td class="ms-contemp-even"><strong>2000..2999</strong></td>
+              <td class="ms-contemp-even">var</td>
+              <td class="ms-contemp-even">&nbsp;</td>
+              <td class="ms-contemp-even">User supplied command with a single numerical parameter. </td>
+            </tr>
+            <tr bgcolor="lightgrey">
+              <td class="ms-contemp-odd"><strong>3000..3999</strong></td>
+              <td class="ms-contemp-odd">P[8]</td>
+              <td class="ms-contemp-odd">&nbsp;</td>
+              <td class="ms-contemp-odd">User supplied command with an array of 8 <strong>var</strong> parameters.. </td>
+            </tr>
+            <tr bgcolor="white">
+              <td class="ms-contemp-even"><strong>4000..5999</strong></td>
+              <td class="ms-contemp-even">char*</td>
+              <td class="ms-contemp-even">&nbsp;</td>
+              <td class="ms-contemp-even">User supplied command with a text string. </td>
+            </tr>
+</table>
+<h3>Parameters:</h3>
+        <table border="0">
+          <tr>
+            <td style="width: 121px"><strong>Command</strong></td>
+            <td>Input, one of the commands from the list above. </td>
+          </tr>
+          <tr>
+            <td style="width: 121px"><strong>Parameter</strong></td>
+            <td>Input, parameter or data to the command. A 32 bit <strong>int</strong> 
+			or pointer for 32 bit plugins, or a 64 bit <strong>long int</strong> 
+			or pointer for 64 bit plugins.</td>
+          </tr>
+          <tr>
+            <td style="width: 121px"><strong>Parameters, P</strong></td>
+            <td>Input, array of up to 8 <strong>var</strong>s  for commands that 
+			set or retrieve multiple parameters.</td>
+          </tr>
+          <tr>
+            <td style="width: 121px"><strong>Symbol</strong></td>
+            <td>Input,  <strong>char*</strong>, broker symbol of an asset (see <a href="script.htm">Symbol</a>). 
+			Complex symbols, as for selected option contracts, can have the 
+			underlying, exchange, expiry, and other parameters coded in the name 
+			as described under <a href="ib.htm">IB Bridge</a>.</td>
+          </tr>
+          <tr>
+            <td style="width: 121px"><strong>Text</strong></td>
+            <td>Input,  <strong>char*</strong>, for commands that require a text string.</td>
+          </tr>
+        </table>
+        &nbsp;<h3>Returns:</h3>
+        <strong>0</strong> when the command is not supported by the broker plugin, otherwise the data to be retrieved.<br>&nbsp;<br>
+<h2>brokerAsset (string Symbol, var* pPrice, var* pSpread, var *pVol)</h2>
+Call the <a href="brokerplugin.htm">BrokerAsset</a> function with the given
+<strong>Symbol</strong> (f.i. <a href="script.htm">SymbolLive</a>) and return the price, spread, and volume.<h2>brokerAccount (string 
+Name, string AccountID, var *pBalance, var *pTradeVal, var *pMarginVal);</h2>
+Call the <a href="brokerplugin.htm">BrokerAccount</a> function for the
+<a href="account.htm">account list</a> entry given by <strong>Name</strong> and an optional account 
+identifer, and return the balance, open trade value, and allocated margin. Can be 
+used to retrieve account information when trading with <a href="brokerarb.htm">
+multiple brokers</a>.
+<h2>brokerRequest (string 
+Path, string Method, string Data): string</h2>
+Call the <a href="brokerplugin.htm">BrokerRequest </a>function for sending 
+arbitrary HTTP requests to the connected REST API. <strong>Path</strong> is the 
+relative URL including the query string, but without the endpoint root. If
+<strong>Method</strong> begins with '<strong>$</strong>', the request will be 
+signed. <strong>Data</strong> is the optional request body. If no particulat
+<strong>Method</strong> and no body is given, a <strong>GET</strong> request is 
+sent. The response is returned and can be evaluated.
+<h2>brokerTrades (int Filter): int</h2>
+Call the <strong>GET_TRADES</strong> command. Cancel all currently open trades, 
+and replace them with the open positions on the broker account (if any). <strong>
+<br>Filter = 0</strong> loads all positions, <strong>
+<br>Filter = 1</strong> loads only positions matching the asset list, <strong>
+<br>Filter = 2</strong> loads only 
+positions of assets that were already selected in the script, <br><strong>
+Filter = 4 </strong>loads only positions of the current asset and prevents the 
+previous cancelling of open trades. <br>Add <strong>16</strong> to <strong>
+Filter</strong> for adjusting <a href="trade.htm">TradeUnits</a> and
+<a href="trade.htm">TradePriceOpen</a> by the <a href="contracts.htm">Multiplier</a>, 
+as needed for option contracts with some broker APIs. <br>The function returns 
+the number of entered positions. It can synchronize 
+script trades with the broker account. The account must support the <strong>
+GET_TRADES</strong> command and have only open positions from the current Zorro 
+script. The <a href="buylong.htm">enterTrade</a> function is used for entering 
+the new trades. The entered trades are plain, without exit limits, TMFs, flags, 
+TradeVars, or any other trade parameter that is not stored on the broker 
+account. The algo identifiers of the trades are set to the current
+<a href="algo.htm">algo</a>. For correctly updating the trades, all assets must 
+have been used in the script. &nbsp; &nbsp;&nbsp;<h3>Remarks:</h3>
+        <ul>
+          <li>Commands marked <span class="Highlight">internal </span>are 
+		  automatically sent 
+		  by Zorro to the broker plugin. They need normally not be used in the 
+		  script. The other commands are not used by Zorro and available to the script. 
+		  If a command is not supported, it returns <strong>0</strong>. Which of the commands are supported can be found on the description page of the broker plugin. </li>
+          <li>The <strong>SET_PATCH</strong> command is always supported since 
+		  it's handled on the Zorro side. It lets Zorro estimate account and trade parameters, rather than 
+		  using the values from the broker API. This is required when the broker API calculates those parameters wrong, as 
+		  was the case for the account balance, equity, and open trade profit in 
+		  some FXCM API versions. Replacing those parameters has no effect on trading, but on the displayed equity and profit values on the Zorro panel. The estimated equity includes only the profit by trades of the current strategy, and thus is different to the account equity when other systems trade on the same account. The estimated trade result can also differ to the real result due to slippage and rollover.</li>
+          <li>For preventing the <span class="Highlight">interruption of a 
+		  command sequence</span> by another Zorro instance -&nbsp; f.i. for 
+		  setting order parameters before sending the order - use either the <strong>SET_LOCK</strong> command 
+		  (if available) or the
+		  <a href="lock.htm">lock</a> function. They work like a Windows Mutex. Before the sequence, 
+		  use <strong>while(0 == brokerCommand(SET_LOCK,1)) wait(5);</strong> 
+		  for waiting until the lock was released, and setting it then. 
+		  Afterwards, <strong>brokerCommand(SET_LOCK,0)</strong> releases the lock after sending the command sequence.  
+		  If <strong>SET_LOCK</strong> is not supported by the plugin, use the
+		  <a href="lock.htm">lock/unlock</a> functions in a simular way to lock the part of the code.  </li>
+			<li>If the script connects to <span class="Highlight">multiple 
+			brokers</span>, commands are sent to the broker assigned to trading 
+			with the the current asset (<a href="script.htm">SourceTrade</a>).</li>
+			<li><span class="Highlight">Contract chains</span> by <strong>
+			GET_OPTIONS</strong> or <strong>GET_FOP</strong> are filled with the following data from the
+			<strong>CONTRACT</strong> struct, which is defined in <strong>
+			include\trading.h</strong>: <br><strong>time:</strong>&nbsp;a null-terminated string of up to 7 chars containing the 
+			trading class symbol (if available)<br><strong>fAsk</strong>,
+			<strong>fBid</strong>: the ask and bid price (if available)<br><strong>fStrike: </strong>&nbsp;the strike price<br>
+			<strong>fVal:</strong> the multiplier (if available)<br>
+			<strong>Expiry:&nbsp; </strong>the expiration date in YYYYMMDD 
+			format<br><strong>Type:</strong>&nbsp;&nbsp; the contract type,
+			<strong>PUT, CALL, FUTURE, EUROPEAN, BINARY</strong>; optionally an 
+			exchange identifier coded in the upper 16 bits.</li>
+			<li><span class="Highlight">Trade arrays</span> by <strong>
+			GET_TRADES</strong> are filled with the following position data (the
+			<strong>TRADE</strong> struct is defined in <strong>
+			include\trading.h</strong>): <br><strong>nId:</strong>&nbsp;&nbsp;a 
+			unique trade identifier (if available)<br><strong>nLots</strong>: the 
+			position amount<br><strong>flags: </strong>&nbsp;<strong>TR_SHORT</strong> 
+			for short positions<br>
+			<strong>fEntryPrice:</strong> the average entry price if available; 
+			some brokers (IB) multiply the entry price with the options 
+			multiplier.<br>
+			<strong>fStrike:</strong> the strike price if applicable<br>
+			<strong>tExitDate</strong>:<strong>&nbsp; </strong>the expiration date in 
+			<strong>DATE</strong> format (if applicable)<br><strong>nContract:</strong>&nbsp;&nbsp;the contract type 
+			if applicable, i.e. <strong>PUT</strong> or <strong>CALL</strong>; optionally an 
+			exchange identifier coded in the upper 16 bits. If the <strong>
+			FUTURE</strong>, <strong>EUROPEAN</strong>, <strong>BINARY</strong> 
+			flags are not available via broker API, they must be set by script.<br><strong>sInfo</strong>: 
+			the trading class symbol (if applicable)</li>
+			<li>Variables or text set up with <strong>brokerCommand</strong> 
+			<span class="Highlight">keep their content</span> until modified by another <strong>brokerCommand</strong>. 
+			Take care of this when a previous trading session has used this 
+			command to set a variable or text.</li>
+			<li>If the broker API provides no information about trades - as is 
+			the case for most NFA compliant APIs - make sure to keep the 
+			trades on the Zorro side and the broker side in sync. Don't close 
+			positions or cancel orders on one side only.</li>
+			<li>If the broker API supports a particular <span class="Highlight">
+			order type</span>, the plugin returns the ordertype on the <strong>SET_ORDERTYPE</strong> 
+			command; otherwise it returns <strong>0</strong>. </li>
+			<li><strong>SET_ORDERTYPE</strong> &gt;= <strong>8</strong> places a 
+			separate <span class="Highlight">stop order</span> when supported by the broker. 
+			Dependent on the behavior of the broker API, 
+			this order might stay alive even when the original trade was closed. 
+			In that case cancel it manually: Send a <strong>DO_CANCEL</strong> 
+			command with the stop order trade ID, which is normally the original 
+			trade ID +1. Otherwise the stop order might stay open and trigger an 
+			unwanted position in reverse direction.</li>
+			<li>Not all <span class="Highlight">price types</span> are supported 
+			with all assets. Check with your broker which prices types are 
+			supported, and make sure to use <strong>SET_PRICETYPE</strong> 
+			only when available for the selected asset.Otherwise leave it at
+			<strong>0</strong></li>
+S				<li>Some commands send a 32 bit pointer as parameter, for 
+			instance to pass a <strong>string</strong> or one or several <strong>
+			double</strong> variables to the plugin. The broker 
+				plugin can then cast it to the required type for getting the 
+				content, f.i. <strong>double NewLotAmount = *(double*)Parameter;</strong></li>
+			<li><span class="Highlight">User defined commands</span> for special broker API settings 
+			can be defined with a command number &gt; 
+		  2000. Numbers below 2000 are reserved for predefined commands. </li>
+        </ul>
+        <h3>Examples:</h3>
+<pre>brokerCommand(SET_COMMENT,strf("Algo %s",Algo));<em> // set a comment</em>
+
+brokerCommand(SET_PATCH,16+32); <em>// take swap, commission, leverage from the asset list</em>
+
+var Greeks[5];
+contractPrice(ThisContract);
+brokerCommand(GET_GREEKS,Greeks); <em>// get greeks of the current contract</em>
+</pre>
+<pre><em>// Read all positions from an asset list ///////////////////////</em>
+void main() 
+{
+  assetList(&quot;AssetsFix&quot;);
+  string Name;
+  while(Name = loop(Assets)) {
+    var Position = brokerCommand(GET_POSITION,Name);
+    printf("\n%6.4f %s",Position,Name);
+    if(!wait(10)) break;
+  }
+}
+
+<em>// read and print the order book
+</em>void main() 
+{
+  static T2 Quotes[MAX_QUOTES];
+  brokerCommand(SET_SYMBOL,&quot;AAPL&quot;);
+  int i,N = brokerCommand(GET_BOOK,Quotes);
+  printf(&quot;\nOrderbook: %i quotes&quot;,N);
+  for(i=0; i&lt;N; i++)
+    printf(&quot;\nPrice %.2f Vol %.2f&quot;,(var)Quotes[i].fVal,(var)Quotes[i].fVol);
+}
+
+<em>// read JSON data string from the Coinigy REST API
+</em>void main() 
+{
+  brokerCommand(SET_BROKER,&quot;GDAX&quot;);
+  static char Buffer[MAX_BUFFER];
+  strcpy(Buffer,&quot;#data &quot;); <em>// target point
+</em>  strcat(Buffer,&quot;{\n\&quot;exchange_code\&quot;: \&quot;GDAX\&quot;,&quot;);
+  strcat(Buffer,&quot;\n\&quot;exchange_market\&quot;: \&quot;BTC/USD\&quot;,&quot;);
+  strcat(Buffer,&quot;\n\&quot;type\&quot;: \&quot;bids\&quot;\n}&quot;);
+  int Size = brokerCommand(GET_DATA,Buffer);
+  if(Size)
+    printf(&quot;\nResponse: %s&quot;,Buffer);
+}</pre>
+<pre><em>// Use Zorro HTTP functions in a REST API plugin
+</em>int (__cdecl *http_send)(const char* url,const char* data,const char* header) = NULL;
+long (__cdecl *http_status)(int id) = NULL;
+long (__cdecl *http_result)(int id,char* content,long size) = NULL;
+int (__cdecl *http_free)(int id) = NULL;
+...
+DLLFUNC double BrokerCommand(int command,intptr_t parameter)
+{
+  switch(command) {
+    case SET_FUNCTIONS: {
+      FARPROC* Functions = (FARPROC*)parameter;
+      (FARPROC&amp;)http_send = Functions[139];
+      (FARPROC&amp;)http_status = Functions[142];
+      (FARPROC&amp;)http_result = Functions[143];
+      (FARPROC&amp;)http_free = Functions[144];
+      return 1.;
+    }
+    ...
+  }
+  return 0.;
+}</pre>
+        <h3>See also:</h3>
+			<a href="brokers.htm">Brokers</a>, <a href="brokerplugin.htm">broker plugin</a>, <a href="mt4plugin.htm">MTR4 bridge</a>, <a href="fxcm.htm">FXCM plugin</a>, <a href="ib.htm">IB plugin</a>, 
+			<a href="oanda.htm">Oanda plugin</a>
+<p></p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+version online</a>
+</body>
+</html>

@@ -1,0 +1,373 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+<title>Mode</title>
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link href="css.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+.auto-style1 {
+	background-color: #FFFFFF;
+}
+</style>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/mode.htm">
+</head>
+
+<body>
+
+<h1>System Flags </h1>
+<p>Zorro's general behavior can be set up through <strong class="Highlight">system flags</strong> 
+- that are internal &quot;switches&quot; that can be either set (activated) or reset 
+(deactivated). By default, they are normally off. Flags that affect the bar 
+generation, such as <strong>TICKS</strong>, must be set in the initial run at 
+start of the script before selecting any assets. The other flags can be set or 
+reset at any point. Flags are set, reset, or read with the following functions:
+</p>
+<h2>set (int Flag1<em>, int Flag2..., int Flag10</em>)</h2>
+Sets or resets the given system flags (up to 10). A flags is reset by adding
+<strong>|OFF</strong> to the flag name. For instance, <strong>set(PARAMETERS,TICKS|OFF);</strong> 
+sets the <strong>PARAMETERS</strong> flag and resets the <strong>TICKS</strong> 
+flag.<h2>is (int Flag): int </h2>
+Returns nonzero (or <strong>true</strong>) when the given system flag is set, otherwise 
+zero or <strong>false</strong>.&nbsp; <br>
+<p>The main system flags:</p>
+<h2>SKIP1</h2>
+<h2>SKIP2</h2>
+<h2>SKIP3</h2>
+Do not <a href="buylong.htm">enter</a> trades in the first, second, or third of 
+every 3 weeks of the historical price data (the period can be set up with
+<a href="dataslope.htm">DataSkip</a>). These flags can be used for out-of-sample 
+testing by separating test data from training data while still covering the same 
+time period. These flags must be set in the <a href="is.htm">INITRUN</a>.<br>&nbsp;<br>
+<h2>PEEK</h2>
+Allow peeking in the future through negative <a href="price.htm">price</a> function 
+offsets; [<span class="tast">Test</span>] and [<span class="tast">Train</span>] 
+mode only. Sometimes required for <a href="advisor.htm">advise</a> functions and 
+price difference analysis.
+<h2>NOLOCK</h2>
+Don't synchronize 
+the API and file accesses of multiple trading Zorro instances, to prevent that 
+they interfere with each other. Set this flag for speeding 
+up API access when the trading Zorros don't share the broker API, or when the 
+broker API allows simultaneous sccesses from multiple sources (MT4/MT5 does 
+not). This flag 
+must be set in the <a href="is.htm">INITRUN</a>.
+<h2>NOWATCH</h2>
+Ignore all <a href="watch.htm">watch</a> statements.&nbsp;Can be set for trading 
+a script that is full of watches.
+<h2>NOSHIFT</h2>
+Do not shift <a href="series.htm">dynamic series</a> and do not change their 
+first element on <strong>series()</strong> calls. Useful for shifting series 
+only under special conditions, f.i. for emulating <a href="bar.htm">special bars</a> or 
+for not updating indicators outside market hours.<h2>NOFLAT</h2>
+Do not shift <a href="series.htm">dynamic series</a> and do not change their 
+first element on <strong>series()</strong> calls when the current asset has a 
+flat bar, i.e. all prices of the current candle are the same. Useful for skipping gaps in the 
+historical data when <a href="barmode.htm">BR_FLAT</a> was set.&nbsp;
+<h2>NOFACTORS</h2>
+Don't automatically calculate <strong>OptimalF</strong> factors in test and training. 
+Useful when OptimalF calculation takes a long time due to a large number of 
+trades. For training script-generated factors with a user-defined algorithm, set 
+both <strong>FACTORS</strong> and <strong>NOFACTORS</strong> flags and set <strong>OptimalF</strong>, <strong>OptimalFLong</strong>,
+	<strong>OptimalFShort</strong> to a script calculated value in the <strong>
+	<a href="is.htm">FACCYCLE</a></strong> training run (<strong>if(is(FACCYCLE)) ...</strong>).&nbsp;<h2>COMMONSTART</h2>
+Delay the simulation until price history of all assets is available. Otherwise the 
+simulation starts<span class="auto-style1"> </span>either at the
+<a href="date.htm">StartDate</a> or at the history begin of the first asset, whichever 
+is later, and missing price history of other assets produce an
+<a href="errors.htm">Error 055</a> message. This flag must be set in the
+<a href="is.htm">INITRUN</a>.
+<h2>OPENEND</h2>
+Do not close the remaining open trades at the end of a simulation cycle; leave them 
+open and ignore their results. This has two purposes. In [<span class="tast">Test</span>] 
+mode it eliminates the effect of prematurely closed trades on the performance report. 
+In [<span class="tast">Train</span>] mode it prevents that parameters or rules are affected by 
+the results of those trades.
+<h2>ALLCYCLES</h2>
+Do not reset the statistics values inside the <strong>STATUS</strong> structs when 
+a new <a href="numsamplecycles.htm">sample cycle</a> is started. The
+<a href="winloss.htm">Long/Short statistics</a> and the
+<a href="performance.htm">portfolio analysis</a> are then the result of all sample 
+cycles so far. Print any sample cycle to the log; otherwise only the last cycle 
+is logged. This flag is always set in [<span class="tast">Train</span>] mode.
+<a name="ticks"></a>This flag must be set in the <a href="is.htm">INITRUN</a>.<br>&nbsp;<h2>
+TICKS </h2>
+Tick-precise intrabar simulation. This flag must be set in the <a href="is.htm">
+INITRUN</a>. If it is set, not only the Open, Close, High, and Low, but also the 
+price curve inside any bar is evaluated for triggering entry, stop, trail, or takeprofit 
+limits. <a href="trade.htm">TMFs</a> are run on every <a href="bars.htm#tick">tick</a> 
+in the simulation, instead of only once per bar. This flag gives a more accurate 
+simulation result, but also requires more time for a simulation cycle, and allocates 
+more memory. <br>&nbsp;&nbsp;If this flag is not set, an intra-bar approximation 
+is used for simulating entry and exit. In this approximation, a stop loss is always 
+triggered earlier than a profit target, resulting in a slightly pessimistic simulation. 
+Trades closed by <a href="trade.htm">TMFs</a> are sold at the open price of the 
+next bar. This less accurate simulation is sufficient in most cases, but <strong>
+TICKS</strong> should be used when trades enter and exit at the same bar, when stop 
+loss, or takeprofit distances are small, or when trading is strongly affected by
+<a href="tick.htm">tick</a> functions or <a href="trade.htm">TMFs</a>.
+<!--h2>FAST</h2>
+Fast simulation mode. This flag must be set in the <a href="is.htm">INITRUN</a>. 
+Ticks are not sorted by their time stamps, but by asset and by trade. This can remarkably 
+speed up backtests, but can generate a less accurate result and
+<a href="testing.htm#bias">peeking bias</a>. In <strong>FAST</strong> mode the script 
+must take care that <strong>TMFs</strong> use no information from other trades or 
+from <a href="winloss.htm">global statistics</a>, since that would be peeking into 
+the future. <strong>FAST</strong> mode should not be used when it causes strongly 
+different results or when stop, take profit, or entry limits, TMFs, <strong>tick()</strong> 
+functions, or virtual hedging is used. Backtest a strategy first with and without
+<strong>FAST</strong> and compare the results.&nbsp;-->
+<h2>LEAN</h2>
+Use compressed historical data. <a href="price.htm">marketVal</a> and
+<a href="price.htm">marketVol</a> are not available, <a href="history.htm">.t1 data</a> 
+is stored without bid prices, and the open/close price of a bar is approximated 
+by the center point of its first and last tick (except for EOD historical data). 
+This flag can reduce memory requirement when market volume and candles are not needed 
+by the strategy, and the historical data has a 
+much higher resolution than one bar period, f.i. M1 data with 1-hour bars. This 
+flag reduces the memory requirement for backtests by 30%. It must be set in the
+<a href="is.htm">INITRUN</a> before calling <a href="asset.htm">asset()</a>.
+<h2>LEANER</h2>
+Use only the Close from historical price data; disregard Open, High, Low, and Mean. 
+Indicators that require full candles, such as <a href="ta.htm">ATR</a> or
+<a href="ta.htm">TypPrice</a>, can not be used. This flag is useful for strategies with hundreds or thousands of stocks, and reduces 
+in combination with the <strong>LEAN</strong> flag the memory requirement by 50%. It must be set in the <a href="is.htm">INITRUN</a> 
+before calling <a href="asset.htm">asset()</a>.
+<h2>RECALCULATE</h2>
+Run a full <a href="lookback.htm">LookBack</a> period at the begin of every WFO 
+cycle in [<span class="tast">Test</span>] mode. Discard the content of all
+<a href="series.htm">series</a> at lookback start, and recalculate them from the 
+parameters and rules of the new cycle.
+<span style="font-size: 11.0pt; font-family: &quot;Calibri&quot;,sans-serif; mso-ascii-theme-font: minor-latin; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-hansi-theme-font: minor-latin; mso-bidi-font-family: Arial; mso-bidi-theme-font: minor-bidi; mso-ansi-language: EN-US; mso-fareast-language: EN-US; mso-bidi-language: AR-SA">
+Otherwise the series keep their values from the previous 
+test cycle.
+<span style="font-size: 11.0pt; font-family: &quot;Calibri&quot;,sans-serif; mso-ascii-theme-font: minor-latin; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-hansi-theme-font: minor-latin; mso-bidi-font-family: Arial; mso-bidi-theme-font: minor-bidi; mso-ansi-language: EN-US; mso-fareast-language: EN-US; mso-bidi-language: AR-SA">
+<strong>RECALCULATE</strong> </span></span>increases the test time, but simulates 
+the start behavior of a new trading session a bit more realistically. This flag must be 
+set in the <a href="is.htm">INITRUN</a>.&nbsp;See also <a href="dataslope.htm">
+DataHorizon</a>.<h2>PRELOAD</h2>
+Causes historical data to be read at any script start.
+In [<span class="tast">Trade</span>] mode, data from the history files is then 
+used for 
+the <a href="lookback.htm">LookBack</a> period, instead of data from the broker 
+API or from external data sources. If the historical data is 
+not sufficient for filling the complete lookback 
+period, the remaining data between the end of the history and the current 
+time is still loaded from the broker or data source. This flag reduces 
+the session start time of systems with long lookback periods, and overcomes history limitations of broker servers. Recent price history files from the current 
+and the last year must be available in sufficient resolution and preferably from 
+the same broker or data source. <a href="lookback.htm">LookBackResolution</a> 
+can be used to enforce the same resolution for pre-loaded and live historical 
+data. Use the
+<a href="scripts.htm">Download</a> script or the <a href="loadhistory.htm">
+assetHistory</a> function for getting the most recent data. This 
+flag must be set in the <a href="is.htm">INITRUN</a>.<br>&nbsp; In [<span class="tast">Test</span>] 
+mode, this flag causes historical data to be read 
+again at any script start and for any further <a href="numtotalcycles.htm">simulation cycle</a>. 
+This delays the start, but allows cycles 
+with shuffled or otherwise manipulated price data, for instance for generating reality check 
+histograms. Otherwise historical data is only read at the first script start or 
+when the [<span class="tast">Edit</span>] button was clicked.<br>&nbsp;
+<h2>PARAMETERS</h2>
+[<span class="tast">Train</span>] mode: generate strategy parameters with
+<a href="optimize.htm">optimize</a> calls and store them in <strong>Data/*.par</strong>. 
+This flag must be set before calling <a href="optimize.htm">optimize</a>. If 
+this flag is not set, parameters are not generated in the training run, but 
+still loaded from previously generated
+<strong>*.par</strong> files.<br>[<span class="tast">Test</span>] / [<span class="tast">Trade</span>] 
+mode: load optimized parameters. If this flag is not set, the default parameters 
+from the <a href="optimize.htm">optimize</a> calls are used.
+<h2>FACTORS</h2>
+[<span class="tast">Train</span>] mode: generate <a href="optimalf.htm">OptimalF</a> 
+capital allocation factors and store them in <strong>Data/*.fac</strong>. [<span class="tast">Test</span>] 
+/ [<span class="tast">Trade</span>] mode: load <strong>OptimalF</strong> factors for allocating capital. 
+If this flag is not set, all <strong>OptimalF</strong> factors are <strong>1</strong>. 
+This flag must be set before the first <a href="asset.htm">asset</a> call.<br>
+<strong>OptimalF</strong> factors are normally generated from the whole backtest 
+period. For generating them individually per WFO cycle, use the <strong><a href="opt.htm">ALLCYCLES</a></strong> 
+	training mode.
+<h2>RULES</h2>
+[<span class="tast">Train</span>] mode: use the <a href="advisor.htm">advise</a>
+machine learning functions to generate trade rules or machine learning models, and store them in <strong>Data/*.c</strong> 
+or <strong>Data/*.ml</strong>. 
+This flag must be set before calling <a href="advisor.htm">advise</a>. Otherwise 
+rules or models are not generated, but loaded from previously generated <strong>*.c</strong> 
+or <strong>*.ml </strong>files.<br>[<span class="tast">Test</span>] / [<span class="tast">Trade</span>] mode: 
+load trade rules or machine learnign models and use them in the <strong>advise</strong> functions. If this 
+flag is not set, the <strong>advise</strong> functions always return the value <strong>100</strong>.
+<h2>VCPP</h2>
+Use the <a href="dlls.htm">Visual Studio C++ compiler</a>, rather than the 
+lite-C compiler, for compiling trade rules with the <strong>RULES</strong> flag. 
+Default for the 64-bit version.<br>&nbsp;
+<h2>MARGINLIMIT</h2>
+Don't enter a <a href="buylong.htm">trade</a> when even the minimum amount of 1
+<a href="lots.htm">Lot</a> exceeds twice the used <a href="lots.htm">Margin</a> 
+value, or when 
+the trade margin plus the trade risk exceeds the account balance. 
+Trades skipped due to too-high risk or too-low balance are indicated in 
+the log. This flag has no effect in training mode or for <a href="lots.htm">phantom 
+trades</a> that are always executed regardless of the margin.
+<h2>RISKLIMIT</h2>
+Don't enter a trade when even with the minimum amount of 1 <a href="lots.htm">Lot</a>, 
+the trade risk is still higher than twice the than the allowed
+<a href="lots.htm">Risk</a>. Also don't enter a new trade in [<span class="tast">Trade</span>] 
+mode when the total risk of all open trades exceeds the available margin left in 
+the account. Setting this flag can reduce profit, as trades with a high stop loss 
+distance are often profitable trades. Trades skipped due to too-high risk or too-low 
+account are indicated in the log. This flag has no effect in training mode or for
+<a href="lots.htm">phantom trades</a> that are always executed regardless of the 
+risk.
+<h2>ACCUMULATE</h2>
+Accumulate the <a href="lots.htm">Margin</a> of trades skipped by <strong>MARGINLIMIT</strong> 
+or <strong>RISKLIMIT</strong>, until the accumulated margin is high enough to overcome 
+the limits. The trade is then executed and the accumulated margin is reset. This 
+allows trading - although less frequently - with <span class="Highlight">very small capital</span> that would 
+otherwise result in trade sizes of less than one lot. This flag has 
+no effect in training mode<strong>.</strong> <a name="nfa"></a><br>&nbsp;
+<h2>BINARY</h2>
+Simulate binary options for training and testing. This flag must be set in the
+<a href="is.htm">INITRUN</a>. In binary mode the trade profit is not proportional 
+to the price difference between entry and exit, but determined by the
+<a href="spread.htm">WinPayout</a> or <a href="spread.htm">LossPayout</a> of the 
+selected asset. The stake can be set with the <a href="lots.htm">Margin</a> variable 
+for the backtest; in live trading the stake is set with the
+<a href="lots.htm">Lots</a> variable or with an <a href="brokercommand.htm">order 
+comment</a>, dependent on the broker. Rollover and commission are ignored for binary 
+trades. <a href="spread.htm">Spread</a> is <strong>0</strong> by default in binary 
+mode, but can be set to a nonzero value for simulating an additional disadvantage. 
+The trade time can be set through <a href="timewait.htm">ExitTime</a>. Stop loss 
+and profit targets are normally not set for binary trades, but can be used for betting 
+on negative or positive excursions in special binary modes. Hedging should be enabled 
+by <strong><a href="hedge.htm">Hedge</a> = 2</strong> for preventing the premature 
+close of opposite trades.
+<h2>NFA</h2>
+Activate NFA Rule 2-43(b) compliant trading. This is required for 
+most US based brokers, such as <a href="ib.htm">IB</a>. Zorro handles NFA compliant 
+trading in 
+a transparent way, so a strategy normally needs not be modified for NFA compliance. When the NFA flag is set, the following NFA restrictions are observed 
+and worked around:<ul>
+	<li>NFA brokers support only positions, but no individual trades. Trades are 
+	managed on the Zorro side.</li>
+	<li>Closing trades is not permitted. The <a href="selllong.htm">exit</a> 
+	functions open an opposite trade instead.</li>
+	<li>Stopping out trades is not permitted. Stops are managed on the Zorro 
+	side and open an opposite trade. </li>
+	<li>Simultaneous long and short positions are not permitted. On the Zorro side 
+	they are still possible with <a href="hedge.htm">virtual hedging</a>. </li>
+	<li>First opened positions must be closed first (FIFO compliance).
+	<a href="hedge.htm">Virtual hedging</a> 
+	takes also care of that.</li>
+</ul>
+<p>The <strong>NFA</strong> flag must be set in the <a href="is.htm">INITRUN</a>. 
+It is automatically set when the selected account has a nonzero
+<a href="account.htm">NFA parameter</a> in the account list. Do not set this flag for non-NFA compliant 
+accounts. You can find out if your account is NFA compliant by manually opening 
+a long and short position of the same asset in the broker platform. If two 
+positions are then really open, your account is not NFA compliant and you must 
+not set the <strong>NFA</strong> flag. If the short position cancels the long 
+one, your account is NFA compliant and the <strong>NFA</strong> flag must be set. <a href="mt4plugin.htm">MT4/5 accounts</a> are 
+normally not NFA compliant 
+even when the broker is located in the US; but they can be FIFO compliant and 
+require exiting trades in the order of their entry.<a name="exe"></a><br>&nbsp;
+</p>
+<h2>EXE</h2>
+Do not run the simulation, but compile the script to an executable in <strong>.x</strong> 
+file format. Executable scripts start faster and can be used for distributing strategies 
+without revealing the source code. If a <strong>.c</strong> and a <strong>.x</strong> 
+script with the same name are found in the <strong>Strategy</strong> folder, the
+<strong>.c</strong> script has priority. <a href="restrictions.htm">Zorro S</a> required. 
+The <strong>EXE</strong> flag must be set in the
+<a href="is.htm">INITRUN</a>; it can also be set by <a href="command.htm">command line</a> 
+or with the [<span class="tast">Action</span>] scrollbox.<h2>AUTOCOMPILE</h2>
+Unless the script was changed, do not compile it again and do not reset sliders 
+and global variables on subsequent runs. This flag is off by default so that 
+global variables are always reset at start, but can also be set in
+<a href="ini.htm">Zorro.ini</a>.&nbsp;
+<h2>STEPWISE</h2>
+Do not run, but single step through the simulation in [<span class="tast">Test</span>] 
+mode. A click on [<span class="tast">Step</span>] moves one bar forward. [<span class="tast">Skip</span>] 
+moves to the next opening or closing a position. The current chart and trade 
+status will be displayed on every step in a browser window. For details see
+<a href="chart.htm">debugging</a>. 
+<h2>STRAIGHT</h2>
+Don't correct or check the lookback period and switch the <a href="ta.htm">ta-lib indicators</a> from time-descending
+<a href="series.htm">series</a> mode to time-ascending array mode. In this mode 
+they accept any data array of sufficient length and can be used even when series 
+are disabled. <br>&nbsp;
+<h2>LOGFILE</h2>
+Generate and export <a href="testing.htm#files">logs and statistics files</a> in the
+<strong>Log</strong> and <strong>Data</strong> folders, dependent on [<span class="tast">Test</span>], [<span class="tast">Train</span>], 
+or [<span class="tast">Trade</span>] mode. This flag affects the backtest 
+speed.It is always set in [<span class="tast">Trade</span>] 
+mode. When <a href="numtotalcycles.htm">LogNumber</a> is set, the number is appended 
+to the filenames, which allows different log files from the same script for 
+comparing or appending. This flag must be set in the <a href="is.htm">INITRUN</a>.
+<h2>EXPORTED</h2>
+Export charts and training curves in the
+<strong>Log</strong> and <strong>Data</strong> folders, dependent on [<span class="tast">Test</span>], [<span class="tast">Train</span>], 
+or [<span class="tast">Trade</span>] mode (see <a href="export.htm">export</a>). This flag must be set in the <a href="is.htm">INITRUN</a>.
+
+<h2>BALANCE</h2>
+Use balance 
+rather than equity for the profit curve in the chart, for the monthly 
+profit table in the <a href="performance.htm">performance report</a>, and for 
+the values in the exported <a href="script.htm">profit/loss curves</a>.
+<!--h2>SCREENSAVER</h2>
+Allow screen savers and other Windows power management functions while Zorro is running.-->
+This flag must be set in the <a href="is.htm">INITRUN</a>.
+<h2>PIPRETURN</h2>
+Use volume-independent returns in <a href="pip.htm">pip</a> units for the profit curve in the chart, for the monthly 
+profit table in the <a href="performance.htm">performance report</a>, and for 
+the values in the exported <a href="script.htm">profit/loss curve</a>.
+<!--h2>SCREENSAVER</h2>
+Allow screen savers and other Windows power management functions while Zorro is running.-->
+This flag must be set in the <a href="is.htm">INITRUN</a>.<h2>MAECAPITAL</h2>
+Do not calculate the required capital, annual return, and the 'underwater profile' 
+on the chart from maximum drawdown, but from maximum adverse excursion (see
+<a href="performance.htm">performance report</a> for the difference). This is for 
+comparing with results of other platforms and normally produces slightly higher 
+required capital. This flag must be set in the <a href="is.htm">INITRUN</a>.<br>&nbsp;
+<h2>TESTNOW</h2>
+Run a test immediately after training, without clicking [<span class="tast">Test</span>]. If the simulation is repeated multiple times 
+by setting <a href="numtotalcycles.htm">NumTotalCycles</a>,
+<strong>TESTNOW</strong> causes the price curve to be generated anew at the 
+begin of every cycle. This is useful for testing different bar offsets or 
+detrend modes. Since the test uses the settings from the previous training, its 
+result can differ from a normal test when static variables or parameters are 
+different.
+<h2>PLOTNOW</h2>
+Plot a chart immediately after testing, without clicking [<span class="tast">Result</span>]. 
+Automatically set when the script plots a histogram with <a href="plot.htm">plotBar</a>. 
+This flag must be set in the <a href="is.htm">INITRUN</a>.<!--h2>PLOTPRICE</h2>
+Plot the price curve and the trades in the chart; automatically set when a trade is executed.
+
+Can be <strong>reset</strong> for preventing that the price curve is plotted.
+This flag is always set in [<span class="tast">Trade</span>] mode.-->
+<!--h2>FASTEXIT</h2>
+When called from the command line, exit immediately instead of waiting 3 seconds.-->
+<br>&nbsp;<h3>Remarks</h3>
+<ul>
+	<li>In old scripts, flag combinations like <strong>set(PARAMETERS|TICKS)</strong> 
+	were used for setting several flags, <strong>reset(TICKS)</strong> for switching 
+	off a flag, and <strong>mode(TICKS)</strong> for checking the flag state. These 
+	methods are still supported, but for new scripts use <strong>set(PARAMETERS,TICKS)</strong> 
+	, <strong>set(TICKS|OFF)</strong>, and <strong>is(TICKS)</strong>.</li>
+</ul>
+<h3>Example:</h3>
+<pre>function run()
+{
+  if(Train) set(SKIP3); <em>// leave every 3rd week for the test</em>
+  if(Test) set(SKIP1,SKIP2,TICKS,FAST,LOGFILE); 
+  ...
+}</pre>
+<h3>See also:</h3>
+<a href="dataslope.htm">DataSkip</a>, <a href="is.htm">Status flags</a>,
+<a href="setf.htm">setf</a>, <a href="ini.htm">Zorro.ini</a>
+<p>&nbsp;</p>
+<a class="button" href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))">&#9658; 
+latest version online</a>
+
+</body>
+
+</html>

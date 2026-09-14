@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>timer</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/timer.htm">
+</head>
+
+<body link="#000000" vlink="#333333" alink="#666666">
+<h2>timer(): var </h2>
+High precision timer function. Can be used to measures the time between calls for testing function execution speed and time optimizing the script for faster training.
+<h3>Returns:</h3>
+		Time elapsed since Zorro start in milliseconds (1/1000 sec).
+		<h3>Remarks:</h3>
+		<ul>
+		  <li>This function uses the Pentium performance counter register. The returned value has a precision of a few nanoseconds, depending
+          on the processor clock rate.</li>
+</ul>
+		<h3>Example:</h3> 
+  <pre>...<br>var Time = timer();<br>myfunction();<br>printf(&quot;\nmyfunction call time = %.3f ms&quot;,timer()-Time); <em>// execution time in microsecond accuracy for the function call</em><br>...</pre>
+  <h3>See Also:</h3>
+<span class="links"><a href="month.htm">time functions</a></span>, <a href="sleep.htm">wait</a>
+<p>     <a href="javascript:window.location.href = 'https://manual.conitec.net' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+  version online</a>
+</p>
+</body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>TradeMode</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/trademode.htm">
+</head>
+
+<body>
+<h1>Trade Mode, Phantom Trades, Equity Curve Trading </h1>
+<p><strong>Phantom trades</strong> are 
+&quot;what-if&quot; trades that are not sent to the broker. Instead the win or loss of a phantom trade is calculated from the price curve 
+and the current slippage and trading costs. It is recorded in the <a href="winloss.htm">Short</a>/<a href="winloss.htm">Long</a> statistics, but not 
+in the <a href="winloss.htm">Total</a> statistics. This way the performances of 
+phantom and real trades can be evaluated separately. Phantom trades are used for 
+'equity curve trading' and for
+<a href="hedge.htm">Virtual Hedging</a>.</p>
+<p><span class="Highlight">Equity curve trading</span> is a method of limiting losses by skipping unfavorable market periods. 
+The strategy monitors the equity curves of any component of a 
+portfolio strategy. When unusual losses are recognized, real trading with that component is suspended. 
+For detecting whether it's worth to resume trading, the subsequent trades are then entered in 
+<strong>phantom mode </strong>until their returns indicate that the market 
+is getting profitable again. In this way the strategy switches in and out of phantom mode 
+dependent on the market situation. The predefined <a href="phantom.htm">phantom</a> 
+function can be used for detecting unusual losses.</p>
+<p>Several methods can be used for determining if the market it profitable or not. In the example below, the equity curve is permanently compared with its own long-term average by lowpass filtering. It the equity is below average and still falling, trading switches to phantom mode; it goes back to normal as soon as the equity curve is rising again. Other methods may be based on the balance instead of the equity curve, or on the ratio of winning to losing trades. </p>
+
+<p>Equity curve trading does not improve the performance when there is no clear distinction between profitable and unprofitable market periods 
+or when the strategy filters unprofitable periods anyway. But it can often 
+improve the perception of a live trading system, and can prevent losses by 
+expiration of market inefficiencies. An example of a system that suddenly became unprofitable is the 'Luxor' strategy in the
+<a href="scripts.htm">script examples</a>; here equity curve trading would have 
+saved the day by stopping trading in December 2011.</p>
+<p>Phantom trades and the overall trade behavior can be controlled with the following variable:</p>
+
+<h2>TradeMode</h2>
+<span class="auto-style1">D</span>etermines 
+with the flags listed below how trades are placed. Use <a href="setf.htm">setf</a> and <a href="setf.htm">resf</a> for setting and resetting flags.
+<h3>Range:</h3>
+<table style="width: 100%">
+	<tr>
+		<td>
+		<strong>TR_PHANTOM</strong></td>
+		<td>Enter trades in phantom mode. The trades are simulated and not sent to the broker 
+		API.<strong> </strong></td>
+	</tr>
+	<!--tr>
+		<td style="height: 23px"><strong>TR_BSTOP </strong> </td>
+		<td>Enter trades as bracket orders with a stop loss at distance <a href="stop.htm">Stop*StopFactor</a> 
+on NFA accounts, if supported by the broker API (see 
+			  remarks).&nbsp; </td>
+	</tr-->
+	<tr>
+		<td><strong>TR_GTC</strong></td>
+		<td>Enter trades in GTC (good-till-cancelled) mode, if supported by the 
+		broker API. Keeps the order active until filled or cancelled by the 
+		broker.</td>
+	</tr>
+	<tr>
+		<td><strong>TR_AON</strong></td>
+		<td>Enter trades in AON (all-or-nothing) mode, if supported by the 
+		broker API. </td>
+	</tr>
+	<tr>
+		<td><strong>TR_POS</strong></td>
+		<td>Check the position before exiting trades, and cancel the trade when 
+		the position was zero. <a href="brokercommand.htm">GET_POSITION</a> must 
+		be supported.</td>
+	</tr>
+	<tr>
+		<td><strong>TR_FILLED</strong></td>
+		<td>Treat the trade as completely filled when trade status and filled 
+		orders are unavailable 
+		by the API.</td>
+	</tr>
+	<tr>
+		<td><strong>TR_FRC</strong></td>
+		<td>Do not round stops, limits, and backtest fill prices to the point value 
+		of the asset. Some brokers reject unrounded stops and limits, others 
+		allow them.</td>
+	</tr>
+	<tr>
+		<td><strong>TR_EXTEND</strong></td>
+		<td>Renew the life time and wait time of open or pending trades when entering 
+		trades with <strong>0</strong> lots, or when exceeding a
+		<a href="lots.htm">MaxLong/MaxShort</a> or margin or risk limit.</td>
+	</tr>
+	<tr>
+		<td><strong>TR_ANYSTOP</strong></td>
+		<td>Move the entry stop and stop loss level of open or pending trades in 
+		any direction by <a href="tradeupdate.htm">tradeUpdate</a>, by entering 
+		trades with <strong>0</strong> lots, or by exceeding a
+		<a href="lots.htm">MaxLong/MaxShort</a> or margin or risk limit. 
+		Otherwise it is only moved closer to the current price.</td>
+	</tr>
+	<tr>
+		<td><strong>TR_ANYLIMIT</strong></td>
+		<td>Move the entry limit or profit target level of an open or pending 
+		trade by <a href="tradeupdate.htm">tradeUpdate</a>, by entering trades 
+		with <strong>0</strong> lots, or by exceeding a
+		<a href="lots.htm">MaxLong/MaxShort</a> or margin or risk limit. 
+		Otherwise it is only moved closer to the current price.</td>
+	</tr>
+	<!--tr>
+		<td><strong>TR_WEEKEND</strong></td>
+		<td>Don't enter trades between <strong><a href="date.htm">EndWeek</a></strong> 
+  and <strong><a href="date.htm">StartWeek</a></strong> and at holidays.</td>
+	</tr>
+	<tr>
+		<td><strong>TR_MARKET</strong></td>
+		<td>Don't enter trades outside the <a href="date.htm">
+StartMarket</a> and <a href="date.htm">EndMarket</a> time either in the
+		<a href="assetzone.htm">BarZone</a> or in the selected asset's time 
+zone (<a href="assetzone.htm">AssetMarket</a>). </td>
+	</tr-->
+</table>
+<br>
+<h3>Type:</h3>
+<strong>int</strong>
+<h3>Remarks:</h3>
+<ul>
+	<!--li> <strong>TR_BSTOP</strong> emulates a 
+			distant 'safety net' stop loss on NFA accounts. 
+			Since a NFA compliant trade cannot have a stop loss, it is sent as a 
+			separate stop order (in fact it's a limit order in reverse 
+	direction). Dependent on the broker API, 
+			this order might stay alive even when the original trade was closed, 
+			possibly triggering an unwanted position in reverse direction. So 
+			use this command in special cases only, for instance with option 
+			contracts or when Zorro does not control the trade. </li-->
+	<li> <strong>TR_GTC</strong> prevents Zorro from cancelling the order when 
+	it is not immediately executed. Use this for orders that take a long time 
+	for execution, for instance option combos. The broker plugin must 
+	support the <a href="brokercommand.htm">SET_ORDERTYPE</a> command with order 
+	type 2. </li>
+	<li> If a GTC order is not immediately filled, the partial fill 
+	amount is contained in the <a href="trade.htm">TradeLots</a> variable. If 
+	the trade status is unavailable via broker API, either use <strong>
+	TR_GTC|TR_FILLED</strong> for treating all accepted GTC trades as completely filled. 
+	Or retrieve the current position size via <strong>GET_POSITION</strong> and 
+	calculate the fill amount from it. You can find an example under
+	<a href="trade.htm">TMF</a>.</li>
+</ul>
+<h3>Example (equity curve trading):</h3>
+<pre><em>// don't trade when the equity curve goes down
+// and is below its own lowpass filtered value</em>
+function checkEquity()
+{
+<em>// generate equity curve including phantom trades</em>
+  vars EquityCurve = series(EquityLong+EquityShort);
+  vars EquityLP = series(LowPass(EquityCurve,10));
+  if(EquityLP[0] &lt; LowPass(EquityLP,100) &amp;&amp; falling(EquityLP))
+    setf(TradeMode,TR_PHANTOM); <em>// drawdown -&gt; phantom trades</em>
+  else
+    resf(TradeMode,TR_PHANTOM); <em>// profitable -&gt; normal trades</em>
+}
+</pre>
+<h3>See also:</h3>
+<a href="mode.htm">NFA</a>, <a href="hedge.htm">Hedge</a>, <a href="fill.htm">Fill</a>,
+<a href="brokerarb.htm">broker arbitrage</a>, <a href="setf.htm">setf</a>, <a href="setf.htm">resf</a><br>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a> 
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Strategy statistics</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/statistics.htm">
+</head>
+<body>
+<h1>Strategy performance statistics </h1>
+<p>The following system variables can be evaluated in the 
+script or the 
+<a href="objective.htm">objective</a> 
+or <a href="evaluate.htm">evaluate</a> function. Some become available only at the end of a simulation 
+or a live trading session, so they are only available to 
+<a href="objective.htm">objective</a> 
+or <a href="evaluate.htm">evaluate</a>. Other variabes are updated at any bar during 
+the test or live session, and thus can be evaluated in the script and affect the 
+algorithm. There is also a set of <a href="winloss.htm">trade statistics</a> that can be evaluated 
+anytime. The statistics variables can be used for calculating individual performance metrics, and printing  them to the <a href="performance.htm">performance report</a>. <br>
+&nbsp;</p>
+<h2>DrawDownMax</h2>
+Maximum drawdown, the largest difference between a balance peak and the lowest subsequent equity valley
+ during the simulation period, in account currency units.
+ Updated at any bar.<h2>DrawDownPercent</h2>
+Maximum drawdown as above, in percent of the preceding balance peak.
+ Updated at any bar.
+ <h2>MAEDepth</h2>
+Maximum adverse excursion, the largest difference between an equity peak and the lowest subsequent equity valley during the simulation period, in account currency units.
+ 
+Updated at any bar.
+ <h2>AEDepth</h2>
+Current adverse excursion, the difference between the last equity peak and the 
+current equity value, in account currency units. Updated at any bar.
+ 
+<h2>MarginMax</h2>
+Maximum  margin sum of open trades during the simulation period, in account currency units.
+ 
+
+Updated at any trade.
+ 
+
+<h2>RiskMax</h2>
+Maximum possible  loss sum of all open trades  during the simulation period, in account currency units.
+ 
+
+The possible loss is calculated by the stop loss distance of a trade, or estimated at 10% of the price if no stop loss was used.
+Updated at any trade.
+<h2>SpreadCost</h2>
+Total loss by bid-ask spreads 
+during the simulation period, in account currency units.
+ 
+
+Updated at any trade.
+ 
+
+<h2>SlippageCost</h2>
+Total win or loss by simulated slippage during the simulation period, in account currency units.
+Updated at any trade.
+<h2>RollCost</h2>
+Total win or loss by rollover and margin interest during the simulation period, in account currency units.
+Updated at any trade.
+<h2>CommissionCost</h2>
+Total loss by commissions 
+during the simulation period, in account currency units.
+Updated at any trade.
+<h2>InterestCost</h2>
+Total loss by 
+interest charged by the broker. Updated any day.
+<h2>ReturnMean</h2>
+Mean of all bar returns on investment. The bar return on investment is the equity difference to the previous bar, divided by <a href="lots.htm">Capital</a>. If <strong>Capital</strong> is not set, the sum of  normalized 
+maximum drawdown and maximum margin is used.
+Only for bars with open positions, and only available at the end.
+<h2>ReturnStdDev</h2>
+Standard deviation of all bar returns on investment. Can be used together with <strong>ReturnMean</strong> for calculating 
+performance metrics, such as Sharpe Ratio (see examples). Only 
+available at the end.
+<h2>ReturnUlcer</h2>
+ Ulcer Index in percent; worst drawdown after an equity peak. Only available 
+at the end.
+<h2>ReturnR2</h2>
+R2 coefficient; the similarity of the equity curve with a straight line ending up at the same profit.Only 
+available at the end.
+<h2>ReReturnLR</h2>
+Theoretical net profit by linear regression of the equity curve. Only available at the 
+end.<br>
+<h2>ReturnCBI</h2>
+The last <a href="ddscale.htm">CBI</a> value based on previously stored backtest 
+data.Only available at the end.<br>
+&nbsp;
+&nbsp;
+<h2>DrawDownBars</h2>
+Total number of bars spent in drawdown, updated at any bar. For the percentage spent in drawdown, divide by the duration of the test, <strong>(<a href="numbars.htm">Bar-StartBar</a>)</strong>.&nbsp;
+<h2>DrawDownBarsMax</h2>
+Maximum length of a drawdown in bars.
+Only available at the end.
+<h2>LossStreakMax</h2>
+Maximum number of losses in a row.
+Only available at the end.
+<h2>NumOpenMax</h2>
+Maximum number of simultaneously open trades. 
+Updated at any bar. 
+<h2>InMarketBars</h2>
+Total number of bars with open trades.
+Updated at any bar.
+<h2>InMarketSum</h2>
+Sum of the durations of all trades, in bars. Updated at any trade. Can be bigger than the duration of the test when several positions are simultaneously open.
+<h2>NumMinutes</h2>
+Total duration of the backtest period; can be used for normalizing metrics to 3 
+years or for calculating profit per period. The backtest years are <strong>
+NumMinutes/(365.25*24*60)</strong>. . For annualizing a result, divide it by this 
+formula.
+<h3>Type:</h3>
+<strong>int</strong> for numbers that count something, otherwise<strong> var</strong>. Read/only.  <br>
+&nbsp;
+<h2>ResultsAtBar</h2>
+Array in chronological order containing the sums of wins and losses of all open and closed trades at every bar, in account currency units. <strong>(var)ResultsAtBar[Bar]</strong> 
+is the end result of the simulation.
+<h3>Type:</h3>
+<strong>float*</strong> pointer, or <strong>0</strong> when no results were calculated. 
+<h2>ProfileAtBar</h2>
+Array in chronological order containing the blue equity, balance, or pip return 
+profile from the chart, at every bar.&nbsp;
+<h2>DrawDownAtBar</h2>
+Array in chronological order containing the red underwater profile from the 
+chart, at every bar.
+<h3>Type:</h3>
+<strong>var*</strong> pointer, or <strong>0</strong>  when no profile was calculated.&nbsp;
+<h2>ResultsDaily</h2>
+Array in chronological order containing the balance or equity (dependent on the <a href="mode.htm">BALANCE</a> flag) at the end of every day, in account currency units. <strong>ResultsDaily[Day]</strong>  is the end result. This array is 
+at the end of the simulation automatically saved to 
+a <strong>.dbl</strong> file for the <a href="ddscale.htm">CBI</a> calculation, 
+and to a <strong>.csv</strong> file for further evaluation. 
+<h3>Type:</h3>
+<strong>var*</strong> pointer, or <strong>0</strong> when no daily results were calculated. 
+<p>&nbsp; </p>
+<h3>Remarks:</h3>
+<ul>
+  <li>In [<span class="tast">Train</span>] mode the parameters are based on trades with 1 lot 
+  and include phantom trades, unless set up otherwise with <a href="opt.htm">
+  TrainMode</a>.</li>
+	<li>More statistics parameters can be retrieved from the
+	<a href="winloss.htm">win/loss statistics</a> at the end of the simulation.</li>
+	<li>Trade dependent metrics can be calculated by enumerating all trades of the simulation with a
+	<a href="fortrades.htm">for(all_trades)</a>  loop, and summing up the desired
+	<a href="trade.htm">trade parameters</a>. Equity curve dependent metrics can be calculated from the
+	<strong>ResultsAtBar</strong> or <strong>ResultsDaily</strong> arrays. </li>
+	<li>All statistics variables are normally reset when the strategy is restarted 
+	or a new session is started. If the <a href="loadstatus.htm">SAV_STATS</a> 
+	 
+	flag is set, statistics is continued from the previous session.</li>
+</ul>
+<h3>Example:</h3>
+<pre><em>// calculate some performance </em>m<span class="question">etrics</span>
+function evaluate()
+{ 
+  if(NumWinTotal == 0) return; <em>// nothing worth to calculate
+</em>  var Years = NumMinutes/<strong>(365.25*24*60);</strong>
+  int NumTrades = NumWinTotal+NumLossTotal;
+  var NetProfit = WinTotal-LossTotal-InterestCost;
+  var Sharpe = <strong>ReturnMean/ReturnStdDev*sqrt(InMarketBars/Years);
+  var Calmar = NetProfit/fix0(DrawDownMax)/Years;
+</strong>  var Expectancy = (WinTotal-LossTotal)/NumTrades;
+  var GAGR = 100.*(pow((NetProfit+MarginMax)/MarginMax,1./Years)-1.);
+  ...
+}</pre>
+<h3>See also:</h3>
+<a href="winloss.htm">Trade statistics</a>, <a href="ddscale.htm">Cold Blood Index</a>, <a href="fortrades.htm">for(trades)</a>, <a href="numbars.htm">NumBars</a>, <a href="performance.htm">performance report</a>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

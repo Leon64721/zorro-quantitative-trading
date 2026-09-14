@@ -1,0 +1,231 @@
+<html>
+<head>
+<title>Scripts</title>
+<meta content="Zorro scripts for various tasks" name="description">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<link rel="canonical" href="https://zorro-project.com/manual/en/scripts.htm">
+</head>
+
+<body>
+
+<h1 align="left">Script repository</h1>
+<p><span class="edition"></span>The following scripts are included as examples and 
+utilites and can be started from the [<span class="tast">Script</span>] scrollbox. 
+Please note that not all scripts will start right away. Some are for Zorro S, some 
+need training first, some need more historical data, and some need Python, R, or modules 
+like DeepNet or RQuantlib. Please check out the description in the source code.</p>
+<h3>Analysis</h3>
+Calculates mean, standard deviation, skew, and kurtosis of the price curve of the 
+selected asset.
+<h3>Benchmark</h3>
+Simple RSI strategy with 10-year backtest for speed tests and comparisons.
+<h3>Binary</h3>
+Example strategy for binary options with 5-minute bets.
+<h3>BrokerArb</h3>
+<a href="brokerarb.htm">Broker arbitrage</a> example. Exploits forex price differences between two brokers. 
+Requires Zorro S and an <a href="account.htm">account list</a> with entries for the two brokers.&nbsp;
+<h3>BuyHold</h3>
+SPY buy-and-hold strategy as a benchmark for comparison.<h3>CalculatePi</h3>
+Example script that calculates the first 1000 digits of Pi 
+<h3>Chart</h3>
+Opens a t1, t6, or t8 historical data file 
+in the History folder and displays its content in a chart.
+<h3>Control</h3>
+Example script for the <a href="engine.htm">ZorroControl</a> integration toolkit (<a href="restrictions.htm">Zorro S</a> required).&nbsp; 
+<h3>CSVfromHistory</h3>
+Small script for converting price history from Zorro's <strong>.t6</strong> format 
+to CSV. 
+<h3>CSVtoHistory</h3>
+Small example script for converting price history in some <strong>.csv</strong> formats 
+to Zorro's <strong>.t6</strong> format, optionally split into separate year files. 
+The input/output file names and the format definition can be edited in the script.
+<h3>CSVtoOptions</h3>
+Small example script for converting options EOD history in <strong>.csv</strong> format 
+to Zorro's <strong>.t8</strong> format. The symbol and CSV format definition can 
+be edited in the script.
+<h3>CSVtoTicks</h3>
+Small example script for converting price history in <strong>.csv</strong> format 
+to Zorro's <strong>.t1</strong> format. 
+The input/output file names and the format definition can be edited in the script.
+<h3>CurrencyStrength</h3>
+Strategy that exploits the relative <a href="ccy.htm">strength of currencies</a> 
+and invests in the strongest forex pair.
+Requires forex history.
+<h3>DateCalculator</h3>
+Displays the Windows date and the Unix date for a given calendar date that can 
+be set with the sliders. Click <span class="tast">[Stop]</span> 
+to terminate.
+<h3>Deeplearn</h3>
+Short-term machine learning strategy from the article on
+<a href="https://financial-hacker.com/">Financial Hacker</a>. Requires R with Caret 
+and a deep learning package. Can switch between libraries Deepnet, H2O, MxNet, and 
+Keras/Tensorflow.
+<h3>Deeplearn+</h3>
+64-bit version of the DeepLearn script, for Python and PyTorch.<h3>Detrend</h3>
+Displays the effect of detrending or randomizing price curves.
+<h3>Distribution</h3>
+Price distribution chart, comparing the distributions of two assets.<h3>Download</h3>
+Script for adding new assets or downloading the price history of single assets or 
+asset lists; details under <a href="history.htm">History</a>.<h3>DownloadEOD</h3>
+Script for accessing a website, and downloading, converting, and storing price data in Zorro .t6 format, 
+as an example for using HTTP and dataset functions.
+<h3>DTree</h3>
+Multi-asset <a href="advisor.htm">decision tree</a> example. Demonstrates why out-of-sample 
+tests for machine learning are mandatory.
+Requires forex history.
+<h3>Ehlers</h3>
+The system from the paper &quot;Predictive Indicators for Effective Trading Strategies&quot; 
+by John Ehlers, converted to lite-C by DdlV. With and without
+<a href="predict.htm">crossover prediction</a>.
+<h3>Filter</h3>
+Test Zorro's <a href="filter.htm">spectral filter</a> and cycle detection functions 
+with a sine chirp.
+<h3>Gap</h3>
+A simple gap trading system based on a book by David Bean as an example of time 
+dependent trading (not really profitable).
+<h3>GapFinder</h3>
+Finds gaps in historical data and displays them with a red line.
+<h3>Grid</h3>
+For your grid trading experiments. Better do not trade this system with real money!<h3>
+History</h3>
+Displays the content of .t8, .t6, and .t1 historical data files in a spreadsheet. 
+Uses the <a href="panel.htm">panel</a> function and thus requires
+<a href="restrictions.htm">Zorro S</a>; a history viewer for the free Zorro 
+version is available on the download page.
+<h3>Impulse</h3>
+Test the impulse response of moving averages, smoothing filters, and lowpass filters.
+<h3>InvestCalculator</h3>
+Calculates the investment from initial capital and accumulated profit with the square 
+root rule. The exponent can be set with the slider from 1.000 (linear investment) 
+up to 2.000 (square root investment). Click <span class="tast">[Stop]</span> to terminate.
+<h3>Keystrokes</h3>
+Demonstrates controlling other applications by sending <a href="keys.htm">key strokes</a> 
+or mouse clicks to them. Opens Windows Notepad, writes something in it, saves the 
+text, and closes Notepad.
+<h3>Indicatortest</h3>
+Displays the curves of popular <a href="ta.htm">indicators</a>.
+<h3>Luxor</h3>
+System from a <a href="links.htm">trading book</a> by Jaeckle and Tomasini. 
+Textbook example of an overfitted strategy: better don't trade it outside the 
+backtest period used in the book.
+GBP/USD history required.
+<h3>Mandelbrot</h3>
+Example script that uses the Windows API for producing Mandelbrot fractals.
+<h3>Martingale</h3>
+For your martingale experiments. Better do not trade this one with real money!
+<h3>MinWinRate</h3>
+Scalping debunker. Plots a histogram of the required win rates for a given asset 
+and trading cost dependent on trade duration in minutes. Demonstrates that 
+'scalping' can only work when the broker loves you so much that they completely 
+waive spread and commission.
+<h3>MRC</h3>
+Framework for a <a href="testing.htm">Montecarlo
+Reality Check</a>. Enter the script name to be tested, and run it in [<span class="tast">Train</span>] mode.&nbsp;
+<h3>MultiTrain</h3>
+Example of training both rules and parameters.
+<h3>_New</h3>
+Strategy template generated by clicking on [<span class="tast">New Script</span>]. 
+Rename it afterwards. Don't use scripts names that are very long or have blanks 
+or other non-letter characters. Source in <strong>Source\Template.c</strong>.&nbsp;
+<h3>OpenGL</h3>
+Example script that demonstrates using external libraries, in this case the OpenGL 
+3D graphics library.
+<h3>OptimizeTest</h3>
+Walk-forward optimization of a 12 parameters portfolio strategy with the ascent, 
+brute force, or genetic optimizer. Useful for 
+comparing optimization speed and methods. Forex history required.
+<h3>OptionsCalculator</h3>
+Calculates the value and delta of call and put options with the Black-Scholes 
+formula. Underlying price, strike distance to the price, and expiration can be set with the sliders, 
+other parameters can be set up in the script. Click <span class="tast">[Stop]</span> to terminate.
+<h3>PanelTest</h3>
+Example script that demonstrates a complex spreadsheet-defined strategy
+<a href="panel.htm">control panel</a> (<a href="restrictions.htm">Zorro S</a> required).<h3>
+Payoff</h3>
+Interactive script that displays payoff diagrams of arbitrary option combinations. 
+The strike distance can be set with a slider. <a href="rbridge.htm">R</a> 
+and the <a href="contract.htm">RQuantLib package</a> must be installed.
+<h3>Perceptron</h3>
+Simple <a href="advisor.htm">machine learning</a> system with walk forward analysis.
+<h3>Performance</h3>
+Script with a function for evaluating arbitrary values from the
+<a href="performance.htm">performance report</a>, and an example that stores the 
+Montecarlo parameters in a .csv file and prints the 50% level.
+<h3>Predict</h3>
+Predicts peaks, valleys, and crossovers in a price curve several bars in advance.
+<h3>PriceDist</h3>
+Compares the price ranges and price distributions of two assets (EUR/CHF and EUR/USD) 
+for finding grid-trading-worth inefficiencies.
+EUR/CHF history required.
+<h3>Process</h3>
+Example of two interacting Zorro <a href="engine.htm">processes</a>. Move the 
+&quot;Other&quot; slider and see the effect on the other Zorro (<a href="restrictions.htm">Zorro S</a> 
+required).&nbsp;
+<h3>PythonTest</h3>
+Short script for testing the correct installation of <a href="python.htm">Python</a>.
+<h3>RandomPrice</h3>
+Plots a price curve together with a random curve. Let fellow traders guess which 
+one is which.
+<h3>RandomWalk</h3>
+Displays a histogram of short-term price movements by random and by real prices.<h3>RecordT1</h3>
+Records live prices of the current asset to a <strong>.t1</strong> file in [<span class="tast">Trade</span>] 
+mode. A click on [<span class="tast">Save</span>] stores the file.
+<a href="restrictions.htm">Zorro S</a> required.
+<h3>Regime</h3>
+Script for testing the response of some indicators to a market regime change from cycles 
+to trending.
+<h3>Rtest</h3>
+Short script for testing the correct installation of <a href="rbridge.htm">R</a>.
+<h3>Sentiment</h3>
+Connects to the Interactive Brokers TWS, downloads the SPY options chain, and plots 
+today's <a href="contractcpd.htm">market sentiment</a> histogram.
+<a href="restrictions.htm">Zorro S</a> required.
+<h3>Simulate</h3>
+            Script for generating a chart and <a href="performance.htm">performance report</a> 
+from a trade list in <strong>.csv</strong> format. Demonstrates how to import 
+data from a spreadsheet to a <a href="data.htm">dataset</a>. The script can be 
+modified for importing other trade lists in different csv formats.
+<h3>SpecialBars</h3>
+Script illustrating the use of Range, Renko, Haiken Ashi, or Point-and-Figure
+<a href="bar.htm">bars</a> for single-asset and multiple-asset strategies.
+<h3>Spectrum</h3>
+Spectral analysis chart example.
+SPX500 history required.
+<h3>TradeCosts</h3>
+Lists the ratio of spread to daily volatility of the main assets. Find out which 
+assests are least expensive to trade.
+Forex and CFD history required.
+<h3>TradeTest</h3>
+A script that opens a panel with buttons for manually opening and closing positions 
+in different modes. Useful for testing broker/account features, f.i. if it's a NFA 
+account, if it is FIFO compliant or if partial closing is supported. Description 
+under <a href="brokerplugin.htm">Broker Plugin</a>.
+<h3>TradeOptions</h3>
+A script that opens a panel with buttons for manually opening and closing options 
+with IB. Set strike and life time, select a combo, then click [Buy] or [Sell].&nbsp;
+<h3>Turk2</h3>
+A simple market sentiment system as described in the &quot;Mechanical Turk&quot; 
+article. Not very profitable, but demonstrates the principle. SPY options history 
+required.<h3>WFOProfile</h3>
+Framework for a <a href="testing.htm">walk-forward optimization profile</a>. Enter the script name to be 
+tested, and run it in [<span class="tast">Train</span>] mode.&nbsp;
+<h3>Workshop1 .. Workshop8</h3>
+Scripts containing the code examples from the <a href="tutorial_var.htm">workshops</a>. 
+Forex and SPY history required for workshops 6 and 8.
+<h3>Z1 ... Z13</h3>
+Zorro's <a href="zsystems.htm">included trade systems</a>. Executable systems only; no source code. Forex and CFD history required. Zorro S required for some 
+of the sytems.
+<h3>ZStatus</h3>
+Small script for displaying the live balances and profits of all your accounts 
+on a single panel (details <a href="trading.htm#zstatus">here</a>; Zorro S 
+required).<h3>See also:</h3>
+<a href="tutorial_var.htm">Workshops</a>
+<p class="auto-style1">
+<a class="button" href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))">&#9658; 
+latest version online</a> </p>
+
+</body>
+
+</html>

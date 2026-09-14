@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>crossOver, crossUnder</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/crossover.htm">
+</head>
+
+<body>
+<h2>crossOver (vars Data1, vars Data2) : bool </h2>
+<h2>crossUnder (vars Data1, vars Data2) : bool </h2>
+<h2>crossOver (vars Data, var Border) : bool </h2>
+<h2>crossUnder (vars Data, var Border) : bool </h2>
+Determines if the <strong>Data1</strong> series crosses over or under the 
+<strong>Data2</strong> series, or over or under a fixed <strong>Border</strong> value 
+between the previous and the current bar. Often used for trade signals.
+<h2>crossOver (vars Data1, vars Data2, int TimePeriod) : int </h2>
+<h2>crossUnder (vars Data1, vars Data2, int TimePeriod) : int </h2>
+<h2>crossOver (vars Data, var Border, int TimePeriod) : int </h2>
+<h2>crossUnder (vars Data, var Border, int TimePeriod) : int </h2>
+Returns the bar offset of the last crossing (<strong>1</strong> = between the 
+previous and the current bar), or <strong>0</strong> when no crossing occurred within the <strong>TimePeriod</strong>.&nbsp;
+<h2>touch (vars Data1, vars Data2) : bool </h2>
+<h2>touch (vars Data, var Border) : bool </h2>
+Determines if the <strong>Data1</strong> series touches or crosses the <strong>Data2</strong> 
+series or a fixed <strong>Border</strong> value from any direction.
+<h3>Parameters:</h3>
+		<table border="0">
+          <tr>
+            <td><strong>Data1</strong></td>
+            <td>First time series.</td>
+          </tr>
+          <tr>
+            <td><strong>Data2</strong></td>
+            <td>Second time series</td>
+          </tr>
+          <tr>
+            <td><strong>Border</strong></td>
+            <td>Border value</td>
+          </tr>
+          <tr>
+            <td><strong>TimePeriod</strong></td>
+            <td>Number of series elements to test</td>
+          </tr>
+        </table>        
+        <h3>Returns:</h3>
+        <strong> true</strong> or bar offset if the first series crosses the second, <strong>false</strong> 
+or <strong>0</strong> otherwise.
+        <h3>Modifies</h3>
+        <strong>rMomentum</strong> - <strong>Data</strong> movement in percent per time frame at the time of the crossing; indicates the 'speed' of the crossover.
+        <h3>Algorithms:</h3>
+			 <pre>bool crossOver(var* Data1,var* Data2) { return (Data1[0] &gt; Data2[0]) &amp;&amp; (Data1[1] &lt;= Data2[1]); }<br>bool crossUnder(var* Data1,var* Data2) { return (Data1[0] &lt; Data2[0]) &amp;&amp; (Data1[1] &gt;= Data2[1]); }<br>bool crossOver(var* Data,var Border) { return (Data[0] &gt; Border) &amp;&amp; (Data[1] &lt;= Border); }<br>bool crossUnder(var* Data,var Border) { return (Data[0] &lt; Border) &amp;&amp; (Data[1] &gt;= Border); }</pre>
+             <h3>Remarks:</h3>
+             <ul>
+		  <li>The <strong>data</strong> series must have a minimum length of 
+		  <strong>2</strong>, resp. <strong>TimePeriod</strong>. </li>
+          <li>For a  fuzzy logic version that also detects 'almost crossovers', use <a href="fuzzy.htm">crossOverF</a> / <a href="fuzzy.htm">crossUnderF</a>. </li>
+          <li>For checking if a crossover occurred exactly <strong>n</strong> bars before, use <strong>crossOver(Data1+n,Data2+n)</strong>. </li>
+				 <li>For getting the Close 
+				 price 
+at the last crossover, use <strong>priceC(crossOver(Data1,Data2,LookBack))</strong><o:p>.</o:p></li>
+				 <li>F<o:p></o:p>or predicting a future crossover, or for detecting only 'strong crossovers', use the
+				 <a href="predict.htm">predict</a> function. </li>
+          <li>Identical values of the two series for several bars will not produce a crossover signal. If that is desired, 
+		  use the <strong>touch</strong> function. </li>
+</ul>
+<h3>Example:</h3>
+<pre>function run()
+{
+<SPAN>  vars Price = series(priceClose());
+  vars SMA100 = series(SMA(Price,100));
+<SPAN>  vars SMA30 = series(SMA(Price,30));
+</SPAN>
+  if(crossOver(SMA30,SMA100))
+    enterLong();
+  else if(<SPAN>crossUnder(SMA30,SMA100)</SPAN>)
+    enterShort();
+</SPAN>}
+</pre>
+            <h3>See also:</h3>
+<a href="series.htm">series</a>, <a href="rising.htm">rising/</a><a href="rising.htm">falling</a>,	 <a href="peak.htm">peak</a>/<a href="peak.htm">valley</a>, <a href="fuzzy.htm">crossOverF</a>/<a href="fuzzy.htm">UnderF</a>, <a href="predict.htm">predict</a><p></p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+version online</a>
+</body>
+</html>

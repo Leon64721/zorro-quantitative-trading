@@ -1,0 +1,265 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>price</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/price.htm">
+</head>
+<body>
+<h1>Price and Volume functions</h1>
+<h2>price(int offset) : var </h2>
+Returns the <strong>TWAP</strong> (time-weighted average price) of the selected 
+asset. TWAP is the mean of all price ticks of the bar or time frame with the 
+given <strong>offset</strong>. 
+For indicators the mean price is normally preferable to the close price, since it is less susceptible to random fluctuations and makes systems more robust and 
+less dependent on the data feed.
+<h2>priceO(int offset) : var </h2>
+<h2>priceC(int offset) : var </h2>
+<h2>priceH(int offset) : var </h2>
+<h2>priceL(int offset) : var </h2>
+Returns the open, close, maximum and minimum price of the current asset and the bar or time frame with the 
+given <strong>offset</strong>.
+<strong>priceC(0)</strong> returns the current price.<h2>priceReal() : var </h2>
+Returns the current real price when OHLC prices have been artificially 
+calculated by <a href="bar.htm">special bars</a>. The <a href="mode.htm">TICKS</a> 
+flag must be set.&nbsp;&nbsp;
+<h2>marketVal(int offset) : var </h2>
+<h2>marketVol(int offset) : var </h2>
+Returns additional market data, such as spread, quote size, trade volume, accumulated volume, tick rate, 
+or quote 
+frequency - see remarks and examples below. The type of data returned depends in 
+live trading on the <a href="brokerplugin.htm">Broker 
+API</a>, and in backtesting on the <strong>fVal</strong> and <strong>fVol</strong> fields 
+in <strong>.t6</strong> historical data, or on the ask-bid difference and volume 
+field in <strong>.t1</strong> or <strong>.t2</strong> data. Normally <strong>marketVal</strong> 
+returns the average 
+historical spread of the last bar period, and <strong>marketVol</strong> returns the 
+average historical trade volume of the last bar period. For the total historical 
+volume of a bar, multiply <strong>marketVol()</strong> with <strong>BarPeriod</strong> 
+divided by the historical data resolution in minutes. The <strong>market</strong> functions require
+<a href="restrictions.htm">Zorro S</a> and no <a href="mode.htm">LEAN</a> flag. <BR>
+<h3>Parameters:</h3>
+<table border="0">
+  <tr>
+    <td><strong>offset</strong></td>
+    <td>Bar or time frame number for which the prices are returned, relative to 
+	the current bar or time frame. <strong>0</strong> for the the current bar or 
+	time frame. Negative offsets return prices of future bars or time frames when the <a href="mode.htm">PEEK</a> flag is set; otherwise they give an error message. </td>
+  </tr>
+</table>
+<h3>Returns:</h3>
+Price or raw market data. <br>
+&nbsp;
+<h2>seriesO(): vars </h2>
+<h2>seriesH(): vars </h2>
+<h2>seriesL(): vars </h2>
+<h2>seriesC(): vars </h2>
+Returns pointers to a temporary open, high, low, and close price
+<a href="series.htm">series</a> of the current asset. Can be used as a price series parameter to any function or indicator, 
+or for referencing a price <strong>N</strong> bars ago (example: <strong>var 
+PreviousClose = (seriesC())[1];</strong> - mind the parentheses). Unlike real series, they don't consume memory and can be conditionally 
+called. Temporary series do not support <a href="barperiod.htm">TimeFrame</a> 
+and <a href="bar.htm">special bars</a>, and keep their content only until the next <a href="ta.htm">indicator</a> 
+call.<br>&nbsp;&nbsp;
+<h2>priceSet (int offset<em>, </em>var Open, var High, var Low, var Close) </h2>
+Modifies the open, high, low, close, and mean price of the current asset at the 
+given bar, for <a href="asset.htm">dummy assets</a>, artificial price curves, 
+displaying special candles, or using a different price source. Use <strong>offset = -1</strong> for modifying the prices of the next bar 
+when trades should be entered at the modified prices. Does not affect intrabar 
+prices in <a href="mode.htm">TICKS</a> mode.
+<h2>priceQuote (var Timestamp, var Quote) : int </h2>
+Enters a new price quote of the current <a href="asset.htm">asset</a> in the system; especially for <a href="fill.htm">HFT simulation</a> or when prices are not available from the broker connection. Filters outliers and updates the current best ask (<a href="pip.htm">AskPrice</a>) and best bid (<a href="pip.htm">AskPrice</a> -  <a href="+">Spread</a>). Increases <a href="numbars.htm">Bar</a> after every <a href="barperiod.htm">BarPeriod</a> when no <a href="run.htm">run</a> function is used. Price quotes are also printed to the log when <a href="verbose.htm">Verbose</a> is at 3 or above, so be careful with <strong>Verbose</strong> for preventing  awfully large log files.
+<h3>Parameters:</h3>
+<table border="0">
+  <tr>
+    <td><strong>offset</strong></td>
+    <td>Optional bar number for which the prices are returned, in time frames before the current time frame. If 
+	<strong>0,</strong> the price of the current bar is returned. Negative offsets return future prices when the <a href="mode.htm">PEEK</a> flag is set; otherwise they give an error message. </td>
+  </tr>
+  <tr>
+    <td><strong>Timestamp</strong></td>
+    <td>The exchange timestamp of the quote in DATE format. Quotes older than the previous quote are ignored.</td>
+  </tr>
+  <tr>
+    <td><strong>Quote</strong></td>
+    <td>The price.  <strong>Quote &gt; 0</strong> indicates an ask price, <strong>Quote &lt; 0</strong> a bid price.  </td>
+  </tr>
+</table>
+<h3>Returns:</h3>
+1 if the price quote was accepted, 0 if an <a href="ticktime.htm">Outlier</a> was detected or the timestamp was outdated.<br>
+&nbsp;&nbsp;
+<h2>priceRecord ()</h2>
+Appends the current OHLC candle and the current spread and volume of the current asset 
+to the begin of the price history in <strong>.t1</strong> or <strong>.t6</strong> 
+format; only in [<span class="tast">Trade</span>] mode and after the <strong>
+INITRUN</strong>. This allows recording live prices for 
+<a href="retraining.htm">re-training</a> or other 
+purposes.<br>&nbsp;
+<h3>Remarks:</h3>
+<ul>
+  <li>The <strong>priceO</strong>, <strong>priceH</strong>, <strong>priceL</strong>,
+  <strong>priceC</strong> functions can be also used under the names <strong>
+  priceOpen</strong>, <strong>priceHigh</strong>, <strong>priceLow</strong>,
+  <strong>priceClose</strong>.</li>
+	<li>At the initial run of the strategy before an <a href="asset.htm">asset</a> 
+  is selected, 
+  all 
+  <span class="Highlight">price functions return <strong>0</strong></span>. After switching to a different <a href="asset.htm">asset</a>, 
+  the price and market functions automatically change to the prices and market 
+  data of that asset. In backtesting or training prices are affected by
+  <a href="detrend.htm">Detrend</a> flags.</li>
+	<li>If not otherwise mentioned, all prices are <span class="Highlight">ask prices</span>. This way stops, entry limits, or profit targets can be calculated without a distinction between long and short trades. Zorro automatically handles conversion from Ask to Bid when entering or exiting trades, 
+  calculating trade profit, or setting limit levels. For getting the 
+	<span class="Highlight">bid price</span>, subtract <a href="spread.htm">Spread</a>; 
+	for getting the <span class="Highlight">pip value</span> of a price, divide 
+	by <strong><a href="pip.htm">PIP</a></strong>. The current bid/ask mean  price is
+	<strong>priceClose() - 0.5*Spread</strong>. More variants of prices - i.e. the Center Price, the Typical Price, the Haiken Ashi Price, 
+	the VWAP etc. - can be found on the <a href="ta.htm">indicators</a> page. 
+  Live prices can be switched between different types (f.i. quotes and trades) with 
+  the <a href="brokercommand.htm">SET_PRICETYPE</a> command when supported by 
+  the broker.</li>
+	<li>For changing the price range of an asset, f.i. for shifting
+	<span class="Highlight">negative prices</span> to the 
+	positive scale, use <a href="spread.htm">PriceOffset</a>.</li>
+	<li>When loading price data, the prices are checked for plausibility dependent 
+	on the <a href="outlier.htm">Outlier</a> parameter. <span class="Highlight">Invalid prices</span>, 
+	such as negative values or outliers, are automatically corrected or removed. Setting
+	<strong><a href="detrend.htm">Detrend</a> = NOPRICE</strong> before calling
+	<strong>asset()</strong> prevents that asset and price data is checked and 
+	invalid prices 
+	are removed. </li>
+  <li>When connected to a broker or exchange, prices are updated at any incoming tick; 
+  when connected to an online <a href="loadhistory.htm">price source</a>, at any 
+  bar. <span class="Highlight">Outliers and stock splits</span> are detected and can be evaluated with the
+  <a href="outlier.htm">PriceJump</a> variable. Outliers are removed, splits are 
+  logged. </li>
+  <li>If the <a href="mode.htm">LEAN</a> flag is set and M1 historical data is used, open and close prices of a bar are  
+  not explicitely stored for preserving memory. They are derived from the mean prices of its first and last M1 tick.</li>
+    <li>If <a href="nhistory.htm">LookBack</a> is not explicitely set, it is automatically expanded to the biggest 
+	<strong>offset</strong> value.
+    If
+  <strong>offset</strong> is higher than the current bar number (<a href="numbars.htm">Bar</a>), the price of the first bar is returned. 
+	</li>
+	<li>When using 
+	<span class="Highlight">multiple time frames</span> in the strategy (<a href="barperiod.htm">TimeFrame</a> variable), the 
+	<strong>offset</strong> parameter gives the number of time frames rather than the number of bars. The 
+	function <strong>priceOpen</strong> returns the price from the begin of the time frame, 
+	<strong>priceClose</strong> from its end, <strong>priceHigh, priceLow</strong> 
+	the maximum and minimum price within the time frame, and <strong>price</strong> 
+	the current average of the time frame. Synchronizing time frames (<strong>TimeFrame 
+	= 0</strong>) to certain events or dates is not supported by price 
+	functions; use price <a href="series.htm">series</a> for that when 
+	required. </li>
+	<li>In live trading, <strong>marketVal</strong> and <strong>marketVol</strong> 
+	return spread and volume from the <a href="brokerplugin.htm">broker API</a>, 
+	when available. If volume is not available, a proxy is returned, such as the 
+	tick frequency. The type of returned volume is described on the specific broker page 
+	(f.i. <a href="ib.htm">IB</a>).Some broker APIs support the
+	<a href="brokercommand.htm">SET_VOLTYPE</a> command for setting up the 
+	volume source between ask/bid or trade volumes.  <span class="Highlight">Historical volume</span> is often the 
+	sum of quote sizes or trade volumes of the current minute or current day. <span class="Highlight">Live volume</span> is 
+	often the accumulated trade volume 
+	of the current day or trading session. The functions 
+	return the current value when <strong>Offset</strong> is 0, otherwise the 
+	average of the time frame. Depending on which sort of raw volume they 
+	return, it can be converted by script to the total volume per time 
+	frame. For instance, to convert accumulated volume to per-minute volume, 
+	subtract the volume from 1 bar ago from the current volume, and divide by
+	<strong>BarPeriod.</strong> See examples below.<br>&nbsp; In test and train 
+	modes, <strong>marketVol</strong> returns the <strong>fVol</strong> element 
+	of <strong>.t6</strong> historical data, or otherwise 0. The <strong>marketVal</strong> 
+	function returns the <strong>fVal</strong> element of .t6 data, and the ask-bid spread 
+	of 
+	.t1 or .t2 data, otherwise 0. </li>
+	<li>&nbsp;Depending on the broker, <span class="Highlight">live volume can be different to 
+	historical volume</span> where delayed transactions, busted trades, combos and 
+	unreportable trades are filtered out. Likewise, outliers are often filtered 
+	out of historical price data. Trade signals should therefore not rely on 
+	comparing live volume with historical volume or live volatility with 
+	historical volatility.</li>
+	<li>For <span class="Highlight">basket trading</span>, artificial assets can be created by combining the prices from several real assets. An example can be found under
+    <a href="tips.htm">Tips &amp; Tricks</a>.</li>
+	<li>For evaluating live or historical <span class="Highlight">order book 
+	data</span> or BBO data, and for generating order flow profiles, use the
+	<a href="ordercvd.htm">orderUpdate</a> function.</li>
+	<li>For calculating <span class="Highlight">VWAP prices</span> from a given 
+	time period, store prices and volumes in <a href="series.htm">series</a> and 
+	apply the <a href="ta.htm">VWAV</a> function.</li>
+	<li>If the <a href="mode.htm">PEEK</a> flag is set, price functions can
+	<span class="Highlight">peek into the future</span> by using negative 
+	offsets. This is often used for training machine learning algorithms (see
+	<a href="advisor.htm">advise</a>) with historical price data. If
+	<a href="mode.htm">PEEK</a> mode is not set, negative offsets will generate an error message. 
+	</li>
+	<li>In a <a href="buylong.htm">TMF</a> or <a href="tick.htm">tick</a> function, 
+	<strong>priceC(0)</strong> returns the last price quote, updated every live 
+	or historical tick when new price data becomes available. <strong>
+	marketVal(0)</strong> returns the last ask-bid spread and <strong>
+	marketVol(0)</strong> returns the last trade or quote volume if available.</li>
+	<li>If <a href="history.htm">.t1 data</a> contains both ask and bid quotes,
+	<strong>marketVal</strong> returns the recent ask-bid spread. In
+	<a href="history.htm">.t6 data</a> it returns the <strong>fVal</strong> 
+	value. The command <strong>if(Test)</strong> <strong>Spread = max(0,marketVal());</strong> 
+	can be used for backtesting with variable 
+	spread when it is available in the historical .t1, .t2, or .t6 data.</li>
+	<li>An example of using the <strong>priceQuote</strong> function for simulating a HFT system can be found on
+	<a href="http://www.financial-hacker.com/hacking-hft-systems/" target="_blank">Financial Hacker</a>. 
+	</li>
+</ul>
+<h3>Examples:</h3>
+<pre>BarPeriod = 60; <em>// set up 1 hour bars (60 minutes)
+</em>
+TimeFrame = 4;
+asset(&quot;EUR/USD&quot;);
+vars EUR4Hs = series(price(0));	<em>// create a series of 4 hour EUR mean prices</em>
+...
+TimeFrame = frameSync(24);
+asset(&quot;SPX500&quot;);
+vars SPXDays = series(priceC(0));	<em>// create a series of daily S&amp;P 500 close prices</em>
+TimeFrame = 1;
+...
+</pre>
+<pre><em>// plot a daily spread histogram
+</em>void run()
+{
+  BarPeriod = 10;
+  PlotLabels = 4;
+  plotBar("Spread",
+    (60*hour(0)+minute(0))/BarPeriod,tod(0),marketVal(0),AVG,RED);
+}</pre>
+<pre><em>// convert accumulated daily trade volume to per-bar volume
+</em>var volumeDiff(var* Buffer,var Volume)
+{
+<em>// Buffer[1] = previous accumulated volume</em>
+  if(Buffer[1] &gt; Volume) <em>// day change? Reset volume</em>
+    Buffer[1] = 0;
+  Buffer[0] = Volume-Buffer[1]; <em>// per-bar volume difference</em>
+  Buffer[1] = Volume;
+  return Buffer[0]; 
+}
+
+void run()
+{
+  BarPeriod = 1;
+  LookBack = 0;
+  
+  assetList("AssetsIB");
+  brokerCommand(SET_PRICETYPE,2); <em>// trade prices
+</em>  brokerCommand(SET_VOLTYPE,4); <em>// trade volume
+</em>  
+  vars VBuffer = series(0,-2);
+  var Volume = marketVol(0);
+  if(Live) <em>// if marketVol is daily accumulated volume</em>
+    Volume = volumeDiff(VBuffer,Volume);
+  printf("# Vol %.0f",Volume);
+}	</pre>
+<h3>See also:</h3>
+<A href="buylong.htm"><span class="links">enterLong</span></A>/<a href="buylong.htm">Short</a>, <a href="series.htm">series</a>, <a href="asset.htm">asset</a>, <strong><a href="spread.htm">Spread</a></strong>, 
+<a href="pip.htm">AskPrice</a>, <a href="pip.htm">AskSize</a>, <a href="detrend.htm">Detrend</a>, <a href="day.htm">dayHigh/Low</a>,
+<a href="history.htm">History</a>, <a href="brokercommand.htm">GET_PRICE</a>
+<p></p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

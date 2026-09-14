@@ -1,0 +1,144 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Spread, Slippage, Commision, Rollover</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/spread.htm">
+</head>
+
+<body>
+<h1>Asset parameters 1 - profits and costs</h1>
+<h2>Spread</h2>
+Difference between <a href="trading101.htm#spread">ask and bid price</a> of the current <a href="asset.htm">asset</a>; 
+by default taken from the <a href="account.htm">asset list</a> when offline, or 
+from the current ask and bid price when connected to a broker. The trade profit 
+is reduced by the spread. For using historical spreads in the backtest, set <strong>Spread = 
+<a href="price.htm">marketVal()</a>; </strong>before entering or exiting a trade. For a backtest with no 
+transaction costs, set <strong>Spread = 0</strong>. <strong>Spread</strong> is 
+ignored for <a href="contract.htm">Options and futures</a> that use the ask-bid 
+spread of the selected contract. <strong>Spread</strong> is also ignored in 
+binary trading mode (<a href="mode.htm">BINARY</a> flag).&nbsp;
+<h2>Slippage</h2>
+Simulated slippage in seconds (default = <strong>5</strong>), effective in [<span class="tast">Test</span>] mode 
+for entering and exiting trades and for entry and exit limits. Has no effect on 
+<a href="contract.htm">contracts</a>, in [<span class="tast">Train</span>] 
+mode, in 'naive' <a href="fill.htm">Fill</a> mode, or when <strong>Penalty</strong> 
+is nonzero. Slippage is simulated by filling orders not at the current price, but at 
+the most likely price after the given number of seconds. The 
+price is estimated by extrapolation of the next candle. Different bar periods and 
+bar offsets therefore produce different slippage, but of similar 
+magnitude. The larger the <strong>Slippage</strong> variable, the larger is the 
+price range and thus the fill price deviation from the current price. <br>
+&nbsp;&nbsp;&nbsp;Slippage has normally a negative effect on trend trading systems, 
+but can also be in favor of the trader, especially with counter-trend or mean-reversion systems. It is recommended to test systems with and without slippage for determining its effect on the result.&nbsp;<strong>Slippage</strong> at <strong>0</strong> disables extra slippage, but entry, stop, or takeprofit 
+fill prices can still deviate from the given limit (see <a href="fill.htm">Fill</a> 
+algorithm). Setting <strong>Slippage</strong> to a negative amount simulates 
+asymmetric slippage that is always in adverse direction.&nbsp;
+<h2>Penalty</h2>
+Alternative price slippage in counter currency units (default 
+= <strong>0</strong>). In <a href="fill.htm">Fill</a> mode <strong>0</strong> it 
+reduces the trade profit by the given amount. In <strong>Fill</strong> modes
+<strong>2..5</strong> it applies a price slippage on limit orders into the limit 
+direction, which can have a positive or negative effect on the backtest. This 
+variable is used for special purposes, such as simulating backtest results by 
+other platforms.&nbsp;&nbsp;&nbsp;
+ <h2>Commission</h2>
+Broker's fee for opening and closing a trade, taken from the
+<a href="account.htm">asset list</a>, in account currency units per 10000 contracts for currencies, 
+per contract for  all other assets, per underlying unit for options, or as percent 
+of the trade volume when negative.  The trade profit is reduced by this amount 
+when the position is closed.
+Commission is automatically reduced by 50% for expired <a href="contract.htm">options</a> (since fees are usually not charged for expiration), and 
+is initialized to zero in <a href="mode.htm">binary</a> trading mode (since binary brokers get their commission via payout, see below). When set in the script, it must be set individually for every traded asset.
+ Commission is equivalent to an additional spread with a size in pips of <strong>Commission*LotAmount/10000/PIPCost</strong> for currencies, and <strong>Commission*LotAmount/PIPCost</strong> for all other assets. 
+If a negative percent value is given (f.i. <strong>-0.25</strong> for 0.25%), 
+the commission of a trade is <strong>-Percent/100 * PIPCost/PIP * Price * Lots</strong>. <br>
+<h2>RollShort</h2>
+<h2>RollLong</h2>
+Daily rollover interest (also called <strong>'swap</strong>') per 10000 contracts for currencies, or per contract for all other assets. Taken from the <a href="account.htm">assets list</a> when offline, otherwise the broker's current rollover value is used 
+when provided by the API. The rollover is daily interest paid to or received from the broker for 
+borrowing or lending margin. For instance, when you hold a EUR/USD long position, you receive interest from the broker for 
+lending the EUR and pay interest for  borrowing the USD - the difference is the rollover. Negative rollover contributes to the losses, positive rollover to the profits. As to be expected, negative rollover values are more frequent and greater than positive rollover values. For CFDs, rollover is usually trend compensating - for instance, upwards trending index CFDs get a negative <strong>RollLong</strong> for eliminating long-term trend profit. Rollover  can 
+affect the performance of long-term strategies and cause an asymmetry between long and short trades when positions are hold for several weeks.
+<br><h2>Interest</h2>
+Annual interest
+on margin loan, in percent; reduces the account balance in the simulation. Set 
+this in the script when interest is not calculated per swap/rollover, but per 
+total maintenance margin. Usual values (2019) are 1.5% for EUR accounts and 3% 
+for USD accounts. The interest calculation assumes no rollover and equal 
+leverage of all traded assets.
+<br><h2>PriceOffset</h2>
+Amount added to historical or live prices of the current asset, for special purposes 
+such as shifting negative prices to the positive scale. Set it after selecting the asset, but before loading history 
+for affecting historical prices.&nbsp;Set <strong>Detrend = NOPRICE</strong> for 
+preventing that negative prices are treated as erroneous.
+<h2>WinPayout</h2>
+<h2>LossPayout</h2>
+Payout in percent of the invested <a href="lots.htm">Margin</a> for binary trading (<a href="mode.htm">set(BINARY)</a>). Winning trades win the invested amount plus the <strong>WinPayout</strong>, losing trades lose the invested amount minus the <strong>LossPayout</strong>. The payout variables must be set individually for every traded asset. <strong>Spread</strong> and <strong>Commission</strong> should be set to <strong>0</strong> for normal binary trades.
+<h3>Type:</h3>
+<strong>var</strong>
+<h3>Remarks:</h3>
+<ul>
+  <li>The accumulated <span class="Highlight">trading costs</span> by spread, slippage, commission and rollover 
+  interest are displayed on the <a href="performance.htm">Performance Report</a>. </li>
+  <li>When Zorro is  connected to a broker, it loads the  current 
+  <span class="Highlight">asset 
+  parameters</span>, including transactions costs, from the broker API. When not connected, 
+  or when asset parameters are not available online, they are loaded from the <a href="account.htm">Asset List</a>. 
+  This file can be selected or edited with a text editor for simulating 
+  different brokers, accounts, and assets in backtests. </li>
+  <li>Spread and transaction costs are <span class="Highlight">asset specific</span>. The asset must be selected 
+  with <a href="asset.htm">asset()</a> before modifying any asset specific parameters.</li>
+	<li>The <span class="Highlight">roundturn cost</span> of a currency pair trade - without rollover and slippage - is 
+	<strong>Lots*(Commission*LotAmount/10000 + Spread*PIPCost/PIP)</strong>. For all other assets it's 
+	<strong>Lots*(Commission*LotAmount + Spread*PIPCost/PIP)</strong>.</li>
+	<li>Transaction costs can be <span class="Highlight">disabled</span> for test purposes. For a simulation with no slippage and costs at all, 
+	enter the following command after selecting the asset: <strong>Spread = Commission = RollLong = RollShort = Slippage = 
+	Penalty = 0</strong>.
+	<a href="fill.htm">Fill mode</a> can be set at 0 for closing all trades exactly at the stop or profit limit.</li>
+	<li>For <span class="Highlight">complex commission</span> calculations that are 
+	neither a flat fee nor a percentage, calculate commission in 
+	the script and set the <strong>Commission</strong> variable to the result 
+	before entering a trade. For instance, when the total commission 
+	is a fixed 1$ when buying less than 50 shares, and 2 cents per share 
+	otherwise, set <strong>Commission = ifelse(Lots &lt; 50, 1.0/Lots, 0.02);</strong>.</li>
+	<li><strong>RollLong/Short</strong> is added to the trading cost in [<span class="tast">Test</span>] and [<span class="tast">Train</span>] 
+	mode for any trade that was longer open than 12 hours at any new day, including Saturday and Sunday. This is only an approximation to the real rollover cost, as brokers have many different algorithms to calculate rollover. If you need to simulate rollover very precisely, use a 
+	<a href="data.htm">data set</a> of historical rollover costs, and add them to the trading costs by script using the broker's algorithm.</li>
+	<li><strong>Interest</strong> is subtracted from the account balance in [<span class="tast">Test</span>] 
+	and [<span class="tast">Train</span>] mode on any trading day at a rate of 
+	1/252 of the annual interest.&nbsp; If you need to simulate interest very 
+	precisely, adapt it to historical riskfree yield rates as retrieved with the
+	<a href="contract.htm">yield</a> function.</li>
+	<li>In live trading, slippage is caused by the delay 
+	between the price quote that triggers the trade signal, and the order 
+	execution. A large contribution to slippage is <span class="Highlight">
+	Internet latency</span>, between 10 and 1000 ms dependent on server 
+	location. Broker servers can add up to 30 seconds to latency. It was 
+	reported that MT4 and MT5 servers are set up by some brokers to generate <span class="Highlight">
+	artificial latency and slippage</span> for entering and exiting at less favourable prices. Zorro 
+	trade handling and script code does not noticeably 
+	contribute to latency.</li>
+	<li>Since spread and rollover are taken from an 'account snapshot' when the asset list was generated, they can be very different to the current, as well as to historical spread and rollover. This can falsify backtests f.i. when trades are open a long time and accumulate a large rollover. For being on the safe side, set 
+	<strong>RollShort</strong> and <strong>RollLong</strong> to their minimum (<strong>RollLong = RollShort = min(RollLong,RollShort);</strong>) and 
+	<strong>Spread</strong> to a high percentile of a one-day sample. 
+	</li>
+</ul>
+<h3>Examples:</h3>
+<pre><em>// ignore broker spread, set constant spread for performance calculation</em> 
+Spread = 3*PIP; 
+
+<em>// allow negative prices by shifting them to the positive range</em>
+assetAdd(&quot;Neg&quot;); <em>// select asset with negative prices
+</em>Detrend = NOPRICE; <em>// prevent treating them as erroneous
+</em>PriceOffset = 1000; <em>//  shift them</em>
+asset(&quot;Neg&quot;); <em>// load the shifted prices</em></pre>
+<h3>See also:</h3>
+<a href="buylong.htm">enterLong/Short</a>, <a href="price.htm">price</a>, <a href="stop.htm">Stop</a>, <a href="timewait.htm"></a><a href="lots.htm">Lots</a>, <a href="lots.htm">Margin</a>, <a href="pip.htm">PIP</a>, <a href="account.htm">asset 
+lists</a>
+<p>&nbsp;</p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

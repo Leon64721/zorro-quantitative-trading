@@ -1,0 +1,201 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Control panel</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+.auto-style1 {
+	text-align: justify;
+}
+</style>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/panel.htm">
+</head>
+<body>
+<h1>User interface</h1>
+<p>For setting up strategy parameters, triggering actions, or displaying 
+something, the following elements are available:</p>
+<ul>
+	<li>The <a href="slider.htm">sliders</a> for entering or displaying 
+	numerical values, </li>
+	<li>the [<span class="tast">Result</span>] button that can be redefined by 
+	script,</li>
+	<li>the [<span class="tast">Action</span>] 
+scrollbox for displaying or selecting items or triggering script functions,</li>
+	<li>and a <strong>control panel</strong> with user-defined buttons, switches, displays, entry fields, 
+	and spreadsheet lists (<a href="restrictions.htm">Zorro S</a> or executable 
+	strategies only).</li>
+</ul>
+<p>The control panel can be created by script or 
+with Excel&trade;. The panel is a rectangular grid of multi-purpose cells, similar to a 
+spreadsheet. Every cell can display text, numbers, or a color, and can serve as a numeric or text input field or as a push, toggle,  radio, or spin button. With this concept, even complex control functions for commercial strategies can be realized in a simple way. Such a control panel does not look particularly pretty, but it's functional:
+</p>
+<p align="center">
+<img src="../images/grid.png" alt="Panel" width="296" height="288"> </p>
+<p class="auto-style1">A panel can have a virtually unlimited number of rows and 
+columns. If there are more than fit on the screen, the panel can be scrolled 
+with scrollbars on the right and bottom side. Header rows or columns can be 
+defined that stay fixed when the rest of the panel scrolls. This way, individual 
+asset parameters can be set up or displayed for multi-asset strategies. An 
+example of a scrolling panel with thousands of rows can be found in the <strong>
+History.c</strong> script. </p>
+<p align="left">The following functions can be used for defining and handling a 
+control panel or for populating the [<span class="tast">Action</span>] 
+scrollbox: </p>
+<h2>panel (int rows, int columns, int color, int size)</h2>
+Opens an empty control panel with the given number of <strong>rows</strong> (at 
+least 2) and <strong>columns</strong> (at least 1), grid <strong>color</strong>, and horizontal cell <strong>size</strong> in pixels. If a control panel was already open,  it is replaced by the new one. The panel is opened next to the Zorro window, and can be freely moved by dragging it with the mouse. If the number of rows or columns  exceed the screen size, scrollbars are added to the panel. 
+A negative <strong>size</strong> limits the panel height to the height of the 
+Zorro panel. 
+<strong>panel(0,0,0)</strong> removes the panel.
+<h2>panel (string filename, int color, int size) </h2>
+As above, but loads a control panel from a <strong>.csv</strong> spreadsheet file. Every cell of the panel is set up from the corresponding spreadsheet cell. The cells in the file 
+must be separated with <span class="tast">&nbsp;;&nbsp;</span> or <span class="tast">&nbsp;,&nbsp;</span> 
+delimiters. Every row must end with a newline character. The following control characters in the cell content have a special meaning: <strong class="tast">&nbsp;!...&nbsp;</strong> - cell is a button; <span class="tast">&nbsp;#...&nbsp;</span> - cell can be edited; <span class="tast"><strong>&nbsp;@&nbsp;</strong></span> - merge the  cell with the next not-empty cell to the left. The default colors are grey for text cells, red for numbers, 
+white for editable cells, and blue for buttons; they can be changed with the <a href="colors.htm">ColorPanel</a> variables. 
+<br>&nbsp; CSV delimiters and control characters must otherwise not appear in 
+cell content. For still displaying them, the cell content can be set with
+<strong>panelSet()</strong> after loading the panel. Examples of spreadsheet-generated panels can be found in the <strong>Strategy</strong> 
+folder.
+<h2> panelSet (int row, int col, string text,<em> int color, int style, int type</em>)</h2>
+Set  properties or update content of an individual cell.<br> 
+&nbsp; <br>
+<strong>row</strong> - row number starting with <strong>0</strong>, or <strong>-1</strong> for the [<span class="tast">Result</span>] button, 
+or <strong>-2</strong> for the [<span class="tast">Action</span>] scrollbox. <br>
+<strong>col</strong> - 
+column number starting with <strong>0</strong>, or line number in the [<span class="tast">Action</span>] 
+scrollbox.&nbsp;<br>
+<strong>text</strong> - content to appear in the cell, button, or scrollbox line, or <strong>0</strong> for not changing the content. Numbers can be converted to text with <a href="str_.htm">strf</a>. <br>
+<strong>color</strong> - background color of the cell, or <strong>0</strong> for 
+not changing the color. <br>
+<strong>style</strong> - <strong>1</strong> normal text, <strong>2</strong> highlighted text, <strong>3</strong> greyed-out text, <strong>
++4</strong> right-aligned, <strong>+8</strong> left-aligned, <strong>+12</strong> centered, 
+<strong>+16</strong> bold, or <strong>0</strong> for not changing the style.<br>
+<strong>type</strong> - <strong>1</strong> normal cell, <strong>2</strong> editable cell, <strong>4</strong> button, <strong>0</strong> for not changing the type. 
+If <strong>row</strong> is <strong>-2</strong> and <strong>type</strong> is nonzero, the 
+<strong>text</strong> is selected in the [<span class="tast">Action</span>] 
+scrollbox.<br><br>The default colors for generating the panel from a spreadsheet are stored in <a href="colors.htm">ColorPanel</a><strong>[n]</strong>, where <strong>n = 0</strong> 
+for text background, <strong>1</strong> for number background, <strong>2</strong> 
+for an editable field, <strong>3</strong> for a button, <strong>4</strong> for 
+highlighted text, <strong>5</strong> for greyed out text. <br>
+<h2> panelGet (int row, int col): string</h2>
+Returns a temporary string with the current content of the cell. Numbers can be converted from the returned string with  <a href="str_.htm">sscanf</a>, <a href="str_.htm">atof</a>, or <a href="str_.htm">atoi</a>. 
+<br>
+<h2> panelMerge(int Row, int Col, int NumRows, int NumCols)</h2>
+Merges the given area of the panel to a single cell, with the content of the 
+first cell. <strong>Row</strong> / <strong>Col</strong> is the upper left corner 
+and <strong>NumRows</strong> / <strong>NumCols</strong> the size.
+<h2> panelFix(int NumRows, int NumCols)</h2>
+Gives the number of header rows or header columns that stay fixed on a vertical 
+or horizontal scrolling 
+panel. Set the other number to <strong>0</strong>. Header cells cannot be merged. <br>
+<br>
+<h2> panelSave (string Filename)</h2>
+Saves the panel content in <strong>.csv</strong> format to the given <strong>
+FileName</strong>, or to <strong>&quot;Data\*.pan&quot;</strong> when the name is empty or 
+zero.
+<h2> panelLoad (string Filename)</h2>
+Loads the saved panel content in <strong>.csv</strong> format from the given 
+<strong>FileName</strong>, or from <strong>&quot;Data\*.pan&quot;</strong> when the name 
+is empty or zero. Only editable or button cells are affected.  <br>
+&nbsp;
+
+<h2>click(int Row, int Col) </h2>
+User-supplied function that is triggered by the following GUI actions:<br>- mouse click 
+on a button cell,<br>- entering a number or editing a cell,<br>- 
+clicking the [<span class="tast">Result</span>] button (<strong>Row</strong> =
+<strong>-1</strong>),<br>- selecting a previously set action from the [<span class="tast">Action</span>] 
+scrollbox (<strong>Row = -2, Col = </strong>action number),<br>- selecting an asset with the [<span class="tast">Asset</span>] 
+scrollbox (<strong>Row</strong> = <strong>-3</strong>; asset name in
+<a href="script.htm">AssetBox</a>), <br>- or moving one of the 3 user-defined 
+sliders (<strong>Row</strong> = <strong>-4, Col =</strong> slider number).<br>Dependent on the desired behavior of the button, the function can then change the cell color or content through
+<strong>panelSet</strong>, <!--Also triggered with <strong>row = -1</strong> by clicking the [<span class="tast">Stop</span>] button on the Zorro window.-->
+and/or save the panel content with <strong>panelSave()</strong>.<h3>Remarks:</h3>
+<ul>
+  <li>Control panels can only be created with <a href="restrictions.htm">Zorro S</a>, but can be included in executable strategies (<strong>.x</strong> files) and 
+  can then also be used with the free Zorro version.</li>
+  <li>Even without a panel, the [<span class="tast">Result</span>] button and the 
+  [<span class="tast">Asset</span>] and [<span class="tast">Action</span>] scrollboxes can trigger the <strong>click</strong> function. 
+  If this is unwanted, filter out clicks with negative row values.</li>
+  <li>Text on the panel caption bar can be displayed with <a href="printf.htm">print(TO_PANEL,...)</a>.  </li>
+    <li>Panel, Result button, and Action scrollbox stay active after the end of the script unless 
+	they are explicitely removed either with 
+	<strong>panel(0,0,0,0)</strong>, or by clicking [<span class="tast">Edit</span>], or by selecting a new script. 
+	In lite-C (<span class="Highlight">not in C++</span>), panel fields can 
+	still be edited and buttons can trigger functions when clicked on even after 
+	the script has terminated. This can be used for establishing a permanent 
+	working panel; if this is not desired, prevent triggering functions by checking the 
+	<a href="is.htm">RUNNING</a> flag. </li>
+	<li>For keeping the previous panel content when the strategy is restarted, call 
+	<strong>panel()</strong> or <strong>panelLoad()</strong> only when both the 
+	<a href="is.htm">INITRUN</a> and the <a href="is.htm">CHANGED</a> flags are set.</li>
+	<li>For keeping a selection state of the [<span class="tast">Action</span>] 
+	scrollbox, save it in an <strong>AlgoVar</strong> and 
+	restore it at the start of the script. Use the <strong>panelSet</strong> 
+	function with the <strong>type</strong> parameter at <strong>1</strong> for 
+	the selected item.</li>
+	<li><span class="edition">&nbsp;!!&nbsp;</span> The <strong>click</strong> function is a separate process and 
+	<span class="Highlight">not in 
+	sync</span> with with the <strong>run</strong> or <strong>tick</strong> functions. 
+	Therefore, directly changing the asset, sending broker commands, or modifying 
+	global variables in the <strong>click</strong> function can interfere with other 
+	functions and with the rest of your script, and may cause errors. For 
+	preventing this, use the <a href="call.htm">call</a><b>(1,....)</b> function for critical 
+	operations inside a <strong>click</strong> function. See example below.</li>
+</ul>
+<h3>Examples: (see also Download.c, History.c, PanelTest.c)</h3>
+<pre><em>// click function example</em>
+function click(int row,int col)
+{
+  if(!is(RUNNING)) return; <em>// prevent clicks after the end of the script</em>
+  if(row &lt; 0) return; <em>// prevent clicks by result button or scroll box</em>
+  sound(&quot;click.wav&quot;);<br>  string Text = panelGet(row,col);<br>  if(Text == &quot;Buy&quot;) <em>// toggle button between &quot;Buy&quot; and &quot;Sell&quot;</em><br>    panelSet(row,col,&quot;Sell&quot;,0,0,0);<br>  else if(Text == &quot;Sell&quot;)<br>    panelSet(row,col,&quot;Buy&quot;,0,0,0);<br>  else if(Text == &quot;Close All&quot;) <em> // push button to close all trades
+</em>    call(1,closeAllTrades,0,0);
+  else if(Text == &quot;Enter Trade&quot;) <em> // push button to enter position
+</em>    call(1,enterMyTrade,0,0);
+  else if(Text == &quot;Cancel&quot;)  <em>// back to last saved state</em>
+    panelLoad(&quot;Data<a href="file://mypanel.csv">\\mypanel.csv</a>&quot;);
+  panelSave(&quot;Data<a href="file://mypanel.csv">\\mypanel.csv</a>&quot;);  
+}</pre>
+<pre>
+<em>// Entering a code number</em>
+int Code = 0;
+
+void click(int row,int col)
+{
+  sound("click.wav");
+  Code = atoi(panelGet(0,0));
+}
+
+void enterNumber()
+{
+  Code = 0;
+  panel(1,4,GREY,30);
+  print(TO_PANEL,"Enter your code number");
+  panelSet(0,0,"",0,1,2);
+  panelMerge(0,0,1,3);
+  panelSet(0,3,"Ok",ColorPanel[3],1,4);
+  while(!Code) wait(0);
+  panel(0,0,0);
+  printf("\nCode: %i",Code);
+}</pre>
+<pre>
+<em>// Start a program via Action scrollbox</em>
+void click(int row,int col)
+{
+  if(row == -2 &amp;&amp; col == 0) <em>// first action line
+</em>    exec(&quot;Editor&quot;,&quot;Strategy\\Z.ini&quot;,0);
+}
+
+function run()
+{
+  panelSet(-2,0,&quot;Edit Z9.ini&quot;,0,0,0);
+  ...
+}</pre>
+<h3>See also:</h3>
+<a href="slider.htm">sliders</a>, <a href="sleep.htm">wait</a>, <a href="funclist.htm">user supplied functions</a>, <a href="colors.htm">ColorPanel</a> 
+<p>&nbsp;</p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

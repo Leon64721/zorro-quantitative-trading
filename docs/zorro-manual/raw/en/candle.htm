@@ -1,0 +1,208 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+<title>Candle patterns</title>
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/candle.htm">
+</head>
+
+<body>
+<h1>Traditional Candle Patterns</h1>
+<p>Japanese rice market candle patterns, returning an integer value of <strong>-100</strong> 
+for bearish patterns, <strong>+100</strong> for bullish patterns, and <strong>0</strong> 
+for no pattern match. They use the current asset price series and detect the pattern 
+at the current bar. All candle pattern functions are listed below in alphabetical order. They are 
+based on the TA-Lib indicator library by Mario Fortier (<a href="http://www.ta-lib.org"><strong>www.ta-lib.org</strong></a>).
+</p>
+<p><strong>Disclaimer:</strong> Traditional candle patterns are implemented in 
+Zorro for 
+the sake of completeness, but are not really recommended for serious algorithmic trading. The 
+patterns have been established 
+by 
+Japanese traders for the local rice markets in the 18th century. They probably 
+were indeed useful back then. But no serious 
+tests found any predictive value in any of the patterns for today's stock and forex 
+markets. If you 
+still want to use them, be aware that the same price curve can produce very different 
+candle patterns dependent on <a href="assetzone.htm">time zone</a>,
+<a href="barmode.htm">bar mode</a>, and price type. Many of the patterns won't appear in 
+assets that are traded around the clock, such as forex pairs, because their 
+candles have normally no difference between close and next open. For finding patterns with real 
+predictive value, use the <a href="advisor.htm">pattern analyzer</a>.</p>
+<h2>CDL2Crows(): int<a name="candle"></a></h2>
+Two Crows, a bearish candle pattern. <br>
+<h2>CDL3BlackCrows(): int</h2>
+Three Black Crows.<br>
+<h2>CDL3Inside(): int</h2>
+Three Inside Up/Down.<br>
+<h2>CDL3LineStrike(): int</h2>
+Three-Line Strike.<br>
+<h2>CDL3Outside(): int</h2>
+Three Outside Up/Down.<br>
+<h2>CDL3StarsInSouth(): int</h2>
+Three Stars In The South.<br>
+<h2>CDL3WhiteSoldiers(): int</h2>
+Three Advancing White Soldiers.<br>
+<h2>CDLAbandonedBaby(var Penetration): int</h2>
+Abandoned Baby. Parameters: <b>Penetration</b> (Percentage of penetration of a candle 
+within another candle).<br>
+<h2>CDLAdvanceBlock(): int</h2>
+Advance Block.<br>
+<h2>CDLBeltHold(): int</h2>
+Belt-hold.<br>
+<h2>CDLBreakaway(): int</h2>
+Breakaway. Bullish + Bearish.<br>
+<h2>CDLClosingMarubozu(): int</h2>
+Closing Marubozu.<br>
+<h2>CDLConcealBabysWall(): int</h2>
+Concealing Baby Swallow.<br>
+<h2>CDLCounterAttack(): int</h2>
+Counterattack.<br>
+<h2>CDLDarkCloudCover(var Penetration): int</h2>
+Dark Cloud Cover. Parameters: <b>Penetration</b> (Percentage of penetration of a 
+candle within another candle).<br>
+<h2>CDLDoji(): int</h2>
+Doji, single candle pattern. Trend reversal.<br>
+<h2>CDLDojiStar(): int</h2>
+Doji Star. Bullish + Bearish.<br>
+<h2>CDLDragonflyDoji(): int</h2>
+Dragonfly Doji.<br>
+<h2>CDLEngulfing(): int</h2>
+Classic
+Engulfing Pattern. Bullish + Bearish.
+<h2>CDLEngulfing0(): int</h2>
+Engulfing pattern including close-open equality, therefore also usable for Forex. Bullish + Bearish. 
+Source code in <strong>indicators.c</strong>.
+<h2>CDLEveningDojiStar(var Penetration): int</h2>
+Evening Doji Star. Parameters: <b>Penetration</b> (Percentage of penetration of 
+a candle within another candle).<br>
+<h2>CDLEveningStar(var Penetration): int</h2>
+Evening Star. Parameters: <b>Penetration</b> (Percentage of penetration of a candle 
+within another candle).<br>
+<h2>CDLGapSideSideWhite(): int</h2>
+Up/Down-gap side-by-side white lines.<br>
+<h2>CDLGravestoneDoji(): int</h2>
+Gravestone Doji.<br>
+<h2>CDLHammer(): int</h2>
+Hammer. Bullish. <br>
+<h2>CDLHangingMan(): int</h2>
+Hanging Man. Bearish.<br>
+<h2>CDLHarami(): int</h2>
+Harami Pattern. Bullish + Bearish.<br>
+<h2>CDLHaramiCross(): int</h2>
+Harami Cross Pattern.<br>
+<h2>CDLHignWave(): int</h2>
+High-Wave Candle.<br>
+<h2>CDLHikkake(): int</h2>
+Hikkake Pattern. Bullish + Bearish.<br>
+<h2>CDLHikkakeMod(): int</h2>
+Modified Hikkake Pattern.<br>
+<h2>CDLHomingPigeon(): int</h2>
+Homing Pigeon.<br>
+<h2>CDLIdentical3Crows(): int</h2>
+Identical Three Crows.<br>
+<h2>CDLInNeck(): int</h2>
+In-Neck Pattern.<br>
+<h2>CDLInvertedHammer(): int</h2>
+Inverted Hammer.<br>
+<h2>CDLKicking(): int</h2>
+Kicking.<br>
+<h2>CDLKickingByLength(): int</h2>
+Kicking - bull/bear determined by the longer marubozu.<br>
+<h2>CDLLadderBottom(): int</h2>
+Ladder Bottom.<br>
+<h2>CDLLongLeggedDoji(): int</h2>
+Long Legged Doji.<br>
+<h2>CDLLongLine(): int</h2>
+Long Line Candle.<br>
+<h2>CDLMarubozu(): int</h2>
+Marubozu.<br>
+<h2>CDLMatchingLow(): int</h2>
+Matching Low.<br>
+<h2>CDLMatHold(var Penetration): int</h2>
+Mat Hold. Parameters: <b>Penetration</b> (Percentage of penetration of a candle 
+within another candle).<br>
+<h2>CDLMorningDojiStar(var Penetration): int</h2>
+Morning Doji Star. Parameters: <b>Penetration</b> (Percentage of penetration of 
+a candle within another candle).<br>
+<h2>CDLMorningStar(var Penetration): int</h2>
+Morning Star. Parameters: <b>Penetration</b> (Percentage of penetration of a candle 
+within another candle).<br>
+<h2>CDLOnNeck(): int</h2>
+On-Neck Pattern.
+<h2>CDLOutside(): int</h2>
+Engulfing including wicks. Bullish + Bearish. Source code in <strong>
+indicators.c</strong>.<br>
+<h2>CDLPiercing(): int</h2>
+Piercing Pattern.<br>
+<h2>CDLRickshawMan(): int</h2>
+Rickshaw Man.<br>
+<h2>CDLRiseFall3Methods(): int</h2>
+Rising/Falling Three Methods.<br>
+<h2>CDLSeperatingLines(): int</h2>
+Separating Lines.<br>
+<h2>CDLShootingStar(): int</h2>
+Shooting Star.<br>
+<h2>CDLShortLine(): int</h2>
+Short Line Candle.<br>
+<h2>CDLSpinningTop(): int</h2>
+Spinning Top.<br>
+<h2>CDLStalledPattern(): int</h2>
+Stalled Pattern.<br>
+<h2>CDLStickSandwhich(): int</h2>
+Stick Sandwich.<br>
+<h2>CDLTakuri(): int</h2>
+Takuri (Dragonfly Doji with very long lower shadow).<br>
+<h2>CDLTasukiGap(): int</h2>
+Tasuki Gap.<br>
+<h2>CDLThrusting(): int</h2>
+Thrusting Pattern.<br>
+<h2>CDLTristar(): int</h2>
+Tristar Pattern.<br>
+<h2>CDLUnique3River(): int</h2>
+Unique 3 River.<br>
+<h2>CDLUpsideGap2Crows(): int</h2>
+Upside Gap Two Crows.<br>
+<h2>CDLXSideGap3Methods(): int</h2>
+Upside/Downside Gap Three Methods.<br>&nbsp;<br>
+<h3>Returns:</h3>
+<strong>-100</strong> for a bearish pattern, <strong>+100</strong> for a bullish 
+pattern, and <strong>0</strong> for no pattern match at the current bar.<strong>
+<br></strong>
+<h3>Remarks:</h3>
+<ul>
+	<li>The <strong>TA-Lib</strong> function prototypes are defined in <strong>include\functions.h</strong>. The source 
+	code of the TA-Lib indicators is included in the <strong>Source</strong> 
+	folder. </li>
+	<li>For different time zones, use <a href="assetzone.htm">BarZone</a> or add 
+	a <a href="barperiod.htm">BarOffset</a> (if you think it matters). </li>
+	<li>At the initial <a href="run.htm">run</a> of the strategy when no price 
+	history was yet loaded, all CDL functions return <strong>0</strong>.</li>
+</ul>
+<h3>Example:</h3>
+<pre>function run()
+{
+  set(PLOTNOW);<br>  MaxBars = 500;<br>  PlotScale = 8;<br>
+<em>// mark patterns with triangles on the chart</em>
+  if(CDLDoji())<br>    plot(&quot;Doji&quot;,1.002*priceHigh(),TRIANGLE4,BLUE);<br>  if(CDLHikkake() &gt; 0)<br>    plot(&quot;Hikkake+&quot;,0.998*priceLow(),TRIANGLE,GREEN);<br>  if(CDLHikkake() &lt; 0)<br>    plot(&quot;Hikkake-&quot;,1.002*priceHigh(),TRIANGLE4,RED);
+
+<em>// go long 3 bars on a bullish Hikkake, short on a bearish Hikkake</em>
+  LifeTime = 3;
+  if(CDLHikkake() &gt; 0)
+    enterLong();
+  else if(CDLHikkake() &lt; 0)
+    enterShort();
+}</pre>
+<h3>See also:</h3>
+<a href="ta.htm">Indicators</a>, <a href="detect.htm">curve form detection</a>,
+<a href="advisor.htm">pattern analyzer</a>.
+<p></p>
+<a class="button" href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))">&#9658; 
+latest version online</a>
+
+</body>
+
+</html>

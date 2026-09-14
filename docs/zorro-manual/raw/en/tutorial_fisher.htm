@@ -1,0 +1,143 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+<title>Algorithmic Trading in C/C++ | Workshop 5</title>
+<link href="css.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+<!--
+.Stil1 {font-weight: bold}
+.Stil2 {font-weight: bold}
+.Stil3 {font-weight: bold}
+.Stil5 {font-weight: bold}
+.Stil6 {font-weight: bold}
+-->
+</style>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/tutorial_fisher.htm">
+</head>
+<body>
+<p><a href="tutorial_trade.htm">Previous: Trend Trading</a></p>
+<h1>Workshop 5: Counter-Trend Trading, Walk Forward Optimization. </h1>
+<p>This is an example of a counter trend trading script (<strong>Workshop5</strong>):</p>
+<pre>
+function run()
+{
+  BarPeriod = 240;  <em>// 4 hour bars</em>
+  StartDate = 2007;
+  EndDate = 2017;   <em>// fixed simulation period
+</em>  LookBack = 500;   <em>// maximum indicator time period</em>
+  set(PARAMETERS);  <em>// generate and use optimized parameters</em>
+  NumWFOCycles = 15;
+  if(ReTrain) {
+    UpdateDays = -1; 
+    SelectWFO = -1; 
+  }
+ 
+<em>// calculate the buy/sell signal with optimized parameters</em>
+  vars Prices = series(price(0));
+  vars Filtereds = series(BandPass(Prices,optimize(30,20,40),0.5));
+  vars Signals = series(FisherN(Filtereds,500));
+  var Threshold = optimize(1,0.5,1.5,0.1);
+ 
+<em>// buy and sell</em>
+  Stop = optimize(4,2,10) * ATR(100);
+  Trail = 4*ATR(100);
+ 
+  if(crossUnder(Signals,-Threshold))
+    enterLong(); 
+  else if(crossOver(Signals,Threshold))
+    enterShort();
+ 
+<em>// plot signals and thresholds</em>
+  plot("Filtered",Filtereds,NEW,BLUE);
+  plot("Signal",Signals,NEW,RED);
+  plot(&quot;Threshold1&quot;,Threshold,0,BLACK);
+  plot(&quot;Threshold2&quot;,-Threshold,0,BLACK);
+  PlotWidth = 600;
+  PlotHeight1 = 300;
+<em></em>}</pre>
+<p>In this strategy, a bandpass filter with an optimized center period is fed with the price curve. 
+The result is a clean curve that consists mostly of the medium-period peaks and 
+valleys. It is normalized and Fisher transformed, and the resulting <strong>Signals</strong> series 
+is finally compared with an upper and lower 
+<strong>Threshold</strong> for generating trade signals. This trading method 
+with frequency filters and transformations is superior to conventional 
+indicators. It is explained in detail in the <strong>Black Book</strong>, and in 
+even greater detail in the books by <strong>John Ehlers</strong> from the
+<a href="links.htm">book list</a>.</p>
+<p>The threshold is optimized between <strong>0.5</strong> and <strong>1.5</strong> in steps of
+<strong>0.1</strong>. Any <strong>Signal</strong> 
+value that exceeds the threshold range triggers a trade. Before that, a stop loss 
+is placed at an adaptive distance from the price, and a trail limit 4 average candles away from 
+the current price. If the trade now goes in favorable direction by more than 4 average candles, the stop loss will follow the price at a distance of 8 candles. This ensures that all trades that reach an 8 candle profit are guaranteed to end with a win, regardless how the price further behaves.&nbsp; </p>
+<p>When the <strong>Signals</strong> curve crosses the negative threshold from above, 
+the script assumes that the price is close to a bottom, and buys long. Short 
+buying works the other way around.&nbsp; </p>
+<h3>Training with Walk Forward Optimization </h3>
+<p>Training serves two purposes. At first, it improves the 'robustness' of a strategy. During the training run, strategy parameters are optimized and adapted to the market until the strategy returns stable profits with minimum deviation. The second purpose is finding out how sensitive the system is to small parameter changes. The more sensitive, the less likely is it that backtest results are reproduced in live trading. </p>
+<p>Walk-Forward Optimization (<a href="numwfocycles.htm">WFO</a>) is not merely an optimization, but an analysis method that tests the strategy together with its parameter ranges and optimization method. If a strategy fails in a walk forward analysis, it will also fail in real trading, even if it collected huge profits in backtests. For this reason, walk forward optimization is the most important process when developing a strategy.</p>
+<p>WFO is activated by setting <strong>NumWFOCycles</strong>. It uses a data frame that is shifted in 10 cycles over the simulation period. The frame consists of a training period and a subsequent test as in the figure <a href="numwfocycles.htm">here</a>. The lookback periods at the begin are needed to collect initial data for the functions. The training periods generate the parameters that are then tested in the subsequent test periods. This ensures that every test uses &quot;unseen&quot; price data that were not used for optimizing its parameters - just as in real trading. The data frame is then shifted over the simulation period for verifiying how the strategy would fare when started at different times. Because the test period is now much smaller than the whole simulation period, a far back<strong>StartDate = 2005</strong> 
+is used. This way enough data can be collected for getting a test period from 2010 to 2015. </p>
+<p>For training the strategy, click [<span class="tast">Train</span>] and observe what the <strong>optimize</strong> calls do. It now takes a few minutes because the simulation period is  about 10 years, and a full optimization is performed for any of the 10 cycles. The optimized parameters are stored in a separate parameter file for every WFO cycle. After the training phase, which can take about one minute depending on the PC speed, you'll see charts pop up in your Internet browser, like this:</p>
+<table border="0">
+  <tr>
+    <td><img src="../images/work5_p12.png" width="295" height="301"></td>
+  </tr>
+  <tr>
+    <td><div align="center">Parameter 1 (bandpass time period) <br>
+&nbsp; </div></td>
+  </tr>
+  <tr>
+    <td><img src="../images/work5_p22.png" width="343" height="301"></td>
+  </tr>
+  <tr>
+    <td><div align="center">Parameter 2 (Threshold) <br>
+&nbsp; </div></td>
+  </tr>
+  <tr>
+    <td><img src="../images/work5_p32.png" width="463" height="301"></td>
+  </tr>
+  <tr>
+    <td><div align="center">Parameter 3 (Stop factor) </div></td>
+  </tr>
+</table>
+<p>The parameter charts show how the parameter values affect the performance of the strategy. The red bars are the <strong>return ratio</strong> of the training period - that's basically the total win divided by the total loss, multiplied by a penalty factor for less trades. The dark blue bars are the number of losing trades and the light blue bars are the number of winning trades. We can see that the time period produces  slightly increasing returns up to about <strong>35</strong>, then the returns go down. <strong>Threshold</strong> has the best performance at about <strong>1.0</strong>. The stop factor - the third parameter - slightly goes up and has a maximum at about 7. We can also see here that a distant stop, although it increases the risk and eventually reduces the profit, achieves a higher number of profitable trades and thus a better 'accuracy' of the strategy. </p>
+<p>All red bars ending above <strong>1.0</strong> indicate a profitable parameter combination. In this case they stay above 1.0 over the whole range, which means that the strategy performance is quite robust and not very sensitive to parameter changes. The optimized parameters are stored in the file <strong>Data/Workshop5_EURUSD.par</strong> (the file name would be different for other assets). </p>
+<p>After training, click [<span class="tast">Test</span>]. The data from the training is now used for a walk forward analysis. This is the equity curve: </p>
+<p><img src="../images/work5_45.png" width="679" height="301"></p>
+<p>We can see that  the strategy still stays profitable with walk forward analysis, but the equity curve does not look smooth and the return in 
+some years was negative.  In the next workshop we'll learn how to make strategy returns more steady and reliable so that 
+one can really derive a regular income from them.</p>
+<h3>Real time  optimizing a WFO strategy </h3>
+<p>When trading a walk forward optimized strategy, it should be regularly re-trained and adapted to the current market situation, just as in the WFO process. For this, the
+<strong>ReTrain</strong> clause was added to the script. <strong><a href="is.htm">ReTrain</a></strong> is nonzero when the [<span class="tast">Train</span>] button is clicked during live trading. <strong>UpdateDays</strong> is the time period for automatically downloading new price data for the current asset from the broker's server, which is then used for the subsequent training cycle. If set to <STRONG>-1</STRONG>, 
+the price data is updated to the current date. <strong>
+<a href="numwfocycles.htm">SelectWFO</a></strong> tells Zorro not to optimize the whole simulation period, but only a certain WFO cycle; in this case, the last cycle (<strong>-1</strong>) that 
+is used for live trading. </p>
+<p>Clicking [<span class="tast">Train</span>] every couple of months (as indicated by &quot;<strong>WFO test cycles</strong>&quot; in the performance report) will continue the WFO process during trading, and make the strategy independent of external parameter settings. This way we have essentially a 'parameter-free' strategy. </p>
+<h3>Plotting signals </h3>
+<p>Since the trade rules are somewhat more complicated than the simple lowpass function of the previous lesson, 
+let's see how the various series look like, for checking if everything works as supposed. This happens in the last lines at the end of the script.</p>
+<p class="Stil5"><strong>plot(&quot;Filtered&quot;,Filtereds,NEW,BLUE); </strong></p>
+<p>This line generates a <a href="plot.htm">plot</a> of the <span class="Stil6"><strong>Filtereds</strong></span> series. It's plotted  in a <strong>NEW</strong> chart window with color <strong>BLUE</strong>. We can use the <strong>plot</strong> function to plot anything into the chart, either in the main chart with the price and equity curve, or below the main chart in a new window. The <strong>Signal</strong> curve and the upper and lower <strong>Threshold</strong> 
+are plotted in another new chart window below the above chart. </p>
+<p>The blue curve in the middle window is the plot of the <strong>Filtered</strong> series. It shows the price fluctuation in the range of about +/-0.005,  equivalent to about 50 pips. The bottom window displays the <strong>Signals</strong> series. The black lines are the thresholds that trigger buy and sell signals when <strong>Signals</strong> crosses over or under them. Plotting variables and series in the chart greatly helps to understand and improve the trade rules. For examining a part of the chart in details, the <a href="plotbars.htm">PlotDate</a> and <a href="plotbars.htm">PlotBars</a> variables can be used to 'zoom into' a part of the chart. </p>
+<h3>What have we learned in this workshop?</h3>
+<ul>
+  <li>A <strong><a href="filter.htm">BandPass</a></strong> filter emphasizes a cycle and removes trend and noise from a price curve. </li>
+  <li>The <strong><a href="ta.htm">Fisher</a></strong><a href="ta.htm"> transform</a> compresses a curve to a Gaussian distributed range. </li>
+  <li>You can use the output of any filter or indicator function as input to another function. </li>
+  <li>The <strong><a href="crossover.htm">crossOver</a></strong> and <strong><a href="crossover.htm">crossUnder</a></strong> functions detect the crossing of a curve with a threshold or with another curve. </li>
+  <li><strong><a href="optimize.htm">Optimize</a></strong> parameters for making a strategy more robust.</li>
+  <li><strong><a href="training.htm#wfo">Walk Forward Optimization</a></strong> simulates trading under realistic conditions. </li>
+  <!--li>Limiting the number of open trades can prevent bursts and peaks in the equity curve. </li-->
+  <!--li><strong>Oversampling</strong> improves the optimizing quality and and the test accuracy. </li-->
+  <li>WFO trained strategies should be <strong><a href="retraining.htm">re-trained</a></strong> in regular intervals.</li>
+  <li>The <strong><a href="plot.htm">plot</a></strong> function displays the curves of signals and indicators. </li>
+</ul>
+<p align="right"><a href="tutorial_kelly.htm">Next: Portfolio Trading</a></p>
+<hr>
+<h3>Further reading: &#9658; <a href="training.htm">Training</a>, <a href="plot.htm">plot</a>, <a href="filter.htm">signal processing</a>, <a href="optimize.htm">optimize</a>, <a href="numwfocycles.htm">NumWFOCycles</a></h3>
+</body>
+</html>

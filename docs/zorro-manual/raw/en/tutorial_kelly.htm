@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+<title>Algorithmic Trading in C/C++ | Workshop 6</title>
+<link href="css.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+<!--
+.Stil1 {font-weight: bold}
+.style1 {color: #FF0000}
+-->
+</style>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/tutorial_kelly.htm">
+</head>
+<body>
+<a href="tutorial_fisher.htm">Previous: Optimizing</a><br>
+<h1>Workshop 6: Portfolio strategies. Money management. </h1>
+<p><strong>Diversification</strong> is an important factor for getting a regular income with algorithmic trading. Therefore, many successful trading strategies trade not only with a portfolio of assets, but also with a portfolio of strategies. Of course, 
+any components of the portfolio - any assets and any algorithm - must be separately optimized. Here's a script that does that automatically. It trades with several assets on several time frames simultaneously, and uses both trend and counter-trend strategy algorithms (<strong>Workshop6.c</strong>): </p>
+<pre><em>// Counter trend trading function from Workshop 5</em>
+function tradeCounterTrend()
+{
+  TimeFrame = 4;	<em>// 4 hour time frame</em>
+  vars Prices = series(price(0));
+  vars Filtereds = series(BandPass(Prices,optimize(30,25,35),0.5));<br>  vars Signals = series(FisherN(Filtereds,500));<br>  var Threshold = optimize(1,0.5,2,0.1);
+
+  Stop = optimize(4,2,10) * ATR(100);<br>  Trail = 4*ATR(100);
+<br>  if(crossUnder(Signals,-Threshold))
+    enterLong();
+  else if(crossOver(Signals,Threshold))
+    enterShort();
+}
+
+<em>// Trend trading function from Workshop 4</em>
+function tradeTrend()
+{
+  TimeFrame = 1; <em>// 1 hour time frame</em>
+  vars Prices = series(price(0));
+  vars Trend = series(LowPass(Prices,optimize(500,300,700)));<br>  
+  Stop = optimize(4,2,10) * ATR(100);<br>  Trail = 0;<br>
+  vars MMI_Raw = series(MMI(Prices,300));
+  vars MMI_Smooth = series(LowPass(MMI_Raw,500));
+  
+  if(falling(MMI_Smooth)) {
+    if(valley(Trend))
+      enterLong();
+    else if(peak(Trend))
+      enterShort();
+  }
+}
+
+<em></em>function run()
+{
+  set(PARAMETERS,FACTORS,LOGFILE);<em>
+  </em>BarPeriod = 60; <em>
+</em>  LookBack = 2000;<em>
+</em>  StartDate = 2007;<em>
+</em>  EndDate = 2017;
+<em>  </em>NumWFOCycles = 10; <em> </em>
+  Capital = 10000;	<br>
+  if(ReTrain) {
+    UpdateDays = -1;  
+    SelectWFO = -1;	
+    reset(FACTORS); 
+  }
+ 
+<em>// double portfolio loop</em>
+  while(asset(loop("EUR/USD","USD/JPY")))
+  while(algo(loop("TRND","CNTR")))
+  {
+    Margin = 0.5 * OptimalF * Capital;
+    if(Algo == "TRND") 
+      tradeTrend();
+    else if(Algo == "CNTR") 
+      tradeCounterTrend();
+  }
+}</pre>
+<p>For testing a portfolio strategy, you'll first need historical data for more assets, since the Zorro installation has only EUR/USD included. Go to the <a href="http://zorro-project.com/download.php" target="_blank">Zorro download page</a>,  and download the M1 price histories from 2002 on (that's normally 3 large files). Unzip the content in your <strong>History</strong> folder. You now have the recent history of the major index and Forex pairs. For this strategy we'll need the USD/JPY history from 2007 on. </p>
+<p>The strategy is divided into 3 different <a href="tutorial_var.htm">functions</a>: <strong>tradeTrend</strong> for trend trading, <strong>tradeCounterTrend</strong> for counter trend trading, and the <strong>run</strong> function that sets up the parameters, selects the assets, sets up the trade volume, and calls the two trade functions. The <a href="loop.htm">loop</a> function 
+lets the code walk through the various assets and trade functions. </p>
+<p>The trade volume is controlled by this line:</p>
+<p><strong>Margin = 0.5 * OptimalF * Capital; </strong> </p>
+<p>We're  using a money management method developed by <strong>Ralph Vince</strong>. He published a computer algorithm that evaluates every component's balance curve for calculating the optimal percentage of the gained capital to be reinvested. This percentage is called the <strong><a href="optimalf.htm">OptimalF</a></strong> factor (you can see it also in the <strong>OptF</strong> column in the performance report). Multiply <strong>OptimalF</strong> with the capital, and you'll get the maximum margin to be allocated to a certain trade. Normally, people try to stay well below this maximum margin. <strong>OptimalF</strong> is specific to the strategy component and calculated from historical performance, meaning there's no guarantee that this performance will continue in the future. Exceeding the maximum margin is  worse than staying below it, therefore it's recommended to only invest about 50% of <strong>OptimalF</strong>. </p>
+<p><a href="lots.htm">Margin</a> is one of the methods for determining the amount invested per trade. Other methods were giving the number of lots or the money at risk. <strong>Margin</strong> is only a fixed percentage of the real trade volume - for instance 1% at 1:100 leverage - that the broker keeps as a deposit. If <strong>Margin</strong> is left at its default value, Zorro always buys 1 lot, the minimum allowed trade size. The higher the margin, the higher the number of lots and the higher the profit or loss. <strong>Capital</strong> is a variable set to our initial investment ($10,000) for determining its annual growth (CAGR). For determining the optimal margin for the strategy component, this <strong>Capital</strong> is multiplied with the 50% of the <strong>OptimalF</strong> 
+factor. </p>
+<p>Now it's time to [<span class="tast">Train</span>] the strategy. Because we have now 4 
+portfolio components, 4x  more bars, and twice as many cycles, the training process will take much longer than in the last workshop. As soon as it's finished, 
+click [<span class="tast">Test</span>], then click [<span class="tast">Result</span>] (again, your equity curve can look different when testing a different time period). </p>
+<p><img src="../images/work6_22.png" width="679" height="301"></p>
+<p>You can see in the chart below that now two different algorithms trade simulaneously. The long green lines are from trend trading where positions are hold a relatively long time, the shorter lines are from counter-trend trading. The combined strategy does both at the same time. It generated about 40% annual CAGR in the walk forward test. </p>
+<p>What happens when we reinvest our profits? Modify this line (changes in red): </p>
+<p><strong> Margin = 0.5 * OptimalF * Capital <span class="style1">* sqrt(1 + ProfitClosed/Capital)</span>; </strong></p>
+<p><a href="winloss.htm">ProfitClosed</a> is the sum of the profits of all closed trades of the portfolio component. <strong>1 + ProfitClosed/Capital</strong> is our capital growth factor. Let's examine the strange formula with an example. Assume we started with $10000 capital and the component made $20000 profit. The inner term inside the parentheses is then <strong>1 + $20000/$10000 = 3</strong>. This is the growth of the capital: we started with $10000 and have now $3000 on our account, so it grew by factor 3. The square root of 3 is ~1.7, and this is the factor used for reinvesting our profits. </p>
+<p>Why the square root? Here's the background in short.  In short term trading 
+with high leverage, the required capital is mainly determined by the expected 
+maximum drawdown. The maximum drawdown of any trade system increases over time. 
+A system tested over 10 years has worse drawdowns than the same system tested over only 5 years. When modeling drawdown depth mathematically with a diffusion model, the maximum drawdown is proportional to the square root of the trading time. 
+But the maximum drawdown is also proportional to the invested amount: When investing twice the volume you'll get twice the drawdown. Thus, 
+if you would reinvest a fixed percentage of your balance, as suggested in most 
+trading books, the maximum drawdown would grow by both effects proportionally to time to the power of <strong>1.5</strong>. 
+It will thus grow faster than your account balance. This means that at some point, a drawdown will  inevitably exceed the balance, causing a margin call. There are several methods to overcome this 
+problem, and one of them is to reinvest only an amount proportional to the square root of the capital growth. Thus when your capital doubles, increase the trade volume only by a factor of about <strong>1.4</strong> (the square root of <strong>2</strong>), i.e. <strong>40%</strong>. 
+That's the famous <strong>square root rule</strong> that applies to all high 
+leverage strategies. If you're interested, you 
+can find the formula explained in detail in the <a href="links.htm#black">Black Book</a>, 
+and also a comparison of several other reinvestment methods. For calculating the 
+investment with the square root rule, use the <strong>InvestCalculator</strong> 
+script.</p>
+<p>Since only the investment method has changed in the script above, the system needs not be retrained. Clicking [<span class="tast">Test</span>] 
+is enough. Reinvesting the capital by the square root rule increases the CAGR to 
+about 50%.
+&nbsp;</p>
+<h3>The evaluation shell</h3>
+<p>In the strategy above we have some parameters that are optimized, and some 
+are not, like the ATR period, the MMI period, or the number of WFO cycles. Hoiw 
+do we know which parameters are to be optimized and which are not? And how do we 
+know that the functions we used, <strong>LowPass</strong>, <strong>BandPass</strong>, 
+and <strong>FisherN</strong>, are the best for our purpose? Finding out normally 
+requres lengthy experimenting. The evaluation shell (available in Zorro Z 
+version 3 and above) can takle over most of the work and automatically generate 
+the best function and parameter combinations for such a strategy. You can find 
+details, and a variant of this workshop with the shell and a short tutorial, in 
+the <a href="shell.htm">Evaluation Shell</a> chapter. </p>
+<h3>What have we learned in this workshop?</h3>
+<ul>
+  <li>The <a href="barperiod.htm">TimeFrame</a> variable allows different time frames for algorithms or indicators within the same strategy. </li>
+  <li>The <strong><a href="loop.htm">loop</a></strong> function can be used to go through a list of assets or algorithms. </li>
+  <li>The <strong><a href="asset.htm">asset</a></strong> and <strong><a href="algo.htm">algo</a></strong> functions select a certain asset and set up an algorithm identifier. </li>
+  <li>The <strong><a href="optimalf.htm">OptimalF</a></strong> factors give the maximum capital allocation to a certain strategy component. </li>
+  <li>Reinvest only the square root of your profit. </li>
+</ul>
+<p align="right"><span><a href="tutorial_pre.htm">Next: Machine Learning</a></span></p>
+<hr>
+<h3>Further reading: &#9658; <a href="while.htm">while</a>, <a href="asset.htm">asset</a>, <a href="algo.htm">algo</a>, <a href="loop.htm">loop</a>, <a href="aarray.htm">string</a>, <a href="str_.htm">strstr</a></h3>
+<p align="right">&nbsp;</p>
+</body>
+</html>

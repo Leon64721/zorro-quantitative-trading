@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>CBI, CBIScale, ReturnCBI</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/ddscale.htm">
+</head>
+
+<body>
+<h1>Cold Blood Index</h1>
+It is essential for risk control to permanently observe automated trading 
+systems and detect as early as possible if a market change rendered the 
+algorithm unprofitable.
+The Cold Blood Index (<strong>CBI</strong>) can distinguish between normal 
+drawdowns that are common to algo trading systems, and loss of profitability due 
+to due to a substantial market change. <br>&nbsp; For this purpose, the live 
+trading profit/loss curve is daily compared with the backtest profit-loss curve. The 
+drawdown probability is calculated based on the algorithm published on <a href="http://www.financial-hacker.com/the-cold-blood-index/" target="_blank">Financial Hacker</a>, and displayed in the trade log and on the status page. A drawdown of low probability indicates a deviation from the backtest due to a a market change. This information can be used for deciding whether to stop 
+the trading algorithm, or to continue it in cold blood. 
+<p>The drawdown probability is calculated with the following function: </p>
+<h2>CBI (var* Data, int Length, int Shuffle, var Depth, int Width, int Horizon): var </h2>
+Returns the probability  in percent (<strong>0..100</strong>) of encountering a drawdown of the given <strong>Depth</strong> and <strong>Width</strong> within a given time <strong>Horizon</strong>. For this, the drawdown is  compared with the <strong>Data</strong> array that 
+is supposed to contain a profit/loss curve from a backtest or a previous trading session.
+<h3>Returns:</h3>
+Probability  in percent (<strong>0..100</strong>).
+A low probability (less than 2%) indicates a deviation from the backtest.&nbsp;
+<h3>Parameters:</h3>
+<table border="0">
+  <tr>
+    <td><strong>Data</strong></td>
+    <td>Data array with profit/loss values, f.i. from the 
+	<a href="export.htm#pnl">pnl.dbl</a> curve stored in a backtest. </td>
+  </tr>
+  <tr>
+    <td><strong>Length</strong></td>
+    <td>Length of the data array, positive for an array in time descending order and negative for ascending order.</td>
+  </tr>
+    <tr>
+    <td><strong>Shuffle</strong></td>
+    <td>Number of shuffled profit/loss curves to evaluate, or <strong>1</strong> 
+	for only evaluating the original curve. The returned probability is 
+	calculated from the original and the shuffled curves.</td>
+    </tr>
+  <tr>
+    <td><strong>Depth</strong></td>
+    <td>Drawdown depth, the difference of an equity or balance peak with the subsequent equity or balance valley, 
+	in the same scale as the values in the <strong>Data</strong> array.</td>
+  </tr>
+  <tr>
+    <td><strong>Width</strong></td>
+    <td>Drawdown duration, the time distance between the highest peak and the subsequent 
+	deepest valley, in the same units as the time distance of the points in the
+	<strong>Data</strong> array, usually bar periods or days.</td>
+  </tr>
+  <tr>
+    <td><strong>Horizon</strong></td>
+    <td>Live trading time in in the same units as the <strong>Data</strong> array, usually bar periods or days. Must be equal or above <strong>Width</strong> and smaller than <strong>Length</strong>. </td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<h2>CBIScale</h2>
+Drawdown scale for the automatic CBI calculation in [<span class="tast">Trade</span>] mode (<strong>default = 1</strong> = no scaling). The  drawdown depth is divided by this scale factor for calculating the <strong>CBI</strong>.
+<h3>Type:</h3>
+<strong>var</strong>
+<h2>ReturnCBI</h2>
+Current CBI value in&nbsp; [<span class="tast">Trade</span>] mode (see remarks). <h3>Type:</h3>
+<strong>var, read/only</strong>
+<br>
+&nbsp;
+<h3>Remarks:</h3>
+<ul>
+  <li>Enough data should be available for meaningful results. Have <strong>
+  Length</strong> <strong>&gt;&gt; Width</strong> and <strong>Horizon</strong> <strong>
+  &gt; 30</strong>.</li>
+	<li><strong>ReturnCBI</strong> is automatically calculated and displayed in [<span class="tast">Trade</span>] mode 
+  when <a href="verbose.htm">Verbose</a> is at 2 or above, when a <a href="export.htm#pnl">backtest profit/loss curve</a> 
+	(<strong>*pnl.dbl</strong>) is present in the <strong>Data</strong> folder, when trades have been opened and 
+  when a drawdown longer than 3 days was encountered. It is recalculated once per day. 
+	The <strong>Shuffle</strong> parameter is 5% the <a href="montecarlo.htm">
+	Montecarlo</a> variable, so the default is 10 (original plus 9 shuffled 
+	curves). In [<span class="tast">Test</span>] mode the CBI is recorded in the
+  <strong>.log</strong> file. Note that the CBI in live trading is only valid 
+  when the trade volume is the same as in the backtest and when no trades are 
+  resumed from previous sessions.</li>
+	<li>Use <a href="random.htm">seed</a> to get always the same result when
+	shuffling is used.</li>
+  <li>When the volume per trade is different to the backtest, use either 
+  volume-independent <a href="mode.htm">PIPRETURN</a> curves or set <strong>CBIScale</strong> the current average trade volume divided by the average trade volume in the backtest (see example). </li>
+	<li>The <a href="zsystems.htm">Z systems</a> display the CBI on their trade status pages. For this, run a backtest with the 
+	<strong>Capital</strong> 
+  slider at the same position as in live trading at session start. When the 
+  system runs on a VPS, make sure that the <strong>*.dbl</strong> file from the backtest is copied to the 
+    <strong>Data</strong> folder on the server.
+  <br>&nbsp;<br></li>
+</ul>
+<h3>Examples:</h3>
+<pre><em>//scale drawdowns for CBI according to invested capital</em>
+var Invest = slider(1,5000,0,10000,&quot;Investment&quot;,&quot;Invested capital&quot;);
+static var InitialInvest = 0;
+if(is(INITRUN)) InitialInvest = Invest; <em>// store the initial investment that was also used in the backtest</em> 
+if(InitalInvest &gt; 0) CBIScale = Invest/InitialInvest;</pre>
+<pre><em>//Check the Cold Blood Index at a Z12 Drawdown of $800 in </em>
+<em>//$500 in the last 60 of 100 trading days</em>
+void main()
+{
+  var* PnLs = file_content("Data\\Z12_pnl.dbl");
+  int Length =  file_length("Data\\Z12_pnl.dbl")/sizeof(var);
+  var P = CBI(PnLs,-Length,1,500,60,100);
+  printf("\nCBI = %.0f%%",P);
+}</pre>
+<h3>See also:</h3>
+<a href="trading.htm">Trading</a>, <a href="http://www.financial-hacker.com/the-cold-blood-index/">Cold Blood Index</a>,
+<a href="randomize.htm">randomize</a>, <a href="lots.htm">ScholzBrake</a>
+<p>&nbsp;</p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

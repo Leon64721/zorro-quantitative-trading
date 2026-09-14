@@ -1,0 +1,413 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Deep Learning for Market Prediction | Zorro Project</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+.auto-style1 {
+	text-align: center;
+}
+</style>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/deeplearning.htm">
+</head>
+
+<body>
+<h1>Deep learning for market prediction</h1>
+<p>  
+  
+  Machine learning algorithms 
+  can be used for market prediction with Zorro's
+  <a href="advisor.htm">advise</a> functions. Due to the low signal-to-noise ratio and to ever-changing market conditions 
+  of price series, 
+  analyzing the market is an ambitious task for machine 
+  learning. But since the price curves are not completely random, even 
+  relatively simple 
+  machine learning methods, such as in the <strong>DeepLearn</strong> script, 
+  can predict the next price movement with a better than 50% success rate. If 
+  the success rate is high enough to overcome transactions costs - at or above 55% 
+  accuracy - we can expect a steadily rising profit 
+  curve. </p>
+<p>  
+  
+  Compared with other machine learning algorithms, such as Random Forests or 
+  Support Vector Machines, deep learning systems combine a high success rate 
+  with litle programming effort. 
+  A linear neural network with 8 analog inputs and 4 binary outputs had a structure like this:</p>
+<p class="auto-style1">
+<img height="260" src="../images/deepnet4.png" width="590"></p>
+<p>  
+  
+  A neural network for trading has normally multiple inputs for price, volume, 
+  order book data, indicators etc. and a single analog output that predicts a 
+  future price or momentum.  
+  
+  Deep learning uses linear or special neural network structures (convolution 
+  layers, LSTM) with a large number of neurons and hidden layers.  
+  
+  Some parameters common for most neural networks:</p>
+<ul>
+	<li><strong>Hidden layers</strong> of a linear network are usually defined 
+	with a vector. For instance, <strong>c(50,100,50)</strong> defines 3 hidden layers, 
+	the first with 50, second with 100, and third with 50 neurons.</li>
+	<li>The <strong>Activation</strong> function converts the sum of neuron 
+	input values to the neuron output. Most often used are a <strong>Rectifier</strong> 
+	(RELU = rectified linear unit) that has a linear slope from 0 to 1, <strong>
+	Sigmoid</strong> that saturates to 0 or 1, <strong>Tanh</strong> that 
+	saturates to -1 or +1, or <strong>SoftMax</strong> that approximates the 
+	highest input.</li>
+	<li>An <strong>Epoch</strong> is a training iteration over the entire data 
+	set. Training will stop once the predefined number of epochs is reached. More epochs 
+	mean better prediction, but longer training.</li>
+	<li>The <strong>Learning rate</strong> controls the step size for the 
+	<strong>gradient descent</strong> algorithm used in training. A lower learning rate means finer steps and possibly 
+	more precise prediction, but longer training time. The <strong>Larning rate scale</strong> is a multiplication factor for 
+	changing the learning rate after each iteration.</li>
+	<li><strong>Momentum</strong> adds a fraction of the previous step to the 
+	current one. It prevents the gradient descent from getting stuck at a tiny 
+	local minimum or saddle point.</li>
+	<li>The <strong>Batch size</strong> is a number of random samples &#8211; a
+	<strong>mini batch</strong> &#8211; taken out of the data set for a single 
+	training run. Splitting the data into mini batches speeds up training since 
+	the weight gradient is then calculated from fewer samples. The higher the 
+	batch size, the better is the training, but the more time it will take.</li>
+	<li><strong>Dropout</strong> is a number of randomly selected neurons that 
+	are disabled during a mini batch. This way the net learns only with a part 
+	of its neurons, which can effectively reduce overfitting.</li>
+</ul>
+<p>Here's a short description of installation and usage 
+  of 5 popular R or Python based deep learning packages: Deepnet, Torch, 
+Keras/Tensorflow, H2O, and MxNet. Each comes with an short example of a (not really deep) linear neural net with one hidden layer.</p>
+<h3>Deepnet (R)</h3>
+Deepnet is a lightweight and straightforward neural net library 
+supporting a stacked autoencoder and a Boltzmann machine. Produces good results when 
+the feature set is not too complex. Note that the current version does not 
+support more than 3 hidden layers. The basic R script for 
+using a deepnet autoencoder in a Zorro strategy:<br>
+<pre>library('deepnet')
+
+neural.train = function(model,XY)
+{
+  XY &lt;- as.matrix(XY)
+  X &lt;- XY[,-ncol(XY)]
+  Y &lt;- XY[,ncol(XY)]
+  Y &lt;- ifelse(Y &gt; 0,1,0)
+  Models[[model]] &lt;&lt;- sae.dnn.train(X,Y,
+  hidden = c(30),
+  learningrate = 0.5,
+  momentum = 0.5,
+  learningrate_scale = 1.0,
+  output = &quot;sigm&quot;,
+  sae_output = &quot;linear&quot;,
+  numepochs = 100,
+  batchsize = 100)
+}
+
+neural.predict = function(model,X)
+{
+  if(is.vector(X)) X &lt;- t(X)
+  return(nn.predict(Models[[model]],X))
+}
+
+neural.save = function(name)
+{
+  save(Models,file=name) 
+}
+
+neural.init = function()
+{
+  set.seed(365)
+  Models &lt;&lt;- vector(&quot;list&quot;)
+}</pre>
+<h3>Torch (Python)</h3>
+Torch&nbsp;is an&nbsp;open-source&nbsp;machine learning&nbsp;library and a&nbsp;scientific 
+computing&nbsp;framework, created by the&nbsp;<a href="https://en.wikipedia.org/wiki/IDIAP">Idiap 
+Research Institute</a>. Torch development moved in 2017 to&nbsp;<a href="https://en.wikipedia.org/wiki/PyTorch">PyTorch</a>, 
+a port of the library to&nbsp;Python. It is currently the library that we 
+recommend for high-end machine learning systems. You will need to program your 
+script in <a href="dlls.htm">C++</a> for using Torch.<br><br>
+The installation:&nbsp;<ul>
+	<li>Download and install a 64 bit Python version. <li>Edit <strong>Zorro.ini</strong> and 
+	enter the path to 64 bit Python on your PC, f.i. &quot;<strong>PythonPath64 
+	= &quot;C:\Users\YourName\AppData\Local\Programs\Python\Python312</strong>&quot;.
+	<!--li>Download and install <strong>RTools</strong> from
+	<a href="https://cran.r-project.org/bin/windows/Rtools/">
+	cran.r-project.org/bin/windows/Rtools/</a>.<li>Download and install <strong>Anaconda</strong> for Windows, Python 3.X version, from
+	<a href="http://www.anaconda.com" target="_blank">www.anaconda.com</a>.. </li>
+	<!--li>Open the <strong>Anaconda 
+Navigator</strong> and install the <strong>RStudio</strong> application. </li-->
+	<li>Install Torch as described on
+	<a href="https://PyTorch.org" target="_blank">PyTorch.org</a>. Usually, open the Windows command prompt, enter
+	<strong>pip3 install torch </strong>and hit 
+	&lt;Return&gt;<strong>.</strong></li-->
+	</ul>
+<p>For your convenience, we've uploaded an image of a 64-bit Python installation 
+with Torch and all required modules to
+<a href="https://opserver.de/down/Python312.zip" target="_blank">
+https://opserver.de/down/Python312.zip</a>. Unzip it into some folder with full 
+access, like your <strong>Documents</strong> folder, then enter its path under
+<strong>PythonPath64</strong> in <a href="ini.htm">ZorroFix.ini</a>. You need not run a setup or modify the 
+enviroment. Other Python installations on your PC are not affected.</p>
+<p>For using Torch, write a .cpp script and run it with the 64-bit Zorro version. 
+Include <strong>pynet.cpp</strong>, which contains the <strong>neural</strong> 
+function for Python. Then write the correcponding PyTorch script, with the same name as your 
+strategy, but extension <strong>.py</strong>. Example:</p>
+<pre>import torch
+from torch import nn
+import math
+import numpy as np
+
+Path = &quot;Data"
+Device = "cpu"
+NumSignals = 8
+Batch = 15
+Split = 90
+Epochs = 30
+Neurons = 256
+Rate = 0.001
+Models = []
+
+def neural_init():
+    global Device
+    Device = (
+        "cuda"
+        if torch.cuda.is_available()
+        else "mps"
+        if torch.backends.mps.is_available()
+        else "cpu"
+    )
+    
+def network():  
+    model = nn.Sequential(
+        nn.Linear(NumSignals,Neurons),
+        nn.ReLU(),
+        nn.Linear(Neurons,Neurons),
+        nn.ReLU(),
+        nn.Linear(Neurons,1),
+        nn.Sigmoid()
+    ).to(Device)
+    loss = nn.BCELoss()
+    optimizer = torch.optim.Adam(model.parameters(),lr=Rate)
+    return model,loss,optimizer 
+
+def data(Path):
+    global NumSignals
+    Xy = np.loadtxt(Path,delimiter=',')
+    NumSignals = len(Xy[0,:])-1
+    return Xy
+
+def split(Xy):
+    X = torch.tensor(Xy[:,0:NumSignals],dtype=torch.float32,device=Device)
+    y = torch.tensor(Xy[:,NumSignals].reshape(-1,1),dtype=torch.float32,device=Device)
+    y = torch.where(y &gt; 0.,1.,0.)
+    return X,y
+
+def train(N,Xy):
+    global Models
+    model,loss,optimizer = network()
+    X,y = split(Xy)
+    for j in range(Epochs):
+        for i in range(0,len(X),Batch):
+            y_pred = model(X[i:i+Batch])
+            Loss = loss(y_pred,y[i:i+Batch])
+            optimizer.zero_grad()
+            Loss.backward()
+            optimizer.step()
+        print(f"Epoch {j}, Loss {Loss.item():&gt;5f}")
+    Models.append(model)
+    return Loss.item()*100
+
+def neural_train(N,Path):
+    Xy = data(Path)
+    return train(N,Xy)
+
+def neural_predict(N,X):
+    if N &gt;= len(Models):
+        print(f"Error: Predict {N} &gt;= {len(Models)}")
+        return 0
+    model = Models[N]
+    X = torch.tensor(X,dtype=torch.float32,device=Device)
+    with torch.no_grad():
+        y_pred = model(X)
+    return y_pred
+
+def neural_save(Path):
+    global Models
+    torch.save(Models,Path)
+    print(f"{len(Models)} models saved")
+    Models.clear()
+
+def neural_load(Path):
+    global Models
+    Models.clear()
+    Models = torch.load(Path)
+    for i in range(len(Models)):
+        Models[i].eval()
+    print(f"{len(Models)} models loaded")
+</pre>
+<h3>Keras / Tensorflow (R)</h3>
+Tensorflow was a neural network kit by Google. They lately seem to have 
+abanoned its further development, but it is still available. It supports CPU and GPU and 
+comes with all needed modules for tensor arithmetics, activation and loss 
+functions, covolution kernels, and backpropagation algorithms. So you can build 
+your own neural net structure. Keras is a neural network shell that offers a simple interface for that, 
+and is well described in a <a href="links.htm">book</a>. <br><br>
+Keras is available as a R library, but installing it with Tensorflow requires also a Python 
+environment such as Anaconda or Miniconda. The step by step installation for the CPU version:&nbsp;<ul>
+	<li>Download and install R 64 bit for Windows from 	<a href="https://cran.r-project.org/bin/windows/">
+	cran.r-project.org/bin/windows/</a>..<li>Edit <strong>Zorro.ini</strong> and 
+	enter the path to the R terminal on your PC, f.i. &quot;<strong>C:\Program 
+	Files\R\R-4.2.1\bin\x64\Rterm.exe</strong>&quot;.
+	<!--li>Download and install <strong>RTools</strong> from
+	<a href="https://cran.r-project.org/bin/windows/Rtools/">
+	cran.r-project.org/bin/windows/Rtools/</a>.<li>Download and install <strong>Anaconda</strong> for Windows, Python 3.X version, from
+	<a href="http://www.anaconda.com" target="_blank">www.anaconda.com</a>.. </li>
+	<!--li>Open the <strong>Anaconda 
+Navigator</strong> and install the <strong>RStudio</strong> application. </li-->
+	<li>Start the <strong>R x64</strong> console. Enter the command <strong>install.packages(&quot;keras&quot;)</strong> and hit 
+	&lt;Return&gt;<strong>.</strong></li-->
+	<li>Now install let Keras automatically install Miniconda and Tensorflow. The commands:
+	<strong>
+	library('keras') -</strong> <strong>
+	install_keras()</strong>.</li>
+</ul>
+<p>Installing the GPU version is more complex, since Tensorflow supports Windows 
+only in CPU mode. So you need to either run Zorro on Linux, or run Keras and 
+Tensorflow under WSL for GPU-based training. Multiple cores are only available 
+on a CPU, not on a GPU.&nbsp; </p>
+<p>Example to use Keras in your strategy:</p>
+<pre>library('keras')
+
+neural.train = function(model,XY)
+{
+  X &lt;- data.matrix(XY[,-ncol(XY)])
+  Y &lt;- XY[,ncol(XY)]
+  Y &lt;- ifelse(Y &gt; 0,1,0)
+  Model &lt;- keras_model_sequential()
+  Model %&gt;%
+    layer_dense(units=30,activation='relu',input_shape = c(ncol(X))) %&gt;%
+    layer_dropout(rate = 0.2) %&gt;%
+    layer_dense(units = 1, activation = 'sigmoid')
+
+  Model %&gt;% compile(
+    loss = 'binary_crossentropy',
+    optimizer = optimizer_rmsprop(),
+    metrics = c('accuracy'))
+
+  Model %&gt;% fit(X, Y,
+    epochs = 20, batch_size = 20,
+    validation_split = 0, shuffle = FALSE)
+
+  Models[[model]] &lt;&lt;- Model
+}
+
+neural.predict = function(model,X)
+{
+  if(is.vector(X)) X &lt;- t(X)
+  X &lt;- as.matrix(X)
+  Y &lt;- Models[[model]] %&gt;% predict_proba(X)
+  return(ifelse(Y &gt; 0.5,1,0))
+}
+
+neural.save = function(name)
+{
+  for(i in c(1:length(Models)))
+    Models[[i]] &lt;&lt;- serialize_model(Models[[i]])
+  save(Models,file=name) 
+}
+
+neural.load = function(name)
+{
+  load(name,.GlobalEnv)
+  for(i in c(1:length(Models)))
+    Models[[i]] &lt;&lt;- unserialize_model(Models[[i]])
+}
+
+neural.init = function()
+{
+  set.seed(365)
+  Models &lt;&lt;- vector(&quot;list&quot;)
+}
+</pre>
+<h3>MxNet (R)</h3>
+MxNet was Amazon&#8217;s answer 
+on Google&#8217;s Tensorflow, but did not gain the same popularity and is 
+currently not further developed. It offers also tensor arithmetics and neural net building 
+blocks on CPU and GPU, as well as high level network functions similar to Keras; 
+a future Keras version will also support MxNet. Just as with Tensorflow, CUDA 
+is supported, but not (yet) OpenCL, so you&#8217;ll need a Nvidia graphics card to 
+enjoy GPU support. The code for installing the MxNet CPU version:<pre>cran &lt;- getOption(&quot;repos&quot;)
+cran[&quot;dmlc&quot;] &lt;- &quot;https://s3-us-west-2.amazonaws.com/apache-mxnet/R/CRAN/&quot;
+options(repos = cran)
+install.packages('mxnet')</pre>
+The MxNet R script:<br>
+<pre>library('mxnet')
+
+neural.train = function(model,XY)
+{
+  X &lt;- data.matrix(XY[,-ncol(XY)])
+  Y &lt;- XY[,ncol(XY)]
+  Y &lt;- ifelse(Y &gt; 0,1,0)
+  Models[[model]] &lt;&lt;- mx.mlp(X,Y,
+    hidden_node = c(30),
+    out_node = 2,
+    activation = &quot;sigmoid&quot;,
+    out_activation = &quot;softmax&quot;,
+    num.round = 20,
+    array.batch.size = 20,
+    learning.rate = 0.05,
+    momentum = 0.9,
+    eval.metric = mx.metric.accuracy)
+}
+
+neural.predict = function(model,X)
+{
+  if(is.vector(X)) X &lt;- t(X)
+  X &lt;- data.matrix(X)
+  Y &lt;- predict(Models[[model]],X)
+  return(ifelse(Y[1,] &gt; Y[2,],0,1))
+}
+
+neural.save = function(name)
+{
+  save(Models,file=name) 
+}
+
+neural.init = function()
+{
+  mx.set.seed(365)
+  Models &lt;&lt;- vector(&quot;list&quot;)
+}</pre>
+<br>
+<h3>Remarks:</h3>
+<ul>
+	<li>&nbsp;<span class="edition">&nbsp;!!&nbsp;</span> Machine learning packages (with 
+	exception of <strong>Deepnet</strong>, which usually always works) are often heavily optimized to 
+	a particular R and/or Python version. This can have the side effect that 
+	you'll end up with a <span class="Highlight">slightly incompatible</span> 
+	library that won't fully work with your R or Python version. In that case the training 
+	process fails with an error message like <strong>NEURAL_INIT: failed</strong>.
+	Check out the support or user forums for suggestions and solutions. 
+	Sometimes you need to fall back to an earlier R, Python, or library version.</li>
+	<li>Most deep learning packages are optimized for  
+	large batch of data samples. Algo trading methods however normally train with 
+	many samples, but predict with only a single sample derived from the current 
+	price curve. This is ok for live trading, 
+	but can render the backtest <span class="Highlight">very slow</span>. Especially 
+	with the H2O package, but to some extent also with other packages. 
+	If you can choose, use GPU support only for training, and CPU for 
+	testing and trading. </li>
+	<li><span class="Highlight">Batch prediction</span> can speed up backtests 
+	enormously. An example with code can be found on the
+	<a href="https://opserver.de/ubb7/ubbthreads.php?ubb=showflat&amp;Number=485210#Post485210" target="_blank">
+	Zorro user forum</a>.</li>
+</ul>
+
+<h3>Read on:</h3>
+<a href="https://zorro-project.com/training.php" target="_blank">Training</a>, <a href="strategy.htm">Strategies</a>,  <a href="advisor.htm">advise</a>&nbsp;
+<p>  <a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; 
+latest version online</a>
+</p>
+</body>
+</html>

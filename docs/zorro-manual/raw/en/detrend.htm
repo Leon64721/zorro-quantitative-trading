@@ -1,0 +1,210 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Detrend</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+.auto-style1 {
+	font-size: smaller;
+}
+</style>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/detrend.htm">
+</head>
+
+<body>
+<h1>Price Curve Detrending, Randomizing, Shaping</h1>
+When developing, testing, or training systems, it is often very useful to 
+modify price curves, <span class="Highlight">randomize </span>price data, or <span class="Highlight">remove trend</span>  from trades, indicators, 
+or trained parameters. This allows training or testing strategies under defined 
+conditions, such as with no trend, with artificial trend, or with artificial 
+price peaks or drops. Randomized price curves can be used for Monte Carlo 
+evaluations or <span class="Highlight">reality checks</span>. Backtesting with detrended or inverted price curves 
+is a 
+quick check to verify the validity and robustness of a strategy.&nbsp; 
+<p><img src="../images/shape.png" height="362" width="701"><br>
+<span class="auto-style1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+Artificial price drop for testing the behavior of a grid trading system</span></p>
+<p><img height="292" src="../images/shuffle.png" width="556"><br>
+<span class="auto-style1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+Shuffled price curves for a reality check algorithm</span></p>
+One variable does it all:<br>
+<h2>Detrend</h2>
+Accepts the flags below for detrending or other manipulations of the price curves or 
+of trades, indicators, 
+or trained parameters.
+The flags can be set with <strong>Detrend = Flag;</strong> or <strong>
+setf(Detrend,Flag);</strong>. Flags can be combined with '+' or '|': 
+<h3>Range:</h3>
+<br>
+<table width="98%"  border="0" cellspacing="1" cellpadding="0">
+  <tr>
+    <td style="width: 209px"><strong>TRADES</strong></td>
+    <td>Detrend trade results. The trade return is corrected by a factor derived 
+	from the average price slope of the current WFO cycle. This removes trend bias from a 
+	WFO test while keeping the properties of the price curve. </td>
+  </tr>
+  <tr>
+    <td style="width: 209px"><strong>PRICES</strong></td>
+    <td>Detrend trade results and <a href="price.htm">price</a> functions, as 
+	well as indicators derived from them. A corrrection factor as above is added 
+	to the returned prices. This ensures that any WFO cycle starts and ends at 
+	the same price, and detrends indicators and signals based on series generated with <strong>price()</strong> calls. </td>
+  </tr>
+  <tr>
+    <td style="width: 209px"><strong>CURVE</strong></td>
+    <td>Detrend historical price data on loading. The curve is tilted so that 
+	the end and the start of the historical data are at the same level. This also affects the  displayed price curve in the chart.</td>
+  </tr>
+    <tr>
+    <td style="width: 209px"><strong>RECIPROCAL</strong></td>
+    <td>Replace historical prices with their reciprocal values. This it can be used for 
+	creating an artifical asset as the reciprocal of an existing forex or crypto 
+	pair (f.i. convert BTC/USD to USD/BTC).</td>
+    </tr>
+  <tr>
+    <td style="width: 209px"><strong>INVERT</strong></td>
+    <td>Similar to <strong>RECIPROCAL</strong>, but keep the price range while 
+	inverting the price curve. This reverses all trends in the curve, and can be used for a reality check of a system that is symmetric in long and short positions. </td>
+  </tr>
+    <tr>
+    <td style="width: 209px"><strong>SHAPE</strong></td>
+    <td>Bend the price curve to a predefined shape for testing strategy behavior 
+	under certain conditions such as sudden price drops or trend reverals, even 
+	when they don't appear in the original curve.The 
+	desired shape can be set up with the <strong>Shape</strong> array (see below). </td>
+    </tr>
+    <tr>
+    <td style="width: 209px"><strong>NOPRICE</strong></td>
+    <td>Do not process the historical data by detecting gaps or fixing invalid 
+	prices or outliers on loading. For  data files that contain no prices, but other types of data. </td>
+    </tr>
+  <tr>
+    <td style="width: 209px"><strong>SHUFFLE</strong></td>
+    <td>Randomize the  price curve by shuffling the price ticks without 
+	replacement. Keeps its overall trend 
+	from start to end, but removes any short-term trends and  correlations between the prices. Used for reality checks. 
+	Requires historical data in <strong>.t6</strong> format.</td>
+  </tr>
+    <tr>
+    <td style="width: 209px"><strong>SHUFFLE+PEAK<br>SHUFFLE+VALLEY</strong></td>
+    <td>Randomize the price curve as above, but generate a curve that does not 
+	exceed the highest peak or/and the lowest valley of the original price 
+	curve. Use this for keeping the original price range. Can be slow on curves 
+	with large price ranges. </td>
+    </tr>
+    <tr>
+    <td style="width: 209px"><strong>BOOTSTRAP</strong></td>
+    <td>Randomize the  price curve by shuffling the price ticks with replacement. Keeps its overall trend 
+	from start to end, but removes any short-term trends and  correlations between the prices. Used for reality checks. </td>
+    </tr>
+	<tr>
+    <td style="width: 209px"><strong>BOOTSTRAP+PEAK<br>BOOTSTRAP+VALLEY</strong></td>
+    <td>Randomize the  price curve as above, but generate a curve that does not 
+	exceed twice the maximum of the orginal price curve, or/and does not fall 
+	below zero. Can be slow on curves with large price ranges. </td>
+    </tr>
+	<tr>
+    <td style="width: 209px"><strong>RANDOMWALK</strong></td>
+    <td>Generate a random walk price curve by moving the price in random steps 
+	that depend on original volatility. Removes any market inefficiency out of 
+	the price curve. </td>
+    </tr>
+	<tr>
+    <td style="width: 209px"><strong>RANDOMWALK+PEAK<br>RANDOMWALK+VALLEY</strong></td>
+    <td>Generate a random walk price curve that does not 
+	exceed twice the maximum of the orginal price curve, or/and does not fall 
+	below zero. Can be slow on curves with large volatility. </td>
+    </tr>
+  </table>
+<h3>Type:</h3>
+<strong>int<br>&nbsp;</strong>
+
+<h2>Shape</h2>
+Pointer to a 0-terminated array
+of price values for applying a shape to the price curve when <strong>Detrend = 
+SHAPE</strong> is set. All prices of the array are placed in equal distances, and the price curve 
+is bent so that it touches any of them. The more prices in the array, the closer is 
+the curve adapted to the given shape. The last array element must be <strong>0</strong> for indicating the 
+end (see example).<h3>Type:</h3>
+<strong>var*</strong> <br>&nbsp; &nbsp;
+<h3>Remarks:</h3>
+<ul>
+  <li>All price curve manipulating flags must be set <span class="Highlight">before</span> calling
+  <a href="asset.htm">asset()</a> the first time. Use <a href="setf.htm">setf</a> or <a href="setf.htm">resf</a> for setting 
+  or resetting single flags, while keeping the other flags unchanged.</li>
+	<li>Price curve randomizing is not supported for <span class="Highlight">
+	data with volume</span>, such as <strong>T2</strong> history. For <strong>T6</strong> 
+	history, only the prices are shuffled, the volume is unchanged.</li>
+	<li>All price curve manipulations are normally applied to the
+	<span class="Highlight">whole price curve</span> on 
+	the ticks level, including lookback, in sample, out of sample,&nbsp;and 
+	skipped periods. If a particular <a href="date.htm">StartDate</a> is set, 
+	the <strong>SHAPE</strong> begins at that date and ends at a given <strong>
+	EndDate</strong>  (if any). <strong>TRADES</strong> or <strong>PRICES</strong> detrends the prices from the end of the 
+  current lookback period until the end of the current WFO test or training cycle. This has the effect that all WFO cycles are separately detrended in [<span class="tast">Train</span>] mode. <strong>Detrend</strong> = <strong>CURVE</strong>  however detrends the 
+  whole price curve, but does not affect the local trends within the WFO cycles.</li>
+	<li><strong>SHUFFLE </strong>generates curves with similar start and end 
+	points as the original curves. <strong>BOOTSTRAP</strong> and <strong>RANDOMWALK</strong> generate curves with a similar start point, but 
+	modified end points. <strong>CURVE</strong> 
+	generates curves with a similar end point, but modified start 
+	point. </li>
+	<li><strong>SHUFFLE</strong> and <strong>BOOTSTRAP</strong> randomize the 
+	the bar ranges (high-low difference) and changes (center price difference to 
+	the previous bar) independently, using the Lehmer random number algorithm. 
+	The resulting curves have similar magnitude, volatility, and long term 
+	trend as the original curve, but all bar correlations are removed. </li>
+	<li><strong>SHUFFLE</strong>, <strong>BOOTSTRAP</strong>, <strong>RANDOMWALK</strong>,<strong>
+	SHAPE</strong>,<strong> </strong>and <strong>CURVE</strong> can produce negative 
+	prices on curves with large price volatility. In that 
+	case <strong>CURVE</strong> clips negative prices and produces a flat price 
+	line close to zero at those curve parts. <strong>SHUFFLE</strong> automatically 
+	generates a new curve when 
+	prices are negative. The <strong>PEAK</strong> and <strong>VALLEY</strong> 
+	flags keep shuffled curves inside the maximum and minimum of the original 
+	curve, and bootstrapped curves between zero and twice the original maximum. 
+	This can delay the bar generation when the curve randomizing process must be 
+	often repeated.</li>
+	<li>If a trade strategy has <a href="testing.htm#bias">trend bias</a>  - f.i. when it buys more long than short positions, or vice versa - it is 
+	normally recommended to remove the trend from the price curve for
+	training the strategy parameters. Otherwise the simulation will be too optimistic when the price curve has an overall upwards trend, or too pessimistic when it has a downwards trend. For symmetric strategies that buy long and short positions under similar conditions and with the same parameters, detrending is normally not necessary. 
+	</li>
+	<li>For detrending only strategy parameters or machine learning models, but not the test results, set 
+	<strong>Detrend</strong> only in [<span class="tast">Train</span>] mode: 
+	<strong>if(Train) Detrend = CURVE;</strong>. For detrending only the prices of certain assets, set 
+	<strong>Detrend 
+	</strong>before calling that <strong><a href="asset.htm">asset</a>()</strong>  
+  in the initial run, and reset it to <strong>0</strong> afterwards. For detrending particular trades only, set 
+	<strong>Detrend = TRADES</strong> before entering the trade, and set 
+	<strong>Detrend = 0</strong> afterwards. This 
+  can be useful for testing portfolio systems that use both trend following and non-trend algorithms. 
+	</li>
+	<li>For determining if a system's profit is caused by artifacts, temporarily set 
+	<strong>Detrend = SHUFFLE+CURVE</strong> and test. If the profit is caused by a real edge, it should then disappear. 
+	For determining if a system's profit is caused by randomness, temporarily set 
+	<strong>Detrend = INVERT</strong> and test. On symmetric assets such as currencies, the system should then still achieve  profits. 
+	</li>
+	<li>Modified price curves can be exported to a CSV file for further tests with 
+	Excel, R, or similar statistical software.
+	</li>
+	<li>Reality checks using inverted or randomized price curves are mentioned on 
+	<a href="http://www.financial-hacker.com/build-better-strategies-part-3-the-development-process/" target="_blank">Financial Hacker | Development Process | Step 7: Reality Check</a>. 
+	</li>
+</ul>
+<h3>Example (see also Detrend.c):</h3>
+<pre><em>// detrend the price curve for training only</em>
+if(is(TRAINMODE)) Detrend = CURVE; <em>
+
+// apply a rectangular shape to the curve</em>
+var SuddenDrop[50] = { 1.5, 1.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.5, 1.5, 0 };
+Shape = SuddenDrop;
+Detrend = SHAPE;
+</pre>
+<h3>See also:</h3>
+<a href="mode.htm">mode</a>, <a href="numwfocycles.htm">WFO</a>, <a href="dataslope.htm">DataSlope</a>, <a href="randomize.htm">randomize</a>,
+<a href="setf.htm">setf</a>
+<p>&nbsp;</p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

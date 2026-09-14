@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>center, compress, scale, normalize, zscore</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/norm.htm">
+</head>
+
+<body>
+<h1>Normalization functions </h1>
+The following functions can be used for normalizing and compressing time series 
+or indicator values to a range that's independent of the  asset and time frame. 
+They suppress long-term trend and emphasize short cycles in various ways. Normalization is often required for <a href="advisor.htm">machine learning</a> algorithms.
+<h2>center (var Value, int TimePeriod): var </h2>
+Centers  <strong>Value</strong> by subtracting its median  over the  <strong>TimePeriod</strong>. Using the median instead of the mean reduces the effect of outliers.
+<h2>compress (var Value, int TimePeriod): var </h2>
+Compresses <strong>Value</strong> to the -100...+100 range. For this, <strong>Value</strong> is divided by its interquartile range - the difference of the 75th and 25th percentile - taken over <strong>TimePeriod</strong>, and then compressed by a <a href="cdf.htm">cdf</a> function. Works best when <strong>Value</strong> is an oscillator that crosses the zero line. Formula: <strong>200 * cdf(0.25*Value/(P75-P25)) - 100</strong>.
+<h2>scale (var Value, int TimePeriod): var </h2>
+Centers and compresses <strong>Value</strong> to the -100...+100 scale. The deviation of <strong>Value</strong> from its median is divided by its interquartile range and then compressed by a <a href="cdf.htm">cdf</a> function. Formula: <strong>200 * cdf(0.5*(Value-Median)/(P75-P25)) - 100</strong>.
+<h2>normalize (var Value, int TimePeriod): var </h2>
+Normalizes <strong>Value</strong> to the -100...+100 range by subtracting its minimum and dividing by its range over <strong>TimePeriod</strong>.  Formula: <strong>200 * (Value-Min)/(Max-Min) - 100 </strong>.
+For a 0..100 oscillator, multiply the returned value with 0.5 and add 50.&nbsp;
+<h2>zscore (var Value, int TimePeriod): var </h2>
+Calculates the Z-score of the <strong>Value</strong>. The Z-score is the deviation from the mean over the <strong>TimePeriod</strong>, divided by the standard deviation. Formula: <strong>(Value-Mean)/StdDev</strong>. 
+<p>&nbsp;</p>
+<p><strong><img src="../images/normalize.png" alt="Normalization results" width="479" height="699"><br>
+  </strong></p>
+<h3>Parameters:</h3>
+<strong>Value</strong> - Variable, expression, or indicator to be normalized.<br>
+<strong>TimePeriod</strong> - Normalization period.
+<h3>Returns:</h3>
+Normalized <strong>Value</strong>. 
+<h3>Remarks:</h3>
+<ul>
+  <li>The above  functions generate <a href="series.htm">series</a> and must be 
+  called in a fixed order in the script.. </li>
+	<li>For converting a value <strong>X</strong> from a -100.+100 range to a 
+	0...<strong>Y</strong> range - for instance to <strong>0..1</strong> for 
+	machine learnign systems -, use the expression <strong>Y*(X+100.)/200.</strong>. </li>
+  <li>There are other functions for compressing data series in various ways:
+  <a href="avar-sinh.htm">tanh</a>  compresses to the -1..1 range, <strong>sigmoid</strong> (= <strong>1./(1.+<a href="avar-exp.htm">exp</a>(-x))</strong> ) compresses to the 0..1 range, 
+  <a href="filter.htm">AGC</a> compress 
+  data series to -1..+1, <a href="transform.htm">PercentRank</a> compresses to 0..100, and <a href="transform.htm">FisherN</a> compresses so that most values fall inside -1.5..+1.5. </li>
+</ul>
+<h3>Example:</h3>
+<pre>function run()
+{
+  set(PLOTNOW);
+  PlotWidth = 600;
+  PlotHeight1 = PlotHeight2;
+  PlotBars = 400;
+  LookBack = 200;
+  var ATR100 = ATR(100);
+  plot("ATR 100",ATR100,NEW,RED);
+  plot("center",center(ATR100,100),NEW,RED);
+  plot("compress",compress(ATR100-0.003,100),NEW,RED);
+  plot("scale",scale(ATR100,100),NEW,RED);
+  plot("normalize",normalize(ATR100,100),NEW,RED);
+  plot("zscore",zscore(ATR100,100),NEW,RED);
+}</pre>
+<h3>See also:</h3>
+<a href="filter.htm">AGC</a>, <a href="transform.htm">FisherN</a>, <a href="advisor.htm">advise</a>, <a href="cdf.htm">cdf</a>
+<p>&nbsp;</p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

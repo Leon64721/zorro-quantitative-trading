@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>PIP, PIPcost, Leverage</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/pip.htm">
+</head>
+
+<body>
+<h1>Asset prices and parameters 2</h1>
+<h2>PIP</h2>
+The minimum price step of the current <a href="asset.htm">asset</a> in units of the counter currency, f.i. <strong>0.0001</strong> for <strong>EUR/USD</strong>, 
+or <strong>0.01</strong> for a stock in dollars, or <strong>0.25</strong> for 
+the E-Mini S&amp;P 
+futures contract. Also named point size or tick size. Can be used to set a price 
+limit in pips, f.i. <strong>Stop = 10*PIP</strong>. For converting a price difference to pips, divide it by <strong>PIP</strong>.
+<h2>PIPCost</h2>
+Value of 1 pip profit or loss per <a href="lots.htm#lot">lot</a> in units of the account currency; determined by the lot size (<strong>LotAmount</strong>) and the  exchange rate of account currency and counter currency. This value should normally remain constant during the simulation for not adding artifacts to the 
+strategy performance figures; but if desired for special purposes, it can be calculated by script to fluctuate with the exchange rate (see example below). When the asset price rises or falls by <strong>x</strong>, the equivalent profit or loss in account currency is <strong>x * Lots * PIPCost/PIP</strong>. 
+The counter currency exchange rate - its value in account curreny units - is
+<strong>PIPCost / (PIP * LotAmount)</strong>.
+<h2>MarginCost</h2>
+Required margin for puchasing and holding 1 <a href="lots.htm#lot">lot</a> of the current asset in units of the account currency.Either 
+directly taken from the asset list, or calculated from the leverage by <strong>
+MarginCost = Asset price * PIPCost / PIP / Leverage</strong>.
+The number of lots at a given margin is <strong><a href="lots.htm">Margin</a> / MarginCost</strong>. 
+For options and futures, <strong>MarginCost</strong> is calculated per 
+underlying unit. The variable is updated in real time when the asset list 
+contains a negatve MarginCost parameter that represents <a href="account.htm">Leverage</a>. For special margin requirements, f.i. for covered options or 
+<a href="contract.htm">option combos</a>, set this variable in the script to the 
+maximum of initial, maintenance, and end-of-day margin per underlying unit before entering 
+the trade.
+<h2>Leverage</h2>
+Asset value divided by margin cost. Determines the account's buying power, i.e. the  asset amount that can be purchased with account currency. <strong>MarginCost</strong> and <strong>Leverage</strong> can be converted into each other:&nbsp;
+<strong>Leverage</strong> = <strong>Asset price * LotAmount * CCValue / 
+MarginCost</strong> or <strong>Leverage = Asset price * PIPCost / PIP / MarginCost</strong>, where <strong>
+CCValue</strong> is the value of the counter currency in account currency units. For brokers that support the <a href="brokercommand.htm">SET_LEVERAGE</a> 
+command, <strong>Leverage</strong> and <strong>MarginCost</strong> must be set on the fly before entering a trade. 
+<h2>LotAmount</h2>
+The number of units or contracts per <a href="lots.htm#lot">Lot</a> with the current asset. Determines the minimum order size and 
+can depend on the account. For stock options,&nbsp; <strong>LotAmount</strong> 
+is the multiplier (normally <strong>100</strong>). For currencies, the lot 
+amount of a micro lot account is <strong>1000</strong> units; of a mini lot account <strong>10000</strong> 
+units; and of a a standard lot account <strong>100000</strong> units. Some brokers offer also lot sizes that are a fraction of a contract, f.i. <strong>0.1</strong> contracts per lot for CFDs 
+or diginal coins. Some brokers, especially for digital coins, allow arbitrary lot amounts 
+and support the
+<a href="brokercommand.htm">SET_AMOUNT</a> broker command.
+<h2>LotLimit</h2>
+Maximum number of <a href="lots.htm#lot">Lots</a> with the current asset 
+(default: <strong>1000000000/LotAmount</strong>). Can be set to a smaller number 
+for safety reasons. If the number of lots exceeds this limit, for instance due 
+to a script bug, the order is not executed and an error message is issued.
+<!--h2>HedgeRatio</h2>
+Multiplies prices, ask-bid spread, trade size, and PIP size of the current asset with the given factor. Can be used for generating an artificial asset for arbitrage purposes. -->
+<h2>InitialPrice</h2>
+The initial asset price taken from the <a href="account.htm">asset list</a>. Can be 
+set to the first historical price and used to adapt parameters (such as <strong>MarginCost</strong>) to 
+asset price changes in the backtest (f.i. <strong>MarginCost = InitialMarginCost * 
+priceClose() / InitialPrice</strong>).&nbsp;
+<h2>AskPrice</h2>
+The last ask price of the current asset.
+<h2>BidPrice</h2>
+The last bid price of the current asset.
+<h2>AskSize</h2>
+The last ask volume of the current asset in live trading mode (if available) or 
+in a backtest with <a href="history,htm">T2 data</a>.
+<h2>BidSize</h2>
+The last bid volume of the current asset in live trading mode (if available) or 
+in a backtest with <a href="history,htm">T2 data</a>.&nbsp;
+<h3>Type:</h3>
+<strong>var</strong>, <strong>read/only</strong> if not mentioned otherwise (edit the <a href="account.htm">Asset List</a> for permanently changing asset parameters).<p>
+&nbsp;</p>
+<h2>AssetBar</h2>
+Bar number of the last received price quote of the current <a href="asset.htm">asset</a>, 
+from <strong>1</strong> (first bar) up to <strong><a href="numbars.htm">Bar</a></strong> 
+(current bar). Can be used to determine if there was a quote in the current bar.
+<h3>Type:</h3>
+<strong>int</strong>, read/only
+<br>&nbsp;<h3>Remarks:</h3>
+<ul>
+  <li>Asset specific parameters are only valid after selecting the
+  <a href="asset.htm">asset</a>.</li>
+	<li>When Zorro is connected to a broker, it loads the current asset parameters from the broker's server 
+  if available. Otherwise they are taken from the current <a href="account.htm">asset list</a> (normally <strong>History\AssetsFix.csv</strong>). 
+	The asset list can be edited with a spreadsheet program or a text editor for 
+	simulating different brokers, accounts, and assets in backtests; or it can 
+	be automatically updated to the parameters of the current broker account. </li>
+</ul>
+<h3>Examples:</h3>
+<pre><strong><em>// set stop / profit target at a fixed pip distance</em>
+Stop = 10*PIP</strong>;<br>TakeProfit = 40*PIP;</pre>
+<pre><em>// let profits fluctuate with the account currency</em> <em>exchange rate</em>
+function convertProfits(string Rate)<br>{<br>  char OldAsset[15]; 
+  strcpy(OldAsset,Asset); <em>// store original asset</em><br>  if(!asset(Rate)) return;<br>  var Price = price();<br>  asset(OldAsset);<br>  if(Price &gt; 0.)<br>    PIPCost = PIP*LotAmount/Price;<br>}
+
+<em>// call this function from run(), f.i. </em>
+convertProfits("EUR/USD"); <em>// when account currency = EUR and counter currency = USD.</em>
+</pre>
+<h3>See also:</h3>
+<a href="stop.htm">Stop</a>, <a href="spread.htm">Spread</a>, <a href="lots.htm">Lots</a>, <a href="price.htm">price</a>, <a href="asset.htm">asset</a>,
+<a href="account.htm">asset parameters</a>, <a href="conversion.htm">
+EasyLanguage parameters</a>
+<p>&nbsp;</p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

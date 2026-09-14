@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+	<head>
+		<title>Pointers</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+		<link href="css.css" rel="stylesheet" type="text/css">
+	    <meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/apointer.htm">
+</head>
+	<body>
+		<h1>Pointers</h1>
+		<p>
+		  
+		  Pointers store references to variables.
+		     They point to the location in memory where the variable stores it's content. Pointers allow, for instance, the same function to do the same with
+		    different global variables, depending on what variable is currently referenced
+		    through a certain pointer. Pointers can be used like synonyms or
+	    alternative names for single variables or for arrays of variables. </p>
+		<p>A pointer is defined by adding a '<strong>*</strong>' to the name, like this:</p>
+		<p><strong>var *mypointer; <em>// defines a pointer of type var with the name mypointer</em></strong> </p>
+		<p>The '*' is also used for multiplication, but the compiler knows from the context if a pointer or a multiplication is meant.</p>
+		<p>You can get a pointer to any variable by adding a '<strong>&amp;</strong>' to the variable name:</p>
+		<p><strong>var myvar = 77;<br>
+	    mypointer = &amp;myvar; <em>// now mypointer points to myvar</em> </strong></p>
+		<p>You can see the '<strong>&amp;</strong>' as the opposite of '<strong>*</strong>'. For accessing a variable that is the target of the pointer, add a  '<strong>*</strong>' to the pointer name, just as in the pointer definition. This way the variable can be directly read or set: </p>
+		<p><strong>*mypointer = 66; <em>// now myvar contains 66</em></strong></p>
+		<p>Pointers can also point to variable arrays, and can access their elements just by adding the usual <strong>[0]</strong>, <strong>[1]</strong>, ... etc. to the pointer name. In fact pointers and arrays are the same internal type. When <strong>mypointer</strong> is a pointer to an array, <strong>mypointer+n</strong> is a pointer to the <strong>n</strong>-th element of that array. Therefore for accessing elements of the array, <strong>*mypointer</strong> points to the same as element as <strong>mypointer[0]</strong> and <strong>*(mypointer+n)</strong> points to the same element as <strong>mypointer[n]</strong>. </p>
+		<h3>Variable pointers in functions </h3>
+	    There can be some situation where variable pointers might be useful. Normally if you pass a variable to a function, the function works merely with a copy of that variable. Changing the variable within the function only affects the copy. However if you pass the pointer to a variable, the function can change the original variable. For getting a pointer to a variable, just place a '<strong>&amp;</strong>' before the variable name. Example:
+    <pre>function change_variable(var myvar)
+{
+  myvar += 1;
+}
+
+
+function change_variable_p(var *myvar)
+{
+  *myvar += 1;
+}
+...
+var x = 10;
+change_variable(x);   <i>// now x is still 10</i>
+change_variable_p(&amp;x); <i>// now x is 11</i></pre>
+    <p>Lite-C automatically detects if a function expects a variable or a pointer to a variable, so you can usually omit the '<strong>&amp;</strong>' and just write: </p>
+    <pre>change_variable_p(x); <i>// now x is 1</i></pre>
+    <h3>Arrays of pointers or series</h3>
+    
+    	When accessing elements in an array of pointers or <a href="series.htm">
+		series</a>, parentheses must be used: 
+        <pre>vars MySeriesArray[3]; <em>// declars an array of series</em> 
+...
+for(i=0; i&lt;3; i++) MySeriesArray[i] = series();
+...
+(MySeriesArray[0])[0] = 123; <em>// access the first element of the first array. Mind the parentheses!</em></pre>
+    <h3>Function pointers</h3>
+    
+    A function pointer
+	      is defined just as a function prototype with return and parameter types.
+	      Example: 
+        <pre>float myfunction(int a, float b); <i>// define a function pointer named &quot;myfunction&quot; </i> 
+
+float fTest(int a, float b) { return (a*b); }
+...
+myfunction = fTest;
+x = myfunction(y,z);</pre>
+	    For storing arrays of function pointers in C,<b> void*</b> arrays can be used.
+	    Example: 
+	    <pre>float myfunction(int a, float b); <i>// define a function pointer</i>
+
+void* function_array[100];        <i>// define a pointer array</i>
+
+float fTest(int a, float b) { return (a*b); }
+...
+function_array[n] = fTest;
+myfunction = function_array[n];
+x = myfunction(y,z);</pre>
+	    <h3>See also:</h3>
+    <A href="aarray.htm">Variables</A>, <a href="structs.htm">Structs</a>, <A href="function.htm">Functions</A>
+        <p><a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+    version online</a>
+    </p>
+	</body>
+</html>

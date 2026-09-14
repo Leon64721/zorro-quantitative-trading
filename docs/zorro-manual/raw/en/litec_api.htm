@@ -1,0 +1,188 @@
+<html>
+<head>
+<TITLE>API</TITLE>
+<META NAME="description" CONTENT="API">
+<META NAME="keywords" CONTENT="CScript C language Compiler">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/litec_api.htm">
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000" link="#3333FF" vlink="#0000FF" alink="#3333FF" >
+ <h1 align="left"><b> </b>Using 
+   
+ DLLs and APIs</h1>
+        <p><span class="edition">
+          </span>The operating system and
+          its subsystems provide Application Programming Interfaces
+          (<b>API</b>)
+          for programs to use their functions. Lite-C can
+          call API functions either based on external Dynamic Link Libraries (DLLs), or on the
+          Component Object Model (COM). DLLs are modules
+          that provide  external functions and variables; they are loaded at runtime. When a DLL is loaded, it is mapped
+          into the address space of the calling process.</p>
+        <p> DLLs can contain two kinds of functions: exported and internal. The
+           exported functions can be called by other modules. Internal functions
+           can only be called from within the DLL where they are defined. Although
+           DLLs can also export variables, their variables are usually only used by their functions.
+          DLLs provide a way to modularize applications so that functionality
+          can be updated and reused more easily. They also help reduce memory
+          overhead when several applications use the same functionality at the
+          same time, because although each application gets its own copy of the
+          data, they can share the code.</p>
+        <p> The Microsoft® Win32® application programming interface (API) is 
+            implemented as a set of dynamic-link libraries, so any process that 
+          uses the Win32 API uses dynamic linking. </p>
+        <h3>Declaring a
+        DLL or Windows API Function</h3>
+ Before an API function 
+ 
+from an external DLL 
+
+can be called, a 
+
+function prototype must be
+declared, just as any other function. Example:        
+<PRE>long WINAPI MessageBoxA(HWND,char *,char *,long);</PRE>
+        <p> 
+          
+          The function prototype - which is in fact a function pointer - must
+          then be initialized with the function address. 
+          
+          There are three methods: static initialization in the <b>api.def</b>
+          (for functions that are often used), static initialization by an <strong>API(FunctionName,ModuleName)</strong> macro<strong> </strong>(for
+          functions only defined in a particular header), and dynamic initialization
+          by <b>DefineApi</b> (for functions that are only used in a particular
+appliction). </p>
+        <p>The most common static API functions are defined in the <b>api.def</b> file.
+            It's just a plain text file, so it can easily be modified. Open <strong>api.def</strong> in
+            the 
+            
+          Zorro folder,
+            
+          and add a line to it in the style (<strong>FunctionName;ModuleName!ProcName</strong>). <strong>FunctionName</strong> is your declared function, <strong>ModuleName</strong> is the name of the DLL without the <strong>&quot;.dll&quot;</strong> extension, and <strong>ProcName</strong> is the name of the function within that DLL (which needs not necessarily be identical to your function name). Example: </p>
+        <pre>MessageBox;user32!MessageBoxA</pre>
+        <p>
+          
+          For acessing a function in a 
+		  Windows header file, the simplest way is 
+		  using the <b>API</b>
+          macro in the script. Example:</p>
+        <PRE>long WINAPI MessageBoxA(HWND,char *,char *,long);
+API(MessageBoxA,user32)</PRE>
+        <p>
+          
+        <strong>WINAPI</strong> is defined as <strong>__stdcall</strong>, as required for calling a 
+		Windows API function. You can find examples of this way to declare external DLL functions in the <strong>include\windows.h</strong> header file. 
+		For implementing your own DLLs you will probably use the <strong>__cdecl</strong> 
+		calling convention, which is the default. So make sure that the 
+		functions are defined correctly. Also look under <a href="tips.htm">Tips &amp; Tricks</a> for using indicators from external DLLs.</p>
+        <p>For dynamically accessing an API function 
+          
+          at runtime, either use the <b>DefineApi</b>          call,
+          or load the DLL and retrieve the function address through standard Windows functions. 
+          
+          The function prototype
+          can be used as a function pointer. Examples:</p>
+        <PRE><i>// Example1:
+</i>long __stdcall MessageBox(HWND,char *,char *,long);
+MessageBox = DefineApi(&quot;user32!MessageBoxA&quot;);
+
+<i>// Example2:</i>
+long __stdcall MessageBox(HWND,char *,char *,long);
+long h = LoadLibrary(&quot;user32&quot;);
+MessageBox = GetProcAddress(h,&quot;MessageBoxA&quot;);</PRE>
+        <p>By default, <b>api.def</b> contains a selection of C standard functions. The <b>windows</b><b>.h</b> header
+          contains the Windows API functions. 
+          
+If you need a certain function that is not included, you can add it easily as
+described under <a href="litec_c.htm">Converting C++ Code to lite-C</a>. </p>
+ <p>For calling functions from a self-written VC++ DLL, put it in the
+ <strong>Strategy</strong> folder, and access its functions in your script as 
+ shown below (assume its name is <strong>MyDll.dll</strong> and it exports a function
+ <strong>double square(double)</strong>):</p>
+ <pre>var square(var Arg);
+API(square,Strategy\\MyDll)
+
+void main()
+{
+  if(!square)
+    printf(&quot;No square!&quot;); <em>// DLL or function not found</em>
+  else
+    printf(&quot;Square: %.3f&quot;,square(3));
+}</pre>
+ For giving your DLL access to all Zorro functions, let Zorro call a function 
+ from your Dll and pass the pointer to the <strong>g</strong> singleton struct. 
+ The <strong>g-&gt;Functions </strong>pointer is the address of a list of all 
+ Zorro functions in the same order as in <strong>include\func_list.h</strong>. 
+ The function prototypes are coded in <strong>include\functions.h</strong>. In this 
+ way you can access all Zorro functions as if from a strategy DLL or a broker 
+ plugin.
+ An example can be found in <strong>Source\VC++\ZorroDll.cpp</strong>, which is 
+ automatically added to all strategy DLLs.&nbsp;
+ <h3 align="left">Using C++ classes (</h3>
+        <p>Lite-C can use classes and functions from COM DLLs; the most often used example is the <strong>DirectX</strong> DLL.  <font face="Arial, sans-serif"><b>Classes</b>          are
+          like <a href="structs.htm">structs</a>, but contain not only variables
+          but also functions (<b>methods</b>).
+          </font>Any COM class contains three standard methods - <b>QueryInterface()</b>, <b>AddRef()</b>,
+          and <b>Release()</b> - as well as any number of class specific methods.
+          For example, here's the lite-C code for defining a COM class that contains
+        two specific methods, <b>Func1()</b> and <b>Func2()</b>:</p>
+        <table  border="0" cellpadding="1">
+          <tr bgcolor="#FFFFFF">
+            <td><PRE>typedef struct _IFooVtbl
+{    
+    HRESULT __stdcall QueryInterface(void* This,IID *riid,void** ppvObject);        
+    DWORD   __stdcall AddRef(void* This);    
+    DWORD   __stdcall Release(void* This);    
+    HRESULT __stdcall Func1(void* This);    
+    HRESULT __stdcall Func2(void* This,int);
+} IFooVtbl;
+
+
+typedef interface IFoo { IFooVtbl *lpVtbl; } IFoo;
+</PRE>
+            </TD>
+          </TR>
+        </TABLE>
+        <p> Note that each of the methods has an additional parameter called "<b>This</b>".
+          You have to pass the <b>This</b> pointer parameter explicitly in C,
+          but it can be passed automatically in lite-C. Any additional
+          parameters come after <b>This</b>, as above. 
+          
+          The
+          interface is then <b>typedef</b>'d as a structure that contains a pointer
+          to the <b>vtable</b>. 
+          
+For calling  methods on
+  COM objects, you can use either a C++-style or 'C'-style syntax.
+            Example:          </p>
+        <pre> pIFoo->Func1(); <i>// C++ style</i><br>pIFoo->lpVtbl->Func1(pIFoo); <i>// C style</i></pre>
+            <p>As lite-C does not support class inheritance, just add all inherited
+              methods, if any, to the class. Example for a DirectX class: </p>
+            <pre>typedef struct ID3DXMeshVtbl<br>{<br><i>// IUnknown methods</i><br>    long __stdcall QueryInterface(void* This, REFIID iid, LPVOID *ppv);<br>    long __stdcall AddRef(void* This);<br>    long __stdcall Release(void* This);
+
+<i>// methods inherited from ID3DXBaseMesh</i>
+   long __stdcall DrawSubset(void* This, long AttribId);
+   long __stdcall GetNumFaces(void* This);
+   long __stdcall GetNumVertices(void* This);
+
+<i>// ID3DXMesh methods</i><br>   long __stdcall LockAttributeBuffer(void* This, long Flags, long** ppData);<br>   long __stdcall UnlockAttributeBuffer(void* This)<br>   long __stdcall Optimize(void* This, long Flags, long* pAdjacencyIn, long* pAdjacencyOut, <br>                     long* pFaceRemap, LPD3DXBUFFER *ppVertexRemap,  <br>                     void* ppOptMesh)
+} ID3DXMeshVtbl;
+
+typedef interface ID3DXMesh { ID3DXMeshVtbl * lpVtbl; } ID3DXMesh;
+
+...
+ID3DXMesh* pMesh;
+...
+pMesh-&gt;DrawSubSet(0);
+long num = pMesh-&gt;GetNumFaces();
+...</pre>
+            <h3>See also:</h3>
+            <A href="apointer.htm">Pointers</A>, <a href="structs.htm">structs</a>, 
+ <a href="function.htm">functions</a>, <a href="dlls.htm">Dlls</a>, 
+ <a href="brokerplugin.htm">plugins</a>
+            <a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+version online</a>
+</body></html>

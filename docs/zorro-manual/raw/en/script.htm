@@ -1,0 +1,166 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+<title>Predefined strings: Script, Algo, Asset, History...</title>
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<meta content="width=device-width, initial-scale=1" name="viewport">
+<link href="css.css" rel="stylesheet" type="text/css">
+<link href="https://zorro-project.com/manual/en/script.htm" rel="canonical">
+</head>
+
+<body>
+
+<h1>Predefined and user-supplied strings</h1>
+&nbsp;<h2>RootName</h2>
+Name root for the exported parameters, rules, and factors (default = script 
+name). Can be changed for sharing training data with other scripts. 
+If <a href="numtotalcycles.htm">LogNumber</a> is nonzero, 
+the logs are also saved under the <strong>RootName</strong>. The name must not 
+contain spaces or special characters.&nbsp;
+<h2>Algo</h2>
+The current algorithm identifier (read/only), set up by the <a href="algo.htm">algo</a> 
+function or a <a href="trade.htm">TMF</a>. Algo identifiers should be short and 
+must not contain spaces or special characters.
+<h2>Asset</h2>
+The current asset name (read/only), set up initially by the [<span class="tast">Asset</span>] 
+scrollbox. Is automatically changed at runtime with the <a href="asset.htm">asset</a> 
+function, a <a href="tick.htm">tick</a> function, a <a href="trade.htm">TMF</a> 
+or a <a href="fortrades.htm">trade loop</a>.&nbsp;
+<h2>AssetPrev</h2>
+The name of the previously selected asset; in a <a href="fortrades.htm">trade loop</a> 
+the name of the asset that was selected before the loop.
+<h2>AssetBox</h2>
+The name of the currently visible asset in the [<span class="tast">Asset</span>] 
+scrollbox (read/only).
+<h2>Assets</h2>
+NULL-terminated <strong>string</strong> array, automatically populated with the names of all available 
+assets in the <a href="account.htm">asset list</a> (read/only). Can be used either 
+as a <a href="loop.htm"><strong>loop</strong></a> parameter, or used for enumerating 
+assets, f.i. <strong>for(N = 0; Assets[N]; N++)</strong>. The asset names are valid 
+after the first <a href="asset.htm">asset</a> or <a href="asset.htm">assetList</a> 
+call. The number of assets in the list is returned by <a href="asset.htm">assetList</a>.<h2>Algos</h2>
+User-supplied NULL-terminated <strong>string</strong> array, containing algo 
+names to be used as a <a href="loop.htm"><strong>loop</strong></a> parameter.
+<h2>Account</h2>
+The name selected with the [<span class="tast">Account</span>] scrollbox, f.i
+<strong>&quot;Demo</strong>&quot; or <strong>&quot;FXCM&quot;</strong>.
+<!--h2>AccountName</h2>
+The account name from the <strong>Name</strong> field in the <a href="account.htm">account list</a> (read/only).&nbsp; -->
+<h2>Factors</h2>
+Name suffix and extension of the file containing the <a href="optimalf.htm">OptimalF</a> 
+factors; can be set for selecting between different sets of factors. If not set 
+up otherwise, the file begins with the script name and ends with <strong>&quot;.fac&quot;</strong>, 
+f.i. <strong>&quot;Z12.fac&quot;</strong>. Set <strong>Factors</strong> f.i. to
+<strong>&quot;oos.fac&quot;</strong> for reading the factors from the file
+<strong>&quot;Z12oos.fac&quot;</strong>.<br>
+<h2>History</h2>
+User-supplied string with path, name suffix, and extension of the historical data 
+files, for selecting between different sets and types (<strong>.t1</strong>,
+<strong>.t2</strong>, <strong>.t6</strong>, <strong>.t8</strong>) of price histories. 
+If not set, <strong>.t6</strong> and the <a href="ini.htm">HistoryFolder</a> path 
+is assumed. A <strong>'*'</strong> character at the begin of the string represents 
+the asset name with optional year number, <strong>'?'</strong> represents the 
+asset name with no year number, and <strong>'#'</strong> represents the appended 
+year number. <strong>History</strong> must be set before the 
+first <a href="asset.htm">asset()</a> or <a href="loadhistory.htm">assetHistory()</a> 
+call, but can be set differently for different assets.&nbsp;Examples (for AAPL 2015): <strong><br>History = &quot;*eod.t6&quot;;</strong> 
+reads price history from <strong>AAPL_2015eod.t6</strong>; if not 
+found, uses <strong>AAPLeod.t6</strong>. <br><strong>History = &quot;*adj#.t6&quot;;</strong> 
+reads price history from <strong>AAPLadj_2015.t6</strong>; if not 
+found, uses <strong>AAPLadj.t6. <br>
+History = &quot;?.t6&quot;;
+</strong>reads price history from <strong>AAPL.t6</strong>.<br>
+<strong>History = &quot;History\\Temp<a href="file://*.t1">\\*.t1</a>&quot;;</strong> 
+reads tick data history from <strong>History\Temp\AAPL_2015.t1</strong>.
+<!--strong>History = &quot;.t6&quot;</strong> has a special meaning - it reads price history files without a year number, f.i. <strong>&quot;AAPL.t6&quot;</strong> (for daily bars only).-->
+<br><strong>History = &quot;D:\\Data\\Options<a href="file://*.t8">\\*.t8</a>&quot;;</strong> 
+reads underlying price history from option chains in <strong>D:\Data\Options\AAPL.t8</strong>.
+<h2>Curves</h2>
+User-supplied string with path, name, and extension of the file containing the exported 
+equity or balance curves of all <a href="optimize.htm">optimize</a> parameter variants 
+in [<span class="tast">Train</span>] mode (see <a href="export.htm#balance">export</a>). 
+Also used for storing the daily equity curve in [<span class="tast">Test</span>] 
+mode. The <a href="mode.htm">LOGFILE</a> flag must be set for exporting curves. 
+If the file already exists, the curves are appended to the end. If <strong>Curves</strong> 
+is not set, no curves are exported in [<span class="tast">Train</span>] mode, and 
+in [<span class="tast">Test</span>] mode the equity/balance curve is exported to 
+a <strong>*.dbl</strong> file in the <strong>Log</strong> folder.
+<h2>SymbolTrade</h2>
+The trading <a href="symbol.htm">symbol</a> of the current asset as set up in 
+the asset list, or the plain asset name when the asset has no assigned 
+trading symbol. Does not contain the optional broker or price source name. Can be 
+modified with <a href="str_.htm">strcpy</a> (see example).
+<h2>SourceTrade</h2>
+The trading <a href="account.htm">account</a> name assigned to the current asset as set up in 
+its <a href="symbol.htm">symbol</a>, or an empty strig for the currently selected account. 
+This account is used for sending orders and <a href="brokercommand.htm">broker 
+commands</a>. Can be 
+modified with <a href="str_.htm">strcpy</a>.
+<h2>SymbolLive</h2>
+<h2>SourceLive</h2>
+<h2>SymbolHist</h2>
+<h2>SourceHist</h2>
+The symbols and account names assigned to the current asset for live and historical prices. Can be modified with <a href="str_.htm">strcpy</a>.<!--h2>Factors</h2>
+String containing the content of the <strong>.fac</strong> file with the <strong>OptimalF</strong> factors (read/only). The string is empty in the initial run, as the factors file is loaded after the assets.<br--><h2>
+ZorroFolder</h2>
+The folder in which Zorro was installed, with trailing backslash, f.i. <strong>&quot;C:\Program 
+Files\Zorro\&quot;</strong> (read/only). This is not necessarily the root folder 
+of the data files - see the remarks about <a href="started.htm#uac">UAC</a>.
+<h2>LogFolder</h2>
+The folder for the log files and reports; otherwise they are stored in the
+<strong>Log</strong> subfolder. Must be set before anything is written into the log.
+<!--h2>DataFolder</h2>
+The folder for the 
+parameters and machine learning rules; if not set, they are stored in the
+<strong>Data</strong> folder.-->
+<h2>WebFolder</h2>
+The folder for the HTML page that displays the trade status. If not set up otherwise, 
+the HTML documents are generated in the <strong>Log</strong> subfolder. Can be set 
+up in the <a href="ini.htm">Zorro.ini</a> file.
+<h3>Type:</h3>
+<strong>string</strong> <br>&nbsp;
+<h3>Remarks:</h3>
+<ul>
+	<li>Make sure not to assign temporary strings to the above string constants. 
+	Temporary strings will lose their content after the next command. For making 
+	them permanent, copy them to a static <strong>char</strong> array of sufficient 
+	size.</li>
+	<li>Make very sure not to assign new content to read/only strings. This will 
+	not only not work, it can even cause subsequent errors when system strings are 
+	overwritten.</li>
+	<li>More strings, performance data and trade lists, broker/account info, and 
+	file contents are available through the <a href="report.htm">report</a> function.
+	</li>
+</ul>
+<h3>Examples:</h3>
+<pre>Script = &quot;MyScriptV2&quot;; <em>// store and load parameters under &quot;MyScriptV2.par&quot;</em>
+History = &quot;*s1.t6&quot;;   <em> // read historical data from f.i. &quot;EURUSD_2013s1.t6&quot;</em>
+History = &quot;?.t6&quot;;   <em> // enforce historical data with no year number, f.i. &quot;EURUSD.t6&quot;</em>
+WebFolder = &quot;C:\\inetpub\\vhosts\\httpdocs\\trading&quot;;  <em>// VPS web folder
+</em>assetAdd(Asset,strf(&quot;%s:%s&quot;,NewSource,SymbolLive)); <em>// change source of current asset</em></pre>
+<pre><em>// change a future's symbol quarterly expiration date
+</em>void updateSymbol()
+{
+  string ExpDate = strstr(SymbolTrade,"FUT-");
+  if(!ExpDate) return; <em>// no future 
+</em>  int OldExpiry = atoi(ExpDate+4);
+  int Month = month(wdate(NOW)); 
+  Month = ((Month+2)/3)*3; <em>// next quarter: 3, 6, 9, 12
+</em>  int NewExpiry = ymd(nthDay(year(NOW),Month,FRIDAY,3));
+  if(OldExpiry == NewExpiry) return;
+  memcpy(ExpDate+4,sftoa(NewExpiry,8),8);
+  strcpy(SymbolLive,SymbolTrade);
+  strcpy(SymbolHist,SymbolTrade);
+  printf("#\n%s new contract",SymbolLive);
+}</pre>
+<h3>See also:</h3>
+<a href="algo.htm">algo</a>, <a href="asset.htm">asset</a>, <a href="report.htm">
+report</a>, <a href="numtotalcycles.htm">LogNumber</a>, <a href="scripts.htm">included 
+scripts</a>
+<p>&nbsp;</p>
+<!--a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a-->
+
+</body>
+
+</html>

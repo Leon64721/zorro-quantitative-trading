@@ -1,0 +1,139 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Contract Variables</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+.auto-style1 {
+	background-color: #FFFFFF;
+}
+</style>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/contracts.htm">
+</head>
+
+<body>
+<h1>Variables for futures and options</h1>
+The following variables are valid after loading a <a href="contract.htm">
+contract chain</a> and selecting a contract.
+<h2>ContractType</h2>
+<h2>ContractExpiry</h2>
+Type and expiration date (<strong>YYYYMMDD</strong> format) of the   selected contract, or <strong>0</strong> when no valid contract was selected. <br>
+<h3>Type:</h3>
+<strong>int</strong>, read/only
+<h2>ContractAsk</h2>
+<h2>ContractBid</h2>
+<h2>ContractUnl</h2>
+<h2>ContractStrike</h2>
+<h2>ContractVol</h2>
+<h2>ContractVal</h2>
+Current  ask, bid, underlying, and strike price, and trade volume or open 
+interest of the   selected contract. <strong>0</strong> when no contract chain 
+was loaded, or no valid contract was selected, 
+or when the parameter is not or not yet available<span class="auto-style1"> in 
+the selected contract. In historical 
+data, <strong>ContractAsk</strong> or <strong>ContractBid</strong> can be 0 with 
+illiquid or worthless contracts; such contracts should not be traded. <strong>
+ContractVal</strong> includes the multiplier retrieved from the broker API in [<span class="tast">Trade</span>] 
+mode. </span>For retrieving the ask and bid prices, the underlying, 
+and the volume in [<span class="tast">Trade</span>] mode, <a href="contract.htm">contractPrice</a> must be called before. <br>
+<h3>Type:</h3>
+<strong>var</strong>, read/only
+<h2>ThisContract</h2>
+The currently selected contract by the last <a href="contract.htm">contract</a> 
+call. In [<span class="tast">Trade</span>] mode,
+<strong>(string)ThisContract</strong> - the first element of the <strong>
+CONTRACT</strong> struct - contains the trading class retrieved from the broker 
+API.
+<h2>Contracts</h2>
+The current option or future chain loaded by the last <a href="contract.htm">contractUpdate</a> 
+call. A list of <strong>CONTRACT</strong> structs of the size <strong>NumContracts</strong>, 
+sorted first by ascending expiration, second by ascending strike. Can be used 
+for enumerating all contracts.
+<h3>Type:</h3>
+<strong>CONTRACT*</strong>
+<h2>NumContracts</h2>
+The number of contracts in the chain, up to 20000, or <strong>0</strong> when no 
+chain was loaded.. 
+<h2>ContractRow</h2>
+The row number of the selected contract in the historical <strong>.t8</strong>
+<a href="data.htm">dataset</a>&nbsp; that holds the contract chain history of 
+the current asset in Test and Train mode; the row number of the selected 
+contract in the options chain (<strong>Contracts</strong> pointer) 
+in Trade mode. Can be used to retrieve further data belonging 
+to the contract from additional datasets. 
+<h2>ContractHandle</h2>
+The handle of the historical <strong>.t8</strong>
+<a href="data.htm">dataset</a> that holds the contract chain history of the 
+current asset in Test and Train mode. Can be set to a specific dataset before 
+calling <a href="contract.htm">contractUpdate</a>; otherwise it is automatically 
+set. 
+<h3>Type:</h3>
+<strong>int</strong>, asset specific.
+<p>&nbsp;</p>
+The following variables are used to set up asset specific contract parameters:
+<h2>Multiplier</h2>
+Number of underlying units per option / future contract, for calculating the trade volume, selecting a contract, and filtering the options chain (default <strong>0 </strong>= download all options). Asset specific; set it after selecting the <a href="asset.htm">asset</a> and before buying contracts.&nbsp;If 
+at <strong>0</strong>, <a href="contract.htm">contractUpdate</a> will in [<span class="tast">Trade</span>] 
+mode automatically set this variable to the multiplier of the first contract 
+if available via broker API. 
+<h2>Centage</h2>
+Combination of flags that determine which option or futures prices in historical data or live 
+data are given in cents instead of dollars (default <strong>0 </strong>= all 
+prices in dollars). Prices are then automatically converted to dollars when 
+loading history or retrieving data from the broker API. Centage 
+flags can be combined by adding them up. Asset specific; to be set after selecting the 
+asset and before buying contracts.<br>
+<br><strong>1</strong> -&nbsp; strike in cents, in live contract data<br><strong>2</strong> 
+-&nbsp; strike in cents, in contract history<br><strong>4</strong> -&nbsp; underlying in 
+cents, in live contract data<br><strong>8</strong> -&nbsp; underlying in cents, in 
+contract history<br><strong>16</strong> - ask/bid in cents, in live contract 
+data<br><strong>32</strong> 
+- ask/bid in cents, in contract history<br><strong>64</strong> - underlying 
+prices and spreads in cents, in live and historical price data (similar to
+<a href="pip.htm">HedgeRatio</a> = 0.01).<p>Example: <strong>Centage = 59</strong> 
+(= 32+16+8+2+1) for ask/bid always in cents, underlying history in cents but 
+live in dollars, and strike always in cents.</p>
+<h3>Type:</h3>
+<strong>int</strong>, asset specific<h2>ExpiryTime</h2>
+The hour in HHMM format at which contracts expire; default <strong>1200 </strong>
+(UTC). Used for
+<a href="contract.htm">contractDays</a>. Added to the <a href="trade.htm">
+TradeExitDate</a> variable when a trade is opened. At that time on its 
+expiration day, the trade will be removed from the open trade list, and its profit or loss will be booked 
+to the account. Set this to a higher value for checking contract expiration with 
+the <a href="contract.htm">contractCheck</a> function in live trading.&nbsp;Note 
+that some exchanges have restrictions to trading or exercising contracts at 
+their expiration day. 
+<h3>Type:</h3>
+<strong>int</strong>, global for all assets
+<h2>Exchange</h2>
+The exchange for the contracts in live trading. Set the exchange symbol manually through this variable 
+when the exchange is required by the broker. 
+The list of valid exchange symbols can be obtained from the broker website. 
+<h3>Type:</h3>
+<strong>string</strong>, asset specific.
+<br>&nbsp;
+<h3>Remarks:</h3>
+<ul>
+	<li>Contract variables are only valid when a contract chain was loaded 
+	(see
+	<a href="contract.htm">contractUpdate()</a>).</li>
+	<li><strong>Multiplier</strong> and <strong>Centage</strong> (if required) 
+	must be set up for the current asset before loading contract chains.</li>
+	<li>Some assets require <strong>Exchange</strong> to be set for retrieving 
+	prices and trading with options.</li>
+	<li>For modifying a variable of the selected contract,use the <strong>
+	ThisContract</strong> pointer. For instance, <strong>ThisContract-&gt;fAsk = 
+	10;</strong> sets the ask price of the current contract to 10 dollars. <br>&nbsp;
+	</li>
+</ul>
+<h3>Examples: see <a href="contract.htm">Options and Futures</a> </h3>
+<h3>See also:</h3>
+<a href="buylong.htm">enterLong/</a><a href="buylong.htm">Short</a>, 
+<a href="contract.htm">Contract</a>, <a href="combo.htm">Combo</a>
+<p>&nbsp;</p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

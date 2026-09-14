@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>is</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/is.htm">
+</head>
+
+<body>
+<h1>Status Flags</h1>
+Zorro's current status can be checked through <strong>status flags</strong>  that can be either on (active) or off (not active). 
+The <a href="mode.htm">is()</a> function is used for reading the state of a 
+status flag. The following status flags are available:<h2>TESTMODE</h2>
+<h2>TRAINMODE</h2>
+<h2>TRADEMODE</h2>
+The script is doing a [<span class="tast">Test</span>],  [<span class="tast">Train</span>], or [<span class="tast">Trade</span>] 
+run (see also <a href="button.htm">Button</a>).
+<h2>DEMO</h2>
+A demo account is selected through the [<span class="tast">Account</span>] scrollbox.  <br>
+<h2>SPONSORED</h2>
+The script is running on a <a href="restrictions.htm">Zorro S</a> version. 
+See also <a href="version.htm">version()</a>. 
+<h2>CHANGED</h2>
+The [<span class="tast">Script</span>] or [<span class="tast">Asset</span>] scrollboxes have been changed since the last script run, or the [<span class="tast">Edit</span>] button has been clicked. The sliders are then set back to their default positions. Use this flag when you want to initialize something only at the first run of the script.
+<h2>AFFIRMED</h2>
+The [<span class="tast">Ok</span>] button of a <a href="printf.htm">nonmodal message box</a> has been clicked.<br>
+&nbsp;
+<h2>INITRUN</h2>
+Initial run of the session or simulation before the price data is loaded and before the log file is opened. Can be used to initialize global and static variables. System variables that are not yet known - f.i. variables that depend on the asset and simulation period - are at <strong>0</strong> during the initial run. 
+<h2>FIRSTRUN</h2>
+First run of the session or simulation with valid price data, parameters, 
+factors, and system variables. Normally immediately after the <strong>INITRUN</strong>.
+<h2>FIRSTINITRUN</h2>
+First initial run of the script, in the case of multiple simulation runs due to training cycles or <a href="numtotalcycles.htm">NumTotalCycles</a>. While  <strong>INITRUN</strong> and <strong>FIRSTRUN</strong> is set at the start of any simulation run, <strong>FIRSTINITRUN</strong> is only set at the 
+first initial run.
+It is not set in any subsequent training or test cycles.
+<h2>EXITRUN</h2>
+Last run of the simulation. All trades are closed. Can be used to calculate results, aside from the <a href="evaluate.htm">evaluate</a> or <a href="optimize.htm">objective</a> functions.
+If a live session or simulation is aborted with [<span class="tast">Stop</span>] or
+<a href="quit.htm">quit(0)</a>, no <strong>EXITRUN</strong> is performed.&nbsp;
+<h2>MARGINCALL</h2>
+At least once in the simulation a trade was liquidated because the equity 
+dropped below the maintenance margin.
+<br>
+&nbsp;
+<h2>RUNNING</h2>
+The script is currently running in simulation or live trading. Script functions can also be executed outside a simulation run f.i. by clicking on [<span class="tast">Result</span>] or on a <a href="panel.htm">panel</a> button.
+<h2>BUSY</h2>
+A broker API call or a <strong>main</strong>, <strong>run</strong>, <strong>tick</strong>, or
+<strong>tock</strong> function is currently executed. Check this flag to 
+determine if an asychronous process, f.i. triggered by a <a href="panel.htm">click</a> 
+or <a href="tick.htm">callback</a> 
+function, is allowed to access the broker API or global variables.&nbsp;See also
+<a href="call.htm">call()</a>.&nbsp;
+<h2>SLIDERS</h2>
+One of the <a href="slider.htm">sliders</a> has been moved. Reset this flag with
+<strong>set(SLIDERS|OFF);</strong> for detecting the next slider movement.
+<br>
+<!--h2>TRADING</h2>
+The script has entered or exited at least one position.-->
+<h2>LOOKBACK</h2>
+The script is currently in the lookback period, either at the begin of the simulation, or due to a <a href="mode.htm">RECALCULATE</a> run.
+<h2>NEWDAY</h2>
+The current bar is the first bar of the current day.&nbsp;
+<h2>PARCYCLE</h2>
+The script is currently generating <a href="optimize.htm">parameters</a> in [<span class="tast">Train</span>] 
+mode.
+<h2>FACCYCLE</h2>
+The script is currently generating <a href="optimalf.htm">capital allocation factors</a> in [<span class="tast">Train</span>] mode.
+<h2>RULCYCLE</h2>
+The script is currently generating <a href="advisor.htm">rules</a> or machine 
+learning models in [<span class="tast">Train</span>] mode. <br>&nbsp;&nbsp;
+<h2>COMMAND</h2>
+The Zorro instance was started through the <a href="command.htm">command line</a>.
+<h2>COMPILED</h2>
+The script is an executable (*.x or *.dll).&nbsp;
+<h2>STEPWISE</h2>
+The script runs in single step mode. For details see
+<a href="chart.htm">debugging</a>.<br>
+&nbsp;
+<h2>PORTFOLIO</h2>
+The script called the <a href="loop.htm">loop</a> function.
+<h2>ASSETSET</h2>
+The script called the <a href="asset.htm">asset</a> or <a href="asset.htm">
+assetAdd</a> function.
+<!--h2>SELECTED</h2>
+The current asset is the same as selected in the [<span class="tast">Asset</span>] scrollbox.-->
+<h2>PLOTSTATS</h2>
+The script called commands that plot a histogram rather than a price chart. <br>
+&nbsp; 
+<p>Some macros for often-used flags have been defined for convenience:</p>
+<h2>Train</h2>
+The same as <strong>is(TRAINMODE)</strong>. 
+<h2>Test</h2>
+The same as <strong>is(TESTMODE)</strong>.
+<h2>Live</h2>
+The same as <strong>is(TRADEMODE)</strong>.
+<h2>ReTrain</h2>
+Process for updating parameters or rules, started by clicking [<span class="tast">Train</span>] while live trading (<a href="restrictions.htm">Zorro S</a> only).
+<h2>ReTest</h2>
+Process started by clicking [<span class="tast">Test</span>] while live trading, f.i. for comparing the live trading results with backtest results of the same period (<a href="restrictions.htm">Zorro S</a> only). 
+<h2>Init</h2>
+The same as <strong>is(INITRUN)</strong>.<br>
+&nbsp;
+<h3>Example:</h3>
+<pre>function run()
+{
+  if(is(TRAINMODE)) set(SKIP3);
+  if(is(TESTMODE)) set(SKIP1,SKIP2,LOGFILE,TICKS); 
+  ...
+}</pre>
+<h3>See also:</h3>
+<a href="mode.htm">System flags</a>, <a href="setf.htm">isf</a>,
+<a href="button.htm">Button</a><p>&nbsp;</p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

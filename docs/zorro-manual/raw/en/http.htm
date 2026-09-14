@@ -1,0 +1,171 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>http functions</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/http.htm">
+</head>
+<body>
+<h1>HTTP functions</h1>
+<p>The HTTP functions can retreive or scrape web content - prices, signals,  news, or indicators - and use them in the trading strategy. They can also execute PHP scripts 
+and can be used by a <a href="brokerplugin.htm">broker plugin</a> for 
+communicating with a REST or FIX API. </p>
+<h2>http_transfer (string URL, string Data): string</h2>
+Transfers data to or from the web address given by <strong>URL</strong>. The function waits until the  web page content or the PHP script response is transferred back to Zorro. The <strong>data</strong> 
+string can contain arguments to be passed to a PHP script (such as the content 
+of an email). The function returns a temporary string containing the web page 
+content for further evaluation; the content remains valid until the next <strong>
+http_transfer</strong> call. The number of bytes received can be retrieved with
+<strong>http_status(0)</strong>.
+<h2>http_request (string Url, string Data, string Header, string Method): int </h2>
+Sends a HTTP request to the given <strong>URL</strong>, and returns a  identifier number (<strong>id</strong>) for controlling the data transfer with <strong>http_status</strong>. The 
+<strong>Data</strong> string can contain arguments to be passed to a PHP 
+script, such as the content of an email. The request type, such as <strong>&quot;GET&quot;</strong>, <strong>&quot;POST&quot;</strong>, <strong>&quot;PATCH&quot;</strong> etc. is given 
+in <strong>Method</strong>. If <strong>Data</strong> and <strong>Method</strong> 
+are <strong>0</strong>, 
+the request type defaults to <strong>GET</strong>. The optional <strong>Header</strong> string can contain custom headers 
+(f.i. for authorization) separated by line feeds (<strong>&quot;\n&quot;</strong>). After the transfer is finished, the identifier number must be freed with <strong>http_free</strong>.&nbsp;
+<!--h2>http_post (string url, string data): int </h2>
+Starts a HTTP POST data transfer to or from a web address. The function returns a  identifier number (<strong>id</strong>) for controlling the data transfer with <strong>http_status</strong>. The <strong>data</strong> string can contain arguments to be passed to the PHP script (such as the content of an email). After the transfer is finished, the identifier number must be freed with <strong>http_free</strong>.-->
+<h2>http_proxy (string proxy, int port) </h2>
+Sets up a HTTP proxy server for the connection to the Internet. If no proxy is used, or if you don't know what a HTTP proxy is, you won't need this function.
+<h2>http_status (int id): long </h2>
+Returns the number of bytes received with the HTTP data transfer with the 
+identifier <strong>id</strong>, or the number of bytes 
+received with the last <strong>http_transfer</strong> call when <strong>id == 0</strong>, or 
+the transfer status info: <strong>0</strong>&nbsp; - transfer is still in progress;
+<strong> -1</strong> - transfer failed; <strong>-2</strong> - <strong>id</strong> 
+is invalid; <strong>-3</strong> - website did not respond; <strong>-4</strong> - 
+host could not be resolved..
+<h2>http_result (int id, string Content, long Size): long </h2>
+Stores the received data of a HTTP data transfer in the <strong>content</strong> string, up to <strong>size</strong> bytes, and returns the received number of bytes. 
+A string terminator (0) is added at the end of the received data.<br>
+<h2>http_free (int id)</h2>
+FFrees the identifier number of a HTTP data transfer and stops the transfer. Must be called at the end of each HTTP data transfer. For stopping the 
+most recent transfer, set <strong>id</strong> to <strong>0</strong>.
+<h3>Parameters:</h3>
+<strong>proxy</strong> - proxy server name (example: <strong>"proxy-host.com"</strong>). <br>
+<strong>port</strong> - port of the proxy server (example: <strong>8080</strong>)).<br>
+<strong>Url</strong> - URL of the web page (examples: <strong>"<a href="http://opserver.de/scratch/ip.php">http://opserver.de/scratch/ip.php</a>"</strong> 
+or <strong>&quot;https://www.google.com/finance&quot;</strong>)).&nbsp; <br>
+<strong>Data</strong> - <strong>string</strong> (or <strong>char</strong> array) containing the data to be sent, 
+for instance a JSON record. <br>
+<strong>Content</strong> - <strong>string</strong> (or <strong>char</strong> array) to receive the web page content or the result data of a HTTP POST operation.<br>
+<strong>Header</strong> - one or several header strings separated by line feeds 
+(<strong>'\n'</strong>):<br>
+<strong>Size</strong> - maximum number of characters to be received, or <strong>0</strong> for using the actual <strong>content</strong> string length. <br>
+<strong>id</strong> - identifier number, returned by <strong>http_post()</strong>.<br>
+<h3>RRemarks:</h3>
+<ul>
+  <li>Up to 4 HTTP data transfers can be run at the same time using <strong>http_request</strong>. If only a single transfer is running at any time, the 
+  <strong>id</strong> 
+	remains the same and needs not be freed between transfers.&nbsp; </li>
+  <li> All functions return <strong>0</strong> if an error occured, and  nonzero if everything went ok (if not otherwise mentioned in the function description). </li>
+  <li>The <strong>data</strong> string can be accessed in a PHP script through the $_POST string array (see example). String variables can be named with <strong>'='</strong> and different variables can be  separated with <strong>'&amp;'</strong>, as in <strong>"user=John&amp;password=Secret"</strong>. </li>
+  <li>The <a href="str_.htm">strvar</a> function can be used to parse numbers on certain locations of web pages.</li>
+</ul>
+<h3>Examples:</h3>
+<pre><em>// access the CFTC website, read the current Commitment Of Traders Report,
+// and store it in a file.</em>
+function main()<br>{
+  file_delete(&quot;cot.txt&quot;); <em>// delete previous report</em>
+  file_append(&quot;cot.txt&quot;,
+    http_transfer(&quot;http://www.cftc.gov/dea/futures/deacmesf.htm&quot;,0));
+}</pre>
+<pre><em>// get current date and time from the Internet</em>
+function main()<br>{
+  string Response = http_transfer(&quot;http://worldtimeapi.org/api/ip&quot;,0);
+  string Date = strtext(Response,&quot;\&quot;datetime\&quot;:&quot;,&quot;0&quot;);
+  printf(&quot;\n%s&quot;,Date);
+}</pre>
+<pre><em>// Download historical EOD price data from Google</em>
+function main()
+{
+  string Code = "SPY";
+  string URL = strf("https://www.google.com/finance/historical?q=%s&amp;startdate=01-Jan-2000&amp;output=csv",Code);
+  string Content = http_transfer(URL,0);
+  if(!Content) continue;
+  file_write("History\\history.csv",Content,0);
+  dataNew(1,0,7);
+  if(dataParse(1,"%d-%b-%y,f3,f1,f2,f4,f6","History\\history.csv"))
+    dataSave(1,strf("History\\%s.t6",Code));
+}</pre>
+<pre><em>// Download earnings data from AlphaVantage 
+// and store earnings surprises in a dataset</em>
+int loadEarnings()
+{
+  string URL = strf(&quot;<a href="https://www.alphavantage.co/query?function=EARNINGS&amp;symbol=%s&amp;apikey=%s">https://www.alphavantage.co/query?function=EARNINGS&amp;symbol=%s&amp;apikey=%s</a>&quot;,
+    Asset,report(33));  <em>// 33 = AlphaVantage API key</em>
+  string Content = http_transfer(URL,0); <em>// JSON format
+</em>  if(!Content) return 0; 
+  string Pos = strstr(Content,"reportedDate");  
+  if(!Pos) return 0;
+  dataNew(1,0,0);
+  while(Pos) {
+    var Date = wdatef("%Y-%m-%d",Pos+12+4);
+    if(Date == 0) break;
+    Pos = strstr(Pos,"surprisePercentage");
+    if(!Pos) break;
+    int Row = dataRow(1,dataAppendRow(1,2));
+    dataSet(1,Row,0,Date); <em>// earnings date in field 0</em>
+    var Surprise = atof(Pos+18+4);
+    dataSet(1,Row,1,Surprise); <em>// surprise in fields 1</em>
+    printf("\n%.4f %.4f",dataVar(1,Row,0),dataVar(1,Row,1));
+    Pos = strstr(Pos,"reportedDate");
+  }
+  return 1;
+}</pre>
+<pre><em>// start the script &quot;ip.php&quot; on a remote server, and <br>// print dots until Zorro's IP address is returned</em> 
+function main()
+{
+  char ip_str[100]; <em>// just a long empty string</em>
+   int id = http_request("http://myserver.de/php/ip.php",0,0,0);
+  if(!id) return;
+  while(!http_status(id)) {
+    if(!wait(100)) return; <em>// wait for the server to reply</em>
+    printf(&quot;.&quot;);
+  }<br>  if(http_status(id) &gt; 0) { <em>//transfer successful?</em>
+    http_result(id,ip_str,100); <em>  //get the replied IP</em>
+    printf(&quot;\n%s&quot;,ip_str);
+  } else
+    printf("\nError during transfer!");
+  http_free(id); <em>//always clean up the id!</em>
+}
+<em>ip.php:
+&lt;?php<br>  echo &quot;Your IP address: &quot; . $_SERVER['REMOTE_ADDR'];<br>?&gt;</em></pre>
+<pre><em>// send an email when a trade is entered</em>
+function sendEmailAboutTrade()
+{
+<em>// compose the message</em>
+  string Content = strf(&quot;content=Zorro has entered a trade!\n%d Lots of %s&quot;,
+    Lots,Asset);
+  http_transfer(&quot;http://www.myserver.com/zorromail.php&quot;,Content);
+}
+
+<em>zorromail.php:
+&lt;?php<br> $to = &quot;me@myself.com&quot;;<br> $subject = &quot;Message from Zorro!&quot;;<br> $body = $_POST['content'];<br> mail($to,$subject,$body);<br>?&gt;</em></pre>
+<pre><em>// write text to a file on a server</em>
+function sendEmailAboutTrade()
+{
+<em>// compose the message</em>
+  string Content = &quot;content=This is my file content&quot;);
+  string echo = http_transfer(&quot;http://www.myserver.com/store.php&quot;,Content);
+  printf(&quot;\nResponse: $s&quot;,echo);
+}
+
+<em>store.php:
+&lt;?php<br>$file = 'file.txt';
+$data = $_POST['content'];
+file_put_contents($file,$data);
+echo &quot;Stored in &quot; . $file;
+?&gt;</em></pre>
+<h3>See also:</h3>
+<span class="links"><a href="ftp.htm">ftp functions</a>, <a href="file_.htm">file functions</a>,
+<a href="email.htm">email</a></span><p> 
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+version online</a>
+</p>
+</body>
+</html>

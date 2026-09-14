@@ -1,0 +1,157 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Algorithmic Trading and Market Inefficiencies</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+<!--
+.Stil2 {font-size: smaller}
+-->
+</style>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/strategy.htm">
+</head>
+
+<body>
+<h1>How - and why - does algorithmic trading work?</h1>
+<p>Model-based algorithmic trading strategies exploit 
+<span class="Highlight">market inefficiencies</span> for predicting price trends of financial assets. 
+Any market inefficiency establishes a price curve anomaly - a deviation of the price curve from pure 
+randomness. Obviously, trading strategies can only work when those 
+inefficiencies really exist. In a perfect, efficient market, prices  would only be affected by  real events, such as 
+the invention of a new technology or the publication of company results. All traders are 'informed', decide rationally and act immediately. The price curves in such a hypothetical market would be pure 
+<strong class="Highlight">random-walk</strong> curves that contain no information for predicting future prices. </p>
+<p>Fortunately for algo trading strategies, real markets are far from this theoretical ideal. Market inefficiencies are everywhere. They are caused by  slow reaction on news, incomplete information,  rumors, 
+patterns of repetitive behavior, and irrational trading (such as following 
+advices by 'analysts'). Suche effects can be described by
+<span class="Highlight">market models</span>. They allow a strategy to predict a small part of the price curve with some degree of accuracy. 
+The problem: those effects are small in relation to the ubiquitous 'noise', i.e. randomness 
+in 
+price curves. They are not visible to the human eye, nor can they be reliably 
+detected by classical &quot;technical indicators&quot;. Serious statistical methods or machine 
+learning algorithms are normally required for exploiting market inefficiencies. </p>
+<p>Example of a potential market inefficiency made visible by 
+<span class="Highlight">spectral analysis</span>:</p>
+<p><img src="../images/spectrum.png" width="853" height="342"></p>
+<p>The histogram  displays the amplitudes of  regular cycles found in the S&amp;P 500 price curve 
+over a week. The x axis is the cycle duration in hours. As you can see, the highest peak is a cycle of about 24 hours, some minor peaks are at 36, 54, and 64 hours, and a broad peak at 120 hours, equivalent to a weekly cycle (a week is 5 days x 24 hours, as weekends are skipped in price curves). Cycles arise from synchronized trading behavior. Some of them remain stable for weeks 
+or months. This effect can be  exploited for generating profit in automated strategies. You can find an example for cycle based trading in the <a href="tutorial_fisher.htm">tutorial</a>. A similar trade method is  used in Zorro's <a href="zsystems.htm">Z2</a> strategy. </p>
+<p>Often, temporary price patterns establish and can be used by intelligent algorithms for predicting short-term trends. The following  curve is produced by a '<span class="Highlight">deep learning</span>' neural net structure:</p>
+<p><img src="../images/sae_3.png" width="800" height="451"></p>
+<p>The  net was fed with EUR/USD price changes of the last   60-minutes bars, and predicted the price direction of the next hour. The blue curve shows the accumulated correct predictions minus the  wrong predictions from a walk-forward analysis. The price direction was predicted with 57% accuracy. 
+This is close to the maximum that can be achieved with machine learning; tales 
+of 90% or 100% prediction accuracy belong to the fairy world (or rather, to 
+backtest bias). The neural net was re-trained every 4 weeks, as the patterns  began to lose their predictive power after that time. We can see that some short-term predictive patterns pop up almost all the time in the market. Such patterns 
+are not found in random data.</p>
+<p>Another interesting inefficiency  can be seen in the following 
+<span class="Highlight">price distribution</span>:</p>
+<p><img src="../images/distribution.png" width="775" height="321"> </p>
+<p>In the chart, the height of a bar is equivalent to how often a certain price appears in the price curve. The red bars are based on the EUR price in Swiss Francs (EUR/CHF) from October 2011 up to January 2015; the green bars are the EUR price in US Dollars (EUR/USD) in the same time period. You can generate such a chart with the <strong>Distribution</strong> script. We can see that the red EUR/CHF price distribution is  quite narrow and ends abruptly on the left, as if cut with a knife. In contrast, the green EUR/USD price distribution is much wider with a broad peak in the middle. It resembles a bell curve (more or less), which indicates a  random price distribution. The EUR/CHF distribution however is no bell curve. It reveals a market inefficiency that can generate profit in automated trading. In this case, the inefficiency is the result of the CHF price ceiling that was established by the Swiss National Bank from September 2011 until January 2015. It prevented the EUR from dropping below 1.20 CHF. This kind of market  inefficiencies  can be very successfully exploited by grid trading strategies. </p>
+<!--h3>Methods that work for automated trading </h3>
+<p>In spite all electronic trade systems, market inefficiencies have even increased over the last decade, making automated trading more profitable than ever. Returns of  100% per year, far above the profit range of any serious long-term investment, can be relatively easily achieved trough automated trading, even with a cheap PC and slow Internet connection. The most important  methods for exploiting  inefficiencies are listed below:</p>
+<ul>
+  <li><strong>Trend</strong>. Most strategies try to anticipate the trend, but the current trend of a price curve itself can be used to predict future prices. Traders tend to follow the mass: when some buy, others start buying too. This causes a sequence of price movements in the same direction that can be detected and exploited. Trend following is one of the most often used strategies, but also one of the most difficult: the crucial point is detecting a beginning trend as early as possible, while at the same time preventing false signals. An example of a  trend trading strategy can be found in <a href="tutorial_trade.htm">Workshop 4</a>. <br>
+&nbsp;   </li>
+  <li><strong>Mean reversion (counter-trend)</strong>. Traders often believe in the existence of a 'fair price' of an asset. They buy when the actual price is cheaper than it ought to be in their opinion, or sell when it is more expensive. This causes the price curve after going in a certain direction often to reverse back to the mean.  An example of a  mean reversion strategy can be found in <a href="tutorial_fisher.htm">Workshop 5</a>. <br>
+&nbsp;</li>
+  <li><strong>Cycles</strong>. When a trade is profitable, traders often sell after a certain time for taking profits; unprofitable trades  are sold after a different time. This  has often the effect to synchronize entries and exits among a large number of traders, and causes the price curve to oscillate with a period that is stable over a relatively long time span. Such a cycle can be detected with <a href="filters.htm">spectral analysis functions</a> and used for predicting the price trend. (Those  cycles in price curves are real and unrelated to the imagined &quot;waves&quot; mentioned below). <br>
+  &nbsp; </li>
+  <li><strong>Clusters</strong>. Traders often believe in a 'real price' of a certain asset, and sell or buy a position at the moment when the price curve reached that value. This is the reason that prices sometimes cluster at certain levels and produce the famous &quot;support&quot; and &quot;resistance&quot; lines (also called &quot;supply&quot; and &quot;demand&quot;). <br>
+&nbsp; </li>
+  <li><strong>Curve patterns</strong>. Traders believe that price movements or trend changes are preceded by certain curve patterns. Most of them - such as the famous &quot;head and shoulders&quot; pattern - are myths. But some patterns, for instance &quot;cups&quot; or &quot;half-cups&quot;, can indeed precede an upwards or downwards movement and can be exploited by pattern-detecting methods  such as  the <a href="detect.htm">Fr&eacute;chet algorithm</a>.<br>
+  &nbsp;</li>
+  <li><strong>Autocorrelation models</strong>. Prices and their volatility often show serial correlation that can be displayed with the <a href="profile.htm">plotCorrelogram</a> function, and simulated with ARIMA or GARCH time series models. The models can be used for predicting the next prices within a probability range.<br>
+  &nbsp;  </li>
+  <li><strong>Price action</strong>. Sometimes the market develops repetitive patterns of 3, 4, or 5 consecutive <a href="bars.htm">candles</a> that can predict price movements. Those patterens can be detected by intelligent pattern search or machine learning algorithms. An example for trading with candle patterns can be found in <a href="tutorial_pre.htm">Workshop 7</a>.<br>
+&nbsp; </li>
+  <li><strong>Price cap</strong>. Sometimes a governement establishes a floor or ceiling for its currency exchange rate. Interventions prevent that the exchange rate exceeds a certain limit - a famous example is the above mentioned 1.20 ceiling of the <strong>EUR/CHF</strong> rate. This can be used in strategies to the trader's advantage. <br>
+&nbsp;   </li>
+  <li> <strong>Seasonality</strong>. &quot;Season&quot; does not necessarily mean a season of a year. Monthly, weekly, or daily trading behavior at large stock exchanges, such as the NYSE, often  follows a certain pattern that can be exploited by strategies. For instance, the S&amp;P500 index  often moves upwards in the first days of a month, and also has often an upwards trend in the early morning hours before the main trading session of the day. You can detect seasonal effects with Zorro's <a href="profile.htm">Profile</a> functions. <br>
+&nbsp;</li>
+  <li><strong>Gaps</strong>. When an asset is traded during certain market hours only - such as  stocks and stock indices - tomorrow's market open price can sometimes be predicted to some degree from the trading behavior at today's market close time. <br>
+&nbsp;</li>
+  <li><strong>Arbitrage</strong>. When two assets are known to be strongly correlated, strategies can exploit the fact that their prices tend to regularly end up at the same level or the same ratio, and derive profit from temporary price deviations. <br>
+&nbsp;  </li>
+  <li><strong>Price shocks</strong>. They often happen on Monday or on Friday morning when  companies or organizations publish good or bad news that affect the market. Even without knowing the news, a strategy can detect the first price reactions and quickly jump onto the bandwagon. </li>
+</ul>
+<p>All this sounds as if it were quite easy to exploit the markets. But trading is a game of probability. No computer can predict with certainty the outcome of a particular trade. Any detected inefficiency gives a trading system only a relatively small advantage, and   mistakes can easily turn a winning strategy into a losing one. There are many traps to avoid when developing trade strategies. </p-->
+<!--h3>Trade methods that don't work <a name="myths"></a></h3>
+<p>Although profitable  strategies can be created with multiple methods, even more    trade methods can and do separate traders from their money in remarkably short time. The prerequisite for any working trade method is an existing inefficiency and a valid scientific method to exploit it. However,  the difference between valid science and the many strange market theories, misconceptions, and myths circulating in the trading scene is  not always easy  to see for non-specialists. How do you know which way of trading is sound, and which is nonsense? Here's a small part of the long list of trade methods that you better avoid.</p>
+<ul>
+  <li><strong>Staring at  price curves</strong>. Discretionary trading - that means, entering trades manually - can be successful under one of the following two prerequisites. First, you have some information about the particular asset that  other traders don't have or don't use. Second, you have a stroke of luck. Otherwise you'll lose money at least at the rate of the transaction costs. It's not possible to the human mind to identify profitable trades by looking at a price curve - except, of course, in hindsight. And although we  see in <a href="tutorial_scam.htm">Workshop 8</a> that luck  gives a  strategy certainly a strong edge, it has one problem: it will end  anytime. <br>
+&nbsp;</li>
+  <li><strong>Technical analysis</strong>. This might come as a surprise, as it's normally considered the very essence of automated trading. Technical analysis uses a toolset of 'technical indicators' for determining trade entry and exit points. How indicators are supposed to work is described in the <a href="ta.htm">Technical Analysis</a> chapter - but in a nutshell: they don't. At least not in the way they are normally used. Many studies confirmed that classical <a href="ta.htm">technical indicators</a> such as Moving Averages, MACD, 'Stochastic', Ichimoku, etc. have no predictive value whatsoever. Using them for trade signals is equivalent to throwing a coin. Still, even nonpredictive indicators can be helpful for auxiliary purposes. The <a href="ta.htm">ATR</a>, for instance, can be used for determining volatility and setting up stop loss distances.<br>
+&nbsp;</li>
+  <li><strong>Neural networks</strong>, support vector machines, or decision trees - they are the very paragons of artificial intelligence. Is it possible that they don't work for trading? Answer: it depends. In most research papers about that subject, neural nets or similar classification algorithms are fed with raw price data, return rates, or a hodgepodge of technical indicators, in the hope that the machine learns from them to predict future prices. And it does... sort of. It trades like a genius,  but unfortunately only with the very historical price curve that was used for training. It fails  miserably in WFA tests and in live trading. Nevertheless, some researchers still publish machine learning results with up to 80% out-of-sample prediction accuracy - but those miracles are apparently only achieved with a lucky asset, a carefully selected test period, and fine-tuned parameters. The bubble quickly bursts when you test the same system with other assets or different periods. Therefore,  trading AI researchers didn't get rich yet, but they are are still experimenting with all sorts of neural net structures or other machine learning tools, and with pre-processing the price data in any imaginable way. <br>
+&nbsp;&nbsp;On the other hand, machine learning is certainly a powerful tool for a trade system - if you give it a specific task. It can not magically generate the ultimate trade method just out of the price curve, but when you know what you're doing, you can use it to effectively  exploit specific inefficiencies. Zorro's <a href="advisor.htm">advise</a> function is available for experimenting with machine learning algorithms.<br>
+&nbsp;</li>
+  <li><strong>Elliott waves</strong>. Ralph Nelson Elliott claimed in his 1938 published book that the prices of financial assets always move up and down in series of five waves. And indeed, you can  see all sorts of waves when you stare at price curves long enough. Problem is that imagined waves are not well suited for predicting real  prices - and that's true not only for Elliott's waves, but also for the countless  other wave patterns invented by his many imitators. No research so far has found  any theoretical basis or any statistical evidence of Elliott waves in  price curves. <br>
+&nbsp;</li>
+  <li><strong>Gann lines</strong>. In the early 20th century, the trader William Delbert Gann was desperate as he could not support his family with his trading. But suddenly he discovered the way to success: promoting himself as a genius trader and selling esoteric trade systems and books. Gann was the  ancestor of all <a href="trading101.htm#scam">scammers</a> in the trading scene. No   serious tests have ever confirmed any value of his lines, cycles, pyramids, or angles. But even today, many traders still believe in them, to the great joy of their brokers.<br>
+ &nbsp;</li>
+  <li><strong>Astrology</strong>. It's hard to believe, but until recently astrology was widely accepted as a normal trade method and discussed in many trading books. Trading would indeed be a breeze if you could calculate tomorrow's prices just from the positions of sun, moon, and planets. Alas, celestial bodies stubbornly refuse to predict earthly events. A full moon has  no correlation to the EUR/USD price, Saturn won't drag down the S&amp;P500 index, and contrary to popular belief, even the sun is not responsible for the change of seasons. All this happens on earth.<br>
+&nbsp;</li>
+  <li><strong>Classical candle patterns. </strong>With names like &quot;Three Stars in the South&quot; or &quot;Concealing Baby Swallow&quot;, they bring some poetry into trading. Candle patterns had been developed in the 18th century by Japanese traders for predicting the local rice markets. Even today, many traders are still  squinting at  price charts, hoping for a lucky trade when a candle formation matches a profitable pattern in their  &quot;Get Rich with Candle Patterns&quot; book. You can easily check if this hope is justified - just run a simple backtest with any of the supported <a href="candle.htm">classical  candle patterns</a>. And you can confirm this way that the new patterns invented by some clever marketeers - &quot;Lizard's Day&quot; or the like - work exactly just as well as the classical patterns. <br>
+&nbsp;</li>
+  <li><strong>Fibonacci numbers</strong>. This simple number series - 1, 2, 3, 5, 8, 13, etc. - can be found in patterns of geometric growth, in mathematics as well as in nature. But there's no  reason to expect it in price levels or time periods of financial assets. And indeed, it isn't there. Nevertheless traders like the word &quot;Fibonacci&quot;, maybe due to its ring of serious math. If a system uses Fibonacci numbers for trade signals, you can be sure that it would also work, and most likely better, with any other numbers. <br>
+ &nbsp;&nbsp;</li>
+  <li><strong>Harmonic trading</strong>. By connecting points on the price curve, you can produce polygonal figures such as diamonds, butterflies, crabs, or bats. Their shapes predict profitable trade entry points. Or do they? Harmonic trading is certainly profitable - for  the tool and seminar vendors who invented it. But contrary to the claims of said vendors, there is absolutely no evidence that it ever helped any trader. <br>
+&nbsp;   </li>
+  <li><strong>Scalping</strong>. Systems that trade in minutes or even seconds might have an edge or not -  problem is that you'll never know. Due to the bad signal/noise ratio and the feed dependency of price curves at short time frames, backtest results of such systems are very unreliable. An additional problem are the trading costs - commission, spread,  slippage -  that explode  on short time scales, while market inefficiencies disappear. Aside from  high frequency trading systems that are an entirely different matter, automated systems  work best with  time frames in the hour or day range. <br>
+&nbsp;</li>
+  <li><strong>Your Trading Style</strong>.  In trading books you'll often read advices like &quot;place the stop loss at a distance that suits your trading style.&quot; This makes you wonder what &quot;your trading style&quot; might be. Do you trade risky, greedy, timidly, or miserly? And  should this affect your trade method or the stop loss? Certainly not. Any parameter in a  trade system has an optimal or most robust value, and any other value will produce a less than optimal result. As long as you prefer winning to losing, better select your trade methods and parameters not by your style, but by their robustness and performance. <br>
+&nbsp;</li>
+  <li><strong>The Holy Grail</strong>. On all trader forums you'll find some lengthy threads about systems with miraculous profits. The thread starter has discovered the ultimate trade method. He feeds the thread periodically with reports of his impressive trade results - such as, doubling his account every month - and vague hints about his miracle algorithm. His devotees eagerly absorb any droplet of information in their attempts to replicate the trade method - but alas, to no avail. Miracles have the nasty habit of disappearing at closer look. The thread will eventually dry out when the miraculist got broke or when the last follower has realized that he was following a Fata Morgana. <br>
+&nbsp;  </li>
+  <li>    <strong><a name="martingale"></a>Martingale</strong> or <strong>d'Alembert methods</strong>. They are used by many trading robots, signal providers, and beginners in roulette: you bet on red or black and double your stake after every loss. Alternatively, you open two new  positions for every lost trade. The theory is that a loss increases your win chance the next time. Unfortunately, it won't. On the contrary, market inefficiencies are often autocorrelated, so after losing a trade there's a good chance that you'll also lose the next one. Although martingale systems at first seem to make steady profits - even when trades are entered at random - they will encounter a long loss streak sooner or later* and wipe out the account. If that doesn't matter for you, <a href="tutorial_scam.htm">workshop 8</a> describes a way to use a martingale system to your advantage.<br>
+&nbsp;</li>
+  <li><strong>High Win Ratio</strong>.  99% win rate is  easy - just use a 5 pips profit target and a 500 pips stop loss distance. You'll then probably win the next 99 trades, regardless of your strategy. Unfortunately the 100th trade will hit the stop and eat up all profit. Even worse, that fatal trade can happen anytime, even right at the beginning. You can easily identify scammers that use a high win ratio for selling their systems: their published profit curve looks like a straight upwards slope, with any trade winning about the same small amount. They don't wait until the 100th trade, though. <br>
+&nbsp;</li>
+  <li><strong><a name="grid" id="grid"></a>Grid trading.</strong> Such a system is a special case of using a high win ratio, up to 100%. It opens many trades at a fixed price grid, and takes profit when the price crosses the next   grid line.  This method can indeed generate a stream of  profits for a while when the prices move up and down, but don't move too far away from their initial position. Problem is that they eventually do, causing a fatal loss**. More capital and smaller trade sizes can delay, but not avoid that event. It's easy to tweak grid trading systems for surviving any backtest, so they are often found in trade robots and on trade copy services.  There are  few exceptions where grid trading can make sense - for instance when runaway prices are hedged with some method, or when the price movement is limited by external factors such as a price cap. </li>
+</ul>
+<p>For your own experiments you can play around with  martingale and  grid trading systems with the code examples under <a href="tips.htm#rich">Hacks&amp;Tricks</a>.</p>
+<p>---------------------------------<br>
+  <span class="Stil2">* After how many trades will a martingale system erase your account? Assume that you invest 1% of your equity per trade. After a loss you double your investment: 2%, 4%, 8%, 16%, 32%... that sums up to 63% after 5 losses, so the sixth loss will exceed 100% and cause a margin call. With 50% win rate and uncorrelated returns, the probability of 6 consecutive losses is <strong>0.5^6 = 0.015625</strong>. The probability of this event not happening in <strong>n</strong> trades is <strong>(1-0.015625)^n</strong>, so the number of trades until the margin call probability exceeds 50% is <strong>log(0.5)/<strong>log(1-0.015625)</strong> = 44</strong>. With one trade per day, your account will last about 2 months. A higher win rate, like 90%, won't help - the average loss is then normally also 9x higher, so the account lifetime is still the same 2 months. Investing only 0.1% instead - $10 per  $10,000 capital - would  extend the average account survival time to about 17 months.<br>
+&nbsp;  <br>
+  ** How much capital do you need for a grid trader to survive a straight price move? Assume that you have <strong>n</strong> open trades and the price moves by <strong>x</strong> pips, <strong>x</strong> being much larger than the grid size. The move will then increase the balance by <strong>x</strong> pips and reduce the open trade value by about <strong>n/2 * x</strong> pips, causing an overall equity drawdown of <strong>(n/2-1) * x</strong> pips. On a Forex account with  10 mini lots trade size, 1 $ pip cost, and an average of 20 open trades, a 500 pips (5 cents) price move  produces a <strong>9*10*500*1$ = 45,000 $</strong> drawdown. Such moves can occur several times per year. </span></p-->
+<h3>Developing algo trading strategies</h3>
+<p>There are plenty - in fact, infinite - algorithms that work for trading strategies. 
+You can find an overview of strategy development in the <a href="links.htm">
+Black Book</a>. What you need 
+to know:</p>
+<ul>
+	<li>Some basic information about the financial markets that you want to 
+trade. </li>
+	<li>An idea or concept of exploiting a particular market inefficiency. 
+</li>
+	<li>Evaluating data and doing basic research to establish a model of that 
+	inefficiency. 
+</li>
+	<li>Read, write, and debug code: Learn <a href="tutorial_var.htm">C</a> 
+	and <a href="Lecture%201.htm">R</a>.</li>
+	<li>Dealing with <a href="training.htm">statistical effects</a> that 
+	cause different outcomes of test and live trading. </li>
+</ul>
+<p>What <span class="Highlight">almost never works</span> is stacking indicators until 
+the backtest turns positive. Indicators are only at the end, not at the begin of strategy development. The 
+general process is described in the Black Book and in a brief version under
+<a href="http://www.financial-hacker.com/build-better-strategies-part-3-the-development-process/" target="_blank">Build 
+Better Strategies</a>. The new <a href="shell.htm">Evaluation Shell</a> helps 
+you in the final stages of development. When you need help with 
+strategy coding, contact our
+<a href="http://zorro-project.com/development.php" target="_blank">development 
+service</a>. </p>
+<p>When you develop an algorithmic trading strategy, you use historical price data for testing and optimizing. 
+When you trade it, prices are live. There is no guarantee that the past is 
+repeating. The market and its inefficiencies undergo changes of any kind all the 
+time. Therefore, even when  you're using proven systems such as the <a href="zsystems.htm">Z strategies</a>, you always deal with an element of uncertainty. 
+<span class="Highlight">The future is unknown.</span> For not relying 
+only on your luck, learn as much as you can, and develop and deploy as many different  strategies as possible.</p>
+<h3>See also:</h3>
+<a href="started.htm">Zorro Platform</a>, 
+<a href="tutorial_var.htm">Strategy Workshops</a>, <a href="bars.htm">Bars &amp; 
+Candles</a>, <a href="tips.htm">Tips&amp;Tricks</a>, <a href="links.htm">Links</a>
+<p>&nbsp;</p>
+</body>
+</html>

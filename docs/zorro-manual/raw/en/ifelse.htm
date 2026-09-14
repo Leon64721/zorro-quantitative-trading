@@ -1,0 +1,99 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+<title>ifdelse</title>
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta content="width=device-width,initial-scale=1" name="viewport">
+<link href="https://zorro-project.com/manual/en/ifelse.htm" rel="canonical">
+</head>
+
+<body>
+
+<h1>Helper functions</h1>
+The following functions are implemented for convenience and for easier converting code from other platforms.
+<h2>ifelse(bool c, var x, var y): var</h2>
+<h2>ifelse(bool c, int x, int y): int</h2>
+<h2>ifelse(bool c, string x, string y): string</h2>
+Returns <strong>x</strong> when the expression or condition <strong>c</strong> is 
+true or nonzero, otherwise <strong>y</strong>.
+<h3>Parameters:</h3>
+<strong>c</strong> - any integer or boolean expression.<br><strong>x</strong>,<strong>y</strong> 
+- variable, constant, or <strong>string</strong>,<strong> </strong>both of the same 
+type.<br>
+<h3>Returns:</h3>
+<strong>x</strong> when <strong>c</strong> is true, otherwise <strong>y</strong>.
+<br>&nbsp;
+<h2>once(bool c): int</h2>
+Helper function; returns nonzero when its <strong>c</strong> parameter became
+<strong>true</strong> or nonzero the first time in a session or backtest. Afterwards 
+it returns <strong>0</strong> regardless of <strong>c</strong>. Can only be 
+called once per bar.
+<h3>Parameters:</h3>
+<strong>c</strong> - any integer or boolean expression.<h3>Returns:</h3>
+<strong>1</strong> when called the first time with a nonzero <strong>c</strong>, 
+otherwise <strong>0</strong>. <br>&nbsp;
+<h2>changed(var V): int</h2>
+Helper function; returns <strong>1</strong> when its <strong>V</strong> value 
+has increased since the last bar, <strong>-1</strong> when it has decreased,
+<strong>0</strong> otherwise. Can be called multiple times per bar. Creates an 
+internal <a href="series.htm">series</a> (see remarks). Source code in <strong>indicators.c</strong>.&nbsp;
+<h3>Parameters:</h3>
+<strong>V</strong> - any variable.<h3>Returns:</h3>
+<strong>1</strong> or <strong>-1</strong> when <strong>V</strong> has changed 
+since the last bar, otherwise <strong>0</strong>. <br>&nbsp;
+<h2>barssince(bool c): int</h2>
+Returns the number of bars or time frames since the expression or condition
+<strong>c</strong> was true or nonzero the last time, or <strong>-1</strong> when 
+it was never true. This function internally creates <a href="series.htm">series</a> 
+(see remarks). Source code in <strong>indicators.c</strong>.&nbsp;
+<h3>Parameters:</h3>
+<strong>c</strong> - any integer or boolean expression.<h3>Returns:</h3>
+Number of bars, <strong>0</strong> when true on the current bar, <strong>-1</strong> 
+when never true.<br>&nbsp;&nbsp;<h2>cum(var Inc): var</h2>
+Accumulates <strong>Inc</strong> at any bar, and returns the sum. This function internally creates 
+a <a href="series.htm">series</a> 
+(see remarks). Source code in <strong>indicators.c</strong>.&nbsp;
+<h3>Parameters:</h3>
+<strong>Inc</strong> - variable to be added.<h3>Returns:</h3>
+Sum of all <strong>Inc</strong> values so far.<br>&nbsp;
+<h2>valuewhen(bool c, vars Data, int n): var</h2>
+Returns the <strong>Data</strong> value at which the expression or condition
+<strong>c</strong> was true or nonzero on the <strong>n</strong>-th most recent 
+occurrence. This function internally creates <a href="series.htm">series</a> 
+(see remarks). Source code in <strong>indicators.c</strong>.
+<h3>Parameters:</h3>
+<strong>c</strong> - any integer or boolean expression.<br><strong>Data</strong> 
+- data series of <a href="lookback.htm">LookBack</a> elements.<br><strong>n</strong> 
+- number of occurrences, <strong>1</strong> = most recent, <strong>2</strong> = 
+second most recent etc.
+<h3>Returns:</h3>
+<strong>Data[i]</strong> when<strong> c</strong> was true the <strong>n</strong>-th 
+time <strong>i</strong> bars ago, otherwise <strong>0</strong>.&nbsp;<br>&nbsp;
+<h3>Remarks:</h3>
+<ul>
+	<li>When functions are used for <strong>x</strong> and <strong>y</strong>, be 
+	aware that both are always executed when <strong>ifelse</strong> is called, 
+	regardless of the state of <strong>c</strong>. Use <a href="if.htm">if</a> for 
+	executing functions depending on a condition. </li>
+	<li>Some  functions internally create <a href="series.htm">data series</a>, and thus 
+	must be called the same number of times and in the same order at any bar. 
+	They must therefore not depend on <strong>if</strong> conditions.</li>
+</ul>
+<h3>Examples:</h3>
+<pre>var MaxOfXY = ifelse(X &gt; Y,X,Y);         
+var CloseAtLastCross = valuewhen(crossOver(Data1,Data2),seriesC(),1); 
+if(once(!is(LOOKBACK))) printf(&quot;\nEnd of lookback reached!&quot;);</pre>
+<h3>See also:</h3>
+<a href="abs.htm">abs</a>, <a href="min.htm">min</a>, <a href="min.htm">max</a>,
+<a href="between.htm">between</a>, <a href="sign.htm">sign</a>,
+<a href="clamp.htm">clamp</a>, <a href="if.htm">if</a>, <a href="invalid.htm">
+fix0</a>
+<p>
+<a class="button" href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))">&#9658; 
+latest version online</a></p>
+
+</body>
+
+</html>

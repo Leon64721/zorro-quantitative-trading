@@ -1,0 +1,34 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>between</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/between.htm">
+</head>
+
+<body>
+<h2>between(int x, int lower, int upper): bool </h2>
+<h2>between(var x, var lower, var upper): bool </h2>
+		Returns <strong>true</strong> when the variable <strong>x</strong> lies 
+at or within a <strong>lower</strong> and <strong>upper</strong> border. When <strong>lower</strong> is above <strong>upper</strong>, returns <strong>true</strong> when either <strong>x &gt;= upper</strong> or <strong>x &lt;= lower</strong>, this way allowing the comparison of cyclic ranges such as hours of the day or months of the year.
+        <h3>Parameters:</h3>
+		<strong>x</strong>, <strong>lower, upper</strong>     - any <strong>var</strong> or <strong>int</strong>.<br>
+		<h3>Algorithm:</h3>
+<pre>if(lower &lt;= upper) 
+  return (x &gt;= lower) and (x &lt;= upper); 
+else&lt;
+  return (x &gt;= lower) or (x &lt;= upper);</pre>
+		<h3>Example:</h3>
+<pre>if(between(x,0.,1.))
+  ...  <em>// executed when x is between 0..1</em>
+if(between(hour(0),22,4))
+  ...  <em>// executed when hour(0) is at or above 22 or at or below 4</em></pre>
+		<h3>See also:</h3>
+  <A href="avar-sqrt.htm">sqrt</A>, <a href="abs.htm">abs</a>, <a href="sign.htm">sign</a>, <a href="clamp.htm">clamp</a>, <a href="min.htm">min</a>, <a href="min.htm">max</a>, <a href="ifelse.htm">ifelse</a>
+  <p>            <a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+    version online</a>
+</p>
+</body>
+</html>

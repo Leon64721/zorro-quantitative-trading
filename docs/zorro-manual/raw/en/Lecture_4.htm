@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<!-- saved from url=(0066)http://www.rfortraders.com/lecture-4-regression-and-pairs-trading/ -->
+<head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="UTF-8">
+<title>Lecture 4: Regression and Pairs Trading</title>
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/Lecture 4.htm">
+</head><body>
+<h1 class="title">Lecture 4 – Regression and Pairs Trading</h1>
+      <p><span class="post-meta"><span class="small">In</span> <span class="categories"><a href="http://www.rfortraders.com/code/beginner-r-tutorial/">Beginner R Tutorial</a>, <a href="http://www.rfortraders.com/code/finc-621/">FINC 621</a>, <a href="http://www.rfortraders.com/code/r-programming/">R Programming</a></span> </span></p>
+      <h4>Regression Analysis</h4>
+<p>Regression is a very important topic. It is a widely used statistical tool in economics, ﬁnance and trading. R provides pre-written functions that perform linear regressions in a very straightforward manner. There exist multiple add-on packages that allow for more advanced functionality. In this class, we will only utilize the <b>lm()</b> function which is available in the base installation of R. The following example demonstrates the use of this function:</p>
+<div class="wp_codebox"><table><tbody><tr id="p2541"><td class="code" id="p254code1"><pre class="rsplus" style="font-family:monospace;"> x    <span style="color: #080;">&lt;-</span> <span style="color: #0000FF; font-weight: bold;">rnorm</span><span style="color: #080;">(</span><span style="color: #ff0000;">1000</span><span style="color: #080;">)</span>
+ y    <span style="color: #080;">&lt;-</span> <span style="color: #080;">(</span>x <span style="color: #080;">-</span> <span style="color: #ff0000;">2</span><span style="color: #080;">)</span> <span style="color: #080;">+</span> <span style="color: #0000FF; font-weight: bold;">rnorm</span><span style="color: #080;">(</span><span style="color: #ff0000;">1000</span><span style="color: #080;">)</span>
+ outR <span style="color: #080;">&lt;-</span> <span style="color: #0000FF; font-weight: bold;">lm</span><span style="color: #080;">(</span>y ~ x<span style="color: #080;">)</span>
+ <span style="color: #0000FF; font-weight: bold;">summary</span><span style="color: #080;">(</span>outR<span style="color: #080;">)</span></pre></td></tr></tbody></table>
+</div>
+<p>What we did above was creat an independent variable x and a dependent variable y. The call to the function <b>lm()</b> performed an OLS (Ordinary Least Square’s) ﬁt to the function: y = b0 + b1x + e, where e was distributed as N(mu, sigma^2)</p>
+<p>The <b>~</b> is used to separate the independent from the dependent variables. The expression <b>y ~ x</b> is a formula that speciﬁes the linear model with one independent variable and an intercept. If we wanted to ﬁt the same model, but without the intercept, we would specify the formula as <b>y ~ x – 1</b>. This tells R to omit the intercept (force it to zero). The following graph illustrates the best ﬁt lines for a model with and without an intercept. If you know that your model should contain an intercept term, then include it. Otherwise, do not include the intercept. For the subsequent pairs trading example, we are going to assume that the intercept term is equal to 0.</p>
+<p><img src="../images/regression_graph.png" alt="Graph of regression in R" title="regression in R graph" width="548" height="507" class="aligncenter size-full wp-image-255"></p>
+<p>Whenever a regression is performed, it is very important to analyze the residuals (e) of the ﬁtted model. If everything goes according to plan, the residuals will be normally distributed with no visible pattern in the data, no auto-correlation and no heteroskedasticity. The residuals can be extracted from the regression object by using the <b>residuals</b> keyword.</p>
+<div class="wp_codebox"><table><tbody><tr id="p2542" class="alt-table-row"><td class="code" id="p254code2"><pre class="rsplus" style="font-family:monospace;"> res <span style="color: #080;">&lt;-</span> outR$residuals
+ <span style="color: #0000FF; font-weight: bold;">par</span><span style="color: #080;">(</span>mfrow <span style="color: #080;">=</span> <span style="color: #0000FF; font-weight: bold;">c</span><span style="color: #080;">(</span><span style="color: #ff0000;">2</span>,<span style="color: #ff0000;">1</span><span style="color: #080;">)</span><span style="color: #080;">)</span>
+ <span style="color: #0000FF; font-weight: bold;">plot</span><span style="color: #080;">(</span>res, <span style="color: #0000FF; font-weight: bold;">col</span> <span style="color: #080;">=</span> <span style="color: #ff0000;">"blue"</span>, main <span style="color: #080;">=</span> <span style="color: #ff0000;">"Residual Plot"</span><span style="color: #080;">)</span>
+ <span style="color: #0000FF; font-weight: bold;">acf</span><span style="color: #080;">(</span>res<span style="color: #080;">)</span></pre></td></tr></tbody></table>
+</div>
+<p>Here is a graph of both the residuals themselves and their auto-correlation.<br>
+<img src="../images/residuals.png" alt="residual plot in R and autocorrelation" title="Regression residuals in R" width="557" height="515" class="aligncenter size-full wp-image-260"></p>
+<p>The <b>summary</b> keyword can be used to obtain the results of the linear regression model ﬁt.</p>
+<div class="wp_codebox"><table><tbody><tr id="p2543"><td class="code" id="p254code3"><pre class="rsplus" style="font-family:monospace;"> <span style="color: #0000FF; font-weight: bold;">summary</span><span style="color: #080;">(</span>outR<span style="color: #080;">)</span></pre></td></tr></tbody></table>
+</div>
+<p>The p-values and t-statistics can be used to evaluate the statistical signiﬁcance of the coefﬁcients. The smaller the p-value, the more certain we are that the coefﬁcient estimate is close to the actual population coefﬁcient. Notice how both the intercept and the independent variable coefﬁcient is signiﬁcant in this example. The extraction of the coefﬁcients can be accomplished via<br>
+the <b>coefficients</b> keyword.</p>
+<div class="wp_codebox"><table><tbody><tr id="p2544" class="alt-table-row"><td class="code" id="p254code4"><pre class="rsplus" style="font-family:monospace;"> outR$coefficients</pre></td></tr></tbody></table>
+</div>
+<h4>Pairs Trading</h4>
+<p>What follows is a really simple version of a pairs trade between two equities. The main motivation for the following example is to expose you to obtaining data via the quantmod package and in using the <b>lm()</b> function that we covered above. </p>
+<p>We will explore a simple two-legged spread between AAPL and QQQ. Once we download and transform the timeseries for both stocks, we will define a simple trading rule and explore the trades that our signal generates. Various trade statistics and graphs will be presented.</p>
+<h5>Step 1: Obtain data via quantmod</h5>
+<div class="wp_codebox"><table><tbody><tr id="p2545"><td class="code" id="p254code5"><pre class="rsplus" style="font-family:monospace;"> <span style="color: #228B22;">#Utilize quantmod to load the security symbols</span>
+ <span style="color: #0000FF; font-weight: bold;">require</span><span style="color: #080;">(</span>quantmod<span style="color: #080;">)</span>
+ <span style="color: #0000FF; font-weight: bold;">symbols</span> <span style="color: #080;">&lt;-</span> <span style="color: #0000FF; font-weight: bold;">c</span><span style="color: #080;">(</span><span style="color: #ff0000;">"AAPL"</span>, <span style="color: #ff0000;">"QQQ"</span><span style="color: #080;">)</span>
+ getSymbols<span style="color: #080;">(</span><span style="color: #0000FF; font-weight: bold;">symbols</span><span style="color: #080;">)</span></pre></td></tr></tbody></table>
+</div>
+<p>Now that our data frames for AAPL and QQQ are loaded into memory, let’s extract some prices.</p>
+<h5>Step 2: Extract prices and time ranges</h5>
+<div class="wp_codebox"><table><tbody><tr id="p2546" class="alt-table-row"><td class="code" id="p254code6"><pre class="rsplus" style="font-family:monospace;"> <span style="color: #228B22;">#define training set</span>
+ startT  <span style="color: #080;">&lt;-</span> <span style="color: #ff0000;">"2007-01-01"</span>
+ endT    <span style="color: #080;">&lt;-</span> <span style="color: #ff0000;">"2009-01-01"</span>
+ rangeT  <span style="color: #080;">&lt;-</span> <span style="color: #0000FF; font-weight: bold;">paste</span><span style="color: #080;">(</span>startT,<span style="color: #ff0000;">"::"</span>,endT,sep <span style="color: #080;">=</span><span style="color: #ff0000;">""</span><span style="color: #080;">)</span>
+ tAAPL   <span style="color: #080;">&lt;-</span> AAPL<span style="color: #080;">[</span>,<span style="color: #ff0000;">6</span><span style="color: #080;">]</span><span style="color: #080;">[</span>rangeT<span style="color: #080;">]</span>
+ tQQQ   <span style="color: #080;">&lt;-</span> QQQ<span style="color: #080;">[</span>,<span style="color: #ff0000;">6</span><span style="color: #080;">]</span><span style="color: #080;">[</span>rangeT<span style="color: #080;">]</span>
+&nbsp;
+ <span style="color: #228B22;">#define out of sample set</span>
+ startO  <span style="color: #080;">&lt;-</span> <span style="color: #ff0000;">"2009-02-01"</span>
+ endO    <span style="color: #080;">&lt;-</span> <span style="color: #ff0000;">"2010-12-01"</span>
+ rangeO  <span style="color: #080;">&lt;-</span> <span style="color: #0000FF; font-weight: bold;">paste</span><span style="color: #080;">(</span>startO,<span style="color: #ff0000;">"::"</span>,endO,sep <span style="color: #080;">=</span><span style="color: #ff0000;">""</span><span style="color: #080;">)</span>
+ oAAPL   <span style="color: #080;">&lt;-</span> AAPL<span style="color: #080;">[</span>,<span style="color: #ff0000;">6</span><span style="color: #080;">]</span><span style="color: #080;">[</span>rangeO<span style="color: #080;">]</span>
+ oQQQ   <span style="color: #080;">&lt;-</span> QQQ<span style="color: #080;">[</span>,<span style="color: #ff0000;">6</span><span style="color: #080;">]</span><span style="color: #080;">[</span>rangeO<span style="color: #080;">]</span></pre></td></tr></tbody></table>
+</div>
+<p>Notice how we defined and in-sample and out-of-sample range. We will use the in-sample data to compute a simple hedge ratio and then we will apply this hedge ratio to the out of sample data.</p>
+<h5>Step 3: Compute returns and find hedge ratio</h5>
+<div class="wp_codebox"><table><tbody><tr id="p2547"><td class="code" id="p254code7"><pre class="rsplus" style="font-family:monospace;"> <span style="color: #228B22;">#compute price differences on in-sample data</span>
+ pdtAAPL <span style="color: #080;">&lt;-</span> <span style="color: #0000FF; font-weight: bold;">diff</span><span style="color: #080;">(</span>tAAPL<span style="color: #080;">)</span><span style="color: #080;">[</span><span style="color: #080;">-</span><span style="color: #ff0000;">1</span><span style="color: #080;">]</span>
+ pdtQQQ <span style="color: #080;">&lt;-</span> <span style="color: #0000FF; font-weight: bold;">diff</span><span style="color: #080;">(</span>tQQQ<span style="color: #080;">)</span><span style="color: #080;">[</span><span style="color: #080;">-</span><span style="color: #ff0000;">1</span><span style="color: #080;">]</span>
+&nbsp;
+ <span style="color: #228B22;">#build the model</span>
+ model  <span style="color: #080;">&lt;-</span> <span style="color: #0000FF; font-weight: bold;">lm</span><span style="color: #080;">(</span>pdtAAPL ~ pdtQQQ <span style="color: #080;">-</span> <span style="color: #ff0000;">1</span><span style="color: #080;">)</span>
+&nbsp;
+ <span style="color: #228B22;">#extract the hedge ratio</span>
+ hr     <span style="color: #080;">&lt;-</span> <span style="color: #0000FF; font-weight: bold;">as.<span style="">numeric</span></span><span style="color: #080;">(</span>model$coefficients<span style="color: #080;">[</span><span style="color: #ff0000;">1</span><span style="color: #080;">]</span><span style="color: #080;">)</span></pre></td></tr></tbody></table>
+</div>
+<h5>Step 4: Construct the spread</h5>
+<div class="wp_codebox"><table><tbody><tr id="p2548" class="alt-table-row"><td class="code" id="p254code8"><pre class="rsplus" style="font-family:monospace;"> <span style="color: #228B22;">#spread price (in-sample)</span>
+ spreadT <span style="color: #080;">&lt;-</span> tAAPL <span style="color: #080;">-</span> hr <span style="color: #080;">*</span> tQQQ
+&nbsp;
+ <span style="color: #228B22;">#compute statistics of the spread</span>
+ meanT    <span style="color: #080;">&lt;-</span> <span style="color: #0000FF; font-weight: bold;">as.<span style="">numeric</span></span><span style="color: #080;">(</span><span style="color: #0000FF; font-weight: bold;">mean</span><span style="color: #080;">(</span>spreadT,na.<span style="">rm</span><span style="color: #080;">=</span>TRUE<span style="color: #080;">)</span><span style="color: #080;">)</span>
+ sdT      <span style="color: #080;">&lt;-</span> <span style="color: #0000FF; font-weight: bold;">as.<span style="">numeric</span></span><span style="color: #080;">(</span><span style="color: #0000FF; font-weight: bold;">sd</span><span style="color: #080;">(</span>spreadT,na.<span style="">rm</span><span style="color: #080;">=</span>TRUE<span style="color: #080;">)</span><span style="color: #080;">)</span>
+ upperThr <span style="color: #080;">&lt;-</span> meanT <span style="color: #080;">+</span> <span style="color: #ff0000;">1</span> <span style="color: #080;">*</span> sdT
+ lowerThr <span style="color: #080;">&lt;-</span> meanT <span style="color: #080;">-</span> <span style="color: #ff0000;">1</span> <span style="color: #080;">*</span> sdT
+&nbsp;
+ <span style="color: #228B22;">#visualize the in-sample spread + stats</span>
+ <span style="color: #0000FF; font-weight: bold;">plot</span><span style="color: #080;">(</span>spreadT, main <span style="color: #080;">=</span> <span style="color: #ff0000;">"AAPL vs. QQQ spread (in-sample period)"</span><span style="color: #080;">)</span>
+ <span style="color: #0000FF; font-weight: bold;">abline</span><span style="color: #080;">(</span>h <span style="color: #080;">=</span> meanT, <span style="color: #0000FF; font-weight: bold;">col</span> <span style="color: #080;">=</span> <span style="color: #ff0000;">"red"</span>, lwd <span style="color: #080;">=</span><span style="color: #ff0000;">2</span><span style="color: #080;">)</span>
+ <span style="color: #0000FF; font-weight: bold;">abline</span><span style="color: #080;">(</span>h <span style="color: #080;">=</span> meanT <span style="color: #080;">+</span> <span style="color: #ff0000;">1</span> <span style="color: #080;">*</span> sdT, <span style="color: #0000FF; font-weight: bold;">col</span> <span style="color: #080;">=</span> <span style="color: #ff0000;">"blue"</span>, lwd<span style="color: #080;">=</span><span style="color: #ff0000;">2</span><span style="color: #080;">)</span>
+ <span style="color: #0000FF; font-weight: bold;">abline</span><span style="color: #080;">(</span>h <span style="color: #080;">=</span> meanT <span style="color: #080;">-</span> <span style="color: #ff0000;">1</span> <span style="color: #080;">*</span> sdT, <span style="color: #0000FF; font-weight: bold;">col</span> <span style="color: #080;">=</span> <span style="color: #ff0000;">"blue"</span>, lwd<span style="color: #080;">=</span><span style="color: #ff0000;">2</span><span style="color: #080;">)</span></pre></td></tr></tbody></table>
+</div>
+<p><img src="../images/pairs_trade.png" alt="trading in R pairs" title="pairs trading in R" width="542" height="533" class="aligncenter size-full wp-image-265"></p>
+<p>Let’s look at the distribution of the spread.</p>
+<div class="wp_codebox"><table><tbody><tr id="p2549"><td class="code" id="p254code9"><pre class="rsplus" style="font-family:monospace;"> <span style="color: #0000FF; font-weight: bold;">hist</span><span style="color: #080;">(</span>spreadT, <span style="color: #0000FF; font-weight: bold;">col</span> <span style="color: #080;">=</span> <span style="color: #ff0000;">"blue"</span>, breaks <span style="color: #080;">=</span> <span style="color: #ff0000;">100</span>, main <span style="color: #080;">=</span> <span style="color: #ff0000;">"Spread Histogram (AAPL vs. QQQ)"</span><span style="color: #080;">)</span>
+ <span style="color: #0000FF; font-weight: bold;">abline</span><span style="color: #080;">(</span>v <span style="color: #080;">=</span> meanT, <span style="color: #0000FF; font-weight: bold;">col</span> <span style="color: #080;">=</span> <span style="color: #ff0000;">"red"</span>, lwd <span style="color: #080;">=</span> <span style="color: #ff0000;">2</span><span style="color: #080;">)</span></pre></td></tr></tbody></table>
+</div>
+<p><img src="../images/spread_histogram.png" alt="distribution of spread in R" title="spread distribution in R" width="549" height="550" class="aligncenter size-full wp-image-267"></p>
+<h5>Step 5: Define the trading rule</h5>
+<p>Once the spread exceeds our upper threshold, we sell AAPL and buy QQQ. Once the spread drops below our lower threshold, we buy AAPL and sell QQQ.</p>
+<div class="wp_codebox"><table><tbody><tr id="p25410" class="alt-table-row"><td class="code" id="p254code10"><pre class="rsplus" style="font-family:monospace;"> indSell <span style="color: #080;">&lt;-</span> <span style="color: #0000FF; font-weight: bold;">which</span><span style="color: #080;">(</span>spreadT <span style="color: #080;">&gt;=</span> meanT <span style="color: #080;">+</span> sdT<span style="color: #080;">)</span>
+ indBuy  <span style="color: #080;">&lt;-</span> <span style="color: #0000FF; font-weight: bold;">which</span><span style="color: #080;">(</span>spreadT <span style="color: #080;">&lt;=</span> meanT <span style="color: #080;">-</span> sdT<span style="color: #080;">)</span></pre></td></tr></tbody></table>
+</div>
+<h5>Step 6: Figure out the trades</h5>
+<div class="wp_codebox"><table><tbody><tr id="p25411"><td class="code" id="p254code11"><pre class="rsplus" style="font-family:monospace;"> spreadL  <span style="color: #080;">&lt;-</span> <span style="color: #0000FF; font-weight: bold;">length</span><span style="color: #080;">(</span>spreadT<span style="color: #080;">)</span>
+ pricesB  <span style="color: #080;">&lt;-</span> <span style="color: #0000FF; font-weight: bold;">c</span><span style="color: #080;">(</span><span style="color: #0000FF; font-weight: bold;">rep</span><span style="color: #080;">(</span>NA,spreadL<span style="color: #080;">)</span><span style="color: #080;">)</span>
+ pricesS  <span style="color: #080;">&lt;-</span> <span style="color: #0000FF; font-weight: bold;">c</span><span style="color: #080;">(</span><span style="color: #0000FF; font-weight: bold;">rep</span><span style="color: #080;">(</span>NA,spreadL<span style="color: #080;">)</span><span style="color: #080;">)</span>
+ sp       <span style="color: #080;">&lt;-</span> <span style="color: #0000FF; font-weight: bold;">as.<span style="">numeric</span></span><span style="color: #080;">(</span>spreadT<span style="color: #080;">)</span>
+ tradeQty <span style="color: #080;">&lt;-</span> <span style="color: #ff0000;">100</span>
+ totalP   <span style="color: #080;">&lt;-</span> <span style="color: #ff0000;">0</span>
+&nbsp;
+ <span style="color: #0000FF; font-weight: bold;">for</span><span style="color: #080;">(</span>i <span style="color: #0000FF; font-weight: bold;">in</span> <span style="color: #ff0000;">1</span><span style="color: #080;">:</span>spreadL<span style="color: #080;">)</span> <span style="color: #080;">{</span>
+     spTemp <span style="color: #080;">&lt;-</span> sp<span style="color: #080;">[</span>i<span style="color: #080;">]</span>
+     <span style="color: #0000FF; font-weight: bold;">if</span><span style="color: #080;">(</span>spTemp <span style="color: #080;">&lt;</span> lowerThr<span style="color: #080;">)</span> <span style="color: #080;">{</span>
+        <span style="color: #0000FF; font-weight: bold;">if</span><span style="color: #080;">(</span>totalP <span style="color: #080;">&lt;=</span> <span style="color: #ff0000;">0</span><span style="color: #080;">)</span><span style="color: #080;">{</span>
+           totalP     <span style="color: #080;">&lt;-</span> totalP <span style="color: #080;">+</span> tradeQty
+           pricesB<span style="color: #080;">[</span>i<span style="color: #080;">]</span> <span style="color: #080;">&lt;-</span> spTemp
+        <span style="color: #080;">}</span>
+     <span style="color: #080;">}</span> <span style="color: #0000FF; font-weight: bold;">else</span> <span style="color: #0000FF; font-weight: bold;">if</span><span style="color: #080;">(</span>spTemp <span style="color: #080;">&gt;</span> upperThr<span style="color: #080;">)</span> <span style="color: #080;">{</span>
+       <span style="color: #0000FF; font-weight: bold;">if</span><span style="color: #080;">(</span>totalP <span style="color: #080;">&gt;=</span> <span style="color: #ff0000;">0</span><span style="color: #080;">)</span><span style="color: #080;">{</span>
+          totalP <span style="color: #080;">&lt;-</span> totalP <span style="color: #080;">-</span> tradeQty
+          pricesS<span style="color: #080;">[</span>i<span style="color: #080;">]</span> <span style="color: #080;">&lt;-</span> spTemp
+       <span style="color: #080;">}</span>
+    <span style="color: #080;">}</span>
+ <span style="color: #080;">}</span></pre></td></tr></tbody></table>
+</div>
+<h5>Step 7: Visualize trades</h5>
+<div class="wp_codebox"><table><tbody><tr id="p25412" class="alt-table-row"><td class="code" id="p254code12"><pre class="rsplus" style="font-family:monospace;"> <span style="color: #0000FF; font-weight: bold;">plot</span><span style="color: #080;">(</span>spreadT, main <span style="color: #080;">=</span> <span style="color: #ff0000;">"AAPL vs. QQQ spread (in-sample period)"</span><span style="color: #080;">)</span>
+ <span style="color: #0000FF; font-weight: bold;">abline</span><span style="color: #080;">(</span>h <span style="color: #080;">=</span> meanT, <span style="color: #0000FF; font-weight: bold;">col</span> <span style="color: #080;">=</span> <span style="color: #ff0000;">"red"</span>, lwd <span style="color: #080;">=</span><span style="color: #ff0000;">2</span><span style="color: #080;">)</span>
+ <span style="color: #0000FF; font-weight: bold;">abline</span><span style="color: #080;">(</span>h <span style="color: #080;">=</span> meanT <span style="color: #080;">+</span> <span style="color: #ff0000;">1</span> <span style="color: #080;">*</span> sdT, <span style="color: #0000FF; font-weight: bold;">col</span> <span style="color: #080;">=</span> <span style="color: #ff0000;">"blue"</span>, lwd <span style="color: #080;">=</span> <span style="color: #ff0000;">2</span><span style="color: #080;">)</span>
+ <span style="color: #0000FF; font-weight: bold;">abline</span><span style="color: #080;">(</span>h <span style="color: #080;">=</span> meanT <span style="color: #080;">-</span> <span style="color: #ff0000;">1</span> <span style="color: #080;">*</span> sdT, <span style="color: #0000FF; font-weight: bold;">col</span> <span style="color: #080;">=</span> <span style="color: #ff0000;">"blue"</span>, lwd <span style="color: #080;">=</span> <span style="color: #ff0000;">2</span><span style="color: #080;">)</span>
+ <span style="color: #0000FF; font-weight: bold;">points</span><span style="color: #080;">(</span>xts<span style="color: #080;">(</span>pricesB,index<span style="color: #080;">(</span>spreadT<span style="color: #080;">)</span><span style="color: #080;">)</span>, <span style="color: #0000FF; font-weight: bold;">col</span><span style="color: #080;">=</span><span style="color: #ff0000;">"green"</span>, cex<span style="color: #080;">=</span><span style="color: #ff0000;">1.9</span>, pch<span style="color: #080;">=</span><span style="color: #ff0000;">19</span><span style="color: #080;">)</span>
+ <span style="color: #0000FF; font-weight: bold;">points</span><span style="color: #080;">(</span>xts<span style="color: #080;">(</span>pricesS,index<span style="color: #080;">(</span>spreadT<span style="color: #080;">)</span><span style="color: #080;">)</span>, <span style="color: #0000FF; font-weight: bold;">col</span><span style="color: #080;">=</span><span style="color: #ff0000;">"red"</span>, cex<span style="color: #080;">=</span><span style="color: #ff0000;">1.9</span>, pch<span style="color: #080;">=</span><span style="color: #ff0000;">19</span><span style="color: #080;">)</span></pre></td></tr></tbody></table>
+</div>
+<p><img src="../images/spread_prices.png" alt="R spread prices" title="spread prices in R" width="531" height="541" class="aligncenter size-full wp-image-270"></p>
+<p align="right"><a href="Lecture 5.htm">Next: R Lecture 5</a></p>
+</body></html>

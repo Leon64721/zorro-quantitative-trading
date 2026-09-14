@@ -1,0 +1,2061 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+<title>New Functions and Features | Zorro Project</title>
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link href="css.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+.auto-style1 {
+	margin-top: 19px;
+}
+</style>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/new.htm">
+</head>
+
+<body>
+<div class="invisible">
+<h1>What's new?</h1>
+<h3>Updating Zorro 3.01 to Zorro 3.11 - questions and answers</h3>
+	<ul>
+		<li>The data format in <strong>64-bit mode</strong> has changed. 
+		Recompile 64-bit scripts.</li>
+		<li>How do I <strong>update a live trading Zorro</strong>? The procedure is described under <a href="trading.htm#update">Trading</a>. 
+		If assets or algos were changed, continue the old version at zero volume 
+		so that no new trades are opened. Wail until all old trades are closed, 
+		then start trading with the new version.</li>
+		<li>Why do I get <strong>error messages</strong> 
+		when the script previously compiled fine? Most likely due to improved error 
+		detection, a 
+		name conflict with a new keyword, or a deprecated variable or function.
+		Deprecated keywords are 
+		defined in <strong>legacy.h</strong>, which can be included for still using 
+		them.<li>
+		Why do I get <strong>different 
+		backtest results</strong>? This is normal due to new price histories or new asset parameters. 
+		You can determine the exact reason by comparing both logs. </li>
+		<li>Why can't I <strong>test the new Z system</strong>? 
+		You need recent historical data. Get it from the 
+		<a href="https://zorro-project.com/download.php" target="_blank">Zorro download page</a>.</li>
+		<li>Why are my <strong>settings</strong> 
+		gone? You probably edited the default settings, which are overwritten by 
+		any update. 
+		Keep individual settings in individual files, like <strong>ZorroFix.ini</strong>, <strong>Z1+.ini</strong>,
+		<strong>Z2+.ini</strong>, etc. They won't be overwritten.
+		<!--li>Internal structs have been changed in version 2.30. Scripts 
+		<span class="Highlight">compiled with earlier versions</span> must be recompiled.</li-->
+		<!--li>The TRADE struct has been changed in version 2.25.
+		<span class="Highlight">Trades from previous 
+		Zorro versions</span> can not be resumed with this version; please see under 
+		<a href="trading.htm#update">Trading</a> 
+		how to update a live system.</li-->
+		<!--li>The <a href="mt4plugin.htm">MT5 bridge</a> 
+		was changed in version 2.30. When trading with MT5,
+		<span class="Highlight">re-install the bridge</span> and re-compile the Zorro EA.</li-->
+		<!--li><strong>Zorro 2.53:</strong> Trade entry and exit prices with <a href="bar.htm">special bars</a> 
+		are calculated in improved precision, 
+		which can cause different backtest results.
+		<li><strong>Zorro 2.53:</strong> New plugins for <a href="ib.htm">IB</a>,
+		<a href="bittrex.htm">Bittrex</a>, and <a href="oanda.htm">Oanda</a> due 
+		to recent API changes.&nbsp;
+		<li><strong>Zorro 2.53</strong>: <a href="barmode.htm">BR_MARKET</a> and
+		<a href="barmode.htm">BR_WEEKEND</a> now override <a href="barmode.htm">
+		BR_FLAT</a>.<li>
+		<strong>Zorro 2.53:</strong> <a href="barmode.htm">
+		BR_LOCAL</a> does not anymore automatically alter
+		<a href="assetzone.htm">BarZone</a>. Set it by script (<strong>BarZone = 
+		AssetMarketZone</strong>) if needed.</li-->
+		<!--li>The <a href="fill.htm">Fill</a> mode was changed. Limit entries and 
+		exits now fill at the current price plus slippage. The previous limit fill behavior can be activated with 
+		fill mode 2. 
+		It <a href="trademode.htm">TR_FRC</a> is not set, fill prices are 
+		now rounded to the point size of the asset.<li>The format of the parameter files (<strong>*.par</strong>) was changed. 
+	Parameters and training results are now stored in CSV format.<li>The <strong>
+		Z1</strong>, <strong>Z2</strong>, and <strong>Z12</strong> systems have 
+		been replaced by <strong>Z1+</strong>, <strong>Z2+</strong>, and <strong>
+		Z12+</strong>, and <strong>Z6+</strong> has been modifed. </ul-->
+<h3 class="auto-style1">Zorro 3.12 beta</h3>
+<ul>
+	<li>Lite-C compiler messages are now printed to <strong>
+	Log\litec.log</strong>.</li>
+	<li>The <a href="exec.htm">exec</a> function got a shortcut for the image 
+	viewer.</li>
+	<li>The algo compare function of the <a href="shell.htm">Evaluation Shell</a> 
+	now generates an image for better comparison. </li>
+	<li>The new <strong>Apex</strong> portfolio for
+	<a href="https://zorro-project.com/rangerz.php" target="_blank">RangerZ</a> 
+	yields &gt; 350% out-of-sample annual return. </li>
+	<li>The <a href="shell.htm">evaluation shell</a> now supports parameter 
+	setting per .ini file.</li>
+	
+	</ul>
+	<p><span class="Highlight">Beta versions</span> or <span class="Highlight">release candiates</span> are 
+	available on the 
+	<a href="https://zorro-project.com/download.php" target="_blank">Zorro Download Page</a>. <a href="restrictions.htm">Zorro S features</a> 
+	can be unlocked in beta versions with a valid Zorro license. <a href="zsystems.htm">Z strategies</a> 
+	are not included in beta versions. A list of fixed bugs can 
+be found under <a href="bugs.htm">bugs</a>.<br></p>
+<!--p>The release candidate is available on the Zorro Download 
+Page. It has all functions of the final release. A list of fixed bugs can 
+be found under <a href="bugs.htm">bugs</a>.</p-->
+
+<div class="invisible">
+	<h1>Future Zorro features</h1>
+	If you want a new Zorro function, feature, 
+	or a new broker plugin, there are two ways to get it. 
+	You can either pay us for implementing it, and donate the feature to the community. Or you can suggest it on the
+	<a href="https://opserver.de/ubb7/ubbthreads.php?ubb=cfrm&amp;c=1" target="_blank">
+	User Forum</a> in the <span class="tast">Zorro Future</span> section. There 
+	you can also comment or support features suggested by other users. We 
+	normally implement any suggested feature when it is <span class="Highlight">useful</span> 
+	(please give a usage example), <span class="Highlight">popular</span> (supported by 
+	other users), <span class="Highlight">backwards compatible</span> (won't break existing 
+	scripts), and <span class="Highlight">efficient</span> (saves a lot of code in a script). How long it takes depends on the usefulness of the 
+	feature and how hard it is to implement. Donated features have priority.<br>
+	<!--br>Features planned for future releases: 
+	<ul>
+		<li>Overcoming the 32-bit limit for training and backtests (Zorro 
+		S; in development).</li>
+		<li>A new Z system based on range market ineffectivity for currency 
+		portfolios (Zorro S; in development).</li>
+		<li>Interactive chart improvements - vertical scrolling, crosshair, live 
+		trading, etc.</li>
+		<li>Licensing system for compiled scripts (Zorro S).</li>
+		<li>Support for .cpp scripts by directly calling the VC++ compiler and 
+		linker.<br>&nbsp;</li>
+	</ul-->
+</div>
+<h1>Zorro Release History </h1>
+<h3 class="auto-style1">Zorro 3.11 (July 2026)</h3>
+<ul>
+	<li>&nbsp;The <a href="shell.htm">Evaluation Shell</a> got new functions for 
+	algo selection and algo 
+	comparison.</li>
+	<li>The <a href="phantom.htm">phantom</a> function now activates phantom 
+	trading automatically for the current algo.</li>
+	<li>New plugin: <a href="ctrader.htm">cTrader</a> </li>
+	<li>The <a href="ta.htm">SMAFast</a> indicator is a two times faster variant 
+	of the <a href="ta.htm">SMA</a>.</li>
+	<li>The <a href="ib.htm">IB plugin</a> now supports adjusted D1 historical 
+	data.</li>
+	<li>The default asset parameters - <strong>AssetsFix.csv</strong> - are 
+	now based on an FXCM 100:1 account. </li>
+	
+	</ul>
+<h3 class="auto-style1">Zorro 3.01 (February 2026) </h3>
+<ul>
+	<li>The new <a href="shell.htm">Evaluation Shell</a> automatizes most of the 
+	strategy development process.</li>
+	<li>Pending trades are now saved and resumed when restarting a session.</li>
+	<li>For compatibility with other platforms, 1 point simulated slippage was 
+	automatically applied to orders. </li>
+	<li>The <a href="loop.htm">loop</a> function now also accepts an array of 
+	algo names.</li>
+	<li>The <a href="script.htm">LogFolder</a> for the log files and reports can 
+	now be set up in by script.</li>
+	<li>The <a href="fxcm.htm">64 bit FXCM plugin</a> is now officially included 
+	(it was 'unoffially' already in 2.70).&nbsp;</li>
+	<li>New file functions: <a href="file_.htm">file_appendCSV</a>,
+	<a href="file_.htm">file_sortCSV</a>.</li>
+	<li>New string functions: <a href="str_.htm">strvarCSV</a>,
+	<a href="str_.htm">strtextCSV</a>,
+	<a href="str_.htm">strfield</a>.</li>
+	<li>The often used <a href="ta.htm">MMI</a> function was recoded and is now 
+	10x faster.</li>
+	<li><a href="mode.htm">NOFLAT</a> skips flat bars.</li>
+	<li>The <a href="phantom.htm">phantom</a> function makes equity curve 
+	trading easier.</li>
+	<li>Moving a slider now triggers the <a href="panel.htm">click</a> function.</li>
+	<li>The <a href="call.htm">event</a> function allows re-assigning 
+	user-supplied functions to script events.</li>
+	<li>The IB plugin now supports the <a href="brokercommand.htm">SET_RESTART</a> 
+	command for overcoming the daily disconnection.</li>
+	
+	</ul>
+<h3 class="auto-style1">Zorro 2.70 (September 2025) </h3>
+<ul>
+	<li>The new <strong>Z6+</strong> trading system with adaptive grid was added to the
+	<a href="zsystems.htm">Z systems</a>.</li>
+	<li>John Ehlers' improved <a href="filter.htm">HighPass3</a> filter and his
+	<a href="ta.htm">LRSI</a> indicator were 
+	added to the indicator library.</li>
+	<li>The <a href="statistics.htm">DrawDownPercent</a> variable returns the 
+	largest drawdown depth in percent of the preceding balance peak.</li>
+	<li><a href="lots.htm">MaxLong/MaxShort</a> now affect training when the
+	<a href="opt.htm">LIMITS</a> flag is set. They update also the open trade 
+	lifetime when <a href="trademode.htm">TR_EXTEND</a> is set.</li>
+	<li>The <a href="export">trade list</a> format has changed. The list now 
+	also contains commission, MAE, and MFE of trades.</li>
+	<li>The <a href="transform.htm">MAE</a> function returns the maximum adverse 
+	excursion of a data series.</li>
+	<li>The <a href="trademode.htm">TR_ANYSTOP/ANYLIMIT</a> flags affect the 
+	trailing of entry or exit stops and limits when trades are updated.</li>
+	<li>The <a href="fill.htm">Fill</a> mode was changed. Limit entries and 
+	exits now fill at the current price. The previous limit 
+	fill behavior can be activated with Fill mode 2. It <a href="trademode.htm">TR_FRC</a> is not set, fill prices are 
+		now rounded to the point size of the asset.</li>
+	<li>The format of the parameter files (<strong>*.par</strong>) was changed. 
+	Parameters and training results are now stored in CSV format.</li>
+	<li>A WFO cycle analysis was added to the <a href="performance.htm">
+	performance report</a>.</li>
+	<li>The <a href="contract.htm">contractExpiry</a> function can be used to 
+	generate a contract symbol.</li>
+	<li>The <strong><a href="str_.htm">strselect</a></strong> function opens a 
+	selection dialog.</li>
+	<li>The <a href="button.htm">Button</a> variable refects the way the code 
+	was started.</li>
+	</ul>
+<h3 class="auto-style1">Zorro 2.66 (April 2025) </h3>
+<ul>
+	<li><a href="loadhistory.htm">assetHistory</a> can now also load tick data 
+	with volume to <strong>.t2</strong> files.</li>
+	<li><a href="history.htm">T2 historical data</a> is now supported by the 
+	<a href="ib.htm">IB 
+	TWS bridge</a>.</li>
+	<li>The <a href="performance.htm">Ulcer Index</a> has been modified to 
+	reflect the maximum MAE, instead of the average.</li>
+	<li><a href="history.htm">T1 historical data</a> is now supported by the
+	<a href="binance.htm">Binance plugin</a>.</li>
+	<li>The <a href="contract.htm">contractChain</a> function loads option 
+	chains much faster (10 sec instead of 20 min).</li>
+	<li>The <a href="brokercommand.htm">GET_CHAIN</a> command is now supported 
+	by the IB TWS bridge.</li>
+	<li>Compiling a <a href="dlls.htm">C++ script</a> will now automatically 
+	generate a <strong>VC++ project file</strong> (Zorro S only).</li>
+	</ul>
+<h3 class="auto-style1">Zorro 2.64 (January 2025) </h3>
+<ul>
+	<li>The data format has changed in 64-bit mode. Recompile 64-bit script DLLs.</li>
+	<li>The <a href="data.htm">dataCompressSelf</a> function compresses a 
+	dataset for reducing its file size.</li>
+	<li><a href="data.htm">dataCol</a> now returns the indices of the minimum 
+	and maximum valuies.</li>
+	<li><a href="data.htm">dataSort</a> can now sort in ascending order.</li>
+	<li>The <strong><a href="brokercommand.htm">SET_ORDERGROUP</a></strong> 
+	command is now supported by the <a href="ib.htm">IB plugin</a> for OCA 
+	orders.</li>
+	<li>The <a href="brokercommand.htm">GET_PRICE</a> and
+	<a href="brokercommand.htm">GET_VOLUME</a> commands are supported by the <a href="ib.htm">IB plugin</a>. </li>
+	<li>The <a href="binance.htm">Binance Spot</a> plugin now supports <strong>
+	LIMIT_MAKER</strong> orders.</li>
+	<li>Unix-like timestamps (<a href="format.htm">%t format code</a>) now also 
+	support microseconds.</li>
+	<li>The script name can be accessed by plugins through the
+	<a href="report.htm">report</a> function.</li>
+	<li>The <a href="matrix.htm">matSort</a> function sorts a two-dimensional 
+	matrix.</li>
+	<li><a href="mode.htm">AUTOCOMPILE</a> can now be set by script.</li>
+	<li>Non-linear Trade profits, as from inverse contracts, can now be updated 
+	by script in a <a href="trade.htm">TMF</a>.</li>
+	</ul>
+<h3 class="auto-style1">Zorro 2.62 (July 2024)</h3>
+<ul>
+	<li>Python machine learning libraries can now be used with the
+	<a href="advisor.htm">advise</a> function.</li>
+	<li>A <strong>neural</strong> function for <a href="deeplearning.htm">
+	PyTorch</a> was implemented.</li>
+	<li>The <a href="ib.htm">IB plugin</a> has been updated to the latest TWS 
+	API version.</li>
+	<li>The <a href="transform.htm">NumAbove</a> function returns the number of 
+	data points above a threshold.</li>
+	<li>The <a href="contracts.htm">Exchange</a> string can now be used to 
+	direct contract orders to a particular exchange.</li>
+	<!--li>The maximum number of cores for WFO training has been increased to 192.</li-->
+	<li>New indicator: <a href="ta.htm">Parkinson Volatility</a>.<li>The
+	<a href="zsystems.htm">Z8 and Z9</a> systems now export a rebalance file 
+	that can be directly imported in the TWS 'Rebalance Portfolio' window. 
+	Fractional shares are supported.</ul>
+<h3 class="auto-style1">Zorro 2.60 (December 2023)</h3>
+<ul>
+	<li>Various small improvements to the <a href="ib.htm">IB plugin</a> for 
+	better differentiating between orders and trades.</li>
+	<li>The <a href="brokerplugin.htm">BrokerTrade</a> function can now 
+	distiguish between cancelled and filled orders.</li>
+	<li><a href="stop.htm">Stops</a> and <a href="stop.htm">order limits</a> are 
+	now automatically rounded to the next PIP step when sent to the broker. This 
+	can be disabled with the <a href="trademode.htm">TR_FRC</a> flag.</li>
+	<li>If the last leg of a <a href="combo.htm">combo order</a> timed out, the 
+	other legs are automatically cancelled. </li>
+	<li><a href="combo.htm">Combo orders</a> can now be entered at
+	<a href="stop.htm">OrderLimit</a>.</li>
+	<li>New trade macros: <a href="trade.htm">TradeFill</a>,
+	<a href="trade.htm">TradeValue</a>.</li>
+</ul>
+<h3 class="auto-style1">Zorro 2.56 (June 2023)</h3>
+<ul>
+	<li>The <a href="algovar.htm">AssetPtr</a> and <a href="algovar.htm">AlgotPtr</a> definitions&nbsp;allow storing 
+	asset or algo specific pointers.</li>
+	<li>The IB plugin was adapted to the name change <strong>DTB</strong> -&gt;
+	<strong>
+	EUREX</strong>.</li>
+	<li>The <a href="profile.htm">plot2</a> function plots curves in two colors.</li>
+	<li>New plugins: <a href="saxo.htm">Saxo Bank</a>, <a href="xtb.htm">XTB</a>.</li>
+	<li>The A2 and HU algos of <strong>Z12</strong> have been modified and 
+	improved.</li>
+	<li>New function: <a href="str_.htm">strcatf</a>.</li>
+	<li>Example script for generating a <a href="brokerarb.htm">multi-broker 
+	asset list</a>. </li>
+	<li>The <a href="frame.htm">sync</a> function can synchronize prices or 
+	indicators to higher time frames.</li>
+</ul>
+<h3 class="auto-style1">Zorro 2.53 (January 2023)</h3>
+<ul>
+	<li><a href="month.htm">strdate</a> now supports milliseconds.</li>
+	<li>New helper functions: <a href="ifelse.htm">cum</a>, <a href="invalid.htm">fix0</a>, <a href="ifelse.htm">changed</a></li>
+	<li><a href="loadhistory.htm">assetHistory</a> can now download data in 
+	arbitrary resolution.</li>
+	<li><a href="series.htm">SeriesLength</a> contains the number of elements of 
+	the current series.</li>
+	<li><a href="numbars.htm">AssetFirstBar</a> contains the number of the first valid bar of the current 
+	asset.</li>
+	<li><a href="assetzone.htm">LogZone</a> prints the log and chart in a 
+	particular time zone.</li>
+	<li><a href="plotmode.htm">PL_DARK</a> generates a chart with a dark 
+	background.</li>
+	<li><a href="account.htm">AssetsFUT</a> is a new asset list with 20 often 
+	traded futures.</li>
+	<li>Trade entry and exit prices are calculated in higher precision with
+	<a href="bar.htm">special bars</a>.</li>
+	<li>The <a href="scripts.htm">Performance</a> script evaluates arbitrary 
+	values from the <a href="performance.htm">performance report</a>.</li>
+	<li>The IB plugin now supports the <a href="brokercommand.htm">DO_CANCEL,0</a> 
+	command that cancels all open orders.</li>
+	<li>The IB plugin now supports the <a href="brokerplugin.htm">
+	BrokerTrade</a> function for determining the fill status of open orders.</li>
+	<li>The <a href="hmacl.htm">sha / hmac</a> function makes crypto broker 
+	plugin development easier.</li>
+	<li><a href="http.htm">http_request</a> supports different request types and 
+	replaces the <strong>http_send</strong> function.</li>
+	<li>The new <a href="bittrex.htm">Bittrex plugin</a> now supports API 
+	version 3.0. A new Bittrex asset list was included.</li>
+	<li>The <a href="brokercommand.htm">brokerRequest</a> function allows a 
+	script to send arbitrary requests to a broker API.</li>
+	<li>New plugin: <a href="finvasia.htm">Finvasia</a>.</li>
+	<li>Duplicate timestamps from t6 files are now filtered out by
+	<a href="loadhistory.htm">assetHistory</a>. </li>
+	<li>Dataset records can be removed with <a href="data.htm">dataDelete</a>.</li>
+	<li>The new <a href="import.htm">import</a> page helps with data conversion.</li>
+	<li>A new article on
+	<a href="https://financial-hacker.com/crypto-trading-with-rest-part-1/" target="_blank">
+	Financial Hacker</a> helps with plugin development.</li>
+	<li><a href="barmode.htm">BR_LOCAL</a> does not anymore automatically alter
+	<a href="assetzone.htm">BarZone</a>. Set it by script (<strong>BarZone = 
+	AssetMarketZone</strong>) if needed.</li>
+</ul>
+<h3 class="auto-style1">Zorro 2.50 (August 2022)</h3>
+<ul>
+	<li><a href="month.htm">strdate</a> now supports a time zone.</li>
+	<li><a href="exec.htm">exec</a> got a flag for hiding the program window.</li>
+	<li><a href="dlls.htm">C++ scripts</a> now start directly, like <strong>.c</strong> 
+	scripts (<a href="restrictions.htm">Zorro S</a> and Visual Studio required). </li>
+	<li>The <a href="mode.htm">VCPP</a> flag uses the VC++ compiler, rather than 
+	the lite-C compiler, for compiling rules. </li>
+	<li>The <a href="quit.htm">quit</a> function can now restart the script.</li>
+	<li><a href="lookback.htm">LookBackNeeded</a> is set to the maximum needed 
+	lookback period.</li>
+	<li>Some adaptions to <strong>zorro.h</strong> and <strong>functions.h</strong> 
+	for 64-bit compatibility.</li>
+	<li>A new <strong>64 bit Zorro version</strong> has been included. It uses
+	<a href="dlls.htm">VC++</a> for compiling scripts.</li>
+	<li>64 bit versions of the <a href="mt4plugin.htm">MT4 bridge</a> and the
+	<strong>Offline</strong> plugin have been added.</li>
+	<li>The charting library was updated. The <a href="data.htm">dataChart</a> 
+	function now supports heatmaps.</li>
+	<li>The <a href="outlier.htm">outlier correction</a> was modified for 
+	producing less artifacts with cryptos.</li>
+	<li>The <a href="python.htm">Python bridge</a> now supports string 
+	variables.</li>
+	<li>The <a href="python.htm">Python bridge</a> now loads the Python DLL at 
+	script start and supports any Python version from 3.6 or above. </li>
+	<li><a href="file_.htm">file_select</a> now supports a file save dialog.</li>
+	<li>The <a href="mode.htm">STRAIGHT</a> flag allows running ta-lib functions 
+	in their original mode.</li>
+	<li><a href="hedge.htm">Hedge</a> mode 6 allows trade synchronization by 
+	script.</li>
+</ul>
+	<!--p>The <span class="Highlight">latest published beta version</span> is 
+	available on the Download Page. <a href="restrictions.htm">Zorro S features</a> 
+	can be unlocked in beta versions with a valid Zorro license. <a href="zsystems.htm">Z strategies</a> 
+	are not included in beta versions. A list of fixed bugs can 
+be found under <a href="bugs.htm">bugs</a>.<br>&nbsp;</p-->
+<!--p>The release candidate is available on the Zorro Download 
+Page. It has all functions of the final release. A list of fixed bugs can 
+be found under <a href="bugs.htm">bugs</a>.</p-->
+<h3 class="auto-style1">Zorro 2.48 (May 2022)</h3>
+<ul>
+	<li><a href="transform.htm">MatchIndex</a> finds the data closest to a 
+	reference in a series.</li>
+	<li>The time zone and market hours of an asset can now be set up in the 
+	Market field of the <a href="account.htm">asset list</a>.</li>
+	<li>New variables for easy handling asset specific market hours:
+	<a href="assetzone.htm">AssetMarketZone</a>,
+	<a href="date.htm">AssetMarketStart</a>, <a href="date.htm">AssetMarketEnd</a>.</li>
+	<li>Market hours for index CFDs have been added to the Oanda asset lists.</li>
+	<li><a href="spread.htm">PriceOffset</a> allows handling negative prices by 
+	shifting them to the positive scale.</li>
+	<li><a href="npp.htm">Notepad++</a> has been updated to version 8.2.</li>
+	<li>The <a href="brokercommand.htm">SET_FUNCTIONS</a> broker command allows 
+	Zorro functions to be called from a plugin.</li>
+	<li><a href="spread.htm">Penalty</a> adds a fixed spread-like offset to 
+	trade fill prices for special purposes.</li>
+	<li><a href="script.htm">AssetPrev</a> stores the main asset inside 
+	enumeration loops.</li>
+	<li><a href="plotmode.htm">PL_HLOC</a> enforces HLOC bars on the chart.</li>
+	<li>The <a href="ib.htm">IB plugin</a> now supports the
+	<a href="brokercommand.htm">GET_FILL</a> command for returning the current 
+	fill amount of open GTC orders.</li>
+	<li>The <a href="month.htm">at</a> function can trigger events at a certain 
+	local time of day.</li>
+	<li>Asset updates can be temporarily suspended with the
+	<a href="assetmode.htm">NOPRICE</a> flag.</li>
+	<li>Swaps can be continuously accumulated with the <a href="assetmode.htm">
+	SOFTSWAP</a> flag.</li>
+	<li>The time for asset updates can be measured with the
+	<a href="ticktime.htm">UpdateTime</a> variable.</li>
+	<li>A name beginning with <strong>'#'</strong> in <a href="asset.htm">asset</a> 
+	calls creates a dummy asset with flat history.</li>
+	<li>The <strong>Z3</strong> cluster strategy missed the performance criteria 
+	and was removed from the <a href="zsystems.htm">Z 
+systems</a>. <!--Z3 is a medium-term commodity and index CFD trading system. It detects   price clusters that precede   breakouts. Price breakouts happen frequently especially with metals and stock indices, and constitute an exploitable inefficiency. The results are uncorrelated to Z1 and Z2, so all  systems can be traded simultaneously with Zorro S. Since Z3  is based on a single algorithm, the equity curve is unaffected by selection bias.</p>
+<p><img src="../images/z3perf.png" width="701" height="405"> </p>
+<p>The equity curve above is from a walk-forward analysis on a Oanda US 
+account with CFDs and 100:1 leverage. The performance depends on asset volatility. In low volatility periods the equity is more or less flat. As with Z1 and Z2, the trade duration is controlled by moving the stop loss level. This can cause the stop to move in both directions and to tighten even when the trade is not in profit.</p>
+<p>Z3 can be traded with CFDs or with index ETFs. In the case of CFDs, select a 
+broker with small swaps and financing fees. Z3 positions are hold for a 
+relatively long time and can otherwise cause substantial rollover costs. </p-->
+	</li>
+	<li>New functions: <a href="ifelse.htm">barssince</a>, <a href="ifelse.htm">
+	valuewhen</a> with code in <strong>indicators.c</strong>.</li>
+	<li>New <a href="series.htm">ref()</a> macro for more convenient script 
+	conversion from other platforms.</li>
+	<li><a href="data.htm">dataCompress</a> got a <strong>Resolution</strong> 
+	parameter for compressing datasets even further.</li>
+	<li>A plugin for the <a href="ftx.htm">FTX exchange</a> has been developed 
+	by a Zorro user.</li>
+	<li>The <a href="profile.htm">plotBuyHold</a> function compares the strategy 
+	returns with a buy-and-hold benchmark.</li>
+	<li>The <a href="loadhistory.htm">Yahoo</a> data feed has be re-activated.</li>
+	<li>New data feed: <a href="loadhistory.htm">EODHistoricalData</a>, with 
+	subscription discount for Zorro users.</li>
+	<li>New scripts: <a href="scripts.htm">MRC</a> and <a href="scripts.htm">
+	WFOProfile</a>.</li>
+	<li>The chart title can now be changed with <a href="printf.htm">
+	print(TO_CHART,...)</a>.</li>
+	<li><a href="plot.htm">plotGraph</a> now supports scatter plots and spline 
+	lines.</li>
+	<li><strong>BR_ASSET</strong> was replaced by <a href="barmode.htm">
+	BR_NOSHIFT</a> and <a href="barmode.htm">BR_LOCAL</a>.</li>
+</ul>
+	<!--p>The <span class="Highlight">latest published beta version</span> is 
+	available on the Download Page. <a href="restrictions.htm">Zorro S features</a> 
+	can be unlocked in beta versions with a valid Zorro license. <a href="zsystems.htm">Z strategies</a> 
+	are not included in beta versions. A list of fixed bugs can 
+be found under <a href="bugs.htm">bugs</a>.<br>&nbsp;</p-->
+<!--p>The release candidate is available on the Zorro Download 
+Page. It has all functions of the final release. A list of fixed bugs can 
+be found under <a href="bugs.htm">bugs</a>.</p-->
+<h3>Zorro 2.44 (December 2021)</h3>
+<ul>
+	<li>New flag <a href="mode.htm">PIPRETURN</a> for exporting 
+	volume-independent profit curves.</li>
+	<li>New plugins: <a href="gdax.htm">Coinbase Pro</a>,
+	<a href="tradestation.htm">TradeStation</a></li>
+	<li><a href="outlier.htm">NumOutliers</a> counts the outliers in the data.</li>
+	<li><a href="fmod.htm">fmod</a> returns the fractional remainder of a 
+	division.</li>
+	<li><a href="brokercommand.htm">SET_VOLTYPE,7</a> returns the open interest 
+	(if available from the broker).</li>
+	<li><a href="lookback.htm">LookBackResolution</a> sets the resolution of the 
+	live lookback history. .</li>
+	<li>If a lookback bar ends after the session start time, it is now continued 
+	into the live period.</li>
+	<li>Script, asset, and action boxes can now be scaled with the application 
+	window.</li>
+	<li><a href="tradeupdate.htm">tradeUpdate</a> scales or modifies an open 
+	trade.</li>
+	<li>The default estimate of <a href="lookback.htm">trades per bar</a> was 
+	slightly reduced for saving memory.</li>
+	<li><a href="trade.htm">TMF</a> functions now also run on incoming ticks 
+	when the trade is still pending (bugfix).</li>
+	<li>The <a href="scripts.htm">BuyHold</a> script can be used for comparing a 
+	system with a SPY buy-and-hold strategy.</li>
+	<li>Loading history with no year number can be enforced with
+	the <a href="script.htm">History</a> string.</li>
+	<li>New <strong>PlotMode</strong> flag: <a href="plotmode.htm">PL_TITLE</a></li>
+	<li>The Oanda asset lists have been modified for 0.1 CFD lot size.</li>
+	<li>The <a href="contracts.htm">ExpiryTime</a> default was changed to 23:00 
+	UTC for avoiding option expiration during market hours.</li>
+</ul>
+<h3>Zorro 2.40 (August 2021)</h3>
+<ul>
+	<li>New text style flag <strong>+16</strong> for bold text on
+	<a href="panel.htm">panel cells</a>.</li>
+	<li><a href="outlier.htm">PriceJump</a> can now also detect stock merges.</li>
+	<li>The <a href="account.htm">Russell2000</a> asset list was included.</li>
+	<li><a href="brokercommand.htm">GET_DATA</a> was implemented in the <a href="iex.htm">IEX plugin</a>.</li>
+	<li>New broker commands: <a href="brokercommand.htm">SET_SERVER</a>,
+	<a href="brokercommand.htm">SET_CCY</a></li>
+	<li><a href="brokercommand.htm">SET_SERVER</a> was implemented in the
+	<a href="binance.htm">Binance plugin</a>.&nbsp;</li>
+	<li>New plugins: <a href="kraken.htm">Kraken</a>, <a href="deribit.htm">Deribit</a>,
+	<a href="binancefutures.htm">Binance Futures</a>.</li>
+	<li><a href="pip.htm">Leverage</a> can now be set individually per trade 
+	when the API supports the <a href="brokercommand.htm">SET_LEVERAGE</a> 
+	command.&nbsp; </li>
+	<li>The <a href="tick.htm">tock</a> function is now executed after
+	<a href="tick.htm">tick</a>, thus ensuring that all recent ticks had been 
+	processed at <strong>tock</strong> time. </li>
+	<li><a href="file_.htm">file_copy</a> now accepts a folder as destination.</li>
+	<li>The <a href="scripts.htm">CSVfromHistory</a> script converts .t6 to .csv 
+	files.</li>
+	<li>The IB <a href="ib.htm">TWS/Gateway</a> socket port number can now be 
+	set up in the <strong>Server</strong> field of the account list. </li>
+	<li>New <a href="gdax.htm">Coinbase</a> plugin by a Zorro user. </li>
+	<li>The current script folder is returned by <a href="report.htm">report(26)</a>.</li>
+	<li>If the strategy folder was <a href="ini.htm">redefined</a>, the <strong>
+	#include &quot;...&quot;</strong> statement now reads files from the new folder.</li>
+	<li>The structure of an unknown dataset can be determined with <a href="data.htm">
+	dataSize</a>.</li>
+	<li><a href="data.htm">dataParseString</a> converts a JSON string to a 
+	dataset.</li>
+	<li><a href="month.htm">mtu</a> converts Unix time to the DATE format.</li>
+	<li><a href="matrix.htm">matSaveCSV</a> saves a matrix to a CSV file.</li>
+	<li><a href="opt.htm">Brute Force, Genetic, and External</a> optimizations 
+	now export results to CSV and generate 2D contour charts..</li>
+	<li><a href="data.htm">dataChart</a> generates a 2D countour chart from a 
+	dataset. </li>
+	<li><a href="data.htm">dataCol</a> retrieves data arrays or series from a 
+	dataset.</li>
+	<li>Order book data (<strong>.t2</strong> files) can now also be used for 
+	the price history with <strong>History = &quot;*.t2&quot;</strong>.</li>
+	<li><a href="ticktime.htm">TickTime</a> now also affects backtests in
+	<strong>TICKS</strong> mode, and can be used to reduce the memory footprint.</li>
+	<li>New broker command: <a href="brokercommand.htm">GET_HEARTBEAT</a>.</li>
+	<li>New script <a href="scripts.htm">Reality.c</a> as a template for reality 
+	checks.</li>
+	<li><a href="barperiod.htm">BarPeriod</a> can now be set up by script to 
+	weekly bars.</li>
+	<li>Partial closing is now also supported in <a href="fill.htm">Fill</a> 
+	mode 3.</li>
+	<li>The <a href="contract.htm">contractUpdate</a> function now sorts 
+	contract chains automatically by expiration and strike.</li>
+	<li>We found that scripts often use the <a href="loop.htm">loop</a> function 
+	unnecessarily, and thus added <a href="loop.htm">of</a> as an alternative.</li>
+	<li>The <a href="mode.htm">NOFACTORS</a> flag prevents OptimalF calculation, 
+	which can take a long time when trade numbers are huge.</li>
+	<li><strong>FAST</strong> backtest mode was abandoned, since standard 
+	backtests are almost as fast as fast backtests.</li>
+	<li>The backtest profit by linear regression of the equity curve can be 
+	retrieved with <a href="statistics.htm">ReturnLR</a>.</li>
+</ul>
+<h3 style="left: -6px; top: 0px">Zorro 2.35 (February 2021)</h3>
+<ul>
+	<li>The account limit of the free Zorro version was raised from $7000 to 
+	$15,000.</li>
+	<li>External optimization algorithms can be used with the
+	<a href="objective.htm">parameters</a> function (Zorro S required).</li>
+	<li>Prices of open option trades are not anymore updated outside market hours when
+	<a href="barmode.htm">BR_SLEEP</a> is set..</li>
+	<li>Zorro's exit code can be set with the <a href="exitcode.htm">ExitCode</a> 
+	variable.</li>
+	<li>The backtest speed was increased due to changes to the print function 
+	and the memory management.</li>
+	<li>The <a href="price.htm">seriesO/H/L/C</a> functions can be used as 
+	prices series parameters to indicators or functions.</li>
+	<li>Multicore training now supports the <strong>
+	<a href="ini.htm">StrategyFolder</a></strong> (was only partially 
+	implemented in the previous version). </li>
+	<li>The <a href="renorm.htm">assign</a> function converts portfolio weights 
+	to asset amounts.</li>
+	<li>The <a href="report.htm">report</a> function can now return a list of 
+	all open trades.</li>
+	<li>Open trades can be loaded from the broker account with the
+	<a href="brokercommand.htm">brokerTrades</a> function.</li>
+	<li>The <a href="brokercommand.htm">GET_TRADES</a> and
+	<a href="brokercommand.htm">DO_CANCEL</a> commands were implemented 
+	in the <a href="ib.htm">IB plugin</a>.</li>
+	<li>Graphics by <a href="plot.htm">plotGraph</a> don't affect the chart 
+	scale anymore.</li>
+	<li><a href="coinigy.htm">Coinigy</a> now supports <a href="trademode.htm">
+	GTC orders</a> and the <a href="brokercommand.htm">GET_DATA</a> and
+	<a href="brokercommand.htm">DO_CANCEL</a> commands.</li>
+	<li><a href="loadhistory.htm">assetHistory</a> can now load data from 
+	arbitrary sources and supports <strong>.t2</strong> order book data (Zorro S 
+	required). </li>
+	<li>Setting <a href="stop.htm">StopFactor</a> at <strong>1</strong> causes 
+	stops to be managed by the broker only.</li>
+	<li>Shifting dynamic <a href="series.htm">series</a> can be controlled with 
+	the <a href="mode.htm">NOSHIFT</a> flag.</li>
+	<li>New plugins by users: <a href="alpaca.htm">Alpaca</a>, <a href="tdamtrade.htm">TD 
+	Ameritrade</a>, and <a href="binancefutures.htm">Binance Futures</a>.</li>
+	<li>New plugins for Zorro S: <a href="iqfeed.htm">DTN IQFeed</a> and
+	<a href="tradier.htm">Tradier</a>.</li>
+	<li>The <a href="loadhistory.htm">assetHistory</a> function now loads split 
+	and dividend adjusted data from <strong>IEX</strong>.</li>
+	<li><a href="barmode.htm">BR_SLEEP</a> is now unaffected by
+	<a href="barmode.htm">BR_LEISURE</a>.</li>
+	<li>The <a href="mt4plugin.htm">MT4 bridge</a> now supports the
+	<a href="brokercommand.htm">GET_POSITION</a> command. Re-install the bridge 
+	for using this command.</li>
+	<li>The Binance plugin now returns the <a href="balance.htm">TradeVal</a> of 
+	all open positions on account requests.</li>
+	<li><strong><a href="brokercommand.htm">GET_AVGENTRY</a></strong> was 
+	implemented in the <a href="ib.htm">IB plugin</a>.</li>
+	<li>The new <a href="trading.htm#zstatus">ZStatus</a> script displays the live 
+	status of multiple accounts (Zorro S required).</li>
+</ul>
+<h3 style="left: -6px; top: 0px">Zorro 2.30 (August 2020)</h3>
+<ul>
+	<li>The <a href="ib.htm">IB API</a> can now return 
+	prices in fast mode (price type = 8) in less than 1 ms, dependent on 
+	setup and location.</li>
+	<li>Charts can now be generated and updated in real time 
+	with the <a href="plot.htm">plotChart</a> function.</li>
+	<li>A price history folder can now be set up with the
+	<a href="script.htm">History</a> string.</li>
+	<li><a href="loadhistory.htm">Historical D1 data</a> 
+	from IB now contains only regular trading hours.</li>
+	<li>The <strong>Offline</strong> plugin can be used in [<span class="tast">Trade</span>] 
+	mode with no broker connection.</li>
+	<li>The <strong>PayOff</strong> script is now 
+	interactive. Strike distance and expiry can be set with sliders.</li>
+	<li>The <a href="combo.htm">comboProfit</a> function 
+	returns the profit or loss of the current combo at a given expiration price.</li>
+	<li>The <a href="is.htm">SLIDERS</a> flag detects slider movement.</li>
+	<li>Bar start/end times in live trading are now synchronized to an integer 
+	multiple of the bar period.</li>
+	<li>The <a href="month.htm">tdm</a> function counted also partial trading 
+	days, such as UTC Sunday 22:00. For avoiding confusion, now only 'real' 
+	workdays are counted.</li>
+	<li>The chart caption can be changed with the <a href="printf.htm">print</a> 
+	function.</li>
+	<li>The <a href="ib.htm">IB plugin</a> was modified for supporting European 
+	options on the ICEEU exchange.</li>
+	<li>The <a href="trademode.htm">TR_AON</a> flag enforces all-or-nothing 
+	order mode.</li>
+	<li>Arbitrary content can be passed via <a href="command.htm">command line</a> 
+	with the <strong>-u</strong> option.</li>
+	<li><a href="contract.htm">contractUpdate</a> now automatically sets the
+	<a href="contracts.htm">Multiplier</a> when it was at 0.</li>
+	<li>The <a href="tick.htm">error</a> function can be used to sound alerts, 
+	send emails, or stop Zorro on warnings or errors.</li>
+	<li>Series can be replaced with external buffers with the
+	<a href="series.htm">SeriesBuffer</a> pointer.</li>
+	<li>Trades from a template can be entered with <a href="buylong.htm">
+	enterTrade</a>.</li>
+	<li>The <a href="scripts.htm">Simulate</a> script backtests a trade list.</li>
+	<li>For suppressing particular error messages, call <a href="errors.htm">
+	ignore(ErrorNumber)</a>.</li>
+	<li>Spearman <a href="transform.htm">correlation</a> with arbritrary 
+	functions.</li>
+	<li>New <a href="ta.htm">Ehlers indicators</a>: <strong>CTI, CCYI, CCYIR, 
+	CCYIState</strong>. </li>
+	<li><a href="ta.htm">SMAP</a> calculates the mean of positive values.</li>
+	<li><a href="mode.htm">NOWATCH</a> switches off all <a href="watch.htm">
+	watch</a> statements.</li>
+	<li><a href="contract.htm">plotContract</a> and <a href="combo.htm">
+	plotCombo</a> plots payoff diagrams of the given option or combo.</li>
+	<li>The <a href="fortrades.htm">break_assets</a>, <a href="fortrades.htm">break_algos</a> statements abort asset or algo enumeration loops.</li>
+	<li>The average profit per trade, instead of per year, is now displayed 
+	after a backtest. </li>
+	<li><a href="account.htm">MarginCost</a> in the asset list can now be 
+	negative for a percentage. Options multipliers can be given in <strong>LotAmount</strong>.</li>
+	<li><a href="asset.htm">assetSelect()</a> selects the current asset in the 
+	scrollbox.</li>
+</ul>
+<h3>Zorro 2.25 (March 2020)</h3>
+<ul>
+	<li>Optimized parameters can be generated by script by setting the
+	<a href="optimize.htm">optimize</a> range to zero.</li>
+	<li><a href="optimalf.htm">OptimalF</a> factors of profitable components are 
+	now rounded up to at least 0.001.</li>
+	<li>A script for converting CSV to .t8 options history was added to the
+	<a href="scripts.htm">repository</a>.</li>
+	<li>The <a href="loadhistory.htm">OVERRIDE</a> flag now also works for 
+	broker price sources.</li>
+	<li>Two new indicators were added: <a href="ta.htm">LSMA</a> and
+	<a href="ta.htm">QLSMA</a>.</li>
+	<li>Memory consumption by <a href="mode.htm">PRELOAD</a> was reduced.</li>
+	<li>The last <a href="numwfocycles.htm">WFO cycle</a> is now extended to 
+	ensure that it includes the end date.</li>
+	<li><strong>HistoryScript = &quot;History&quot;</strong> in <a href="ini.htm">
+	zorro.ini</a> opens the <a href="scripts.htm">History</a> script when clicking on a t1, t2, t6, or t8 file (Zorro S).</li>
+	<li>The <a href="peak.htm">peak</a>, <a href="peak.htm">valley</a>, and
+	<a href="crossover.htm">cross</a> functions now return the bar offset of the 
+	last event.</li>
+	<li>The <a href="slope.htm">slope</a> and <a href="slope.htm">line</a> 
+	functions can be used to connect points on the price curve.</li>
+	<li>More traditional indicators: <a href="ta.htm">Pivot</a>, <a href="ta.htm">
+	Support</a>, <a href="ta.htm">Resistance</a>, <a href="ta.htm">Divergence</a>.</li>
+	<li>More traditional candle patterns: <a href="candle.htm">CDLEngulfing0</a>,
+	<a href="candle.htm">CDLOutside</a>.</li>
+	<li>The <a href="is.htm">BUSY</a> flag indicates whether the broker API can 
+	be accessed.</li>
+	<li><a href="plotbars.htm">PlotLabels</a> determines the x axis label 
+	distance on histograms.</li>
+	<li>Text can now be plotted to the chart with <a href="plot.htm">plotText</a>.</li>
+	<li>Price curves can now also be <a href="detrend.htm">randomized</a> with 
+	the <strong>BOOTSTRAP</strong> and <strong>RANDOMWALK</strong> methods.</li>
+	<li>The <a href="detrend.htm">SHAPE</a> flag allows manipulating price 
+	curves in arbitrary ways for test purposes.</li>
+	<li>Use the <a href="call.htm">call</a> scheduler for running functions at 
+	particular events.</li>
+	<li>The <a href="chart.htm">debugger</a> now displays a list of open trades.</li>
+	<li>Options expiration time of day can now be set with <a href="contracts.htm">
+	ExpiryTime</a>.</li>
+	<li>New time series functions: <a href="transform.htm">SemiMoment</a>,
+	<a href="ta.htm">Sharpe</a>, <a href="ta.htm">Sortino</a>.</li>
+	<li>The <strong>Sortino ratio</strong> was added to the
+	<a href="performance.htm">performance report</a>.</li>
+	<li>The <a href="renorm.htm">knapsack</a> function can be used to manage a 
+	stock portfolio with small capital.</li>
+	<li>The <a href="lots.htm#scholz">ScholzBrake</a> and <a href="winloss.htm">
+	LossGlobal</a> variables can step around the new German trader tax.</li>
+	<li>The Scholz tax is now included in the <a href="performance.htm">
+	performance report</a>. </li>
+	<li>The C functions <strong>strcpy_s</strong>, <strong>sprintf_s</strong>,
+	<strong>strcat_s</strong>, <strong>memcpy_s</strong> have been added to
+	<a href="litec_h.htm">stdio.h</a>.</li>
+	<li>New functions for options: <a href="contract.htm">contractMargin</a>,
+	<a href="combo.htm">comboMargin</a>, <a href="combo.htm">comboType</a>.</li>
+	<li><a href="ta.htm">OBV</a> has been added to the indicators.</li>
+	<li>The <a href="invalid.htm">invalid</a> function helps debugging 
+	arithmetic errors.</li>
+	<li><a href="brokercommand.htm">GET_CALLBACK</a> sets a plugin supplied 
+	callback function.</li>
+	<li>Historical data from <a href="loadhistory.htm">CryptoCompare</a> is now 
+	automatically appended to existing data, if any.</li>
+</ul>
+<h3>Zorro 2.20 (November 2019)</h3>
+<ul>
+	<li>The <a href="once.htm">once</a> function registers the first time when a condition became true.
+	</li>
+	<li>The <a href="cdf.htm">erf</a> function returns the interval probability.&nbsp;</li>
+	<li><a href="numsamplecycles.htm">SampleOffset</a> can be used for per-cycle 
+	oversampling.</li>
+	<li>A <strong>Detrend</strong> example script was added to the
+	<a href="scripts.htm">script repository</a>.</li>
+	<li>The price range of randomized curves (<a href="detrend-htm">SHUFFLE</a> 
+	flag) can now be limited.</li>
+	<li>A new <a href="tutorial_lowpass.htm">workshop 4a</a> about indicator 
+	development has been added.</li>
+	<li>Wrong <strong>PIP</strong>, <strong>PIPCost</strong>, or <strong>
+	LotAmount</strong> parameters from the broker API can be fixed by
+	<a href="brokercommand.htm">SET_PATCH</a>.</li>
+	<li><a href="ini.htm">Zorro.ini</a> entries are now available by the
+	<a href="report.htm">report</a> function. <a href="report.htm">report(1)</a> can now be called inside
+	<a href="evaluate.htm">evaluate</a>.</li>
+	<li>The <a href="sys_malloc.htm">zalloc</a> function is useful for 
+	allocating temporary arrays.</li>
+	<li><a href="barmode.htm">BR_SLEEP</a> or <a href="barmode.htm">BR_LOGOFF</a> 
+	flags 
+	can now be set for the Z systems.</li>
+	<li>The question &quot;Close open trades?&quot; at session end can be skipped with the
+	<a href="ini.htm">AutoConfirm</a> setting.</li>
+	<li>Since <strong>Oanda</strong> now requires a unique size for stop loss orders, 
+	stops are now 
+	handled on the Zorro side.</li>
+	<li>Variables and functions that are long outdated or deprecated are now collected in 
+	<strong><a href="litec_h.htm">legacy.h</a></strong>, which 
+	can be included when needed. </li>
+	<li>Outdated keywords moved to <strong><a href="litec_h.htm">legacy.h</a></strong>:
+	<strong>Slider1-3</strong>, <strong>CVolatility</strong>, <strong>loadHistory</strong>, 
+	<strong>DDScale</strong>, <strong>OptCycle</strong>,
+	<strong>reverseLong</strong>, <strong>reverseShort</strong>.</li>
+	<li>The <a href="script.htm">AccountName</a> string contains the selected 
+	name from the [Account] scrollbox.</li>
+	<li>The <a href="scripts.htm">OptionsCalculator</a> script calculates the 
+	value and delta of call and put options. </li>
+	<li>The <a href="advisor.htm">advise</a> training speed has been improved 
+	for large training sets.</li>
+	<li>The <a href="mode.htm">flag system</a> was changed to support more than 
+	64 flags. All flags can now be set and read with the <strong>set</strong> 
+	and <strong>is</strong> functions.</li>
+	<li>The status flags <a href="is.htm">PARCYCLE</a>, <a href="is.htm">FACCYCLE</a>, 
+	<a href="is.htm">RULCYCLE</a> are renamed to avoid confusion 
+	with mode flags of the same name. </li>
+	<li>Internal structs have been changed in version 2.19.5. Compiled scripts must be re-compiled for 
+	the current version.</li>
+	<li>The command line and other system strings are now available through the
+	<a href="report.htm">report</a> function.</li>
+	<li>The <a href="loadstatus.htm">SAV_STATS</a> flag resumes
+	<a href="winloss.htm">trade statistics</a> from the previous session.</li>
+	<li>An example for <a href="engine.htm">integrating Zorro</a> in other 
+	software was included in the <strong>Source</strong> folder.</li>
+</ul>
+<h3>Zorro 2.15 (July 2019)</h3>
+	<ul>
+		<li><a href="is.htm">Init</a> is an abbreviation for <strong>is(INITRUN)</strong>.</li>
+		<li>The <a href="command.htm">-quiet</a> option suppresses the 3 seconds 
+		pause at the end of a batch run.</li>
+		<li>An asset can be optionally preselected in the scrollbox with the <a href="asset.htm">assetList</a> function.</li>
+		<li>In the <a href="scripts.htm"> <strong>TradeOptions</strong> script</a> now several combos can 
+		be selected.</li>
+		<li>The <a href="putvar.htm">getvar/putvar</a> 
+		functions can now store variables in the Windows registry.</li>
+		<li>The primary exchange for <a href="ib.htm">IB 
+		asset symbols</a> can be appended to the exchange code.</li>
+		<li>The <a href="str_.htm">strx</a> function can now 
+		replace text in strings of unlimited size.</li>
+		<li>Special order types, like &quot;market on close&quot; etc, 
+		are now supported by the <a href="ib.htm">IB plugin</a>.</li>
+		<li><strong>NaN</strong> lines can now be filtered 
+		out by <a href="data.htm">dataParse</a>.</li>
+		<li><strong>M1 bitcoin history</strong> has been added to the 
+		download page.</li>
+		<li>A list of market holidays can be passed to the
+		<a href="sate.htm">Holidays</a> pointer.</li>
+		<li>The <a href="plotbars.htm">PlotBorder</a> 
+		variable reserves space for the chart axis labels.</li>
+		<li>The <a href="fxcm.htm">FXCM plugin</a> was 
+		updated to the most recent API version. You'll need to unpack additional DLLs. Win XP is not supported anymore by 
+		FXCM.</li>
+		<li>The <strong>Weekend</strong> variable 
+		has been replaced by <a href="barmode.htm">flags</a> that are more 
+		flexible to use. </li>
+		<li>New <strong>FXCM accounts</strong> are now 
+		rewarded with a <a href="restrictions.htm">Zorro S</a> subscription.</li>
+		<li>A <a href="engine.htm">DLL for integrating Zorro</a> in other platforms 
+		is available on request.<li><a href="engine.htm">Zorro instances</a> can 
+		now start, stop, and communicate with each other.<li>
+		<a href="brokercommand.htm">SET_PRICETYPE,8</a> 
+		now loads option and futures prices faster from IB.</li>
+		<li>The <a href="mt4plugin.htm">MT4/MT5 bridge</a> 
+		was changed in 2.14.6. Re-install the bridge and compile the Zorro EA.</li>
+		<li>CSV files by <a href="printf.htm">print(TO_CSV)</a> 
+		are now generated in the <strong>Data</strong> folder.</li>
+		<li><strong>[New Script]</strong> will now generate a basic strategy 
+		template.</li>
+		</ul>
+<h3>Zorro 2.12 (May 2019)</h3>
+	<ul>
+		<li>Genetic and brute force <a href="opt.htm">training modes</a> are now 
+		available (Zorro S).</li>
+		<li>10 new scripts for various purposes have been added to the
+		<a href="scripts.htm">script repository</a>.</li>
+		<li>The <a href="ta.htm">RET</a> indicator is for quickly calculating 
+		momentum without a series.</li>
+		<li>The <strong>SpecialBars</strong> script illustrates the use of 
+		special bars for single-asset and multi-asset strategies.</li>
+		<li>The <a href="slider.htm">sliders</a> can now display fractional 
+		values.</li>
+		<li>The <span class="tast">Action</span> scrollbox can now be selected
+		<a href="panel.htm">by script</a> and keeps the selection after the 
+		end of the strategy.</li>
+		<li>A new <a href="zsystems.htm">Z13</a> options trading system was 
+		added to the Z systems (Zorro S).</li>
+		<!--li>The new <strong>numpy 1.16.3</strong> version was reported to work 
+		with embedded <a href="python.htm">Python</a> applications, including 
+		Zorro.</li-->
+		<!--li>The <strong>pyExit</strong> function closes a Python session.</li-->
+		<li>The number of concurrent broker connections was increased from 4 to 
+		12.<li>The <a href="plotmode.htm">PL_BENCHMARK</a> flag plots the equity 
+		curve as a line.
+		<li><a href="hedge.htm">Virtual Hedging</a> became a S feature and the <a href="chart.htm">interactive chart viewer</a> 
+		became a free 
+		feature.<li>
+		The <a href="performance.htm">performance report</a> now contains a 
+		breakdown of annual and monthly returns.<li>
+		The <strong>InvestCalculator</strong> script allows investing by the 
+		square root rule.<li>
+		The <a href="opt.htm">SETFACTORS</a> flag allows factor calculation by 
+		script.<li>
+		CSV files generated with the <a href="advisor.htm">SIGNALS</a> flag are 
+		now stored separately per asset.<li>
+		The <a href="statistics.htm">Ulcer</a> and <a href="statistics.htm">R2</a> 
+		statistics parameters have been renamed to <strong>ReturnUlcer</strong> 
+		and <strong>ReturnR2</strong>.<li>
+		The <a href="rev.htm">conv</a> function converts a float array to a var 
+		series.<li>
+		The <a href="transform.htm">R2</a> function returns the coefficient of 
+		determination of a series.<li><a href="data.htm">dataMerge</a> adds new 
+		data at the front of an existing dataset.<li>Interest on margin loan can 
+		be set up with the <a href="spread.htm">Interest</a> variable.<li>The 
+		IEX exchange is now supported by <a href="loadHistory.htm">assetHistory</a> 
+		and with the <a href="iex.htm">IEX plugin</a>.<li>Price request can be 
+		switched off with the <a href="brokercommand.htm">SET_PRICETYPE</a> 
+		command.<li>The default <strong>objective</strong> function now rejects 
+		results with less than 5 trades.<li><a href="optimalf.htm">OptimalF</a> 
+		factors are not displayed in the performance report when profit is 
+		reinvested.</ul>
+<h3>Zorro 2.08 (April 2019)</h3>
+	<ul>
+		<li>The new <a href="python.htm">Python Bridge</a> allows to run Python 
+		scripts and commands from Zorro.</li>
+		<li>A new <a href="scripts.htm">Regime</a> script was added to test 
+		indicator responses on market regime changes.</li>
+		<li>The <a href="frame.htm">frameSync</a> function now synchronizes also 
+		30-min and 4-hour timeframes.</li>
+		<li>Get info about trading events with the <a href="email.htm">
+		email</a> function.</li>
+		<li>The <a href="profile.htm">plotHistory</a> helper function allows 
+		easier producing histograms.</li>
+		<li>The <a href="combo.htm">comboAdd</a> function adds a contract to the 
+		current combo.</li>
+		<li><a href="combo.htm">comboPremium</a> calculates the premium of a 
+		combo.</li>
+		<li>Stop orders can be added to IB trades with the
+		<a href="brokercommand.htm">SET_ORDERTYPE</a> command.</li>
+		<li><a href="numassets.htm">NumAssetsUsed</a> counts the assets used in 
+		the script.</li>
+		<li><a href="is.htm">Live</a> is an abbreviation for <strong>
+		is(TESTMODE)</strong>.</li>
+		<li>The <a href="contract.htm">contractSellUnderlying</a> function gets 
+		rid of the underlying of exercised contracts.</li>
+		<li><strong><a href="barmode.htm">BarMode</a> &gt; 4</strong> now suspends 
+		broker API calls when logged out.</li>
+		<li>A new memory management reduces the memory footprint of portfolio 
+		systems by about 50%.</li>
+		<li>The <a href="mode.htm">LEANER</a> flag reduces the memory footprint 
+		by further 50% when <strong>TICKS</strong> is not set.</li>
+		<li>Option premiums displayed in the log now include the ask-bid spread.</li>
+		<li>The <strong><a href="fortrades.htm">Itor</a></strong> variable 
+		counts asset and trade loops.</li>
+		<li><a href="account.htm">Symbol</a> strings can now contain <strong>'*'</strong> 
+		for the asset name.</li>
+		<li>The IB API now supports <a href="combo.htm">option combinations</a> 
+		and<a href="trademode.htm"> GTC orders</a>.</li>
+		<li><strong>AlgoVar2</strong> can now be saved with the
+		<a href="loadstatus.htm">SV_ALGOVARS2</a> flag.</li>
+		<li><a href="errors.htm">Warning 054</a> will now be issued when asset 
+		parameters from the broker API are suspicious.</li>
+		<li>The <a href="version.htm">require</a> function can be used to start 
+		a script only with a certain software version.</li>
+	</ul>
+<h3>Zorro 2.03 (February 2019)</h3>
+	<ul>
+		<li>The <a href="brokercommand.htm">brokerAsset</a> and
+		<a href="brokercommand.htm">brokerAccount</a> functions directly call the 
+		corresponding functions of the <a href="brokerplugin.htm">broker API</a>.</li>
+		<li>The <a href="scripts.htm">Chart</a> script opens a .t1, .t6, or .t8 
+		file and displays its content in a chart.</li>
+		<li>The <a href="loadhistory.htm">CryptoCompare</a> download function 
+		has been adapted to the new 2000 prices limit.</li>
+		<li><strong>Z9</strong> now downloads UK ETFs from Stooq (Yahoo 
+		sometimes delivered wrong prices for UK assets).</li>
+		<li><a href="loadhistory.htm">assetHistory</a> now uses the current asset 
+		history symbol when no name is given.</li>
+		<li>The <a href="contracts.htm">Centage</a> flags automatically convert 
+		live or historical prices given in cents, as 
+		for some agricultural futures and options.</li>
+		<li>A new [<span class="tast">Action</span>] scrollbox has been added. It 
+		can be set up in <a href="ini.htm">Zorro.ini</a> or in the
+		<a href="panel.htm">script</a> for running Zorro tasks, external programs, 
+		or script functions with a mouse click.</li>
+		<li>The <a href="brokercommand.htm">SET_PATCH</a> command can now also 
+		override the broker API's leverage and margin cost parameters.</li>
+		<li>The <a href="month.htm">timeOffset</a> function now also supports 
+		bars in the future.</li>
+		<li>The <a href="contract.htm">contractUpdate</a> function can now load chains 
+		from any historical data, using the <strong>Now</strong> 
+		variable.</li>
+		<li>The <strong>.t8</strong> format is now also accepted for historical 
+		price data (<strong>History = &quot;.t8&quot;</strong>). If the file contains 
+		different underlying prices for the same date, as for futures, their 
+		average is used. </li>
+		<li>For options on futures (FOPs) the trading class can now be encoded 
+		in the <a href="ib.htm">IB symbol string</a>.</li>
+		<li>The exchange for the current options chain can now be retrieved or 
+		given with the <a href="contracts.htm">Exchange</a> variable.</li>
+		<li>The <strong>ER</strong> and <strong>KAMA2</strong> indicators have 
+		been added to the <a href="ta.htm">indicators list</a>.</li>
+		<li>The maximum size of a contract chain has been increased to 20,000 
+		contracts.</li>
+		<li><a href="lots.htm">MaxLong</a> and <a href="lots.htm">MaxShort</a> 
+		can be set to a negative number for preventing the updating of open 
+		trades.</li>
+		<li>The Zorro.exe can now be assigned to files with <strong>.t1</strong>,
+		<strong>.t6</strong>, <strong>.t8</strong> extension and automatically 
+		displays them in a chart.</li>
+		<li>A name can be passed via command line to the <a href="cmd.htm">
+		Define</a> string.</li>
+		<li><a href="plotbars.htm">PlotHeight2</a> can be used for determining 
+		the proportions of additional charts in the interactive chart viewer.</li>
+		<li>The account is now stored per trade so that trades from multiple 
+		brokers or accounts can be resumed.</li>
+		<li>The <a href="file_.htm">file_appendFront</a> function now supports 
+		text strings.</li>
+		<li>Options can now be combined with the <a href="combo.htm">combo</a> 
+		functions.</li>
+		<li><a href="algo.htm">Algo</a> identifiers ending with <strong>&quot;:L&quot;</strong> 
+		or <strong>&quot;:S&quot;</strong> now automatically suppress trades in opposite 
+		direction.</li>
+		<li>The <a href="ta.htm">VWAV</a> function calculates volume weighted 
+		average values.
+		</li>
+	</ul>
+<h3>Zorro 1.96 (November 2018)</h3>
+<ul>
+	<li><a href="stop.htm">Stop</a> and <a href="stop.htm">Trail</a> distances can 
+	now also be used for option contracts.</li>
+	<li>The interactive <a href="chart.htm">Chart Viewer</a> allows zooming into 
+	chart details and replaying the backtest in single step and slow motion (Zorro 
+	S).</li>
+	<li>Level 2 data is now supported by the IB plugin with the
+	<a href="brokercommand.htm">GET_BOOK</a> command. Market depth data must be 
+	subscribed and the exchange must be coded in the asset symbol.</li>
+	<li>The <a href="contract.htm">contract.c</a> include file is now&nbsp; C++ 
+	compatible, which allows writing options trading systems with the
+	<a href="dlls.htm">VC++ environment</a>.</li>
+	<li>A step by step instruction for <a href="dlls.htm">writing strategies with 
+	Visual Studio</a> was added to the manual (Zorro S).</li>
+	<li>The <a href="contract.htm">contractRecord</a> function can store the current 
+	option or futures chain in a historical data file in <strong>.t8</strong> format.</li>
+	<li>The number of <a href="algovar.htm">AssetVars</a> has been increased to 
+	16. The first 8 can be read from the asset list.</li>
+	<li>The background color of a <a href="panel.htm">panel button</a> can now be 
+	changed in the <strong>click</strong> function.</li>
+	<li>Automatic daylight saving can now be switched off by adding <strong>UTC</strong> 
+	to the time zone, f.i. <strong>UTC+1</strong> = Central European Winter Time 
+	and <strong>UTC+2</strong> = Central European Summer Time.</li>
+	<li>A new workshop for <a href="tutorial_options.htm">options trading</a> was 
+	added to the tutorial.</li>
+	<li>A negative lot parameter to a <a href="buylong.htm">trade</a> function reverses 
+	the trade direction. This allows shorter code in some situations.</li>
+</ul>
+<h3>Zorro 1.88 (August 2018)</h3>
+<ul>
+	<li>The <a href="sortdata.htm">sortRank</a> function can encode candle patterns 
+	for machine learning features.</li>
+	<li>The <a href="file_.htm">file_next</a> function can enumerate file names 
+	in a directory.</li>
+	<li>Multiple accounts are now supported by the <a href="ib.htm">IB plugin</a>. 
+	The account can be set up in the <a href="account.htm">account list</a>.</li>
+	<li>Order flow can be analyzed with the <a href="ordercvd.htm">order book functions</a>.</li>
+	<li>Broker API requests can be limited with the <a href="ticktime.htm">MaxRequests</a> 
+	variable. The limit is automatically set by broker plugins that support the
+	<a href="brokercommand.htm">GET_MAXREQUESTS</a> command.</li>
+	<li>The <a href="transform.htm">Mode</a> function returns the most frequent 
+	value of a data series.</li>
+	<li>The <a href="hwnd.htm">Windows Handle</a> can be used for triggering events 
+	between Zorros or asynchronously receiving price quotes from
+	<a href="brokerplugin.htm">broker plugins</a>.</li>
+	<li>Option Delta can now be calculated with the <a href="contract.htm">contractDelta</a> 
+	function.</li>
+	<li>With the <a href="panel.htm">panelFix</a> function header rows or colums 
+	can be determined on a scrolling panel.</li>
+	<li>The default <a href="barperiod.htm">BarOffset</a> for daily candles and 
+	D1 history is now set to 16:30 for preventing unwanted midnight bars.</li>
+	<li>The <a href="modf.htm">modf</a> function splits a variable in a fractional 
+	and integer part.</li>
+	<li><a href="loadHistory.htm">FROM_YAHOO</a> is back! At least for the moment, 
+	Yahoo&trade; data can be downloaded again, using a 'backdoor'.</li>
+	<li>The <a href="data.htm">dataParseJSON</a> function parses OHLC prices from 
+	a JSON file to a <strong>.t6</strong> dataset.</li>
+	<li>The <a href="timewait.htm">OrderDuration</a> variable limits the duration 
+	of a GTC order.</li>
+	<li>Williams' Market Sentiment Index has been added to the <a href="ta.htm">
+	indicator collection</a>.</li>
+	<li><a href="spread.htm">Commission</a> is now stored per trade, which allows 
+	to set up script-calculated commission amounts before entry or in a
+	<a href="trade.htm">TMF</a>.</li>
+	<li>Option trades displayed in the <a href="performance.htm">chart</a> now begin 
+	with the strike price.</li>
+	<li>The <a href="cot.htm">COT</a> functions can be used to evaluate the
+	<strong>Commitment Of Traders</strong> report.</li>
+	<li>The <a href="price.htm">priceRecord</a> function can be used to update price 
+	history files while live trading.</li>
+	<li>Use <a href="file_.htm">file_appendfront</a> for appending data to the start 
+	of a file.</li>
+	<li>Different brokers and sources can now be used for trading, live prices, 
+	and historical prices through the <a href="account.htm">Symbol</a> syntax.</li>
+	<li>The <a href="zsystems.htm">Z10 system</a> now automatically rebalances the 
+	cryptocurrency positions in trade mode.</li>
+	<li>The <a href="binance.htm">Binance</a> and <a href="bitfinex.htm">Bitfinex</a> 
+	cryptocurrency exchanges are now directly supported.</li>
+</ul>
+<h3>Zorro 1.83 (May 2018)</h3>
+<ul>
+	<li>Stock splits are now detected and can be evaluated with the
+	<a href="outlier.htm">PriceJump</a> variable.</li>
+	<li>The <a href="sortdata.htm">sortData / sortIdx</a> functions can now also 
+	sort in descending order.</li>
+	<li>The <a href="fxcm.htm">FXCM</a> plugin now also downloads bid prices in
+	<strong>.t1</strong> files.</li>
+	<li>The <a href="price.htm">marketVal</a> function now supports bid-ask spread 
+	from bid prices in <strong>.t1</strong> files.</li>
+	<li>Closed trades can be enumerated with <a href="fortrades.htm">for(closed_trades)</a>.</li>
+	<li>The <a href="contractcpd.htm">contractCPD</a> function can be used for predicting 
+	the underlying price from option prices.</li>
+	<li>For finding a particular value in a time series, use the
+	<a href="sortdata.htm">findIdx</a> function.</li>
+	<li>The <a href="suspended.htm">suspended</a> function returns the current trading 
+	permission.</li>
+	<li>Changed margin costs of open positions are now considered in the backtest.</li>
+	<li>On no-leverage accounts, the ROI (return on investment) is displayed at 
+	the end.</li>
+	<li>The <a href="contract.htm">contractNext</a> function allows to enumerate 
+	contracts by their strike value.</li>
+	<li><strong>ConnorsRSI</strong> and SMA-based <strong>RSI</strong> were added 
+	to the <a href="ta.htm">indicators</a>.</li>
+	<li>The <strong>NFA</strong> flag does not prevent partially closing trades 
+	anymore.</li>
+	<li>The <a href="filter.htm">filter</a> and <a href="renorm.htm">renorm</a> 
+	functions can be used for array filtering and normalization.</li>
+	<li>The <a href="contract.htm">contractStrike</a> function calculates a strike 
+	price from Delta.</li>
+	<li>The <a href="trade.htm">TradeIsMissed</a> status can be used for generating 
+	adaptive orders. The <a href="brokerplugin.htm">TradeTest</a> script now supports 
+	adaptive entries and exits. </li>
+	<li><a href="barmode.htm">BarMode</a> flag 16 suppresses bars outside market 
+	hours.</li>
+	<li>Assets and algos can be enumerated with <a href="fortrades.htm">for(used_assets)</a> 
+	/ <a href="fortrades.htm">for(all_algos)</a>.</li>
+	<li>The <a href="results.htm">results</a> function can sum 
+	up the results of the last N trades by several criteria.</li>
+	<li>Selecting an account from the <a href="accounts.htm">
+	account list</a> now also changes the assets in the Asset scrollbox.</li>
+	<li>The <a href="brokerplugin.htm">broker interface</a> 
+	now supports UUID strings to identify trades.</li>
+	<li>The <a href="bittrex.htm">Bittrex</a> plugin is included 
+	in the beta version (Zorro S).</li>
+	<li><strong>Weekend = +16</strong> now uses the bar time 
+	zone for allowing bar generation without setting <strong>AssetMarket</strong>.</li>
+	<li><a href="month.htm">wdatef</a> now supports Unix time 
+	stamps with the <strong>%t</strong> format code.</li>
+	<li>For quicker finding a function, a
+	<a href="funclist.htm">list by category</a> was added to the manual.</li>
+	<li><a href="detrend.htm">Detrend</a> now supports
+	<strong>RECIPROCAL</strong> mode for swapping currencies of a forex pair.</li>
+	<li><a href="price.htm">marketVal</a> and
+	<a href="price.htm">marketVol</a> can now also be called in a TMF or
+	<a href="tick.htm">tick</a> function.</li>
+	<li>The <a href="data.htm">dataFromQuandl</a> function now 
+	automatically adjusts timestamps by 16 hours.</li>
+	<li>Datasets can be truncated with <a href="data.htm">dataClip</a>.</li>
+	<li>A new <strong>Z10</strong> system with more than 1000% 
+	annual return was added to the <a href="zsystems.htm">Z systems</a> (Zorro S).</li>
+	<li>The <strong>Z3</strong> system is now included in the 
+	free Zorro version.</li>
+	<li>Crypto history in day, hour, or minute resolution can 
+	be downloaded from <a href="loadhistory.htm">CryptoCompare</a> (Zorro S).</li>
+	<li>Selecting an asset with the scrollbox now triggers the
+	<a href="panel.htm">click</a> function. The selected asset can be evaluated 
+	with the <a href="script.htm">AssetBox</a> string.</li>
+	<li>The <a href="str_.htm">sftoa</a> function can display 
+	prices with an adaptive number of digits.</li>
+	<li>The <a href="coinigy.htm">Coinigy</a> plugin is included 
+	in the beta version (Zorro S). Coinigy allows algorithmic trading with many 
+	digital currency exchanges.</li>
+	<li>The new <strong>History</strong> script displays the 
+	content of <strong>.t1</strong>, <strong>.t6</strong>, or <strong>.t8</strong> 
+	files (Zorro S).</li>
+	<li>The [<span class="tast">Edit</span>] button now also 
+	opens the asset list after a test if the script used special assets.</li>
+	<li>Portfolio weights can be generated with the
+	<a href="renorm.htm">distribute</a> function.</li>
+</ul>
+<h3>Zorro 1.74 (January 2018)</h3>
+<ul>
+	<li><a href="data.htm">dataParse</a> is now 2x faster, and supports larger text 
+	fields in the target dataset (1.70.2) and a start and end record (1.70.3).</li>
+	<li>The <a href="contracts.htm">ContractRow</a> variable allows easy expansion 
+	of option contracts with further fields in an extra dataset.</li>
+	<li>Colors can be made brighter or darker with <a href="color.htm">colorScale</a>.</li>
+	<li>A negative <strong>Capital</strong> amount allows backtests without margin 
+	call detection.</li>
+	<li>The <a href="str_.htm">stridx</a> function can be used for indexing arrays 
+	or datasets with asset or algo names.</li>
+	<li>Up to 4 different brokers or price sources can now be simultaneously connected 
+	by <a href="account.htm">asset/account list</a> entries (1.70.6, Zorro S required).</li>
+	<li>A page about <a href="brokerarb.htm">Broker Arbitrage</a> was added to the 
+	manual.</li>
+	<li>The <a href="trouble.htm">_POS</a> macro helps finding the location of error 
+	messages in the script.</li>
+	<li>The <a href="brokercommand.htm">GET_MAXTICKS</a> broker command allows downloading 
+	historical data in bigger chunks than 300 ticks (1.71.2).</li>
+	<li>Indicators can now be loaded from CSV time series with the
+	<a href="data.htm">dataFromCSV</a> function.</li>
+	<li>The <a href="cdf.htm">dnorm</a> function returns the probability of a variable 
+	in a Gaussian distribution. </li>
+	<li>The <a href="str_.htm">strtr</a> function returns a string identifying a 
+	trade.</li>
+	<li>The currency symbol and number of decimals for account values can now be 
+	set up with the <a href="accounts.htm">account list</a> (1.71.9).</li>
+	<li>The fill status of a trade can now be returned with the
+	<a href="brokerplugin.htm">BrokerTrade</a> function. The MTR4 bridge has been 
+	modified accordingly.</li>
+	<li>The <a href="rbridge.htm">R Bridge</a> can now also be used with a
+	<a href="dlls.htm">strategy DLL</a> (1.72.4).</li>
+	<li>The <a href="plotmode.htm">PL_ALLTRADES</a> flag plots trades of all assets 
+	in the same chart.</li>
+	<li>Downloading <a href="loadhistory.htm">Crypto Currencies</a> from Coinbase 
+	and Bitfinex is now supported through the Quandl Bridge (Zorro S required).</li>
+	<li>Limiting trades to local market hours can now be set up in the
+	<a href="barmode.htm">BarMode</a> variable.</li>
+	<li>Panel cells can be merged with <a href="panel.htm">panelMerge</a>.</li>
+	<li>The stop distance of pool trades can be set with <a href="stop.htm">StopPool</a>.</li>
+	<li>The <strong>IB Bridge</strong> now downloads prices in 1500-tick packets, 
+	which increased the download speed by up to 30%.</li>
+	<li>The <strong>IB Bridge</strong> now supports the
+	<a href="brokercommand.htm">SET_PRICETYPE</a> command with parameters 1 (quotes) 
+	and 2 (trades). </li>
+	<li>The <a href="history.htm">Download script</a> was pimped up. It is now easier 
+	to use and offers more features.</li>
+	<li><a href="advisor.htm">Perceptrons</a> with an analogue output can now be 
+	generated.</li>
+	<li>The start date of the <a href="zsystems.htm">Z8 and Z9 systems</a> is now 
+	automatically adapted to the availability of historical data.</li>
+	<li>Unix time stamps in milliseconds are now supported for
+	<a href="data.htm">dataParse</a> (1.73.4).</li>
+	<li>Since Support got permanently complaints by former MTR4 users about the 
+	'wrong lot size', position sizes can now be given as <a href="lots.htm">Amount</a>, 
+	similar to MTR4 lots.</li>
+	<li>The <a href="opt.htm">TrainMode</a> variable got a new flag to generate
+	<strong>OptimalF</strong> factors separately per WFO cycle.</li>
+	<li>Broker connections can now be set up per asset in the
+	<a href="account.htm">asset list</a>, allowing simultaneous connection to several 
+	brokers (Zorro S). </li>
+</ul>
+<h3>Zorro 1.66 (September 2017) </h3>
+<ul>
+	<li><a href="statistics.htm">Statistics data</a> can now be evaluated at the 
+	end of the strategy.</li>
+	<li>The <a href="data.htm">dataSaveCSV</a> function can be used for saving datasets 
+	in arbitrary CSV formats.</li>
+	<li>The <a href="transform.htm">PercentRank</a> function was added. </li>
+	<li>The &quot;reverse&quot; helper functions have been replaced by the
+	<a href="lots.htm">MaxLong</a> / <a href="lots.htm">MaxShort</a> variables.
+	</li>
+	<li>Option history files in <strong>.t8</strong> format are now automatically 
+	loaded by <a href="contract.htm">contractUpdate</a>.</li>
+	<li>Commission is now automatically reduced by 50% on expired options. </li>
+	<li>A <a href="format.htm">cheat sheet</a> with often used codes was added to 
+	the manual. </li>
+	<li><strong>TO_ALERT</strong> and <strong>TO_CSVHDR</strong> modes have been 
+	added to the <a href="printf.htm">print</a> command. </li>
+	<li>The Zorro panel can now be resized, allowing more space for the message 
+	window. </li>
+	<li>The <a href="command.htm">-stay</a> command line option leaves the Zorro 
+	window open after running a script. </li>
+	<li>The <a href="http://www.financial-hacker.com/the-cold-blood-index/">Cold 
+	Blood Index</a> has been implemented through the <a href="ddscale.htm">verify</a> 
+	function. It is now displayed every day in live trading by the Z systems.
+	</li>
+	<li>Log files from strategy variants can be more conveniently compared by numbering 
+	them with <a href="numtotalcycles.htm">LogNumber</a>. </li>
+	<li><a href="plot.htm">Plot</a> curves are now automatically exported to spreadsheets 
+	in the CSV format.</li>
+	<li>The <strong>Margin</strong> and <strong>Risk</strong> sliders of the
+	<a href="zsystems.htm">Z strategies</a> have been replaced by a <strong>Capital</strong> 
+	slider similar to Z8. </li>
+	<li>The <a href="zsystems.htm">Z8</a> system got several improvements (heatmap 
+	display, sell priority, weight adaption). </li>
+	<li>A new system <a href="zsystems.htm">Z9</a> was added to the Z systems, based 
+	on Antonacci's &quot;Dual Momentum&quot;. </li>
+	<li>The <a href="advisor.htm">advise</a> function now accepts signals in an 
+	array with arbitrary length.</li>
+	<li>The generated perceptron, decision tree, and price pattern rules use now 
+	double precision variables. </li>
+	<li>Zorro now distinguishes rejected <a href="hedge.htm">Pool Trades</a> from 
+	externally closed Pool Trades. </li>
+	<li>The <a href="npp.htm">Notepad++</a> editor was integrated in Zorro as a 
+	replacement of the SED editor.</li>
+</ul>
+<h3>Zorro 1.60 (July 2017) </h3>
+<ul>
+	<li>Price data can now also be <a href="loadhistory.htm">downloaded</a> from
+	<strong>Google Finance</strong>, <strong>AlphaVantage</strong>, and <strong>
+	Stooq</strong>.</li>
+	<li>The <a href="ig.htm">IG</a> plugin by Daniel Lindberg has been added to 
+	the Plugins folder.</li>
+	<li>The <strong>Payoff</strong> script can be used for calculating profit 
+	diagrams of option combinations. </li>
+	<li>The <a href="asset.htm">assetList</a> function now also sets the Asset scrollbox 
+	to the selected asset list. </li>
+	<li>The <a href="mt4plugin.htm">MTR5 platform</a> is now supported with the 
+	MTR5 bridge 1.15</li>
+	<li>The outlier detection can be adjusted with the <a href="ticktime.htm">Outlier</a> 
+	variable. </li>
+	<li>The <a href="ta.htm">Stoch</a> function now also supports variable time 
+	frames. </li>
+	<li><strong><a href="date.htm">StartDate = NOW</a> </strong>can be used for 
+	strategies that do not run permanently, but are started periodically, f.i. for 
+	modifying a portfolio.</li>
+	<li><a href="assetzone.htm">AssetMarket</a> can be used for skipping all bars 
+	outside market hours in local time. </li>
+	<li>Z8 was changed to trade not anymore at a fixed day of the month. The next 
+	trading day is now displayed in trade mode. </li>
+</ul>
+<h3>Zorro 1.58 (May 2017) </h3>
+<ul>
+	<li>If an asset is not available from the broker, it can be downloaded from 
+	Yahoo or Quandl by using special <a href="account.htm">Symbol</a> codes.</li>
+	<li>The <a href="funclist.htm">callback</a> function can be called from the
+	<a href="brokerplugin.htm">broker plugin</a>, allowing the script to react immediately 
+	on certain API events. </li>
+	<li>In <a href="fill.htm">HFT mode</a>, high frequency trading systems can be 
+	simulated with pre-set lag. </li>
+	<li>Various plot flags can be set with the <a href="plotmode.htm">PlotMode</a> 
+	variable.</li>
+	<li>A <a href="stop.htm">StopFactor</a> can now be determined for the Z systems 
+	and allows disabling broker stops. </li>
+	<li>The <a href="oanda.htm">Oanda plugin</a> now also supports Oanda API V2.0.
+	</li>
+	<li>Text can now be assigned to the [<span class="tast">Result</span>] button 
+	with <a href="panel.htm">panelSet</a>. </li>
+	<li>The <a href="ib.htm">IB plugin</a> now supports trade volume also in live 
+	data. </li>
+	<li>Seconds in <a href="data.htm">.csv files</a> and <a href="data.htm">wdatef</a> 
+	fields can now have decimals and are parsed with 1 microsecond resolution.</li>
+	<li>A new <a href="filter.htm">lowpass</a> filter function was added that does 
+	not use a series. </li>
+	<li>The Quandl <strong>WIKI</strong> database is now supported by
+	<a href="loadhistory.htm">assetHistory</a>. </li>
+	<li>A user-developed <a href="dukascopy.htm">Dukascopy</a> plugin has been included.
+	</li>
+</ul>
+<h3>Zorro 1.54 (February 2017) </h3>
+<ul>
+	<li>Functions for <a href="data.htm">loading arbitrary data</a>, such as option 
+	chains, futures, order book content etc. from CSV files have been implemented.</li>
+	<li>The <a href="month.htm">wdatef</a> function parses time/data parameters 
+	from formatted strings. </li>
+	<li>The <a href="data.htm">dataFromQuandl</a> function can access Quandl&#8482; 
+	datasets for backtests as well as for live trading (<a href="restrictions.htm">Zorro 
+	S</a> required). </li>
+	<li>Up to 8 additional asset specific values or strings can be stored in the
+	<a href="account.htm">asset list</a>.</li>
+	<li>The <a href="contract.htm">contract</a> functions are for trading and analyzing 
+	options and futures.</li>
+	<li>Real money accounts can now be connected in read-only mode with an
+	<a href="account.htm">account list</a>. </li>
+	<li>The <strong>EXTRADATA</strong> flag of version 1.50 was replaced by the
+	<a href="mode.htm">LEAN</a> flag that has the opposite meaning. Historical data 
+	is now stored in noncompressed format by default. </li>
+	<li>Option and future chains can be restricted to certain trading classes with 
+	the <a href="brokercommand.htm">SET_CLASS</a> command. </li>
+	<li>The IB bridge now supports the <a href="brokercommand.htm">SET_LIMIT</a> 
+	command for getting a better fill price. </li>
+	<li>The IB bridge now supports stock CFDs (type <strong>STKCFD</strong>).
+	</li>
+	<li>Prices are now stored with 5 digits precision in the trade spreadsheet.
+	</li>
+	<li>Option trades are now based on the real options ask price instead of the 
+	extrinsic price. </li>
+	<li>The <a href="lookback.htm">MinutesPerDay</a> variable prevents &quot;Not 
+	Enough Bars&quot; errors of assets that are only traded a few hours per day.
+	</li>
+	<li>The <a href="between.htm">between</a> function now also works for cyclic 
+	ranges. </li>
+	<li><a href="plotbars.htm">PlotPeriod</a> sets the update rate of the chart 
+	on the trade status page. </li>
+	<li>The <a href="stop.htm">OrderLimit</a> variable allows sending limit orders 
+	for filling with best price within a time period. </li>
+	<li>The <a href="season.htm">season</a> indicator can be used to predict price 
+	movements based on seasonal strength. </li>
+	<li><a href="cdf.htm">qnorm</a> is the inverse of the <a href="cdf.htm">cdf</a> 
+	function. </li>
+	<li>Assets can now be excluded from Z3 and Z7 with the
+	<a href="zsystems.htm">Exclude</a> line in z.ini. </li>
+	<li>The equity or balance curve of a test run is now also exported in CSV format 
+	for further evaluation.</li>
+	<li>MTR4 bridge 1.13 now supports a <a href="brokercommand.htm">lock command</a> 
+	for preventing that trade parameters sent by different Zorro instances interfere 
+	with each other. </li>
+</ul>
+<h3>Zorro 1.50 (September 2016)</h3>
+<ul>
+	<li>Orders for binary options and other special order types can now be sent 
+	via MTR4 bridge with the <a href="brokercommand.htm">SET_ORDERTEXT</a> command 
+	(V 1.47.1). </li>
+	<li><a href="ccy.htm">Currency strength</a> functions have been added for detecting 
+	currency trends that affect several markets (V 1.47.2). </li>
+	<li>Live trading results can be verified by <a href="retraining.htm">retesting</a> 
+	(V 1.47.2; <a href="restrictions.htm">Zorro S</a> required). </li>
+	<li>Live trading systems can retrain automatically in predefined intervals with 
+	the <a href="date.htm">ReTrainDays</a> variable (V 1.47.2;
+	<a href="restrictions.htm">Zorro S</a> required). </li>
+	<li>The sliders can now be moved with <a href="slider.htm">slider(num,pos)</a> 
+	commands (V 1.47.2). </li>
+	<li>The default data format was changed from <strong>.bar</strong> to
+	<a href="history.htm"><strong>.t6</strong></a> for including volume and other 
+	data streams in the price history (V 1.47.2). <strong>.bar</strong> data can 
+	still be used. </li>
+	<li>With the <a href="price.htm">marketVol</a> function, trade or tick volume 
+	of an asset can be used in a trading algorithm (V 1.47.3; Zorro S only).
+	</li>
+	<li>The <a href="fill.htm">Fill</a> mode determines how orders are filled in 
+	the simulation (V 1.47.4). </li>
+	<li>Numbers can be passed to the <a href="cmd.htm">Command</a> variable via 
+	command line (V 1.47.4; <a href="restrictions.htm">Zorro S</a> required).
+	</li>
+	<li>The number of optimize steps per parameter was increased to 1000 (V 1.47.7).
+	</li>
+	<li>Price ticks are now internally stored in a different format that used less 
+	memory for large high-resolution backtests. (V 1.47.7). </li>
+	<li>Disquieting broker messages - such as &quot;An internal server error occurred, 
+	our engineers have been notified&quot; - are now filtered out by the Oanda plugin 
+	(V 1.47.8). </li>
+	<li>Three <a href="ta.htm">Volatility indicators</a> are now supported - Chaikin, 
+	Min/Max, and StdDev based volatilities (V1.50.2). </li>
+</ul>
+<h3>Zorro 1.46 (July 2016) </h3>
+<ul>
+	<li>The <a href="asset.htm">assetAdd</a> function allows adding assets via script 
+	without editing the asset list.</li>
+	<li>The <a href="asset.htm">assetList</a> function loads an asset list immediately.</li>
+	<li>Price history files can be shared among several Zorro installations when 
+	a <a href="ini.htm">HistoryFolder</a> is set up in <strong>Zorro.ini</strong>.
+	</li>
+	<li>With the <strong>&quot;\r&quot;</strong> character in a <strong>
+	<a href="printf.htm">print/printf</a></strong> statement that jumps back to 
+	begin on the current line, a running counter or similar effects can be realized 
+	in the message window. </li>
+	<li>The <a href="mouse.htm">mouse</a> function can be used for automated clicking &quot;Buy&quot; 
+	and &quot;Sell&quot; buttons on a broker's web interface.</li>
+	<li>Individual asset lists for the <a href="zsystems.htm">Z systems</a> can 
+	now be entered in the <strong>Z.ini</strong> setup file. </li>
+	<li>A new free trading system <strong>Z8</strong> was added to the
+	<a href="zsystems.htm">Z systems</a>. </li>
+	<li>The <a href="oanda.htm">Oanda plugin</a> now supports sub-accounts. </li>
+	<li>The <strong>LINE</strong> flag in a <a href="plot.htm">plot</a> command 
+	plots thick lines in the chart. </li>
+	<li>[<span class="tast">Change Folder</span>] in the Strategy scrollbox selects 
+	strategies from a different folder.</li>
+</ul>
+<h3>Zorro 1.44 (May 2016)</h3>
+<ul>
+	<li>The <a href="oanda.htm">Oanda</a> plugin allows direct trading with Oanda&#8482;.</li>
+	<li>Headers for authorization or other purposes can now be included in the
+	<a href="http.htm">http_send</a> function. </li>
+	<li>The <a href="brokerplugin.htm">TradeTest</a> script opens a panel with buttons 
+	for manually trading, useful for testing broker plugins.</li>
+	<li>Files can now be selected in a dialog box with the <a href="file_.htm">file_select</a> 
+	function. </li>
+	<li>Clicking on [<span class="tast">Result</span>] during test or trading triggers 
+	the <a href="panel.htm">click</a> function. This can be used for performing 
+	a calculation or plotting an interim result. </li>
+	<li>The <a href="ib.htm">IB bridge</a> was modified for downloading larger price 
+	history. </li>
+	<li>The <a href="brokercommand.htm">GET_POSITION</a> command is now supported 
+	by the IB bridge. </li>
+	<li>The <a href="advisor.htm">BALANCED</a> flag produces a balanced samples 
+	distribution for all machine learning algorithms. </li>
+	<li>A set of <a href="norm.htm">normalization functions</a> was added for better 
+	adapting indicators to machine learning algorithms. </li>
+	<li>The <a href="advisor.htm">SIGNALS</a> method exports samples for experimenting 
+	with them in R sessions. </li>
+	<li>A default <a href="advisor.htm">neural</a> function was included in the
+	<strong>r.h</strong> header. The documentation now got a R example for a 'deep 
+	learning' strategy. </li>
+	<li>The <a href="ta.htm">Covariance</a> between two series was added to the 
+	indicator library. </li>
+	<li>The <a href="mode.htm">TRADESIZE</a> flag can be used for training strategies 
+	that rely on different trade sizes, f.i. Martingale systems. </li>
+	<li>The <a href="http://zorro-project.com/download.php">28 Currencies history</a> 
+	was updated until the end of 2015. </li>
+	<li><a href="numbars.htm">Day</a> gives the current day number of the simulation.
+	</li>
+	<li>Optimal capital allocation among portfolio components can be calculated 
+	with the <a href="markowitz.htm">Markowitz efficient frontier</a>. </li>
+	<li>Symbols on a histogram or statistics chart can now have individual colors.
+	</li>
+	<li>The <a href="profile.htm">plotHeatmap</a> function can plot correlation 
+	heatmaps. </li>
+	<li>The <a href="color.htm">color</a> function can be used for plotting heatmaps 
+	or multiple color curves. </li>
+	<li>Date and time can be printed more easily with the <a href="month.htm">strdate</a> 
+	function.</li>
+	<li>A set of <a href="matrix.htm">matrix functions</a> was added. </li>
+	<li>By default Zorro is now installed in the <strong>User</strong> folder instead 
+	of the <strong>Program Files</strong> folder. </li>
+</ul>
+<h3>Zorro 1.42 (February 2016) </h3>
+<ul>
+	<li>The <a href="mode.htm">STEPWISE</a> flag can be used for
+	<a href="https://zorro-project.com/manual/en/testing.htm#step" target="_blank">
+	debugging</a> trade behavior by single stepping through a test session. </li>
+	<li>Variables can be debugged with the <a href="printf.htm">watch</a> function.
+	</li>
+	<li>When a script crashes, the name of the faulty function is now displayed.
+	</li>
+	<li>A negative <a href="plotbars.htm">PlotBars</a> number zooms to the end of 
+	the chart.</li>
+	<li>The <a href="mt4plugin.htm">MTR4 Bridge</a> can now draw horizontal lines 
+	and text in the MTR4 chart window. </li>
+	<li>The <a href="mt4plugin.htm">MTR4 Bridge</a> latency time was reduced from 
+	~100 ms to ~30 ms by optimizing the data transfer. </li>
+	<li><a href="panel.htm">Control panels</a> can now be defined for entering and 
+	displaying strategy parameters.</li>
+	<li>The <a href="pip.htm">Leverage</a> parameter was changed to reflect account 
+	leverage instead of buying power. </li>
+	<li>The location of the <strong>.trd</strong> files moved from the <strong>Log</strong> 
+	to the <strong>Data</strong> folder. </li>
+	<li>The last potentially orphaned trade is now displayed in the status page.
+	</li>
+	<li>The <a href="ta.htm">Shannon Entropy</a> was added to the indicators.
+	</li>
+	<li>Price data of stocks and indices can now be downloaded from Yahoo with the
+	<a href="loadhistory.htm">assetHistory</a> function. </li>
+	<li>The <a href="history.htm">Download</a> script is now controlled with a panel; 
+	editing the script is not necessary anymore. </li>
+	<li>Assets can now be tested even with no entry in the asset list. An error 
+	message will then be issued and default asset parameters will be used. </li>
+	<li><a href="fortrades.htm">Trade loops</a> can now be executed from inside 
+	a <a href="trade.htm">TMF</a>.</li>
+	<li>The <a href="month.htm">wdate</a> function returns the date and time of 
+	a bar in the Windows <strong>DATE</strong> format. </li>
+	<li>Trades can be simulated in an unrealistic <a href="mode.htm">naive mode</a> 
+	for special purposes.</li>
+	<li>Individual text editors (such as Notepad++) and chart viewers can be used 
+	by editing the <a href="ini.htm">Zorro.ini</a> file. </li>
+</ul>
+<h3>Zorro 1.40 (November 2015) </h3>
+<ul>
+	<li>Zorro can now trade with <a href="ib.htm">Interactive Brokers</a> accounts 
+	through the IB plugin. </li>
+	<li>Asset lists and account lists are now in <strong>.csv</strong> format for 
+	easier editing. <strong>Leverage</strong> and <strong>Symbol</strong> have been 
+	added to the asset parameters. </li>
+	<li>Correlograms can now be plotted with the <a href="profile.htm">profile</a> 
+	library. </li>
+	<li>Trade slippage, magic number, and other parameters can now be set up in 
+	the <a href="mt4plugin.htm">MTR4 bridge</a> via <a href="brokercommand.htm">
+	brokerCommand</a>. </li>
+	<li>The type of an asset can be determined with the <a href="asset.htm">assetType</a> 
+	function. </li>
+	<li>The <a href="frame.htm">frameSync</a> function can be used to snychronize 
+	the time frame to full hours or days.</li>
+	<li>A fixed WFO test/training time can be set up with
+	<a href="numwfocycles.htm">WFOPeriod</a>. </li>
+	<li><a href="export.htm#pnl">Curves</a> stores balance or equity curves during 
+	the training process for further evaluation. </li>
+	<li>The <a href="putvar.htm">putvar/getvar</a> functions share variables globally 
+	among scripts. </li>
+	<li>The <a href="lock.htm">lock</a> function can synchronize the behavior of 
+	multiple Zorros (Zorro S only). </li>
+	<li>The <a href="sortdata.htm">sort</a> functions can now be used without data 
+	length limits. </li>
+	<li>The <a href="randomize.htm">randomize</a> function can shuffle a price or 
+	equity curve with or without replacement.</li>
+	<li><a href="ta.htm">Percentile</a> calculates upper or lower percentiles of 
+	a data series. </li>
+	<li><a href="ta.htm">ProfitFactor</a> calculates the profit factor of a balance 
+	or equity curve. </li>
+	<li>The <a href="month.htm">market</a> function can be used to limit trading 
+	to certain hours of the day. </li>
+	<li>The <a href="plot.htm">plotData</a> function returns plot data arrays that 
+	can be used for further evaluation. </li>
+	<li>Plotting data is now pre-sampled, which makes plotting huge data sets - 
+	f.i. a backtest of several years based on minute or second bars - up to 100 
+	times faster than before. </li>
+	<li>The <a href="brokerplugin.htm">BrokerAccount</a> function is now optional 
+	(account data is normally unavailable in a FIX API implementation). </li>
+	<li>The <a href="montecarlo.htm">Montecarlo</a> module has been integrated in 
+	Zorro, so an external plugin is not required anymore. </li>
+	<li>Periodic I/O tasks can be realized with the <a href="tick.htm">tock</a> 
+	function. </li>
+	<li>The sample period of the <a href="filter.htm">Spectrum</a> function can 
+	now be set up independently. </li>
+	<li>The <a href="zsystems.htm">Z.ini</a> file can now be modified while trading, 
+	and is updated at the begin of the next bar. </li>
+	<li>The <a href="zsystems.htm">Z7 system</a> got a modified and supposedly more 
+	robust algorithm.</li>
+	<li><a href="loop.htm">loop(Assets)</a> loops over all assets from the asset 
+	list.</li>
+</ul>
+<h3>Zorro 1.34 (released August 2015)</h3>
+<ul>
+	<li>WFO training time can be minimized by using <a href="numcores.htm">several 
+	CPU cores</a> (Zorro S only). </li>
+	<li>The Zorro window can be started minimized with the <a href="command.htm">
+	-h</a> command line option. </li>
+	<li>The <a href="assetzone.htm">AssetZone</a> variable allows individual time 
+	zones for assets in a portfolio system. </li>
+	<li>The pattern analyzer behavior can be set up with the
+	<a href="advisor.htm">PatternCount</a> and <a href="advisor.htm">PatternRate</a> 
+	variables. </li>
+	<li>A negative <a href="series.htm">series</a> length can be used for generating 
+	static, non-shifting series.</li>
+	<li>The <a href="ta.htm">ZigZag</a> indicator was added to the indicators list.</li>
+	<li>Machine learning models and script parameters can now be trained at the 
+	same time (see <a href="training.htm">Training</a>). In the previous version 
+	this was only possible for the integrated machine learning methods, but not 
+	for the general <strong>NEURAL</strong> method. </li>
+	<li>The <a href="bar.htm">bar</a> function allows user-defined special bars 
+	such a Range Bars or Renko Bars. </li>
+	<li>Training parameters now really produces a HTML file with parameter histograms 
+	(in the previous version this was not yet fully included). </li>
+	<li>The <a href="Lecture%201.htm">R lectures</a> by Harry Georgakopoulos have 
+	been included in the Zorro documentation. </li>
+	<li>Zorro will now detect margin calls when <a href="lots.htm">Capital</a> is 
+	set. </li>
+	<li>The <a href="random.htm">seed</a> function can initiate a deterministic 
+	random number sequence. </li>
+	<li>The <a href="ta.htm">HH</a> and <a href="ta.htm">LL</a> functions now also 
+	accept a bar offset. </li>
+	<li>The <a href="ta.htm">Ichimoku</a> indicator was added to the collection.
+	</li>
+	<li>The <a href="printf.htm">TO_CSV</a> print target prints into a CSV file.
+	</li>
+	<li>The <a href="str_.htm">strmid</a> function returns a substring from a string.
+	</li>
+	<li>The asset list <strong>AssetsCur.dta</strong> contains all 28 major currency 
+	pairs.</li>
+	<li>Price history of all 28 major currency pairs is available on the download 
+	page. </li>
+	<li>The <a href="zsystems.htm">Z2</a> system has been improved and got better 
+	exit algorithms and a new counter trend algo (A2). </li>
+	<li>The new <a href="zsystems.htm">Z7</a> system, based on the machine learning 
+	algorithm from <a href="tutorial_pre.htm">Workshop 7</a>, was included. </li>
+</ul>
+<h3>Zorro 1.32 (released June 2015) </h3>
+<ul>
+	<li>The <a href="rbridge.htm">R br</a><a href="rbridge.htm">idge</a> runs R 
+	functions from lite-C scripts and allows coding a trade strategy completely 
+	in R, using the newest and sexiest AI algorithms. </li>
+	<li><a href="verbose.htm">Verbose</a> = 30 now stops the blackbox recording 
+	at the first error. </li>
+	<li>The <a href="str_.htm">strw</a> function converts strings to wide character 
+	strings. </li>
+	<li>The <a href="str_.htm">strf</a> function returns a formatted string.
+	</li>
+	<li>The <a href="str_.htm">strx</a> function replaces sub-strings in a string.
+	</li>
+	<li>The <a href="printf.htm">TO_FILE</a> and <a href="printf.htm">TO_ANY</a> 
+	print target prints messages to the log file and window in all modes. </li>
+	<li>The <a href="mode.htm">TICKS</a> mode was changed. Ticks are now executed 
+	in the order of their time stamp, not sorted by asset or trade as before. This 
+	makes testing slower, but removes the special restrictions for tick functions, 
+	TMFs, and virtual hedging. The old testing method can still be used by setting 
+	the <a href="mode.htm">FAST</a> flag. </li>
+	<li>The <a href="rev.htm">rev</a> function reverses a series so that it now 
+	starts with the oldest data. </li>
+	<li>The <a href="detrend.htm">SHUFFLE</a> flag randomizes a price curve and 
+	thus helps determining if profit is caused by a real edge or by artifacts or 
+	randomness. </li>
+	<li>The <a href="profile.htm">plotWFOCycle</a> and <a href="profile.htm">plotWFOProfit</a> 
+	functions can be used for analyzing the profit curve over several WFO cycles.</li>
+	<li>The <a href="assetzone.htm">BarZone</a> variable can be used to shift daily 
+	bars to a certain local time zone.</li>
+	<li><a href="ta.htm">Chaikin Volatility</a> was added to the standard indicators.
+	</li>
+	<li>The <a href="mode.htm">BINARY</a> flag enables the simulation of binary 
+	trading. </li>
+	<li><a href="training.htm">Training</a> now plots all parameter charts in a 
+	HTML page, also for portfolios and WFO. </li>
+</ul>
+<h3>Zorro 1.30 (released April 2015)</h3>
+<ul>
+	<li>The <a href="optimalf.htm">OptimalFRatio</a> variable modifies <strong>OptimalF</strong> 
+	factors for preventing large component margin differences in portfolio systems.</li>
+	<li>For scalping strategies, <a href="barperiod.htm">bar periods</a> down to 
+	100 ms are now possible with Zorro S. The <strong>BarPeriod</strong> variable 
+	is now of type <strong>var</strong> instead of <strong>int</strong> (check possible 
+	compatibility issues, f.i. in print/printf statements).</li>
+	<li>Asset specific parameters can be stored in the <a href="algovar.htm">AssetVar</a> 
+	variables.</li>
+	<li>All <a href="zsystems.htm">Z systems</a> can now be retrained with Zorro 
+	S by clicking the [<span class="tast">Train</span>] button (even while trading). 
+	Price history of all assets from 2008 and above must be available in the
+	<strong>History</strong> folder. The recent prices are updated and the parameters 
+	of the last WFO cycle are trained. Retraining the Z systems is normally not 
+	necessary, but was requested by many users. </li>
+	<li>Several small improvements have been implemented in the
+	<a href="zsystems.htm">Z systems</a>, among them different <strong>OptimalF</strong> 
+	factors for the backtest and for live trading, and a different profit lock method.</li>
+	<li>The <a href="zsystems.htm">Z3 system</a> now also trades US indexes.
+	</li>
+	<li>A chart with the current equity curve and other information is now included 
+	in the <a href="trading.htm">trade status page</a>. </li>
+	<li>If the trade volume is controlled by setting both <a href="lots.htm">Margin</a> 
+	and <a href="lots.htm">Lots</a>, the <strong>Lots</strong> variable now determines 
+	the minimum number of lots per trade. Trades can be automatically skipped when 
+	Margin is below the minimum. </li>
+	<li>The <a href="testing.htm">backtest</a> can now use T1 (tick based) historical 
+	price data. </li>
+	<li>The <a href="loadhistory.htm">assetHistory</a> function can now be used 
+	to produce T1 price history files. </li>
+	<li>The <a href="month.htm">seconds</a> function is now of type <strong>var</strong> 
+	instead of <strong>int</strong> (check possible compatibility issues, f.i. in 
+	print/printf statements). Its fractional part contains fractions of a second 
+	in milliseconds precision. </li>
+	<li>The user-supplied <a href="evaluate.htm"></a><a href="tick.htm">tick</a> 
+	function can be used to evaluate incoming price quotes.</li>
+	<li>The <a href="ini.htm">AutoCompile</a> flag determines whether scripts are 
+	always compiled, or only when they were modified. </li>
+	<li><a href="plot.htm">Plot</a> names beginning with '#' won't appear in the 
+	chart legend.</li>
+	<li>The test performance can now be further evaluated with the user-supplied
+	<a href="evaluate.htm">evaluate</a> function.
+	<!--doc --></li>
+	<li>The <strong><a href="ta.htm">UO</a></strong> (Universal Oscillator) by John 
+	Ehlers was added to the indicator library. </li>
+	<li>The <strong>Risk</strong> column of the <a href="trading.htm">status page</a> 
+	now displays the current risk of a trade instead of the initial risk. </li>
+</ul>
+<h3>Zorro 1.28 (February 2015)</h3>
+<ul>
+	<li>The <strong><a href="ini.htm">WebFolder</a></strong> variable can now be 
+	set up globally for displaying live trade status on a web site. </li>
+	<li>The <a href="str_.htm">strtext</a> function can be used to read strings 
+	from an <strong>.ini</strong> file. </li>
+	<li>The <a href="ta.htm">DPO</a> oscillator was added to the TA functions.
+	</li>
+	<li>The <a href="transform.htm">AGC</a> and <a href="ta.htm">EMA</a> functions 
+	now also accept an alpha parameter instead of a time period. </li>
+	<li>Some Zorro properties - for instance, the automatic deleting of old log 
+	files - can now be set up in the <a href="ini.htm">Zorro.ini</a> file. </li>
+	<li>The commission per asset can now be set up in the <strong>
+	<a href="account.htm">AssetsFix.csv</a></strong> file and by script in the
+	<a href="spread.htm">Commission</a> variable. The simulation now simulates a 
+	spread/commission account, instead of a pure spread account.</li>
+	<li>In the SNB floor removal aftermath, many brokers reduced their maximum leverage 
+	from 400:1 or 200:1 to 100:1. The simulated default account (<strong>AssetsFix.csv</strong>) 
+	was also changed to 100:1 leverage, which affects the profit of most systems.</li>
+	<li>The <strong>Z4</strong> and <strong>Z5</strong> systems are expired and 
+	have been removed from the strategy pool. </li>
+	<li>The <a href="zsystems.htm">Z3 system</a> now also got an equity curve trading 
+	mechanism. </li>
+	<li>The currently profitable and suspended components of the <strong>Z12</strong> 
+	system are now displayed in a <a href="zsystems.htm">asset/algo matrix</a> with 
+	green and red rectangles. </li>
+</ul>
+<h3>Zorro 1.26 (October 2014)</h3>
+<ul>
+	<li>The number of open lots per asset can be evaluated with the
+	<a href="winloss.htm">LotsPool</a> and <a href="winloss.htm">LotsPhantom</a> 
+	variables. </li>
+	<li>The Market Meanness Index (<a href="ta.htm">MMI</a>) was added to the indicator 
+	library.</li>
+	<li>Haiken Ashi prices (<a href="ta.htm">HA</a>) were added to the indicator 
+	library.</li>
+	<li>The Z systems have been improved and retrained. New algorithms have been 
+	added to the Z4 and Z5 systems for working with very low price volatility.</li>
+</ul>
+<h3>Zorro 1.24 (June 2014)</h3>
+<ul>
+	<li>The <a href="assetzone.htm">AssetFrame</a> variable can be used to skip 
+	quoteless bars of assets in a portfolio system. </li>
+	<li>The <a href="scripts.htm">TradeCosts</a> script lists the relative trade 
+	costs of all main assets. </li>
+	<li>The <strong>Script</strong> scrollbox now 'remembers' the last selected 
+	script. </li>
+	<li><a href="hedge.htm">Hedge mode 5</a> now minimizes the number of open trades 
+	by closing trades partially if required. </li>
+	<li><a href="selllong.htm">exitLong/Short</a> can now close trades partially.
+	</li>
+	<li>The <strong>MTR4 bridge</strong> and the <strong>FXCM plugin</strong> have 
+	been adapted to partially closing trades. </li>
+	<li><a href="stop.htm">TrailSpeed</a> raises the stop faster before breakeven, 
+	this way preventing that a winning trade turns back into a loser.</li>
+	<li>The <a href="ta.htm">Hurst exponent</a> can determine trending state of 
+	a price curve.</li>
+	<li>The <a href="ta.htm">Alligator</a> indicator was added to the library.
+	</li>
+	<li>The <a href="predict.htm">predict</a> function can predict crossovers several 
+	bars before they happen. </li>
+	<li>The <a href="crossover.htm">Momentum</a> variable indicates the 'strength' 
+	of crossovers, peaks, or valleys. </li>
+	<li>The <a href="loadstatus.htm">saveStatus</a>/<a href="loadstatus.htm">loadStatus</a> 
+	functions can preserve variables, open trades, and slider positions when the 
+	system is stopped or restarted.</li>
+	<li>The <a href="algovar.htm">AlgoVar</a> variables are now automatically saved, 
+	thus keeping their content when a trading system is stopped or restarted.
+	</li>
+	<li>Invalid <a href="lots.htm">Margin</a> values are now indicated with an error 
+	message. </li>
+	<li>The <a href="mode.htm">NFA</a> flag is now ignored in training mode.
+	</li>
+	<li>While trading, Zorro now displays a detailed lists of open trades and performance 
+	statistics in a HTML file that is updated every minute.</li>
+</ul>
+<h3>Zorro 1.22 (April 2014) </h3>
+<ul>
+	<li>The <a href="mt4plugin.htm">MTR4 bridge</a> was updated to version 1.3 that 
+	supports MTR4 version 600 and above. </li>
+	<li>The <a href="account.htm">Multisession plugin</a> allows to trade with multiple 
+	brokers, instances, and accounts even with the free Zorro version.</li>
+	<li>Placing the stop level at the wrong side of the price in a TMF is now automatically 
+	corrected. </li>
+	<li>The <a href="ta.htm">ATR</a> function now adapts to the <strong>TimeFrame</strong>.
+	</li>
+	<li>A new <a href="hedge.htm">Virtual Hedging</a> mode allows to combine trades 
+	opened on the same bar to a single net trade. </li>
+	<li>The <a href="ta.htm">Keltner Channel</a> was added to the indicator library.
+	</li>
+	<li>The <a href="plotbars.htm">PlotDate</a> variable can be used to zoom the 
+	chart to a certain date.</li>
+	<li>The <a href="printf.htm">print</a> function can print to various targets, 
+	f.i. to a message box or to the performance report.</li>
+	<li>Zorro now only logs in to the broker when in trade mode. In test or train 
+	mode, missing assets or price data will produce an error message. The
+	<a href="scripts.htm">Download</a> script now needs trade mode for updating 
+	prices or asset data. </li>
+	<li>The <a href="exec.htm">exec</a> function can be used to open an external 
+	program, document, URL, or batch file. </li>
+	<li>A <a href="montecarlo.htm">Monte Carlo plugin</a> is now available for a 
+	Monte Carlo analysis of strategy scripts and external trade lists. </li>
+	<li>The annual return is now calculated from the maximum margin instead of the 
+	average margin. This produces slightly more pessimistic returns. </li>
+	<li>The <strong>R2</strong> coefficient that measures equity curve linearity 
+	is now included in the <a href="performance.htm">performance report</a>.</li>
+	<li>A small example script for converting <strong>.csv</strong> price history 
+	files to Zorro's <strong>.bar</strong> format was added (needs the <strong>file_write</strong> 
+	function).</li>
+	<li>The <a href="script.htm">History</a> string can be used for selecting between 
+	different sets of historical data files. </li>
+	<li>The <a href="file.htm">file_write</a> function can be used to store the 
+	content of a string, series, or array in a file. </li>
+	<li>The <a href="filter.htm">NumInRange</a> function can be used to generate 
+	price distribution statistics while trading. </li>
+	<li>The <a href="filter.htm">ShannonGain</a> indicator calculates the expected 
+	gain of the next bar period, based on Shannon probability. </li>
+	<li>A description of using NeuroShell&trade; and other DLL-based indicators 
+	for Zorro was added to the <a href="conversion.htm">conversion</a> chapter.
+	</li>
+	<li>Trade management functions (<a href="trade.htm">TMF</a>) can now be triggered 
+	by entry or exit limits, thus allowing for additional entry/exit conditions 
+	or trade chains.</li>
+	<li><a href="ticktime.htm">TickSmooth</a> can remove outliers from incoming 
+	price ticks.</li>
+	<li>The <a href="ticktime.htm">TickTime</a> variable can be used to save CPU 
+	resources by defining a minimum time between script executions. </li>
+	<li>The <a href="profile.htm">plotProfit</a> functions plot the daily, weekly, 
+	monthly, or quarterly profit or loss in the price chart. </li>
+	<li>The <a href="zsystems.htm#z5">Z5 system</a> got a new algorithm for the &quot;Stop&quot; 
+	slider that re-enters trades closed due to the risk limit. This greatly improves 
+	the profit in situations when the risk limit is exceeded. </li>
+</ul>
+<h3>Zorro 1.20 (November 2013)</h3>
+<ul>
+	<li>The <a href="mode.htm">PRELOAD</a> flag allows loading lookback price data 
+	from the price history on trade start. </li>
+	<li>The <a href="filter.htm">DominantPhase</a> function can detect turning points 
+	of the dominant cycle in a price curve even before they happen.</li>
+	<li>The <a href="account.htm">account selection system</a> was implemented for 
+	multiple accounts and/or multiple MTR4 clients (Zorro S only).</li>
+	<li>A new FXCM plugin is available where the wrong trade profit issue is fixed, 
+	so the <a href="brokercommand.htm">SET_PATCH</a> command is not required anymore.
+	</li>
+	<li>Bar charts by <a href="plot.htm">plotBar</a> are now automatically aligned 
+	so that the chart always starts with the first bar.</li>
+	<li>The <a href="mt4plugin.htm">MTR4 bridge</a> now supports multiple MTR4 instances 
+	on the same PC (Zorro S only). To connect to a particular MTR4 account, either 
+	the account number can be manually entered in Zorro's [<span class="tast">User</span>] 
+	field, or the <a href="account.htm">account selection system</a> can be used.
+	</li>
+	<li>The <a href="command.htm">-d</a> command line option allows to pass a
+	<strong>#define</strong> statement to the script (Zorro S only). This way many 
+	different tasks can be automatized with the same script.</li>
+	<li>The <a href="mode.htm">ALLCYCLES</a> flag produces a portfolio analysis 
+	of all sample cycles. </li>
+	<li>The <a href="plot.htm">plot</a> command now supports plotting different 
+	symbols in the chart. </li>
+	<li>A price data gap check can be activated with the <a href="date.htm">GapDays</a> 
+	variable. </li>
+	<li>New indicators by John Ehlers (<a href="filter.htm">HighPass2</a>,
+	<a href="ta.htm">StochEhlers</a>) have been converted to C by DdlV, together 
+	with an example script of a trade system.</li>
+	<li>A <a href="scripts.htm">Filter</a> script has been added for testing and 
+	displaying Zorro's <a href="filter.htm">spectral filter</a> functions. </li>
+	<li>The sine and square wave generators can now produce hyperbolic chirps for 
+	filter testing. </li>
+	<li><a href="lots.htm">Margin</a> at <strong>0</strong> now prevents trades; 
+	previously 1 lot was opened, which was a common source of mistakes. </li>
+	<li>A backup of the <strong>.trd</strong> file is now stored at trade start.
+	</li>
+	<li>Several different money management methods are now discussed at the end 
+	of <a href="tutorial_kelly.htm">workshop 6</a>. </li>
+	<li>A <a href="scripts.htm">Gap</a> script was added as an example for a simple 
+	gap trading system.</li>
+	<li>The <a href="zsystems.htm#z5">Z5 system</a> was improved for adapting to 
+	periods of low volatility.</li>
+	<li>The new <a href="zsystems.htm#z5">Z4 system</a> was especially designed 
+	for minimal budgets in the range of $100 .. $400. </li>
+</ul>
+<h3>Zorro 1.16 (September 2013) </h3>
+<ul>
+	<li>The <a href="command.htm">-quiet</a> command line flag suppresses message 
+	boxes. </li>
+	<li><a href="ftp.htm">FTP</a> and <a href="http.htm">HTTP</a> functions have 
+	been added for accessing the content of websites or sending emails or files 
+	to or from remote servers. </li>
+	<li>A new <a href="hedge.htm">Virtual Hedging</a> mode was implemented and replaces 
+	the <strong>HEDGING</strong> flag. It can greatly reduce the market exposure 
+	and the trade duration, and improve profit due to smaller trade costs.</li>
+	<li>A drawdown chart was added to the <a href="performance.htm">performance 
+	chart</a>. </li>
+	<li>Chart colors can be individually set up with the <a href="colors.htm">color</a> 
+	variables. </li>
+	<li>The contribution weights of portfolio components are now listed in the
+	<a href="performance.htm">portfolio analysis</a>. </li>
+	<li>New trades can now be opened from inside a <a href="trade.htm">TMF</a>.
+	</li>
+	<li>The <a href="scripts.htm">Simulate</a> script simulates a trade system by 
+	importing trades from a .CSV file.</li>
+	<li>Entry and exit time of a trade are now stored with tick precision in the 
+	.CSV file (previously it was with bar precision only). </li>
+	<li>Some users had problems to set up a trading system on a VPS, so a
+	<strong>VPS installation service</strong> was added to the download page.
+	</li>
+	<li>The <a href="zsystems.htm">Z5</a> system now uses virtual hedging. </li>
+</ul>
+<h3>Zorro 1.14 (August 2013) </h3>
+<ul>
+	<li>While trading, a click on [<span class="tast">Result</span>] prints a list 
+	of open trades with entry, current, and stop prices.</li>
+	<li>The <a href="login.htm">login</a> function can be used for temporarily logging 
+	out from the broker.</li>
+	<li>The <a href="memory.htm">memory</a> function can be used for determining 
+	the current memory footprint of the script, and for finding memory leaks.
+	</li>
+	<li>The <a href="buylong.htm">reverse</a> functions are convenient for limiting 
+	the number of trades. Their use is explained in
+	<a href="tutorial_fisher.htm">workshop 5</a>. </li>
+	<li>The <a href="printf.htm">msg</a> function can now be used for modeless message 
+	boxes, useful for trade alerts without interrupting the script. </li>
+	<li>The stop loss distance is now displayed in the daily profit/loss reports 
+	with <a href="verbose.htm">Verbose</a> &gt;= 2. </li>
+	<li><a href="optimalf.htm">OptimalF</a> factors are now also calculated for 
+	long and short trades together. This gives a more precise result than averaging 
+	the long and short OptimalF factors. </li>
+	<li>A <a href="month">seconds</a> function was added for evaluating intrabar 
+	time. </li>
+	<li>The <a href="timewait.htm">OrderDelay</a> variable can be used for improving 
+	profits by entering trades at the optimal moment. </li>
+	<li>A step by step description of adding new assets and downloading price data 
+	was added to the manual. </li>
+	<li>The <a href="lots.htm">Capital</a> variable allows to set up an initial 
+	capital and calculate the CAGR. </li>
+	<li>The <a href="advisor.htm">advise</a> function can now generate trading rules 
+	for multiple assets and algos. </li>
+	<li>The <a href="barperiod.htm">BarPeriod</a> variable can now be set from an
+	<a href="optimize.htm">optimize</a> call, except for WFO.</li>
+	<li><a href="barperiod.htm">TimeFrame</a> can now generate individual time frames 
+	that are aligned to external events. </li>
+	<li><a href="loadhistory.htm">assetHistory</a> can now be used for updating 
+	or adding new assets without downloading historic price data. </li>
+	<li>The state of the input sliders are now stored together with the open trades, 
+	and restored when trading is resumed. </li>
+	<li>The state of the Account scrollbox is now preserved when Zorro is restarted.
+	</li>
+	<li>The <a href="barmode.htm">BarMode</a> variable can now be set to <strong>
+	2</strong> for preventing that bars end during the weekend. </li>
+	<li>The <a href="verbose.htm">Verbose</a> variable can now be used to set up 
+	message verbosity and diagnostics mode via script. It is also added to the
+	<a href="zsystems.htm">Z.ini</a> file for the included systems. </li>
+	<li>The <strong>diag.txt</strong> file is now separately stored for every strategy.
+	</li>
+</ul>
+<h3>Zorro 1.12 (July 2013) </h3>
+<ul>
+	<li>Slippage is now recorded while live trading, and displayed in the
+	<a href="performance.htm">performance report</a> in total and per trade.
+	</li>
+	<li>An additional algorithm (VO) was added to the Z1 system, increasing the 
+	annual return to about 280% </li>
+	<li>After 6 months live test the <a href="zsystems.htm#income">Z3</a> and
+	<a href="zsystems.htm#income">Z5</a> trade systems have been released. </li>
+	<li>C source generated by machine learning functions is now stored in
+	<strong>.c</strong> files instead of <strong>.rul</strong>. </li>
+	<li>The <a href="profile.htm">plotMAEGraph</a> function can produce MAE distribution 
+	graphs and similar charts. </li>
+	<li>The <a href="plot.htm">plotGraph</a> function draws lines and polygons in 
+	a chart. </li>
+	<li>The <a href="plot.htm">DOT</a> type can be used for plotting a dotted curve.
+	</li>
+	<li>The <a href="stop.htm">Trail</a> distance can now be negative for raising 
+	the stop loss on any bar regardless if the trade is in profit or not. </li>
+	<li>Due to an internal loop optimization, trades are now entered faster, thus 
+	reducing slippage.</li>
+	<li>The <a href="mode.htm">MUTE</a> flag prevents playing sounds (in the case 
+	that Zorro trades from your bedroom). </li>
+	<li><a href="numtotalcycles.htm">NumTotalCycles</a> can be used to repeat a 
+	full simulation cycle many times. </li>
+	<li>The <a href="advisor.htm">pattern analyzer</a> can now generate 'fuzzy patterns' 
+	with the <strong>FUZZY|PATTERN</strong> method.</li>
+	<li>The <a href="advisor.htm">pattern analyzer</a> can now generate pattern 
+	finding functions in C that can be exported to other platforms. </li>
+	<li>The <strong>equalF</strong> and <strong>eq</strong> functions have been 
+	added to the <a href="fuzzy.htm">fuzzy logic</a> set. </li>
+</ul>
+<h3>Zorro 1.10 (May 2013)</h3>
+<ul>
+	<li>Zorro can now run as a MTR4 expert advisor using the
+	<a href="mt4plugin.htm">MTR4 Bridge</a>. </li>
+	<li>The <a href="filters.htm">Spectrum</a> function can be used to find hidden 
+	cycles in a price curve. </li>
+	<li>A new <a href="tutorial_pre.htm">workshop</a> was added for trading with 
+	machine learning algorithms. </li>
+	<li>AI rules and strategy parameters can now be generated at the same time.
+	</li>
+	<li>The <a href="advisor.htm">PATTERN</a> analyzer automatically finds profitable 
+	candle patterns for price action trading. </li>
+	<li>The <a href="barperiod.htm">FrameOffset</a> variable allows to generate 
+	trade signals at different times within the same time frame of a multi time 
+	frame strategy. </li>
+	<li>The <a href="command.htm">-diag</a> command line option can be used for 
+	finding the reason of a crash or similar problem that terminates the script.
+	</li>
+</ul>
+<h3>Zorro 1.06 (March 2013)</h3>
+<ul>
+	<li>The <strong>AVG</strong> flag now allows to <a href="plot.htm">plot</a> 
+	a value as an average curve over all oversampling cycles. </li>
+	<li>A <strong>Laguerre</strong> filter was added to the <a href="filter.htm">
+	filters</a>. </li>
+	<li>Comparing a function pointer with a <strong>var</strong> or <strong>float</strong> 
+	value - this can happen when forgetting the () of a function call - will now 
+	generate a compiler error. </li>
+	<li>The <a href="printf.htm">info</a> and <a href="progress.htm">progress</a> 
+	commands display text and color signals in Zorro's info window and progress 
+	bar. </li>
+	<li>Zorro can now be started from external programs with
+	<a href="command.htm">command line options</a>.</li>
+	<li><a href="profile.htm">Seasonal analysis functions</a> have been implemented. 
+	They are also be available as an add-on for Zorro 1.05. </li>
+	<li>The <strong>Z12</strong>, <strong>Z12fx</strong>, and <strong>Z12nfa</strong> 
+	combined strategies have been removed because they were found less profitable 
+	than trading Z1 and Z2 separately. Reason is an internal mechanism that evaluated 
+	open trade profits for trade decisions, which does not work well across opposite 
+	strategies such as the Z1 trend trading and the Z2 counter trend trading systems.</li>
+</ul>
+<h3>Zorro 1.05 (January 2013)</h3>
+<ul>
+	<li>The <strong>Total down time</strong> - the time spent below a preceding 
+	equity peak - is now displayed in the <a href="performance.htm">performance 
+	report</a>. </li>
+	<li>The <a href="timer.htm">timer</a> function can be used for precisely determining 
+	execution times. </li>
+	<li>Asymmetric slippage can be simulated by setting the <a href="spread.htm">
+	Slippage</a> variable to a negative value. </li>
+	<li><a href="day.htm">dayPivot</a> calculates the pivot point of the previous 
+	day. </li>
+	<li>The stock exchange working hours for the <a href="day.htm">day</a> functions 
+	can be changed through the variables <strong>StartMarket</strong> and
+	<strong>EndMarket</strong>.</li>
+	<li>The week start and end time can be changed through the variables <strong>
+	StartWeek</strong> and <strong>EndWeek</strong>.</li>
+	<li>The <a href="mode.htm">DIAG</a> flag prints the execution time for opening 
+	and closing positions into the log file.</li>
+	<li>The <a href="mode.htm">TICKS</a> flag now also handles entry limits with 
+	per-tick resolution.</li>
+	<li><a href="trade.htm">Trade functions</a> can now also be used for individual 
+	entry limits.</li>
+	<li>Price history files are not anymore automatically downloaded at the begin 
+	of a new year - this confused beginners and was a bad idea anyway. Instead the
+	<a href="loadhistory.htm">assetHistory</a> function was implemented. </li>
+	<li>A new broker plugin with the ForexConnect&#8482; API interface has been 
+	implemented. It provides a more stable connection than the previously used Order2Go&#8482; 
+	broker plugin.</li>
+	<li>Logging in to the broker with several Zorro instances on the same PC will 
+	now generate an error message. </li>
+	<li>The <strong>Z1</strong> / <strong>Z2</strong> system components are now 
+	optionally filtered with the results of an out-of-sample test with the real 
+	trading parameters. This reduces the backtest performance, but should improve 
+	the real trading performance. </li>
+</ul>
+<h3>See also:</h3>
+<a href="https://zorro-project.com" target="_blank">Zorro Home</a>,
+<a href="started.htm">Get Started</a>, <a href="bugs.htm">Bug History</a>, <a href="brokers.htm">Brokers</a>,
+<a href="tutorial_var.htm">Tutorial</a>
+<p>
+<a class="button" href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))">&#9658; 
+latest version online</a> </p>
+
+</body>
+
+</html>

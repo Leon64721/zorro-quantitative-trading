@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>putvar, getvar</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/putvar.htm">
+</head>
+
+<body>
+<h2>putvar (string FileName, string VarName, var Value) </h2>
+<h2>getvar (string FileName, string VarName): var</h2>
+Writes, updates, or reads a variable to or from a file or the Windows registry. Can be used for storing data globally or exchanging data between different scripts or Zorro instances.
+<h3>Parameters:</h3>
+		<table border="0">
+		  <tr>
+            <td><strong>FileName</strong></td>
+		    <td>Name of the file. If it does not exist, it is created. If
+			<strong>0</strong>, the variable is stored in the Windows registry.</td>
+	      </tr>
+		  <tr>
+            <td><strong>VarName</strong></td>
+		    <td>Name of the variable. </td>
+	      </tr>
+          <tr>
+            <td><strong>Value</strong></td>
+            <td>Value to be written or updated. </td>
+          </tr>
+        </table>        
+        <h3>Returns:</h3>
+ Current variable value (<strong>getvar</strong>).
+ If the variable does not yet exist, <strong>0</strong> is returned.
+ <h3>Remarks:</h3>
+			<ul>
+		  <li>If several Zorro instances access the same variable at the same time, it should be <a href="lock.htm">locked</a> between reading and writing. </li>
+          <li>The variables are stored in a normal text file that can be viewed with a text editor or spreadsheet program. 
+		  But it must not be manually edited or modified unless it is ensured 
+		  that the file size does not change. Any variable 
+		  in the file has a fixed line length for speedier access.</li>
+</ul>
+<h3>Example:</h3>
+<pre>function increase_global_counter(string Name)
+{
+  string FileName = &quot;\\Log\\Counters.csv&quot;;
+  lock();
+  int Counter = getvar(FileName,Name);
+  putvar(FileName,Name,Counter+1);
+  unlock();
+}
+</pre>
+            <h3>See also:</h3>
+			<a href="file_.htm">file</a>, <a href="str_.htm">strvar</a>, <a href="lock.htm">lock</a>
+            <p></p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+version online</a>
+</body>
+</html>

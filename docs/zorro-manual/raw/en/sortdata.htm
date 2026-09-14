@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>sortData, sortIdx</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/sortdata.htm">
+</head>
+
+<body>
+<h2>sortData (var* Data, int Length)</h2>
+Sorts the <strong>Data</strong> array in ascending (<strong>Length &gt; 0</strong>) 
+or descending (<strong>Length &lt; 0</strong>) order.
+<h2>sortIdx (var* Data, int Length): int* </h2>
+Does not affect the <strong>Data</strong> array, but returns a sorted <strong>
+int</strong> array of 
+the indices from the smallest to the greatest <strong>Data</strong> value.<h2>sortRank (var* 
+Ranks, var* Data, int Length): int* </h2>
+Stores the rank of any <strong>Data</strong> element in 0..1 range in 
+the <strong>Ranks</strong> array, from 0 for the smallest to 1 for the greatest 
+element. If the elements are OHLC prices, candle patterns can be encoded this 
+way for machine learning 
+algorithms.
+<h2>findIdx (var* Data, int Length, var Value): int </h2>
+Returns the index of the highest <strong>Data</strong> element below or equal to <strong>Value</strong>, 
+or<strong> -1</strong> when no such element was found.&nbsp;<h3>Parameters:</h3>
+		<table border="0">
+          <tr>
+            <td><strong>Data</strong></td>
+            <td style="width: 388px"><strong>var</strong> / <strong>double</strong> array or <a href="series.htm">series</a> to be sorted</td>
+          </tr>
+            <tr>
+            <td><strong>Rank</strong></td>
+            <td style="width: 388px"><strong>var</strong> / <strong>double</strong> 
+			array to receive the <strong>Data</strong> ranks.</td>
+            </tr>
+          <tr>
+            <td><strong>Length</strong></td>
+            <td style="width: 388px">Length of the <strong>Data</strong> array; negative for sorting 
+			in descending order.</td>
+          </tr>
+          <tr>
+            <td><strong>Value</strong></td>
+            <td style="width: 388px">Value to be found in the <strong>Data</strong> 
+			array.,</td>
+          </tr>
+        </table>        
+        <h3>Returns</h3>
+ <strong>sortIdx, sortRank:</strong> Pointer to a temporary <strong>int</strong> array 
+of size <strong>Length</strong> containing the numbers of the <strong>Data</strong> 
+values after sorting.
+ The array will be overwritten by the next <strong>sortIdx</strong> or <strong>
+sortRank</strong> call. Returns 0 when a parameter is invalid.<br>
+ <h3>Remarks</h3>
+ <ul>
+   <li>For sorting or searching arrays, the standard C functions <strong>qsort</strong> and <strong>bsearch</strong> can alternatively be used. They are available in the <a href="litec_h.htm">stdio.h</a> include file.   </li>
+ </ul>
+<h3>Example:</h3>
+<pre><em>// Spearman trend indicator</em><br>var Spearman(var* Data,int Period)<br>{<br>  Period = clamp(Period,2,g-&gt;nLookBack);<br>  int* Idx = sortIdx(Data,Period);<br>  var sum = 0;
+  int i,n;<br>  for(i=0,n=Period-1; i&lt;Period; i++,n--)<br>    sum += (n-Idx[i])*(n-Idx[i]);<br>  return 1. - 6.*sum/(Period*(Period*Period-1.));<br>}</pre>
+            <h3>See also:</h3>
+            <a href="randomize.htm">randomize</a>, <a href="detect.htm">frechet</a>, <a href="series.htm">series</a>, <a href="data.htm">dataSort</a>,
+<a href="matrix.htm">matSort</a>
+<p></p>
+			<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+version online</a>
+</body>
+</html>

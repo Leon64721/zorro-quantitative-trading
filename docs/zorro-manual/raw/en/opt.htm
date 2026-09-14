@@ -1,0 +1,213 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>TrainMode</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/opt.htm">
+</head>
+
+<body>
+<h1>Training variables</h1>
+<h2>TrainMode</h2>
+Training method; affects the way how parameters, factors, 
+rules, or machine learning models are generated in the 
+training process. 
+ The following flags can be set: 
+ <h3>Flags:</h3>
+<table width="98%"  border="0" cellspacing="1" cellpadding="0">
+    <tr>
+    <td><strong>ASCENT</strong></td>
+    <td>Ascent parameter optimization and
+	<a href="training.htm">parameter chart</a> export. Evaluates the effect 
+	of any parameter on the strategy separately. Starts with the first parameter 
+	and applies the results of already optimized parameters and the defaults of 
+	the rest. Seeks for 'plateaus' in the parameter space, while 
+	ignoring single peaks. This is normally the best algorithm for a robust strategy, 
+	except in special cases with highly irregular parameter spaces or with interdependent parameters. </td>
+    </tr>
+	<tr>
+    <td><strong>BRUTE</strong></td>
+    <td>Brute force parameter optimization (<a href="restrictions.htm">Zorro S</a> required). Evaluates all 
+	parameter combinations, exports them to a <strong>*par.csv</strong>&nbsp; 
+	file in the <strong>Log</strong> folder, and selects the most profitable combination 
+	that is not a single peak. Can take a long time when many parameters are 
+	optimized or when parameter ranges have many steps. Useful when parameters affect each other in complex ways, 
+	or when it is necessary to evaluate results from any parameter combination. Brute force optimization 
+	tends to overfit the strategy, so out-of-sample 
+	testing or walk-forward optimization is mandatory.</td>
+    </tr>
+	<tr>
+    <td><strong>GENETIC</strong></td>
+    <td>Genetic parameter optimization (<a href="restrictions.htm">Zorro S</a> required). A population of parameter combinations is evolved toward the best 
+	solution in an iterative process. In each iteration, the best combinations 
+	are stochastically selected, and their parameters are then pair-wise 
+	recombined and randomly mutated to form a new generation. This algorithm is 
+	useful when a large number of parameters - 5 or more per component - must be optimized, or 
+	when parameters affect each other in complex ways. It will likely overfit the strategy, so out-of-sample or walk-forward testing 
+	is mandatory.</td>
+    </tr>
+  <tr>
+    <td><strong>TRADES</strong></td>
+    <td>Use trade sizes by <a href="lots.htm">Lots</a>, <a href="lots.htm">Margin</a>, 
+	etc. Large trades get then more weight in the 
+	optimization process. 
+	Set this flag in special cases when the trade volume matters, f.i. for 
+	optimizing systems with adaptive trade sizes, or for optimizing the money management. Otherwise trade sizes are ignored  in the training process 
+	for giving all trades equal weights.</td>
+  </tr>
+    <!--tr>
+    <td><strong>NOMAX</strong></td>
+    <td>Include trades that exceed <a href="lots.htm">MaxLong/MaxShort</a>.  Otherwise 
+	the limits are observed in training.</td>
+    </tr-->
+    <tr>
+    <td><strong>LIMITS</strong></td>
+    <td>Observe trade limits by <a href="lots.htm">MaxLong/MaxShort</a> 
+	etc. Otherwise all trades are used for training, even when the number of trades 
+	exceeds the limit.</td>
+    </tr>
+  <tr>
+    <td><strong>PHANTOM</strong></td>
+    <td>Exclude <a href="trademode.htm">phantom trades</a>.  Otherwise phantom trades are 
+	used for training just as normal trades.</td>
+  </tr>
+  <tr>
+    <td><strong>PEAK</strong></td>
+    <td>Optimize toward the highest single peak in the 
+	parameter space, rather than toward hills or plateaus. This can generate 
+	unstable strategies and is for special purposes only, such as comparing 
+	training results with other platforms.</td>
+  </tr>
+    <tr>
+    <td><strong>ALLCYCLES</strong></td>
+    <td>Generate individual <a href="optimalf.htm">OptimalF</a> 
+	factor files for all WFO cycles, instead of a single file for the whole 
+	simulation. This produces less accurate factors due to less trades, but 
+	prevents backtest bias.</td>
+    </tr>
+  <!--tr>
+    <td><strong>SETFACTORS</strong></td>
+    <td>Don't calculate <strong>OptimalF</strong> factors. 
+	For generating them with a user-defined algorithm, set <strong>OptimalF</strong>, <strong>OptimalFLong</strong>,
+	<strong>OptimalFShort</strong> to a script calculated value in the <strong>
+	<a href="is.htm">FACCYCLE</a></strong> training run (<strong>if(is(FACCYCLE)) ...</strong>).</td>
+  </tr-->
+    </table>
+<br> 
+<h2>NumParameters</h2>
+Number of parameters to <a href="optimize.htm">optimize</a> for the current 
+asset/algo component that was selected in a 
+<a href="loop.htm">loop</a> (<strong>int, </strong>read/only, 
+valid after the first <a href="mode.htm">INITRUN</a>).
+<h2>ParCycle</h2>
+Current parameter or current generation, runs from <strong>1</strong> to <strong>NumParameters</strong> 
+in Ascent mode, or from <strong>1</strong> to <strong>Generations</strong> in 
+Genetic mode (<strong>int, </strong>read/only, valid after the first
+<a href="mode.htm">INITRUN</a>).
+<h2>StepCycle</h2>
+Number of the optimize step, starting with <strong>1</strong> (<strong>int,
+</strong>read/only, valid after the first <a href="mode.htm">INITRUN</a>).
+The number of step cycles depends on the number of steps in a parameter 
+range and of the population in a genetic optimization.&nbsp;Counts up after any 
+step until the required number is reached or <strong>StepNext</strong> is set to 
+0.&nbsp;
+<h2>StepNext</h2>
+Set this to <strong>0</strong> for early aborting the optimization (<strong>int</strong>). 
+<h2>NumTrainCycles</h2>
+Number of training cycles (<strong>int</strong>, default = <strong>1</strong>). 
+Use multiple cycles 
+for special purposes, such as training a parameter set a second time, or 
+training a combination of interdependent rules and parameters 
+in a given order (see <a href="training.htm">Training</a>). In any cycle, set either <a href="mode.htm">RULES</a>, or
+<a href="mode.htm">PARAMETERS</a>, or both, dependent on training method.
+Not to be confused with <a href="numwfocycles.htm">WFO cycles</a>&nbsp;or <strong>
+Generations</strong>.
+<h2>TrainCycle</h2>
+The number of the current training cycle from <strong>1</strong> to <strong>NumTrainCycles</strong>, 
+or <strong>0</strong> in [<span class="tast">Test</span>] or [<span class="tast">Trade</span>] 
+mode (<strong>int,
+</strong>read/only).
+The training mode of the current cycle can be determined with the
+<a href="is.htm">PARCYCLE</a>,
+<a href="is.htm">RULCYCLE</a>, <a href="is.htm">FACCYLE</a> flags.
+<h2>LogTrainRun</h2>
+Set this to a identifier number for logging a particular training run. The 
+identifier is a 5-digit number in the format <strong>WFSPO</strong>, where
+<strong>W</strong> = WFO cycle, <strong>F</strong> = first loop iteration,
+<strong>S</strong> = second loop iteration, <strong>P</strong> = parameter 
+number, and <strong>O</strong> = optimize step. At <strong>11111</strong> the 
+very first training run is logged.&nbsp;<h2>DataSlope</h2>
+Applies a moving weight factor to the  trade results in the training period. F.i. at <strong>DataSlope = 2</strong> the last trades have twice the weight than the first trades. This generates  parameters that are better fitted to the most recent part of the price curve, and thus takes care of slow market changes.
+Default = <strong>1</strong> (equal weight for all trades).
+<h2>Population</h2>
+Maximum population size for the genetic algorithm (<strong>int, </strong>default = 
+100). Any parameter 
+combination is an individual of the population. The population 
+size reduces automatically when the algorithm converges and only the fittest 
+individuals and the mutants remain.
+<h2>Generations</h2>
+Maximum number of generations for the genetic algorithm (<strong>int, </strong>default = 50). 
+Evolution terminates when this number is reached or when the overall fitness does not increase for 10 
+generations.
+<h2>MutationRate</h2>
+Average number of mutants in any generation, in percent (<strong>int, </strong>default = 
+5%). More mutants can find more and better parameter combinations, but let the 
+algorithm converge slower.
+<h2>CrossoverRate</h2>
+Average number of parameter recombinations in any generation, in 
+percent (<strong>int, </strong>default = 80%).&nbsp;
+<h2>BestResult</h2>
+Highest <a href="objective.htm">objective</a> return value so far (<strong>var</strong>, 
+read/only, starting with <strong>0</strong>).
+<h2>Parameters</h2>
+Pointer to a lobal list of <strong>PARAMETER</strong> structs for the current asset/algo 
+component. The <strong>Min, Max, </strong>and <strong>Step</strong> elements are set up in 
+the list after the first <a href="mode.htm">INITRUN</a> in [<span class="tast">Train</span>] 
+mode. The <strong>PARAMETER</strong> struct is defined in <strong>trading.h</strong>.
+<h3>Remarks:</h3>
+<ul>
+	<li><strong>TrainMode</strong> must be set up before the first
+	<a href="optimize.htm">optimize</a> call.</li>
+	<li>Training methods for machine learning or rules generating are set up with the
+	<a href="advisor.htm">advise</a> function.</li>
+	<li>Alternative optimization algorithms from external libraries or 
+	individual optimization targets can be set up with the
+	<a href="objective.htm">parameters</a> and <a href="objective.htm">objective</a> 
+	functions.</li>
+	<li><a href="training.htm">Parameter charts</a> are only produced by <strong>Ascent</strong> optimization 
+	with <a href="mode.htm">LOGFILE</a> set. 
+	It is recommended to do first an Ascent training for 
+	determining the parameter dependence of a strategy. Afterwards the final 
+	optimization can done with a genetic or brute force method if requried.</li>
+	<li><a href="export.htm">Parameter spreadsheets</a> are exported by <strong>
+	Genetic</strong> and <strong>
+	Brute Force</strong> optimization. They can be used for generating 2-d 
+	parameter heatmaps or 3-d parameter surfaces with Excel or other programs.</li>
+	<li>Percent steps (negative 4th parameter of the <strong>optimize</strong> function) 
+	are replaced by 10 equal steps for brute force and genetic optimization.</li>
+	<li>In genetic optimization, parameter combinations that were already 
+	evaluated in the previous generation are not evaluated again and are skipped in the log. 
+	This lets the algorithm run faster with higher generations.</li>
+	<li>Genetic optimization uses random mutations and thus can generate 
+	different results on any run, and also different results between optimizing 
+	with or without <a href="numcores.htm">multiple cores</a>.</li>
+	<li>When parameters are trained several times by using <strong>
+	NumTrainCycles</strong>, each time the start 
+  values are taken from the last <a href="optimize.htm">optimization</a> cycle 
+  in <a href="opt.htm">Ascent</a> mode. This 
+sometimes improves the result, but requires a longer time for the training process 
+  and increases the likeliness of <a href="training.htm">overfitting</a>. To prevent overfitting, use not more than 2 
+  subsequent parameter training cycles. </li>
+</ul>
+<h3>Example:</h3>
+<pre>setf(TrainMode,TRADES+PEAK);
+</pre>
+<h3>See also:</h3>
+<a href="training.htm">Training</a>,
+<a href="optimize.htm">optimize</a>, <a href="advisor.htm">advise</a>, <a href="optimalf.htm">OptimalF</a>,
+<a href="objective.htm">objective</a>, <a href="setf.htm">setf</a>, <a href="setf.htm">resf</a><br>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

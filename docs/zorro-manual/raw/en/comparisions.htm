@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Comparisons</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/comparisions.htm">
+</head>
+
+<body link="#000000" vlink="#333333" alink="#666666">
+<h2>Comparisons</h2>
+		
+		
+		A comparison is a special type of <a href="expressions.htm">expression</a> that
+		delivers either <b>true</b> (nonzero)
+		or <b>false</b> (zero) as a result. There are special comparison
+		operators for comparing  variables or expressions:<br>
+<br>
+<table border="0" cellspacing="2" cellpadding="2">
+          <tr>
+            <td valign="top"><strong>==</strong></td>
+            <td>True if the expressions left and right of the operator are equal.</td>
+          </tr>
+          <tr>
+            <td valign="top"><strong>!=</strong></td>
+            <td>True if the expressions left and right of the operator are not
+              equal.</td>
+          </tr>
+  <tr>
+            <td valign="top"><strong>&gt;</strong></td>
+            <td>True if the expression <em><span class="links">
+              
+            </span></em>left of the operator is greater than
+              the expression right of the operator.</td>
+  </tr>
+          <tr>
+            <td valign="top"><strong>&gt;=</strong></td>
+            <td>True if the expression <em><span class="links">
+              
+            </span></em>left of the operator is greater than
+            or equal to the expression right of the operator.</td>
+          </tr>
+          <tr>
+            <td valign="top"><strong>&lt;</strong></td>
+            <td>True if the expression <em><span class="links">
+              
+            </span></em>right of the operator is greater than
+              the expression left of the operator.</td>
+          </tr>
+          <tr>
+            <td valign="top"><strong>&lt;=</strong></td>
+            <td>True if the expression<em><span class="links">
+              
+            </span></em> right of the operator is greater than
+              or equal to the expression left of the operator.</td>
+          </tr>
+          <tr>
+            <td valign="top"><strong>and, &amp;&amp;</strong></td>
+            <td>True if the expressions left and right of the operator are both
+            true.</td>
+          </tr>
+          <tr>
+            <td valign="top"><strong>or, ||</strong></td>
+            <td>True if any one of the expressions left and right of the operator
+              is true.</td>
+          </tr>
+          <tr>
+            <td valign="top"><strong>not, !</strong></td>
+            <td> True if the expression
+            right of the operator is not true.</td>
+          </tr>
+          <tr>
+            <td valign="top"><strong>()</strong></td>
+            <td>Brackets, for defining the priority of comparisions. Always use
+              brackets when priority matters! </td>
+          </tr>
+</table>
+		<h3> Remarks:</h3>
+        <ul>
+          <li>The "equals" comparison is done with '==', to differentiate
+    it from the assignment instruction with '<b>=</b>'. Wrongly 
+		  <span class="Highlight">using '='
+      instead of '=='</span> causes no error message from the compiler because it's a valid
+    assignment, but is a frequent bug in scripts. </li>
+          <li><span class="Highlight">Comparing floating point variables</span> 
+		  (<strong>var</strong>, <strong>double</strong>, <strong>float</strong>,
+		  <strong>DATE</strong>) 
+		  with '==' returns normally <strong>false</strong> because they are almost never absolutely identical. 
+		  Only exception are simple cases such as comparison with <strong>0</strong>. 
+		  Otherwise, use only <strong>&gt;</strong>, <strong>&gt;=</strong>, <strong>&lt;</strong>, 
+		  <strong>&lt;=</strong>, or the <a href="between.htm">between</a> function for comparing floating point variables 
+		  with each other. </li>
+          <li>For comparing the content of structs or arrays, compare their elements. 
+		  <span class="Highlight">Strings can be compared</span> with each other 
+		  with the <a href="str_.htm">strstr</a> or <a href="str_.htm">strcmp</a> functions. 
+		  For case insensitive comparing strings with string constants, (f.i.
+		  <strong>if(Asset == &quot;EUR/USD) ...</strong> ) the operators&nbsp; <strong>'=='</strong> and '<strong>!=</strong>' 
+		  can be also used. </li>
+          <li>The <span class="Highlight">precedence</span> of comparison and expression operators follows the C/C++ standard. Use parentheses in case of doubt. For instance, the expressions <strong>(x &amp; y == z)</strong> and <strong>((x &amp; y) == z)</strong> give different results because the <strong>&amp;</strong> operator has lower precedence than the <strong>==</strong> operator.</li>
+          <li>Unlike C/C++, <span class="Highlight">lite-C evaluates all parts</span> in a <strong>&amp;&amp;</strong> 
+		  or <strong>||</strong> comparison, even if one of it evaluates to false. Therefore, avoid constructs like <strong>if (p &amp;&amp; p-&gt;data == 1)..;</strong> use <strong>if (p) if (p-&gt;data == 1)..</strong> instead. </li>
+        </ul>
+<h3>Examples:</h3>
+  <pre>10 &lt; x <i>// true if x is greater than 10</i>
+(10 &lt;= x) and (15 =&gt; x) <i>// true if x is between 10 and 15</i>
+!((10 &lt;= x) and (15 =&gt; x)) <i>// true if x is less than 10 or greater than 15 (lite-C only)</i></pre>
+  <h3>See also:</h3>
+&nbsp;<span class="links"><A href="function.htm">Functions</A>, <A href="aarray.htm">Variables</A>, <A href="apointer.htm">Pointers</A></span>,
+		<a href="expressions.htm">Expressions</a><p>&nbsp;</p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+version online</a>
+</body>
+</html>

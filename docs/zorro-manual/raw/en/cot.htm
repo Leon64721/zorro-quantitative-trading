@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>COT</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/cot.htm">
+</head>
+
+<body link="#000000" vlink="#333333" alink="#666666">
+<h1>Commitment Of Traders Report</h1>
+<p>The Commitments of Traders (COT) is a market report by the Commodity Futures 
+Trading Commission (CFTC), listing the holdings of participants in futures of financial instruments, metals, and other commodities. 
+It is 
+believed by some traders to give insight into the upcoming development of those 
+markets. The CFTC releases a new report every Friday at 3:30 p.m. Eastern Time, 
+and the report reflects the commitments of traders on the prior Tuesday. </p>
+<p>*** The COT report by Quandl is currently unavailable due to the move behind 
+a NASDAQ paywall. We will update the URLs and data format in a future version, 
+and make it again available for free. ***</p>
+<p>The following functions return selected parts of the COT report, and work 
+likewise in backtest and live trading:</p>
+<h2>COT (int Handle, string Code, int Field): var </h2>
+Downloads the COT report with the given Quandl <strong>Code</strong> and stores 
+it in the dataset with the given <strong>Handle</strong>. Returns the position 
+determined by the <strong>Field</strong> number for the time of the current bar. 
+If the dataset already exists, the data is not loaded again, but only the 
+position returned. <h2>COT_CommercialPos (int 
+Handle, string Code): int </h2>
+As before, but returns the net commercials position, i.e. the difference 
+producer + swap dealer longs - producer + swap dealer shorts.<h2>COT_CommercialIndex (int 
+Handle, string Code, int TimePeriod): var </h2>
+As before, but returns the commercials net position 
+<a href="norm.htm">normalized</a> over the given <strong>TimePeriod</strong> and scaled to 0..100.<h2>
+COT_OpenInterest (int Handle, string Code): var </h2>
+As before, but returns the open interest.<h3>Returns:</h3>
+Positions, net positions, or index.
+<h3>Parameters:</h3>
+		<table border="0">
+		  <tr>
+            <td><strong>Handle</strong></td>
+		    <td> Dataset handle for storing the report. Every report needs a 
+			dedicated handle.</td>
+	      </tr>
+          <tr>
+            <td><strong>Code</strong></td>
+            <td>The Quandl code number of the report; normally 6 digits or 
+			letters. Can be looked up under
+		  <a href="https://www.quandl.com/data/CFTC-Commodity-Futures-Trading-Commission-Reports" target="_blank">
+		  https://www.quandl.com/data/CFTC-Commodity-Futures-Trading-Commission-Reports</a>. 
+			The <strong>&quot;CTFC/&quot;</strong> prefix and <strong>&quot;_F_ALL&quot;</strong> 
+			suffix of the Quandl database are automatically added.</td>
+          </tr>
+          <tr>
+            <td><strong>Field</strong></td>
+            <td>The field of the report: <strong>1</strong> = 
+open interest, <strong>2</strong> = producer long positions, <strong>3</strong> 
+= producer short positions, <strong>4</strong> = swap dealer long positions,
+<strong>5</strong> = swap dealer short positions, <strong>6</strong> = 
+			noncommercials long positions, <strong>7</strong> 
+= noncommercials short positions.&nbsp; </td>
+          </tr>
+          <tr>
+            <td><strong>TimePeriod</strong></td>
+            <td>The number of bars for normalizing the index.</td>
+          </tr>
+          </table>        
+ <h3>&nbsp;</h3>
+			<h3>Remarks:</h3>
+			<ul>
+		  <li>For retrieving the COT report, <a href="restrictions.htm">Zorro S</a> 
+		  and a Quandl key is required (to be entered in <a href="ini.htm">Zorro.ini</a>). </li>
+				<li>The report is only downloaded when needed at the begin of 
+				the strategy. Subsequent function calls access the dataset only. 
+				Downloaded reports are stored in the <strong>History</strong> 
+				folder.</li>
+				<li>The source code of COT functions can be found in <strong>contract.c</strong>, 
+				which must be included. Note that the functions use the new COT 
+				report structure with the field names listed in the comment. If 
+				you're downlaoding a COT report with a different structure, copy the <strong>
+				COT</strong> functions in your script and adapt the conversion 
+				string as described under <a href="data.htm">dataParse</a>. </li>
+            </ul>
+            <h3>Example:</h3>
+<pre>#include &lt;contract.c&gt;
+
+<em>// Database symbols and codes below are just for illustration.
+// Current available symbols can be found on the Quandl / NASDAQ website.
+</em>function run()
+{
+  StartDate = 2018;
+  EndDate = 2023;
+  BarPeriod = 1440;
+  LookBack = 12*20;
+  set(PLOTNOW);
+  
+  assetAdd(&quot;GOLD&quot;,&quot;YAHOO:GC=F&quot;);
+  asset("GOLD");
+  string COT_Code = "088691&quot;;
+  var Ind = COT_CommercialIndex(1,COT_Code,6*20); <em>// gold COT report</em>
+  plot("Fast Index",Ind,NEW,RED);
+  var Ind2 = COT_CommercialIndex(1,COT_Code,12*20);
+  plot("Slow Index",Ind2,0,BLUE);
+  var Ind3 = COT_OpenInterest(1,COT_Code);
+  plot(&quot;Open Interest&quot;,Ind3,NEW,BLACK);
+}</pre>
+            <h3>See also:</h3>
+            <a href="asset.htm">asset</a>, <a href="season.htm">season</a>,
+<a href="data.htm">dataFromQuandl</a><p></p>
+			<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+version online</a>
+</body>
+</html>

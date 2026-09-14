@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Structs</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/structs.htm">
+</head>
+<body>
+<h1>Structs </h1>
+<p> A <b>struct</b> is an assembled object that contains variables, pointers, or further structs. Members of a struct are individually accessed using the struct name, followed by a '.' and the member name. Example: </p>
+<pre>typedef struct { 
+  int x; 
+  int y; 
+  string name;
+} SPOT;<i>  // defines a struct type named &quot;SPOT&quot;</i>
+...
+SPOT myspot; <i>// creates an uninitalized SPOT struct named &quot;myspot&quot;</i><br>SPOT* pspot; <i>// creates an uninitalized pointer to a SPOT struct</i>
+...
+myspot.x = 10;
+myspot.name = &quot;test!&quot;;</pre>
+<p> A struct can contain <a href="apointer.htm">pointers</a> to previously defined structs, and even pointers on itself, but no pointers to later defined structs: </p>
+<pre>typedef struct SPOT { 
+  int x; 
+  int y; 
+  string name;
+  struct SPOT* next; <i>// pointer to a SPOT struct</i>
+} SPOT;<i>  // defines a struct type named &quot;SPOT&quot;</i></pre>
+<p> In lite-C, struct pointers can be initialized to a static struct. Example<b>:</b></p>
+<pre>SPOT* myspot = { x = 1; y = 2; name = &quot;my struct&quot;; }  
+<i>// creates a new SPOT struct with initial values that is then referenced through the myspot pointer</i></pre>
+<!--p>In standard C / C++, members of structs are accessed by a dot '<strong>.</strong>' and members of struct pointers are accessed by an arrow '<strong>-&gt;</strong>'. In lite-C, the dot '.' can normally be used for both because the compiler automatically detects whether a simple object is a pointer or not. You only need to give the '-&gt;' in ambiguous cases, for instance when the struct pointer is a member of another struct pointer. </p>
+<pre>
+SPOT* myspot = { x = 1; y = 2; name = &quot;my struct&quot;; }
+...
+myspot-&gt;x = 1;<i> // standard C/C++; works also in lite-c</i>
+myspot.y = 2;<i><b>  </b>// lite-C </i></pre-->
+<p><b> </b>Working with structs is explained in any C/C++ book, so we won't cover it here in detail. For creating structs or arrays of structs at run time, the standard C library functions <strong><a href="sys_malloc.htm">malloc</a></strong> and <strong><a href="sys_free.htm">free</a></strong> can be used. For initializing or copying structs, use the C library functions <strong>memset()</strong> and <strong>memcpy()</strong>:</p>
+<pre><b></b>function foo()
+{
+  SPOT myspot; 
+  memset(myspot,0,sizeof(myspot)); <em>// set the struct content to zero (it's undefined after malloc)</em>
+  myspot.x = 1;  
+  SPOT* spot_array = malloc(100*sizeof(myspot)); <i>// creates an array of 100 SPOT structs</i>
+  memcpy(&amp;spot_array[0],myspot,sizeof(myspot));  <em>// copy the myspot struct to the first member of the array</em>
+  ...
+  free(myspot_array); <em>// removes the created structs
+</em>}</pre>
+<p> <b> </b><span class="edition">&nbsp;!!&nbsp;</span> There is plenty information about C, C++, or Windows library functions on the Internet or in online C courses. It is highly recommended for advanced lite-C programming to work through such a course or book and learn about <strong>malloc</strong>, <strong>memcpy</strong> and all the other library functions that you can use. </p>
+<h2>sizeof(struct)</h2>
+The <b>sizeof()</b> <span> </span>macro <b> </b>that is used in the example above <b> </b>gives <span> </span>the size of a variable or a struct 
+instance in bytes. This can be used to initialize structs:
+<pre>#define zero(struct) memset((void*)&amp;struct,0,sizeof(struct))
+...
+SPOT speed;
+zero(speed);	<i>// initializes the SPOT struct &quot;speed&quot; to zero</i></pre>
+<p><span class="edition">&nbsp;!!&nbsp;</span> Unlike C/C++, <strong>sizeof(some 
+struct)</strong> requires that at least one instance of the struct exists. Otherwise <strong>sizeof</strong> will return 0.</p>
+<p><span class="edition">&nbsp;!!&nbsp;</span> Arrays are internally treated as a pointer to a memory area. So, <b>sizeof(some array)</b> and <b>sizeof(some pointer)</b> always <span> 
+evaluates to </span><b>4</b> because that is the size of a pointer.</p>
+<h3>See also:</h3>
+<A href="aarray.htm">Variables</A>, <A href="apointer.htm">pointers</A>, <A href="function.htm">functions</A>
+<p> </p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

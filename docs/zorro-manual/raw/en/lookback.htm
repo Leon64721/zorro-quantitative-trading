@@ -1,0 +1,133 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>LookBack, UnstablePeriod</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/lookback.htm">
+</head>
+
+<body>
+<h2>LookBack</h2>
+Number of bars that are executed before Zorro can begin to trade (default = <strong>80</strong>). Required for 
+most <a href="ta.htm">indicators</a> 
+or other functions that need a certain amount of previous price history for their 
+calculations. If left at the default value, it is automatically adapted to the 
+needed lookback period by subsequent indicators. Otherwise set it to a value that is sure to cover the longest period 
+of all used indicators, assets, and time frames. Set it to <strong>0</strong> when 
+the script needs no lookback period. The maximum lookback period for live trading is  one year. Backtests can have any lookback period as long as it does not exceed the total number of bars.&nbsp;<h2>
+LookBackNeeded </h2>
+Initially <strong>0</strong>; automatically set by any indicator or function to the maximum lookback period 
+needed so far (see example). If <strong>LookBack</strong> is at its default and 
+only a single asset is used, <strong>LookBack</strong> is automatically set to
+<strong>LookBackNeeded</strong>. If <strong>LookBack</strong> is set to a value 
+less than <strong>LookBackNeeded, </strong>an error message is printed and the 
+script terminates if not restarted (see example).&nbsp;
+<h2>UnstablePeriod </h2>
+Runs <strong>recursive TA-Lib indicators</strong><font size="2"> 
+over the given period (default = <strong>40</strong>) at any call.</font> 
+Background:
+Some indicators are influenced by an infinite number of past bars. They are 
+recursive or cumulative - indicators &quot;with memory&quot;. Examples are the <a href="ta.htm">EMA</a> (Exponential Moving Average) and the <a href="ta.htm">ATR</a> (Average True Range). They use their previous bar's value in their algorithm, which in turn use the value of their previous bars, and so forth. This way a given value will have influence on all the subsequent values. In contrast, a simple moving average (<a href="ta.htm">SMA</a>) only reflects the average of its 
+time period, without any influence from bars further in the past. <br>
+Because a price series is always finite and starts at a certain point, the effect of missing past bars is the more significant, the closer to the start a 
+recursive indicator is calculated. Thus a trade strategy using the EMA or derived indicators (such as the <a href="ta.htm">MACD</a>) could behave different dependent on its bar number. The <strong>UnstablePeriod</strong> value allows to strip off such <span lang="en-us">initial </span>unstable period and remove the influence of all bars prior to this period. This way indicators are guaranteed to behave the same way regardless of the amount of past data. <span lang="en-us">For coming as close to the real cumulative formula as possible, strip off as much data as you can afford. </span>
+Using <span lang="en-us">40 bars (default) is reasonable for most indicators. </span>&nbsp;<h2>
+LookBackResolution </h2>
+Candle resolution of the historical data that is loaded at <a href="trading.htm">
+trading start</a> for filling the lookback period, in minutes. Also used for
+<a href="loadhistory.htm">assetHistory</a>. At <strong>0</strong> 
+(default), the resolution is equivalent to <a href="barperiod.htm">
+BarPeriod</a>. If <strong>BarOffset</strong> is active or <strong>.t1</strong> 
+data is used, the lookback resolution is accordingly increased. Set <strong>
+LookBackResolution</strong> to <strong>1</strong>, <strong>5</strong>, <strong>
+15</strong>, <strong>30</strong>, <strong>60</strong>, <strong>240</strong>, or
+<strong>1440</strong> for enforcing a higher or lower resolution of the lookback 
+data. A higher lookback resolution can replicate the backtest better when
+<a href="tick.htm">tick functions</a> are used, a lower resolution can help with 
+long lookback periods when the broker history is limited.<br>&nbsp;
+<h2>TradesPerBar</h2>
+Maximum number of trades and <a href="series.htm">series</a> per bar, or <strong>0</strong> 
+(default) for automatically estimating the maxima. Determines the allowed total 
+number of trades when multiplied with the assets and bars of the simulation. Opening more trades causes an <a href="errors.htm">Error 049</a> message, .more 
+series cause <a href="errors.htm">Error 041</a> Set this to a higher value when the strategy needs to enter an unusual number of trades or create an unusual number of series, <span class="txtel">as for 
+special systems such as grid trading, or for training an <a href="advisor.htm">advise</a> function. 
+Set it to a low value, such as <strong>1</strong>, for saving memory when the 
+system does not trade more often than once per bar on average.</span>
+<h2>MinutesPerDay</h2>
+Average daily trading time of the least traded asset in minutes (default =
+<strong>1000</strong> for daily bars,
+<strong>360</strong> otherwise). Internally used for determining the 
+size of historical data to be loaded for covering the lookback period. Set this 
+to a higher value for reducing the start time and the needed history when assets 
+are traded around the clock on multiple exchanges. Set this to a lower value when <a href="errors.htm">Error 047</a> indicates that the lookback period gets not enough historical bars at trading start. This can be the case when an asset is only traded a few hours per day, or when you use a <a href="bar.htm">bar</a> function that produces only a few bars per day.
+<h3>Type:</h3>
+<strong>int</strong>
+<h3>Remarks:</h3>
+<ul>
+  <li>All variables on this page must be set before loading an <a href="asset.htm">asset</a>.</li>
+	<li>Lookback resolutions of less than one minute require
+	<span class="Highlight">tick data</span> in <strong>.t1</strong> or <strong>
+	.t2</strong> format in accordingly high resolution - not only in the 
+	backtest, but also for filling the lookback period in live trading. Set 
+	History = &quot;*.t1</li>
+  <li>The number of the first bar at which a trade can be entered is greater or equal to <strong>Lookback</strong>. 
+  All trades are skipped before that bar. </li>
+  <li>If <strong>LookBack</strong> is not set by script, it is automatically set to the maximum time period of all used indicators, and a message &quot;<strong>Lookback set to nnnn bars</strong>&quot; 
+  is printed to the window and log file. Automatic setting is not always possible, for instance when different <a href="basrperiod.htm">time frames</a> 
+  are used, when indicator time periods change in the training run, or when 
+  different assets require different lookback periods. In that case set <strong>LookBack</strong> by 
+  script to the maximum needed value. </li>
+	<li>If a particular <strong>StartDate</strong> is used, the lookback period 
+	is placed before the start date. The simulation must then begin at least
+	<strong>N</strong> days before <strong>StartDate</strong>, where <strong>N</strong> 
+	can be estimated from <strong>LookBack * BarPeriod/MinutesPerDay * 365/252</strong>. </li>
+  <li>If indicators get their data from other indicators - for instance, taking the a SMA of another SMA, or normalizing the value of an indicator - <strong>LookBack</strong> should be set to at least the sum of 
+  the maximum time periods 
+  of the nested indicators. </li>
+	<li><span class="edition">&nbsp;!!&nbsp;</span> Setting <strong>Lookback</strong> to <strong>0</strong> overrides all 
+	internal lookback checks. You must be sure that a lookback period is really not needed. 
+	Otherwise the script can try to access nonexiting history, causing 
+	an error or a crash.</li>
+  <li>When using series with an offset (f.i. <strong>myseries+n</strong>), make sure that <strong>LookBack</strong> is always higher than the required lookback period of the series plus <strong>UnstablePeriod</strong> plus the highest offset. Otherwise the series length can be exceeded, resulting in a script error at runtime.</li>
+  <li>When <a href="optimize.htm">optimizing</a> the time period of an indicator, make sure that <strong>LookBack</strong> is big enough to cover the maximum time period of the optimize range, plus the <strong>UnstablePeriod</strong> when the indicator is 
+  recursive. 
+  Do not optimize the <strong>LookBack</strong> period itself, since it must not 
+  change anymore after loading the first asset.</li>
+  <li><strong>UnstablePeriod</strong> is only used for recursive TA-Lib indicators. 
+  For other recursive indicators such as <strong>LowPass</strong>, <strong>DominantPeriod</strong>, <strong>UO</strong>, 
+  etc. <strong>LookBack</strong> serves as unstable period.&nbsp; </li>
+  <li>In [<span class="tast">Trade</span>] mode, price history covering the <strong>LookBack</strong> 
+  duration is downloaded from the server immediately before trading starts. Due 
+  to weekends and market hours, the lookback duration is normally longer than <strong>LookBack * BarPeriod</strong>. 
+  The downloaded history usually exceeds the lookback duration by a safety 
+  margin, but does not exceed 1 year. A longer lookback duration requires the <a href="mode.htm">PRELOAD</a> 
+  flag and available price history. A too long lookback period will be indicated 
+  with a warning message. </li>
+	<li>When trading multiple assets, the lookback period can be truncated for 
+	assets that have no price data at lookback begin. Use the <a href="mode.htm">
+	COMMONSTART</a> flag to enforce full lookback periods for all assets. 
+	Otherwise, use <a href="numbars.htm">AssetFirstBar</a> to check when the 
+	lookback period is over for a particular asset.</li>
+</ul>
+<h3>Example:</h3>
+<pre><em>// restart script when lookback period is exceeded</em>
+void run()
+{
+  LookBack = max(30,LookBackNeeded);
+  ...
+  SMA(seriesC(),50); <em>// need more than 30 bars!</em>
+  if(LookBack &lt; LookBackNeeded)
+    return quit(&quot;+Restart with new LookBack&quot;);
+  ...
+}
+</pre>
+<h3>See also:</h3>
+<a href="bars.htm">Bars</a>, <a href="barperiod.htm">BarPeriod</a>, 
+<a href="numbars.htm">NumBars</a>, <a href="barperiod.htm">TimeFrame</a>, <a href="numsamplecycles.htm">BarOffset</a>, 
+<a href="trading.htm">Trading Start</a>, <a href="date.htm">Date</a>
+<p>&nbsp;</p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

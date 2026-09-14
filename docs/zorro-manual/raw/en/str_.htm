@@ -1,0 +1,329 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+<title>string functions</title>
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link href="css.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+.auto-style1 {
+	font-weight: normal;
+}
+</style>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/str_.htm">
+</head>
+
+<body>
+<h1>String functions</h1>
+<p>The following functions - mostly from the standard C library - can be used to 
+manipulate <a href="aarray.htm#string">strings</a>:</p>
+<h2>strcpy (string dest, string src): string </h2>
+<h2>strncpy (string dest, string src, int count): string </h2>
+Fills the char array <strong>dest</strong> with the content of string <strong>src</strong>. 
+The buffer size of <strong>dest</strong> must not be exceeded.
+<h3>Parameters:</h3>
+<strong>dest</strong> - destination string, either a <a href="aarray.htm">char array</a> 
+of sufficient length or a temporary string as returned from <strong>strmid</strong>,
+<strong>strf</strong>, or <strong>strx</strong>. <br><strong>src</strong> - source 
+string<br><strong>count</strong> - max number of chars to copy
+<h2>strcat (string dest, string src): string </h2>
+Appends a copy of <strong>src</strong> to the end of the string <strong>dest</strong>. The buffer size of <strong>dest</strong> must 
+be of sufficient length.<h2>strcatf (string dest, string src): string </h2>
+Like <strong>strcat</strong>, but appends to the front of <strong>dest</strong>. 
+Can be used to insert a string into another string. This is not standard C 
+string function.
+<h3>Parameters:</h3>
+<strong>dest</strong> - destination string, a <a href="aarray.htm">char array</a> 
+of sufficient length or a temporary string as returned from <strong>strmid</strong>,
+<strong>strf</strong>, or <strong>strx</strong>. <br><strong>src</strong> - source 
+string<br>&nbsp;
+<h2>strlen (string str): int </h2>
+Returns the number of characters in the given string.
+<h3>Parameters:</h3>
+<strong>str</strong> - string
+<h2>strcspn (string str,string set): int </h2>
+Returns the index of the first occurrence of a character that belongs to a set 
+of characters. Can be used to clip a string or to copy it up to a delimiter.
+<h3>Parameters:</h3>
+<strong>str</strong> - string<br><strong>set</strong> - character set, f.i.
+<strong>&quot; ,\n&quot;</strong> for the first occurrence of either blank, comma, or line 
+feed.
+<h2>strcount (string str, char c): int </h2>
+Returns the number of occurrences of the character <strong>c</strong> in the given 
+string. This is not a standard C string function.
+<h3>Parameters:</h3>
+<strong>str</strong> - string<br><strong>c</strong> - character to be counted, f.i.
+<strong>0x0a</strong> for a line feed. <br>&nbsp;<br>
+<h2>strcmp (string str1, string str2): int </h2>
+<h2>strncmp (string str1, string str2, int count): int </h2>
+Compares all or the first <strong>count</strong> characters of the strings (case sensitive) and returns <strong>0</strong> if they have 
+the same content. For comparing strings with text constants and case insensivity, 
+the <strong>==</strong> and <strong>!=</strong> operators can alternatively be used.
+<h3>Parameters:</h3>
+<strong>str1</strong> - first string to compare<br><strong>str2</strong> - second 
+string to compare<br><strong>count</strong> - number of characters to compare<br>&nbsp;<br>
+<h2>strstr (string str1, string str2): string</h2>
+Returns a substring beginning with the first occurrence (case sensitive) of
+<strong>str2</strong> within <strong>str1</strong>, or <strong>NULL</strong> when
+<strong>str2</strong> is not contained in <strong>str1</strong>. This function is 
+often used to check if a string can be found in another 
+string, or to parse string content by keywords.&nbsp;
+<h3>Parameters:</h3>
+<strong>str1</strong> - string to search within<br><strong>str2</strong> - substring 
+to be found <br>
+<h2>strchr (string str, int c): string </h2>
+<h2>strrchr (string str, int c): string </h2>
+Returns a substring beginning with the first (<strong>strchr</strong>) or last (<strong>strrchr</strong>) 
+occurrence of the character <strong>c</strong> in the string <strong>str</strong>, 
+or <strong>NULL</strong> when <strong>c</strong> is not contained in <strong>str</strong>. 
+This function can be used f.i. for getting the extension (search for <strong>'.'</strong>) 
+or the file name (search for <b>'</b>\\') from a path name. Another use is checking 
+if a certain character is contained in a set of characters.
+<h3>Parameters:</h3>
+<strong>str</strong> - string to search within<br><strong>c</strong> - character 
+to be found<br>&nbsp;
+<h2>strtok (string str, string delimiter): string</h2>
+Returns a substring from <span class="parameter">the string <strong>str</strong></span>, 
+or <strong>0</strong> when no more substring is found. 
+The set of characters in <span class="parameter">the <strong>delimiter</strong></span> 
+string specifies the characters that separate the substrings.
+This function can be used to parse CSV or similar files.
+<h3>Parameters:</h3>
+<strong>str</strong> - string to separate the first substring from, or <strong>0</strong> 
+for continuing the search with the next substring of the last <strong>str</strong> 
+string. The string is modified by replacing 
+the delimiters with <strong>0</strong> bytes. <br><strong>delimiter</strong> - character 
+or set of characters that separate the substrings, f.i. <strong>&quot;,&quot;</strong> 
+for the comma that separates fields in a CSV file, or <strong>&quot;\n&quot;</strong> 
+for a line feed.<br>&nbsp;
+<h2>strvar (string str, string name, var default): var</h2>
+<!--h2>strvar2 (string str, string name, int n, var default): var</h2-->
+Parses a number from the string <strong>str</strong> that is preceded by the identifier
+<strong>name</strong>. If no identifier <strong>name</strong> is found in the string, the function returns the <strong>default</strong> value. Can be used to parse 
+<strong>.csv</strong>, <strong>.ini</strong>, or <strong>.json</strong> files. This is not a standard 
+C string function.
+<h3>Parameters:</h3>
+<strong>str</strong> - string containing the number.<br><strong>name</strong> - 
+substring, variable identifier, or <strong>0</strong> to read the first number out 
+of the string.
+<!--br><strong>n</strong> - for tokens with multiple numbers, the 
+number of the number, starting with <strong>0</strong>.-->
+<br><strong>default</strong> - returned when no identifier <strong>name</strong> 
+or no number was found in the string. Use <strong>NIL</strong> for detecting
+<strong>name</strong>.
+<h2>strtext (string str, string name<em>, </em>string default): string (temporary)
+</h2>
+Parses text from the string <strong>str</strong> and returns a temporary string 
+containing the text preceded by the identifier <strong>name</strong>. If the text 
+contains spaces, it should be in double quotes inside <strong>str</strong>. If no 
+identifier <strong>name</strong> is found in the string <strong>str</strong>, the 
+function returns <strong>default</strong>. Can be used to parse <strong>.ini</strong> 
+files or JSON strings. This is not a standard C string function.
+<h3>Parameters:</h3>
+<strong>str</strong> - string containing the text to be extracted.<br><strong>name</strong> 
+- substring, text identifier. For a JSON token, put it in double quotes followd 
+by a colon (f.i. <strong>&quot;\&quot;datetime\&quot;:&quot;</strong>).<br>
+<strong>default</strong> - returned when no identifier <strong>name</strong> was 
+found in the string.
+<h2>strvarCSV (string str, string name<em>, </em>int field, var default): var
+</h2>
+Like <strong>strvar</strong>, but parses the number from a subsequent field in a 
+CSV file. Can be used to parse the content of CSV files This is not a standard C string function.
+<h2>strfield (string str, string name, int field): string
+</h2>
+Like <strong>strtext</strong>,, but returns a pointer to the content of a 
+subsequent field in a CSV file. Can be used to parse or modify the content of 
+CSV files This is not a standard C string function.
+<h3>Parameters:</h3>
+<strong>str</strong> - string containing the text to be extracted.<br><strong>name</strong>  
+- substring, token identifier, or <strong>0</strong> for counting the fields 
+from the begin of the string.<br>
+<strong>field</strong>  - the number of commas in the CSV record to skip before 
+returning the field content<br>.&nbsp;
+<h2>strtr (TRADE*): string</h2>
+Returns a temporary string (see remarks) with a trade identifier, as in the log messages. This 
+is not a standard C string function.
+<h3>Parameters:</h3>
+<strong>TRADE</strong> pointer.<br>
+<h2>strcon (CONTRACT*): string</h2>
+Returns a temporary string (see remarks) with the <a href="symbol.htm">contract 
+symbol</a>. This 
+is not a standard C string function.
+<h3>Parameters:</h3>
+<strong>CONTRACT</strong> pointer.<br>
+&nbsp;&nbsp;
+<h2>strmid (string str, int first, int count): string</h2>
+Returns a temporary string (see remarks) that contains a substring of <strong>str</strong>, with length
+<strong>count</strong> and starting at position <strong>first</strong>. This is 
+not a standard C string function.
+<h3>Parameters:</h3>
+<strong>str</strong> - string containing the source text. <br><strong>first</strong> 
+- position of the first character of the copy; <strong>first = 0</strong> copies 
+the string from the begin.<br><strong>count</strong> - number of characters in the 
+copy; 1000 characters maximum. If <strong>count</strong> exceeds the length of
+<strong>str</strong>, it is copied until the end.<br>&nbsp;
+<h2>strxc (string str, char orig, char repl): string (temporary)</h2>
+<h2>strxc (string out, string str, char orig, char repl)</h2>
+<h2>strx (string str, string orig, string repl): string (temporary)</h2>
+<h2>strx (string out, int size, string str, string orig, string repl)</h2>
+Returns a temporary string (see remarks) or fills an existing string with a copy of <strong>str</strong> where 
+all ocurrences of <strong>orig</strong> are exchanged with <strong>repl</strong>. 
+This is not a standard C string function. For cutting off a string at a certain 
+character, replace it with 0 (f.i. <strong>strxc(Name, '.', 0)</strong> cuts off 
+the extension from a file name).
+<h3>Parameters:</h3>
+<strong>out</strong> - target string to be filled; must have been allocated before and 
+have sufficient size.<br><strong>size</strong> - size of the target string. <strong><br>str</strong> 
+- string containing the source text, 1000 characters maximum. <br><strong>orig</strong> 
+- original text or char to be exchanged, or <strong>0</strong> for inserting
+<strong>repl</strong> at the begin.<br>
+<strong>repl</strong> - replacement text or char. <br>&nbsp;
+<h2>strw (string str): short* (temporary)</h2>
+Converts an 8-bit char string to a temporary 16-bit wide string, i.e. an array of shorts. 
+Useful for passing small strings, such as file names, to DLLs that require 16-bit 
+characters. This is not a standard C string function.
+<h3>Parameters:</h3>
+<strong>str</strong> - string containing the text to be converted, 1000 characters 
+max.<br>&nbsp;
+<h2>stridx (string str, <em>int index)</em>: int</h2>
+Assigns the given <strong>str</strong> string to the given <strong>index</strong> 
+number, a unique integer in the 1..1000 range. Useful 
+for indexing <a href="aarray.htm">arrays</a> or <a href="data.htm">datasets</a> 
+with strings, such as asset or algo names. If <strong>index</strong> is <strong>
+0</strong>, the function generates and return an index This is not a standard C string function.
+<h3>Parameters:</h3>
+<strong>str</strong> - string to be converted to an index, 15 characters max.<br>
+<strong>index</strong> - number associated to the string.
+<h2>strxid (int index): string</h2>
+Returns the string associated to the given <strong>index</strong>. 
+Example: <strong>int i = stridx(&quot;EUR/USD&quot;,0), j = stridx(&quot;USD/JPY&quot;,0); 
+printf(&quot;\n%i %i %s %s&quot;,i,j,strxid(i),strxid(j));</strong>. This is not 
+a standard C string function.<br>&nbsp;<h2>strf (string format, ...): string (temporary)</h2>
+Returns a temporary string (see remarks) with data and variables formatted by the <strong>format</strong> 
+string (see <a href="format.htm">format codes)</a>. This is not a standard C string 
+function.
+<h3>Parameters:</h3>
+<strong>format</strong> - format string, limited to a single line (no <strong>&quot;\n&quot;</strong> 
+characters) and to maximum 1000 characters of the returned string.<br>
+<h2>sprintf (string dest, string format, ...): int </h2>
+Like <strong>strf</strong>, but fills a given char array with formatted data, and 
+returns the number of characters written. The <strong>dest</strong> char array must 
+have sufficient size.
+<h3>Parameters:</h3>
+<strong>dest</strong> - destination string, a <a href="aarray.htm">char array</a> 
+of sufficient length. <br><strong>format</strong> - format string (see
+<a href="format.htm">format codes</a>).<br>
+<h2>sscanf (string str, string format, ...): int </h2>
+Reads formatted data from a string into variable pointers or substrings according 
+to the <strong><a href="format.htm">format</a></strong> string (see example). Returns 
+the number of variables read from the string. The execution time of this function 
+depends on the string length, so don't use it for very long strings such as the 
+content of a whole file. Special format codes are supported, f.i. <strong>&quot;%[^\n]&quot;</strong> 
+reads a substring until the end of the line, or <strong>&quot;%[^,]&quot;</strong> 
+parses a line into comma-separated strings. Details can be found in any C/C++ manual 
+or online documentation. <span class="edition">&nbsp;!!&nbsp;</span> Unlike
+<strong>sprintf</strong> and <strong>printf</strong>, for reading floating point 
+numbers with <strong>%f</strong> the target variable must be <strong>float</strong>;
+<strong>var</strong> or <strong>double</strong> require <strong>%lf</strong>.
+<h3>Parameters:</h3>
+<strong>str</strong> - string to parse.<br><strong>format</strong> - format string 
+similar to <a href="format.htm">format codes</a>, but with additional fields.
+<br>&nbsp;<br>
+<h2>atof (string str): var </h2>
+<h2>atoi (string str): int </h2>
+Converts a number from a string to a <strong>var</strong> or <strong>int</strong> 
+variable. If the string does not begin with a valid number, <strong>0</strong> is 
+returned.
+<h3>Parameters:</h3>
+<strong>str</strong> - string containing a number.<br>
+<h2>sftoa (var Value, 
+int Digits): string </h2>
+Returns <strong>Value</strong> converted to a temporary string with the given number of significant
+<strong>Digits</strong>. For instance <strong>sftoa(0.00123456, 4)</strong> will 
+return <strong>&quot;0.001235&quot;</strong>, <strong>sftoa(12.3456, 4)</strong> 
+will return <strong>&quot;12.35&quot;</strong>, and <strong>sftoa(123,0)</strong> 
+will return <strong>&quot;123&quot;</strong>. A negative <strong>Digits</strong> 
+number enforces the number of decimals. This is not a standard C string 
+function.
+<h3>Parameters:</h3>
+<strong>Value</strong> - value to convert.<br><strong>Digits</strong> - number of 
+nonzero digits when positive, decimals when negative. <br>&nbsp;<h2>strselect (string* 
+List, int NunStrings): int</h2>
+Opens a dialog to select one of the strings from the given <strong>List</strong> of 
+strings.
+Returns the index of the selected string, or -1 if no string was selected.This is 
+not a standard C string function.
+<h3>Parameters:</h3>
+<strong>List</strong> - array of strings<strong><br>NumStrings</strong> 
+- number of strings in the array.<br>&nbsp;<br>
+<h3>Remarks:</h3>
+<ul>
+	<li>Most of the string functions are standard C functions; a more extensive 
+	description with examples can be found in C/C++ books or tutorials. Standard C functions like 
+	<strong>strcpy</strong>, <strong>strcat</strong>,
+	<strong>sprintf</strong> are normally <span class="Highlight">not fool proof</span>. They will crash when the 
+	original length of the destination string is exceeded. </li>
+	<li>More C standard string functions are available when including <strong>
+	&lt;stdio.h&gt;</strong>.</li>
+	<li>For convenience, some string functions (such as <strong>strf</strong>) return 
+	a <span class="Highlight">temporary string</span>. Temporary strings are taken from a string 
+	pool and have a maximum length of 1023 characters and a lifetime of 10 function 
+	calls, i.e. they are recycled and overwritten after 10 subsequent calls. 
+	They can be used for passing string parameters to other functions, but 
+	cannot be used when a permanent string is required, f.i. for setting one of 
+	the <a href="script.htm">predefined strings</a>. See the example below for 
+	converting a temporary string to a permanent string.</li>
+	<li>Use <strong>strf</strong> or <strong>strx</strong> 
+	for temporarily extending the length of a string, f.i. <strong>MyTempString = 
+	strf(&quot;%s&quot;,MyOriginalString);</strong>. The returned temporary string can be extended to a length of up to 1023 characters.&nbsp; </li>
+</ul>
+<h3>Examples (see also <strong><a href="file_.htm">file functions </a>and Simulate.c</strong>):</h3>
+<pre><em>// read a variable out of a string</em>
+<em>// with a format like &quot;name = 123.456&quot;</em>
+var readVar(string str,string name)
+{
+  float f = 0; <em>// sscanf needs float</em>
+  string s = strstr(str,name);
+  if(s) s = strstr(s,"=");
+  if(s) sscanf(s+1,"%f",&amp;f);
+  return f;
+}
+
+function main()
+{
+  var Test1 = 0,Test2 = 0;
+  string s = file_content("Strategy<a href="file://vars.ini">\\vars.ini</a>");
+  if(s) {
+    Test1 = readVar(s,"Test1");
+    Test2 = readVar(s,"Test2");
+  }	
+  printf("\nTest1 = %f, Test2 = %f",Test1,Test2);
+}</pre>
+<pre><span class="auto-style1"><strong><em>// copy a temporary string to a permanent string</em></strong></span>
+...
+static char MyPermanentString[100];
+strcpy(MyPermanentString,strx(&quot;I like Ninja!&quot;,&quot;Ninja&quot;,&quot;Zorro&quot;));
+...
+</pre>
+<pre><em>// open a dialog to select an algorithm</em>
+...
+string Items[4];
+Items[0] = "Trend";
+Items[1] = "Counter Trend";
+Items[2] = "Channel&quot;;
+Items[3] = "Cycle";
+int N = strselect(Items,4);
+if(N&lt;0) printf("Error");
+else printf("\n%s selected!",Items[N]);</pre>
+<h3>See also:</h3>
+<a href="printf.htm">printf</a>, <a href="aarray.htm">string</a>,
+<a href="month.htm">strdate</a>, <a href="file_.htm">file_functions</a>,
+<a href="putvar.htm">putvar</a>, <a href="format.htm">format codes</a>
+<p></p>
+<a class="button" href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))">&#9658; 
+latest version online</a>
+
+</body>
+
+</html>

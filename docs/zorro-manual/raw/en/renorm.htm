@@ -1,0 +1,218 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>distribute, assign, knapsack</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+.auto-style1 {
+	font-weight: bold;
+}
+.auto-style2 {
+	background-color: #FFFFFF;
+}
+</style>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/renorm.htm">
+</head>
+
+<body>
+<h1>Portfolio distribution functions</h1>
+<h2>distribute (var* Weights, var* Values, int N, int M, var* Caps) : var </h2>
+<h2>distribute (var* Weights, var* Values, int N, int M, var Cap) : var </h2>
+Calculate portfolio weights for a subset of <strong>M</strong> assets out of a
+<strong>N-</strong>asset portfolio. The <strong>M</strong> largest positive elements 
+of the <strong>Values</strong> array are taken; the other elements are ignored. 
+The resulting weights are stored in the <strong>Weights</strong> array and normalized so that they sum up 
+to <strong>1</strong>. 
+<span class="auto-style2">A weight limit can be applied either individually (<strong>Caps</strong> 
+array) per element, or globally (<strong>Cap</strong>) for all elements. Weights 
+are clipped at the limit, and the remainders are distributed among the other 
+positive weights. 
+The total weight sum can end 
+up less than <strong>1</strong> if the weight limit restriction were otherwise violated 
+or if the <strong>Values</strong> are all zero.</span>This function 
+is normally used to distribute asset weights in a 
+portfolio dependent on individual parameters such as momentum. 
+<h3>Parameters:</h3>
+		<table border="0">
+          <tr>
+            <td><strong>Weights</strong></td>
+            <td>Output array&nbsp;of size <strong>N </strong>to receive 
+			<strong>M</strong> normalized weights. The other elements are
+			<strong>0</strong>.</td>
+          </tr>
+          <tr>
+            <td><strong>Values</strong></td>
+            <td>Input array of size <strong>N</strong>, for instance projected 
+			profits, momentums, or Sharpe ratios of 
+			portfolio components.</td>
+          </tr>
+          <tr>
+            <td><strong>N</strong></td>
+            <td>Number of elements in the <strong>Weights</strong>, <strong>
+			Values</strong>, and
+			<strong>Caps</strong> arrays.</td>
+          </tr>
+          <tr>
+            <td><strong>M</strong></td>
+            <td>Max number of resulting nonzero weights, or <strong>0</strong> for 
+			distributing all <strong>N</strong> weights. </td>
+          </tr>
+          <tr>
+            <td><strong>Caps</strong></td>
+            <td>Array of weight limits in the <strong>0..1</strong> range, or
+			<strong>0</strong> for no weight limit, or <strong>-1</strong> for 
+			ignoring the component.</td>
+          </tr>
+          <tr>
+            <td><strong>Cap</strong></td>
+            <td>Global limit in the <strong>0..1</strong> range to be 
+			applied to all weights, or <strong>0</strong> for no weight limits.</td>
+          </tr>
+        </table>        
+        <h3>Returns</h3>
+ Sum of weights 
+after applying the limits.<br>&nbsp;<h2>assign (int* Items, var* Costs, var* 
+Weights, int N, var Budget) : var </h2>
+Given current <strong>Costs</strong> and portfolio <strong>Weights </strong>of <strong>N</strong> 
+assets, distribute the given <strong>Budget</strong> according to asset weights. 
+The <strong>Weights</strong> array can be generated with the <strong>distribute</strong> 
+or <a href="markowitz.htm">markowitz</a> functions. Due to the integer amounts, 
+normally not the whole budget can be assigned. The function assigns in several 
+steps as much of the budget as possible, and returns the rest. 
+<h3>Parameters:</h3>
+		<table border="0">
+          <tr>
+            <td><strong>Items</strong></td>
+            <td>Output array&nbsp;of size <strong>N </strong>to receive the 
+			weight-equivalent amounts for all assets.</td>
+          </tr>
+          <tr>
+            <td><strong>Costs</strong></td>
+            <td>Input array of size <strong>N</strong> containing the current 
+			asset cost, such as price or margin cost.</td>
+          </tr>
+            <tr>
+            <td><strong>Weights</strong></td>
+            <td>Input array of size <strong>N</strong> containing the normalized 
+			portfolio weights.The sum must be <strong>1</strong>.</td>
+            </tr>
+          <tr>
+            <td><strong>N</strong></td>
+            <td>Number of elements of the arrays. </td>
+          </tr>
+            <tr>
+            <td><strong>Budget</strong></td>
+            <td>Available capital to distribute, for instance the current account 
+			equity.</td>
+            </tr>
+          </table>    
+        <h3>Returns</h3>
+ Budget remainder that could not be assigned.<br>&nbsp;<br>&nbsp;
+<h2>knapsack (int* Items, var* Costs, var* Values, int N, var Budget, var Cap) : var </h2>
+Given current <strong>Costs</strong> and expected <strong>Values</strong> of <strong>N</strong> 
+assets, calculate the optimal asset amounts that maximize the total 
+value, while keeping the total cost below the given <strong>Budget</strong>. 
+The function performs an <span class="Highlight">unbounded knapsack</span> 
+optimization. 
+It can be used to optimally distribute small capital among a portfolio of stocks or ETFs.&nbsp; 
+<h3>Parameters:</h3>
+		<table border="0">
+          <tr>
+            <td><strong>Items</strong></td>
+            <td>Output array&nbsp;of size <strong>N </strong>to receive the 
+			optimal amounts for all assets.</td>
+          </tr>
+          <tr>
+            <td><strong>Costs</strong></td>
+            <td>Input array of size <strong>N</strong> containing the current 
+			asset cost, such as price or margin cost.</td>
+          </tr>
+            <tr>
+            <td><strong>Values</strong></td>
+            <td>Input array of size <strong>N</strong> containing projected 
+			prices or expected 
+			profits.</td>
+            </tr>
+          <tr>
+            <td><strong>N</strong></td>
+            <td>Number of elements of the arrays. </td>
+          </tr>
+            <tr>
+            <td><strong>Budget</strong></td>
+            <td>Available capital to distribute, for instance the current account 
+			equity.</td>
+            </tr>
+          <tr>
+            <td><strong>Cap</strong></td>
+            <td>Maximum <strong>Budget</strong> weight per asset in the <strong>
+			0..1</strong> range (f.i. <strong>0.5</strong> = max 50% of <strong>
+			Budget</strong>), or <strong>0</strong> for no asset limits. </td>
+          </tr>
+        </table>    
+        <h3>Returns</h3>
+ Total expected value of the portfolio.<br>&nbsp;
+        <h3>Remarks</h3>
+ <ul>
+	 <li>For distributing <span class="Highlight">small capital</span> that is 
+	 only sufficient for a few shares, calculate first the asset weights with the <a href="markowitz.htm">markowitz</a> or <strong>distribute</strong>  functions, 
+	 then use the weights as <strong>Values</strong> 
+	 for a <strong>knapsack</strong> optimization.</li>
+	 <li>For a <span class="Highlight">large budget</span> that can buy many 
+	 shares, weight-based capital distribution is normally 
+	 preferable to knapsack 
+	 optimization. The knapsack algorithm allocates most of the capital to a few assets with the highest value/price ratio. 
+	 This results sometimes in better backtest performance, but produces a less 
+	 diversified portfolio with accordingly higher risk.</li>
+	 <li>For a fixed ratio of <span class="Highlight">different asset classes</span> - for instance, 70% 
+	 equities and 30% bonds - call <strong>distribute</strong> twice with stocks 
+	 and bonds, then multiply the stock weights with <strong>0.7</strong> and 
+	 the bond weights with <strong>0.3</strong>.</li>
+	 <li>For <span class="Highlight">optimizing</span> a portfolio rebalancing 
+	 system, make sure to <a href="opt.htm">setf(TrainMode,TRADES)</a> because 
+	 trade size matters. Make also sure to select an asset before calling
+	 <a href="optimize.htm">optimize</a>.</li>
+</ul>
+<h3>Examples (see also the Alice6 system from the Black Book):</h3>
+<pre><em>// knapsack test
+</em>void main() 
+{
+  var wt[5] = {30,40,70,80,90};
+  var val[5] = {40,50,100,110,130};
+  int Items[5];
+  var Total = knapsack(Items,wt,val,5,500,0); 
+  printf(&quot;\nItems: %i %i %i %i %i =&gt; %.2f&quot;,
+    Items[0],Items[1],Items[2],Items[3],Items[4],Total);
+}</pre>
+<pre><em>// portfolio rebalancing</em>
+void run() 
+{
+  ...
+  assetList(&quot;MyPortfolio&quot;); <em>// max 100 assets</em>
+  static var Weights[100],Strengths[100];
+  if(month(0) != month(1)) <em>// rebalance any month
+</em>  {
+<em>// calculate asset strengths
+</em>    while(asset(loop(Assets)))
+      Strengths[Itor1] = RET(30*PERIOD);
+<em>// enter positions of the the 4 strongest assets
+</em>    distribute(Weights,Strengths,NumAssetsListed,4,0);
+    int i;
+    for(i=0; i&lt;NumAssetsListed; i++) {
+      asset(Assets[i]);
+      int NewShares = Balance * Weights[i]/priceClose(0) - LotsPool;
+      if(NewShares &gt; 0)
+        enterLong(NewShares);
+      else if(NewShares &lt; 0)
+        exitLong("",0,-NewShares);
+    }
+  } 
+}</pre>
+            <h3>See also:</h3>
+            <a href="cfilter.htm"><span class="auto-style1">renorm</span></a>, <a href="optimalf.htm">OptimalF</a>,
+<a href="markowitz.htm">markowitz</a> <p></p>
+			<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest
+version online</a>
+</body>
+</html>

@@ -1,0 +1,303 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>year, month, week, day, dow, hour, minute</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/month.htm">
+<style type="text/css">
+.auto-style1 {
+	background-color: #EEEEEE;
+}
+</style>
+</head>
+<body>
+<h1>Time and Calendar Functions</h1>
+<h2>year (int offset): int</h2>
+Year number of the given bar, f.i. <strong>2011</strong>. <BR>
+<h2>month (int offset): int</h2>
+Month number of the given bar, <strong>1..12</strong>. <BR>
+<h2>week (int offset): int</h2>
+Week number of the given bar, <strong>0..53</strong>, with Monday as first day 
+of week. 
+<h2>day (int offset): int</h2>
+Day of month of the given bar, <strong>1..31</strong>.
+<!--h2>date (int offset): int</h2>
+Date of the given bar in the form <strong>yyyymmdd</strong>, f.i. <strong>20150703</strong> for July 3rd, 2015.-->
+<h2>dom (int offset): int</h2>
+Number of days of the month of the given bar, <strong>28..31</strong>.
+<h2>tdm (int offset): int</h2>
+Trading day of the month of the given bar, <strong>1..23</strong>. Uses
+<a href="assetZone.htm">BarZone</a> for determining Weekends and 
+Holidays (see <a href="barmode.htm">BarMode</a>) when counting 
+trading days.
+<h2>tom (int offset): int</h2>
+Total number of trading days of the month of the given bar, <strong>20..23</strong>. <strong>(tom(offset)-tdm(offset))</strong> 
+gives the days until the last trading day of the month.&nbsp;
+<h2>dow (int offset): int</h2>
+Day of week of the given bar, <strong>MONDAY</strong> (<strong>1</strong>), <strong>TUESDAY</strong> (<strong>2</strong>) ... <strong>SUNDAY</strong> (<strong>7</strong>).<h2>
+ndow (int offset): int</h2>
+Number of the current day of week in the current month; to be used f.i. for 
+finding the first Monday (<strong>1</strong>), the third Friday (<strong>3</strong>), etc.
+<h2>ldow (int zone,int offset): int</h2>
+Local day of week of the given bar in the given time zone (see <strong>timeOffset</strong> below), considering daylight saving time (see <strong>dst</strong> 
+below).&nbsp;
+<h2>hour (int offset): int</h2>
+Closing  hour of the given bar, <strong>0..23</strong>, with 1 second precision. <strong>hour(0)</strong> gives the  current hour and can be used to apply different trade tactics in the US, European, or Asia-Pacific session.<br>
+<h2>lhour (int zone, int offset): int</h2>
+Closing local hour of the given bar in the given time zone (see <strong>timeOffset</strong> below), considering daylight saving time (see <strong>dst</strong> below). F.i. <strong>lhour(EST)</strong> 
+returns the current hour at the New York Stock Exchange.&nbsp;
+<h2>minute (int offset): int</h2>
+Closing minute of the given bar, <strong>0..59</strong>, with 1 ms precision. <strong>minute(0)</strong> gives the current minute.
+<h2>tod (int offset): int</h2>
+Time of day of the given bar in the form <strong>hhmm</strong>, f.i. <strong>2107</strong> 
+for 9:07 pm. A time in hhmm can be converted to minutes with <strong>int MinuteOfDay = 
+((tod(0)/100)*60 + (tod(0)%100);</strong>.<h2>ltod (int zone, int offset): int</h2>
+Local time of day of the given bar in the form <strong>hhmm</strong>.
+<h2>tow (int offset): int</h2>
+Time of week of the given bar in the form <strong>dhhmm</strong>. <strong>d</strong> is the weekday number starting with Monday(1),  f.i.  <strong>52107</strong> = Friday 9:07 pm. See also <a href="date.htm">StartWeek</a>, <a href="date.htm">EndWeek</a>.
+<h2>ltow (int zone, int offset): int</h2>
+Local time of week of the given bar in the form <strong>dhhmm</strong>.
+<h2>second (): var </h2>
+Closing second of the current bar. The decimals give the fraction of the second with 1 ms precision. 
+The current second number of the day can be calculated with <strong>var 
+SecondOfDay = modf(wdate(0),0)*24*60*60;</strong>. 
+<h2>second (var Time): var </h2>
+Second of the given <strong>Time</strong> value in Windows <strong>DATE</strong> 
+format. The decimals give the fraction of the second with 1 ms precision. The 
+returned value can be different to the seconds printed by <strong>strdate</strong>, 
+which are rounded to the next full second.&nbsp; <br>
+&nbsp;
+<h2>minutesAgo (int bar): int </h2>
+Total number of minutes between the end of the bar with the given offset and the end of the current bar.
+<h2>minutesWithin (int bar): var </h2>
+Total number of minutes from  start to end of the bar with the given offset. Normally identical to <a href="barperiod.htm">BarPeriod</a>, but can be different due to weekends, holidays,  daylight saving time, gaps due to lack of price quotes, or when called from an intrabar function. <br>
+&nbsp;
+<h2>workday (int offset): bool</h2>
+Returns <strong>true</strong> when the given date or the end of the given bar is not a holiday or a weekend  determined by
+<a href="date.htm">Holidays</a>, <a href="date.htm">StartWeek</a>, and <a href="date.htm">EndWeek</a>.
+<h2>market (int zone, int offset): bool</h2>
+Returns <strong>true</strong> when the end of the given bar is within 
+<a href="date.htm">StartMarket</a> and <a href="date.htm">EndMarket</a> 
+(see also <a href="suspended.htm">suspended()</a>).
+<h2>at (int hhmm): bool</h2>
+Returns <strong>true</strong> when the given time in <strong>hhmm</strong> 
+format is at the end or inside the current bar in the <a href="assetzone.htm">
+BarZone</a>.
+<h2>dst (int zone, int offset): int </h2>
+Returns <strong>1</strong> when daylight saving time is active at the end of the given bar, otherwise <strong>0</strong>. A simplified daylight saving schedule is used, based on US east coast daylight saving periods for all time zones in America, Sydney daylight saving periods for Australian and Pacific time zones, and European daylight saving periods for all other time zones. UTC and JST time zones have no daylight saving time. 
+For years between 2000 and 2024 the real historical time switching dates are 
+used, for all other years estimated dates from an average of the historical 
+dates. <br>
+&nbsp;
+<h3>Parameters:</h3>
+<table border="0">
+    <tr>
+    <td><strong>bar</strong></td>
+    <td>Offset of the bar for which the date or time is returned; <strong>0</strong> 
+	for the current bar, <strong>1</strong> for the previous bar and so on. When 
+	multiple time frames are used, bar offsets are multiplied with <a href="barperiod.htm">TimeFrame</a>.</td>
+    </tr>
+  <tr>
+    <td><strong>offset</strong></td>
+    <td>Offset of the bar for which the date or time is returned; or <strong>NOW</strong> for the current PC time; or a day number in <strong>DATE</strong> 
+	format with no decimals. </td>
+  </tr>
+  <tr>
+    <td><strong>zone</strong></td>
+    <td><strong>UTC</strong> for UTC/GMT time, <strong>WET</strong> for London, <strong>CET</strong> for Frankfurt, <strong>EST</strong> for New York,
+	<strong>CST</strong> for Chicago, <strong>JST</strong> for Tokyo, <strong>AEST</strong> for Sydney, or the zone offset in hours, 
+	from -12...+12 (with daylight saving) or from UTC-12..UTC+12 (without 
+	daylight saving). For the daylight saving period, US periods are used for 
+	time zones -4 or below, Australian periods are used for time zones 10, 11, 
+	12, and European periods for all other time zones. Note that <strong>JST</strong> 
+	is defined as <strong>UTC+9</strong> since Japan uses no daylight saving.</td>
+  </tr>
+</table>
+<h3>Usage:</h3>
+<strong>hour(1)</strong> returns the hour of the previous bar.
+<p>&nbsp; </p>
+<h2>wdate (int offset): var <a name="wdate"></a></h2>
+Returns UTC date and time of the given bar <strong>offset</strong> in Windows <strong>DATE</strong> 
+format.&nbsp; 
+<h2>ldate (int zone, int offset): var <a name="wdate"></a></h2>
+Returns date and time in the given time <strong>zone</strong> of the given bar 
+<strong>offset</strong> in <strong>DATE</strong> 
+format.&nbsp; 
+<h2>wdateBar (int n): var </h2>
+Returns UTC date and time of the bar with the given bar number (<strong>0...<a href="numbars.htm">NumBars</a>-1</strong>) in  <strong>DATE</strong> format. 
+<h2>wdatef (string Format, string DateTime): var</h2>
+Returns date and time in <strong>DATE</strong> 
+format of the given  <strong>DateTime</strong> string. Can be used to parse date/time fields in CSV files in various 
+<a href="format.htm">formats</a>.&nbsp;Seconds 
+are read with decimals.<br>&nbsp;
+<h2>strdate (string Format, int offset): string</h2>
+<h2>strdate (string Format, int zone, int offset): string</h2>
+<h2>strdate (string Format, var Date): string</h2>
+Returns a temporary string 
+in the given <strong><a href="format.htm">Format</a></strong> with the date and time of the given bar 
+<strong>offset</strong> or <strong>Date</strong>; 
+can be used in <a href="printf.htm">printf</a> 
+statements. Predefined formats are <strong>YMD</strong>, <strong>HM, HMS</strong>, <strong>
+YMDHMS</strong>. If the <strong>Format</strong> string ends with <strong>&quot;%S.&quot;</strong>, 
+milliseconds are added; otherwise seconds are rounded to the next full second. 
+Examples: <strong>strdate(YMD,0)</strong> returns a string with the date 
+of the current bar, and <strong>strdate(&quot;%y-%m-%d %H:%M:%S.&quot;,NOW)</strong> 
+returns the current date and time in millisecond precision.&nbsp;<br>&nbsp;
+<h2>nthDay(var Date, int Dow, int N): var</h2>
+<h2>nthDay(int Year, int Month, int Dow, int N): var</h2>
+Returns the date of the <strong>N</strong>th given weekday at or after the given
+<strong>Date</strong>, or of the given <strong>Year</strong> and <strong>Month</strong>. For instance, <strong>nthDay(2025,12,FRIDAY,3)</strong> returns the date of the third 
+Friday in December 2025. Useful for determining contract expiration dates.<br>&nbsp;
+<h2>dmy (int <strong>YYYYMMDD</strong>): var</h2>
+<h2>ymd (var Date): int</h2>
+Convert a date in the <strong>YYYYMMDD</strong> format to the Windows <strong>DATE</strong> 
+format and vice versa. 
+For instance, <strong>ymd(wdate(NOW) - 10)</strong> returns the date from 10 
+days ago in the YYYYMMDD format.<br>&nbsp; 
+<h2>utm (var Date): int</h2>
+<h2>mtu (int UnixTime): var</h2>
+Convert a date in Windows <strong>DATE</strong> format to Unix time in seconds 
+since 1-1-1970, resp. from Unix time to <strong>DATE</strong>. 
+Unix time in milliseconds can be converted to seconds by dividing by 1000. 
+<h3>Parameters:</h3>
+<table border="0">
+  <tr>
+    <td><strong>Format</strong></td>
+    <td> <p>Format string, see <a href="format.htm">format codes</a>.
+      Some often used format strings are predefined in <strong>variables.h</strong>: <strong>    YMD</strong> = &quot;<strong>%Y%m%d</strong>&quot;; &nbsp;&nbsp;<strong>HMS</strong> = &quot;<strong>%H:%M:%S</strong>&quot;; &nbsp;&nbsp; <strong>YMDHMS</strong> =	&quot;<strong>%y%m%d %H:%M:%S</strong>&quot;.</p>
+    </td>
+  </tr>
+  <tr>
+    <td style="height: 20px"><strong>offset</strong></td>
+    <td style="height: 20px"><a href="bars.htm">Bar</a> offset, <strong>0</strong> 
+	for the current bar, <strong>1</strong> 
+	for the previous bar and so on, or <strong>NOW</strong> for 
+	the current time (see remarks). </td>
+  </tr>
+  <tr>
+    <td><strong>YYYYMMDD</strong></td>
+    <td>Date as integer, f.i. <strong>20180403</strong> for April 3, 2018.</td>
+  </tr>
+  <tr>
+    <td><strong>Date</strong></td>
+    <td>Date/time in Windows <strong>DATE</strong> format, as returned from <strong>wdate()</strong>. 
+	Days are represented by whole number increments starting on Saturday, 30 December 
+	1899, midnight UTC. The time of the day is represented in the fractional 
+	part of the number. This format allows easy and precise date comparison down 
+	to a microsecond (= <strong>0.000001/(24*60*60)</strong>).</td>
+  </tr>
+  <tr>
+    <td><strong>DateTime</strong></td>
+    <td>Date/time string in various formats, see <a href="format.htm">format 
+	codes</a>. </td>
+  </tr>
+</table>
+<h3>Usage:</h3>
+<strong>printf(&quot;\nDate: %s&quot;,strdate(YMD,0));</strong> prints the current bar 
+date in YYYYMMDD format. <strong>wdatef(&quot;%d.%m.%y&quot;,&quot;15.9.16&quot;)</strong> returns the DATE value of September 15, 2016.
+<p>&nbsp;</p>
+<h2>timeOffset (int zone, int days, int hour, int minute): int</h2>
+Returns the offset (in bars) of the last bar closing at the given time, or a negative offset for a bar in the future.
+<h3>Parameters:</h3>
+<table border="0">
+  <tr>
+    <td><strong>zone</strong></td>
+    <td><strong>UTC</strong> for UTC time, <strong>ET</strong> for New York, <strong></strong><strong>WET</strong> for London, <strong>CET</strong> for Frankfurt, <strong>AEST</strong> for Sydney, <strong>JST</strong> for Tokyo, or a number giving the zone offset in hours to UTC. Daylight saving time is considered in non-UTC zones from 2000 to 2024.</td>
+  </tr>
+  <tr>
+    <td><strong>days</strong></td>
+    <td>Number of days in the past, or <strong>0</strong> for the day of the current bar, 
+	or a negative number for days in the future.</td>
+  </tr>
+  <tr>
+    <td><strong>hour</strong></td>
+    <td>Hour of the day, 0..23. If above 23, <strong>days</strong> is adjusted accordingly. </td>
+  </tr>
+  <tr>
+    <td><strong>minute</strong></td>
+    <td>Minute of the hour, 0..59. If above 59, <strong>hour</strong> is adjusted accordingly. </td>
+  </tr>
+</table>
+<h3>Usage:</h3>
+<strong>timeOffset(ET,1,16,0)</strong> returns the bar offset of yesterday's NYSE closing time. <strong>timeOffset(ET,0,9,30)</strong> returns <strong>0</strong> when the NYSE is just opening.
+<strong>if(0 == timeOffset(0,0,TIME/100,TIME%100))</strong> is fulfilled when 
+the current time is at the <strong>HHMM</strong> value given by <strong>TIME</strong>.&nbsp;
+<p>&nbsp;</p>
+<h3>Remarks:</h3>
+<ul>
+  <li>If not stated otherwise, all dates and times reflect the time stamp of the Close price 
+  at the <span class="Highlight">end of the bar</span>. Dates and times are normally UTC, also 
+  called &quot;GMT&quot; or &quot;Zulu&quot; time (Greenwich mean time without daylight saving time). 
+  Timestamps in historical data are supposed to be either UTC, or to be a date 
+  only with no additional time part, as for daily bars. 
+  It is possible to use historical data with local timestamps in 
+  the backtest, but this must be considered in the script since the date and time functions will then return the 
+  local time instead of UTC, and time zone functions cannot be used.</li>
+  <li>All date and time functions return <strong>0</strong> or invalid values 
+  in the <a href="is.htm">INITRUN</a> when no asset was yet loaded and thus the bars and date ranges are not 
+  yet set up. For getting the current 
+  time at script start, use <strong>NOW</strong> for the offset. When <strong>offset</strong> is 
+  <strong>0</strong> or omitted, the  end time of the current bar is returned. When
+  <strong>offset</strong> is set to <strong>NOW</strong>, the current 
+  UTC time of the PC clock is returned. When a 
+  value &gt; 30000 is used for <strong>offset</strong>, it is assumed a day number
+  in
+  <strong>DATE</strong> format, and the corresponding year, month, or day is 
+  returned. The <strong>offset</strong> parameter is affected by 
+  <a href="barperiod.htm">TimeFrame</a>, f.i. when <strong>TimeFrame</strong> is 
+  <strong>6</strong> and <strong>offset</strong> is <strong>3</strong>, the time of 
+  <strong>3*6 = 18</strong> bars ago is returned. Note that not all time/date 
+  functions support the special <strong>offset</strong> values. </li>
+	<li>Time functions with offset <strong>0</strong> return the current 
+	timestamp when called inside a <a href="tick.htm">tick</a> function.</li>
+	<li>Be careful when checking time, because not all hours or minutes have an 
+	associated bar. For instance, <strong>if(hour == 17)</strong> will fail when 
+	no bar ends between 17:00:00 and 17:59:59 UTC. Better use the <strong>at</strong> 
+	function or check a time range.</li>
+  <li>Date and time functions require a <a href="lookback.htm">LookBack</a> 
+  period of at least the highest used or returned bar offset.</li>
+  <li>Most date and time functions return <strong>int</strong>, but some return <strong>var</strong> - take care of that when using the functions in a <a href="printf.htm">printf</a> 
+  statement. </li>
+  <li>In live trading the time functions are based on the broker's server time 
+  when supported by the API; otherwise on the PC time. The script must take 
+  care that rounding differences and small time deviations don't cause problems. For instance, the weekday (<strong>dow(0)</strong>) exactly at midnight 
+  can return different values depending on whether the server time is a second slower 
+  or faster than 
+  the PC time. So a tick can have a 23:59:59 time stamp, while the PC clock has already the next day at 00:00:00. When using daily bars, check the whole time and not only the day, or set the <a href="barperiod.htm">bar offset</a>  so that the bars do not change exactly at midnight.</li>
+	<li>Time printing uses the Windows COleDateTime class, which rounds a <strong>DATE</strong> value to 
+	the next second. Therefore, minutes and seconds 
+	in time strings can differ by about 0.5 seconds to the <strong>minute</strong> and <strong>second</strong> functions, 
+	which round the time to the next millisecond.</li>
+</ul>
+<h3>Examples:</h3>
+<pre><em>// buy at UTC midday on the last day of the month, 
+// sell 2 trading days later
+</em>if(NumOpenLong == 0) { <em>// nothing yet bought this month</em>
+  if((tom(0) == tdm(0)) &amp;&amp; hour() &gt;= 12)
+    enterLong();
+} else if(tdm(0) &gt;= 2)
+    exitLong();
+
+<em>// print New York local time to the log</em><br>printf(strdate(&quot;# NY: %H:%M&quot;,EST,0));
+
+<em>// close all position at 16:15 local time
+</em>if(at(1615)) {
+  printf(&quot;\nClosing all positions&quot;);
+  exitLong(&quot;**&quot;);
+  exitShort(&quot;**&quot;);
+}
+
+<em>// convert a time stamp from EST to UTC
+</em>TimeStamp -= (EST+dst(EST,TimeStamp))/24.;
+
+<em>// calculate the next quarterly expiration date
+</em>int Month = month(wdate(NOW)); 
+Month = ((Month+2)/3)*3; <em>// next quarter: 3, 6, 9, 12
+</em><span class="auto-style1"><em>i</em></span>nt ExpireDate = ymd(nthDay(year(NOW),Month,FRIDAY,3));</pre>
+<h3>See also:</h3>
+<a href="bars.htm">bar</a>, <a href="day.htm">dayHigh</a>, <a href="timer.htm">timer</a>, <a href="assetzone.htm">BarZone</a>, <a href="barmode.htm">BarMode</a>, <a href="format.htm">format codes</a>
+<p></p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>

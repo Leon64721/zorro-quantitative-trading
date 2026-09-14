@@ -1,0 +1,471 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>TMF &amp; trade variables</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="css.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://zorro-project.com/manual/en/trade.htm">
+<style type="text/css">
+.auto-style1 {
+	font-family: TradeDir;
+}
+</style>
+</head>
+<body>
+<h1>Trade management functions (TMF)</h1>
+<p>Trade <a href="buylong.htm">enter</a> commands can receive the name of a trade management function (<strong>TMF</strong>) as the first argument:
+<strong>enterLong(MyTMF, ...);</strong>. Alternatively, a user function named
+<strong>manage</strong> can be defined as a global TMF for all entered trades:</p>
+<h2>int manage() </h2>
+<p>A TMF is a function  for micro managing the trade. It is triggered for any 
+open or pending trade at any price tick or price change of the traded asset. In most cases it's used for modifying entry, stop, or profit limits in a special way, 
+thus overriding the standard trailing methods. Since a TMF runs at every <a href="bars.htm#tick">tick</a>, 
+it has access to the most recent price quote. When the market is closed and no price ticks are received, TMFs are not executed. </p>
+<p>TMFs are also executed at special events in the lifetime of a trade: Right before entering or exiting due to 
+an <a href="stop.htm">Entry</a>, <strong> <a href="stop.htm"></a></strong><strong><a href="stop.htm">Stop</a></strong>, or <strong><a href="stop.htm">TakeProfit</a></strong> 
+limit, and right after being closed. Which event it is can be checked in the TMF with the boolean expressions <strong>TradeIsEntry</strong>, <strong>TradeIsStop</strong>, <strong>TradeIsProfit</strong>, <strong>TradeIsClosed</strong> (described below). </p>
+<p>If the TMF is passed to an <a href="buylong.htm">enter</a> command, it can 
+receive up to 8 additional <strong>var</strong> parameters following the 
+function name: <strong>enterLong(MyTMF, parameter1, parameter2...)</strong>. They 
+must also appear in the function's parameter list and keep their values during the lifetime of the trade. 
+The alternative global <strong>manage</strong> function has no parameters.</p>
+<p>A TMF has the return type <strong>int</strong> and should normally return <strong>0</strong>; other return values have a special meaning:</p>
+<h3>TMF return values</h3>
+<table>
+	<tr>
+		<td><strong>0</strong></td>
+		<td>Check the trade's <a href="stop.htm">Entry</a>, <strong> <a href="stop.htm">Stop</a></strong>, <strong><a href="stop.htm">TakeProfit</a></strong>, and <a href="stop.htm">Trail</a> parameters, and exit or enter accordingly.</td>
+	</tr>
+	<tr>
+		<td><strong>1</strong></td>
+		<td>If the trade is open or pending, exit or cancel it now. If the exit 
+		order was unfilled due to an <a href="stop.htm">OrderLimit</a>, 
+		automatically repeat the 
+order after the given <a href="timewait.htm">OrderDelay</a>. </td>
+	</tr>
+	<tr>
+		<td style="height: 42px"><strong>2</strong></td>
+		<td style="height: 42px">If the trade is pending, enter it now. If the entry order was 
+		unfilled due to an
+<a href="stop.htm">OrderLimit</a>, automatically repeat the order after the given
+<a href="timewait.htm">OrderDelay</a>. </td>
+	</tr>
+	<tr>
+		<td><strong>4</strong></td>
+		<td>If a pending trade is about to be opened because the
+		<a href="stop.htm">Entry</a> price was hit, leave it pending and wait 
+		for the next hit. If an open trade is about to be closed because <strong> 
+		<a href="stop.htm">Stop</a></strong> or <strong><a href="stop.htm">TakeProfit</a></strong> 
+		was hit,<strong> </strong> leave it open and wait for the next hit<strong>.</strong> </td>
+	</tr>
+	<tr>
+		<td><strong>+8</strong></td>
+		<td>Execute the TMF at any bar right before the <a href="run.htm">run</a> call, 
+instead of at any incoming tick.
+</td>
+	</tr>
+	<tr>
+		<td><strong>+16</strong></td>
+		<td>Execute the TMF only at the following events: right before entering due to <a href="stop.htm">Entry</a>, 
+		right before exiting due to <strong> <a href="stop.htm">Stop</a></strong> or <strong><a href="stop.htm">TakeProfit</a></strong>, and 
+		right after the trade was closed.</td>
+	</tr>
+</table>
+<p>Some values can be combined by addition. For instance, <strong>return 28</strong>&nbsp; (28 = 4+8+16) executes the TMF only 
+at the next bar or when <a href="stop.htm">Entry</a>, <strong> <a href="stop.htm"></a></strong><strong><a href="stop.htm">Stop</a></strong>, or <strong><a href="stop.htm">TakeProfit</a></strong> was hit, and does not automatically enter or exit in that case.&nbsp; <span class="edition">&nbsp;!!&nbsp;</span> When using a TMF, 
+make sure the function has a <strong>return</strong> statement with the correct value!<br>&nbsp;</p>
+<h1>Trade variables</h1>
+<p> In a selected trade, the variables listed below available for evaluation and 
+partially for modification. Trades are automatically selected in a TMF or in a <a href="fortrades.htm">trade loop</a>. 
+They can also be selected by setting the <strong>ThisTrade</strong> pointer, 
+f.i. with <strong>ThisTrade = enterLong();</strong>. In this case check if
+<strong>ThisTrade</strong> is nonzero, since 
+accessing a variable of a nonexisting trade will cause <a href="errors.htm">
+Error 111</a>. Without a selected trade, i.e. outside a TMF or trade enumeration loop 
+and with no set <strong>ThisTrade</strong> pointer, <span class="Highlight">trade 
+variables have no meaning</span>. </p>
+<h2>TradePriceOpen</h2>
+The  average ask price at the time when the trade or contract was filled; or the current ask price if the 
+position was not yet filled.
+<h2>TradeFill</h2>
+The average fill price, equivalent to <strong>
+TradePriceOpen-ifelse(TradeIsShort,TradeSpread,0).</strong> 
+In the backtest long positions are filled at the ask price, short positions are 
+filled at the bid price. 
+<h2>TradePriceClose</h2>
+The  average ask price at the time when the position was closed or the contract was sold or covered. If the 
+position is still open, it's the current 
+best ask price of the asset or contract. 
+If an option was exercised or expired, this variable contains the underlying ask 
+price at expiration.
+In the backtest, short positions exit at the ask price, long positions exit at 
+the bid price, i.e. ask minus spread.
+If a trade was closed in several steps by partial closing, the price is from the 
+last step.
+<h2>TradeValue</h2>
+The average current value of the trade, equivalent to <strong>
+TradePriceClose-ifelse(TradeIsLong,TradeSpread,0).</strong>
+<h2>TradeSpread</h2>
+The ask-bid spread at the trade opening time for short trades, or at the current 
+and trade closing time for long trades.
+<h2>TradeStrike</h2>
+The strike price of the traded option (if any).
+<h2>TradeUnderlying</h2>
+The underlying price of the traded option (if any).&nbsp;
+<h2>TradeRoll</h2>
+The current accumulated rollover/swap of the trade, negative or positive. Calculated by multiplying the trade duration with 
+the trade volume and the
+<a href="spread.htm">RollLong</a>/<a href="spread.htm">RollShort</a> value. 
+Trades that last shorter than 12 hours get no rollover. If
+<a href="spread.htm">RollLong</a> and <a href="spread.htm">RollShort</a> are 
+both at <strong>0</strong>, <strong>TradeRoll</strong> can be modified by the TMF for 
+using a broker-specific swap calculation. If the broker API 
+provides current rollover/swap values for open trades, <strong>TradeRoll</strong> 
+is read from the broker API.
+<h2>TradeMarginCost</h2>
+The margin cost of the trade per underlying unit, set up at entry from <strong>
+<a href="pip.htm">MarginCost</a></strong>. 
+Can be modified by the TMF for more complex margin calculations. The current allocated margin 
+amount of the trade is <strong>TradeMarginCost * TradeLots</strong>.
+<h2>TradeCommission</h2>
+The commission cost of the trade per underlying unit, set up at entry from
+<strong><a href="spread.htm">Commission</a></strong>. 
+Can be modified by the TMF for using different commissions on entry and exit, or 
+for more complex commission calculations.
+<h2>TradeProfit</h2>
+The current profit or loss of the trade in units of the account currency, including  costs such as spread, rollover, slippage, and commission. 
+With no trade costs and no spread, the current profit of a trade is <strong>(TradePriceClose-TradePriceOpen)*TradeUnits</strong>. 
+The volume-neutral profit of the trade in pips is <strong>TradeProfit/TradeUnits/PIP</strong>. On <a href="mode.htm#nfa">NFA compliant</a> accounts the profit is 
+estimated, as there is no profit assigned to a single trade. If a trade was 
+closed in several steps by partial closing, the profit is taken from the last 
+step.<br>&nbsp; For options, <strong>TradeProfit</strong> is  determined by the difference of premium and current contract price. If the option is expired or was exercised, <strong>TradeProfit</strong> is  determined by the extrinsic value, i.e. the difference of strike and underlying price minus the premium.
+For complex products with nonlinear profit, such as inverse futures or options, 
+set <strong>TradeCost</strong> to <strong>0</strong> and calculate <strong>
+TradeProfit</strong> in a TMF.
+<h2>TradeDir</h2>
+<strong>1</strong> for a long trade and <strong>-1</strong> for a short trade; 
+translates to <strong>ifelse(TradeIsShort,-1.,1.)</strong>.
+<h2>TradeUnits</h2>
+Conversion factor from price change to win/loss in account currency units; normally <strong>TradeLots*</strong><a href="pip.htm">PIPCost/PIP</a> for assets, or <strong>TradeLots*</strong><a href="contracts.htm">Multiplier</a> for options or futures 
+in USD. Examples see below. The price move equivalent to a certain profit (not considering spread and commission) is <strong>Profit/TradeUnits</strong>.&nbsp;<h2>TradeCost</h2>
+Effect of 1 pip price change on the win/loss per lot, in account currency units; normally <a href="pip.htm">PIPCost/PIP</a>. 
+Set this variable to <strong>0</strong> in a TMF when you want to calculate
+<strong>TradeProfit</strong> by script.
+<h2>TradeDate</h2>
+The time in Windows Date format when a pending trade with
+<a href="timewait.htm">OrderDelay</a> will be opened. For open trades, the time 
+at which it was opened.<h2>TradeExitDate</h2>
+The time in Windows Date format when the trade was closed (for closed trades) or 
+will expire (for open or pending trades). The expiry date of options or futures is
+<strong>ymd(TradeExitDate)</strong>.
+<h2>TradeMFE</h2>
+Maximum favorable excursion, the maximum price movement in favorable direction of the trade.
+Only valid after the trade was opened.
+<strong>TradeMFE*TradeUnits</strong> is the highest profit of the trade in account currency units while it was open (without trading costs).
+<h2>TradeMAE</h2>
+Maximum adverse excursion, the maximum price movement in adverse direction of the trade.
+
+Only valid after the trade was opened.
+<strong>TradeMAE*TradeUnits</strong> is the highest loss of the trade in account currency units while it was open (without trading costs).
+<h2>TradeEntryLimit</h2>
+Entry limit; initially calculated from <a href="stop.htm">Entry</a>. The trade 
+will be opened when the price reaches this value. Can be modified by the TMF by 
+setting it to the desired price (not to a distance!).
+
+<h2>TradeStopLimit</h2>
+Current stop level, initially determined from <a href="stop.htm">Stop</a>, and 
+modified by trailing. Only valid 
+when the trade is open. The trade will be closed when the price reaches this 
+value. Can be modified by the TMF by setting it to the desired price (not to a 
+distance!).
+<h2>TradeStopDiff</h2>
+Difference of the initial price to the initial stop limit; negative for long trades and positive for short trades. Initially 
+determined from <a href="stop.htm">Stop</a> and  only valid when the trade is open. When <strong>TradeStopLimit</strong> was moved by trailing, the original stop position can be retrieved through <strong>TradePriceOpen+TradeStopDiff</strong>.
+<h2>TradeProfitLimit</h2>
+Profit limit, initially  calculated from <a href="stop.htm">TakeProfit</a>; only 
+valid when the trade is open. The trade will be closed when the price reaches 
+this value. Can be modified by the TMF by setting it to the desired price (not 
+to a distance!).&nbsp;
+<h2>TradeTrailLimit</h2>
+Trail limit, initially calculated from <a href="stop.htm">Trail</a>; only valid when the trade is open and  a stop limit was set. The stop limit will be moved when the price reaches this value. Can be modified by the 
+TMF by setting it to the desired price (not to a distance!).
+<h2>TradeTrailSlope</h2>
+Trail slope factor in the range <strong>0..1</strong>; only valid when the price is over the <a href="stop.htm">Trail</a> limit, and a <a href="stop.htm">Stop</a> limit was set. Can be modified by the trade function for changing the trail slope f.i. after breakeven.
+<h2>TradeTrailStep</h2>
+Trail step factor in the range <strong>0..1</strong>; only valid when the price is over the <a href="stop.htm">Trail</a> limit, and a <a href="stop.htm">Stop</a>  limit was set. Can be modified by the trade function for changing the trail step f.i. after breakeven.
+<h2>TradeTrailLock</h2>
+Trail lock factor in the range <strong>0..1</strong>; only valid when the price is over the <a href="stop.htm">Trail</a> limit, and a <a href="stop.htm">Stop</a>  limit was set. Can be modified by the trade function for changing the trail lock f.i. after breakeven.
+<h3>Type:</h3>
+<strong>float</strong>, read/only if not mentioned otherwise.<span class="edition"> 
+!! </span>&nbsp;Convert them to <strong>var</strong> when 
+needed, f.i. for printing them in <strong>print/printf</strong> statements. <strong> <br>
+</strong>
+<h2>TradeVar[0] .. TradeVar[7]</h2>
+<h2>TradeStr[0] .. TradeStr[7]</h2>
+<h2>TradeInt[0] .. TradeInt[15]</h2>
+A 64-byte area in the <strong>TRADE</strong> struct for storing up to 8 
+trade-specific variables or strings, or up to 16 integers per trade. They can be 
+accessed and modified by 
+a TMF or a trade enumeration loop. The locations are shared, i.e. either <strong>
+TradeVar[N]</strong> or <strong>
+TradeStr[N]</strong> can be used, but not both with the same index <strong>N</strong>.
+Two subsequent <strong>TradeInt</strong> are shared with a <strong>TradeVar</strong> 
+at half the index, f.i. <strong>TradeInt[10]</strong> and <strong>TradeInt[11]</strong> 
+are shared with <strong>TradeVar[5]</strong>.
+<strong>TradeStr</strong> can only be modified with <a href="str_.htm">strcpy</a> 
+and has a maximum length of 7 characters unless extended over 
+adjacent <strong>
+TradeStr</strong> variables. It is recommended to <a href="define.htm">define</a> meaningful names for the 
+variables, like <strong>#define MyLimit TradeVar[0]</strong>. <br>
+<h3>Type:</h3>
+<strong>var</strong>,<strong> string, int<br>
+&nbsp;</strong>
+<h2>TradeLots</h2>
+Number of open <a href="lots.htm">Lots</a>. If the trade was partially closed or 
+partially filled, the number of still open or filled lots. 
+Automatically updated when the broker APIs supports individual trades. 
+<h2>TradeLotsTarget</h2>
+Number of lots to be opened. 
+If the trade was only partially filled, <strong>TradeLots</strong> 
+is smaller than <strong>TradeLotsTarget</strong>. 
+To treat an unfilled or partially filled trade as if it were completely filled, set <strong>
+TradeLots = TradeLotsTarget</strong>. 
+<h2>TradeLife</h2>
+Trade <a href="timewait.htm">life time</a> in bars plus 1, or <strong>0</strong> for no time limit. 
+<h2 class="auto-style1">TradeBars</h2>
+The number of bars since the trade was entered (for pending trades) or opened (for open trades).&nbsp;Not 
+valid for resumed trades since they have no opening bar.
+<h2>TradeBarOpen</h2>
+Number of the opening bar of the trade. For pending trades, the number of the bar at which the trade was entered. Can be set to the current bar number (<strong><a href="numbars.htm">Bar</a></strong>) for resetting the wait time of pending trades. After the trade is opened, this number must not be changed anymore.
+It is not valid for resumed trades since they have no opening bar.
+<h2>TradeBarClose</h2>
+Number of the closing bar of the trade, or <strong>0</strong> if the trade is still open.
+<h2>TradeContract</h2>
+The contract type for options and futures, a combination of <strong>PUT</strong>, <strong>CALL</strong>, <strong>EUROPEAN</strong>, <strong>BINARY</strong>, or <strong>FUTURE</strong>.
+<h2>TradeID</h2>
+Trade identifier number, normally identical to the order ticket number in the broker platform.
+<strong>0</strong> when the trade was not yet opened, <strong>-1</strong> when 
+the trade is identified not with a number, but with a <strong>TradeUUID</strong> 
+string.
+<h3>Type:</h3>
+<strong>int</strong> <br>&nbsp;
+<h2>TradeUUID</h2>
+The trade identifier string when <strong>TradeID == -1</strong>.
+<h2>TradeAlgo</h2>
+The <a href="algo.htm">algorithm identifier</a> of the trade. Also set to <a href="script.htm">Algo</a> during a TMF.
+<h2>TradeAsset</h2>
+The <a href="algo.htm">asset</a> name of the trade. Also set to <a href="script.htm">Asset</a> during a TMF or a <a href="fortrades.htm">trade loop</a>.
+<h3>Type:</h3>
+<strong>string</strong>, read/only
+<br>
+&nbsp;
+<h2>TradeIsShort</h2>
+Boolean expression. Is <strong>true</strong> when the trade was entered with <a href="buylong.htm">enterShort</a>.
+<h2>TradeIsLong</h2>
+Is <strong>true</strong> when the trade was entered with <a href="buylong.htm">enterLong</a>.
+<h2>TradeIsContract</h2>
+Is <strong>true</strong> when the trade is an option or future contract.
+<h2>TradeIsCall</h2>
+Is <strong>true</strong> when the trade is a call option.
+<h2>TradeIsPut</h2>
+Is <strong>true</strong> when the trade is a put option.
+<h2>TradeIsAsset</h2>
+Is <strong>true</strong> when the trade used the same asset that was currently 
+selected.
+<h2>TradeIsPhantom</h2>
+Is <strong>true</strong> when the trade was entered in <a href="lots.htm">phantom mode</a> for virtual hedging or for equity curve trading. 
+<h2>TradeIsPool</h2>
+Is <strong>true</strong> for a pool trade for <a href="hedge.htm">virtual hedging</a>.
+<h2>TradeIsVirtual</h2>
+Is <strong>true</strong> for a phantom trade for <a href="hedge.htm">virtual hedging</a>.
+<h2>TradeIsPending</h2>
+Is <strong>true</strong> when the trade was not yet opened, f.i. because it was just entered or its <a href="stop.htm">Entry</a> limit was not yet met.
+<h2>TradeIsMissed</h2>
+Is <strong>true</strong> when the enter or exit order was unsuccessful 
+due to an <a href="stop.htm">OrderLimit</a>. 
+<!--h2>TradeIsUnfilled</h2>
+Is <strong>true</strong> when a GTC trade was opened and was not 
+immediately filled. For determining the initial fill amount, compare <strong>TradeLots</strong> 
+with <strong>TradeLotsTarget</strong>.-->
+<h2>TradeIsOpen</h2>
+Is <strong>true</strong> when the trade was opened and is not yet closed. 
+<h2>TradeIsClosed</h2>
+Is <strong>true</strong> when the trade was completely closed.
+This is the last TMF execution of the trade. The <strong>TradeProfit</strong> variable contains the final result.<h2>TradeIsExpired</h2>
+Is <strong>true</strong> when the <a href="contract.htm">contract</a> of the 
+trade was expired.<h2>TradeIsNewBar</h2>
+Is <strong>true</strong> in a TMF at the first tick of a new bar.
+<h2>TradeIsEntry</h2>
+Is <strong>true</strong> in a TMF when the <a href="stop.htm">Entry</a> limit was hit. 
+Unless the TMF returns <strong>4</strong>, the trade will now be opened.
+<h2>TradeIsStop</h2>
+Is <strong>true</strong> in a TMF when the <strong><a href="stop.htm">Stop</a></strong> limit was hit. 
+Unless the TMF returns <strong>4</strong>, the trade will now be closed and the 
+TMF will then be called a final time with <strong>TradeIsClosed</strong>.
+<h2>TradeIsProfit</h2>
+Is <strong>true</strong> in a TMF when the <strong><a href="stop.htm">TakeProfit</a></strong> limit was hit. 
+Unless the TMF returns <strong>4</strong>, the trade will now be closed and the 
+TMF will then be called a final time with <strong>TradeIsClosed</strong>.
+<h3>Type:</h3>
+<strong>bool</strong>, read/only<br>
+&nbsp;
+<h2>ThisTrade</h2>
+The <strong>TRADE*</strong> pointer in a trade loop or TMF.
+All trade variables are accessed through this pointer. The <strong>TRADE</strong> struct is defined in <strong>include\trading.h</strong>. Its members are the above trade variables, redefined to easier-to-memorize names in <strong>include\variables.h</strong>.
+<strong>ThisTrade</strong> can be set by script (f.i. <strong>ThisTrade = 
+enterLong();</strong>) for accessing variables of a just opened trade, but will 
+not keep its value between <strong>run</strong> or <strong>tick</strong> 
+functions. <br>
+&nbsp;
+<h3>Remarks:</h3>
+<ul>
+    <li><span class="edition">&nbsp;!!&nbsp;</span> All trade variables listed above 
+	can only be accessed inside a <strong>TMF</strong>, inside a
+	<a href="fortrades.htm">trade enumeration loop</a>, or when <strong>ThisTrade</strong> 
+	was explicitely set to a valid <strong>TRADE*</strong> pointer. In all other 
+	cases they have no or invalid content. If <strong>ThisTrade</strong> was set from
+	<a href="buylong.htm">enterLong/Short</a>, check the pointer 
+  for nonzero before accessing a trade variable. Any access to a trade variable 
+	will cause an invalid pointer crash when the <strong>ThisTrade</strong> 
+	pointer is 0 or not set.</li>
+  <li>Asset specific variables, such as <a href="pip.htm">PIP</a>, <a href="pip.htm">PIPCost</a> etc. are automatically set to the trade asset during a TMF or a trade enumeration loop, unless you explicitely prevent this by switching to a different asset. For using algorithm specific variables in a TMF, such as <a href="winloss.htm">trade statistics</a> or <a href="algovar.htm">AlgoVar</a>, the <a href="algo.htm">algo</a> function must be called in the TMF (see <a href="algovar.htm">example</a>). </li>
+  <li> <span class="edition">&nbsp;!!&nbsp;</span> Most trade variables are of type <strong>float</strong>. They are normally automatically converted to <strong>var</strong> in lite-C, exept for functions that have no fixed variable type such as <a href="printf.htm">printf()</a>. For 
+  directly printing trade variables, place a <strong>(var)</strong> before them in the <strong>printf</strong> parameter list to convert them to <strong>var</strong>.</li>
+	<li><span class="edition">&nbsp;!!&nbsp;</span> Make sure that all TMFs 
+	return a value. Ending the TMF function without a return value can cause 
+	wrong or random trading behavior. </li>
+	<li>The <a href="mode.htm#ticks">TICKS</a> flag is often required for testing TMFs that use intrabar prices or enter / exit trades. 
+	</li>
+	<li>TMFs can open new trades with <a href="buylong.htm">enterLong</a>/<a href="buylong.htm">Short</a>. However be careful when assigning them the same TMF: 
+	mistakes in entry conditions can lead to an endless loop of entering new trades. Exit a trade by returning 
+	<strong>1</strong>, rather than calling 
+	<a href="selllong.htm">exitTrade</a>. </li>
+	<li>Trades can be entered and exited by returning <strong>1</strong> or 
+	<strong>2</strong> even during the weekend or holidays when price quotes arrive and 
+	the <a href="barmode.htm">BR_SLEEP</a> flag is not set. </li>
+	<li>TMFs can have a heavy performance footprint. For tasks that are not related to a certain trade, using a 
+	<a href="tick.htm">tick</a> function is preferable to a TMF. For scanning 
+	through multiple trades, a <a href="fortrades.htm">for(open_trades)</a> loop 
+	is preferable to a TMF.</li>
+	<li>Functions that affect the program flow - like <a href="loop.htm">loop</a>, 
+	<a href="optimize.htm">optimize</a>, etc. - can not be called in a TMF. Data 
+	<a href="series.htm">series</a> cannot be created in a TMF, and indicators that create data series can not be called; 
+  but series and indicator values can be evaluated through global variables or 
+	<a href="algovar.htm">asset/algo specific</a> variables. 
+  Static series can be shifted in a TMF using the <a href="shift.htm">shift</a> 
+  function. </li>
+	<li>The current candle is incomplete within a TMF, so its range and height 
+	normally deviates from the other candles. The <a href="price.htm">price</a> functions return different values because they get their open, high, and low prices from the incomplete candle. 
+	</li>
+</ul>
+<h3>Examples (see also <a href="fortrades.htm">trade loops</a>):</h3>
+<pre><em>// TMF for adaptive entry / exit by moving OrderLimit every 30 seconds</em> 
+int adaptLimit()
+{
+  if(TradeIsMissed) {
+    var Step = max(0.2*Spread,PIP/2);
+    OrderDelay = 30;   <em>// try again in 30 seconds</em>
+    if(!TradeIsOpen) { <em>// entry limit
+</em>      if(TradeIsLong) {
+        if(OrderLimit &gt; TradePriceOpen) 
+          return 1;   <em>// cancel trade</em>
+        OrderLimit += Step;  <em>// adapt limit
+</em>      } else { <em>// short</em>
+        if(OrderLimit &lt; TradePriceOpen-Spread) 
+          return 1;   
+        OrderLimit -= Step;
+      }
+      OrderLimit = roundto(OrderLimit,PIP/2);
+      return 2+16; <em>// trigger tmf at next event
+</em>    } else { <em>// exit limit</em>
+      if(TradeIsLong)
+        OrderLimit -= Step;
+      else
+        OrderLimit += Step;
+      OrderLimit = roundto(OrderLimit,PIP/2);
+      return 1+16; <em>// trigger tmf at next event
+</em>    }
+  }
+  return 16; <em>// trigger tmf at next event</em>
+}
+</pre>
+<pre><em>// TMF for calculating the fill amount of a GTC trade from the broker position.
+// No other trade with the same asset must be open.
+</em>int adaptFill()
+{
+  if(Live &amp;&amp; TradeLots &lt; TradeLotsTarget) {
+    TradeLots = (int)brokerCommand(GET_POSITION,SymbolTrade);
+    return 0;
+  } else
+    return 16;
+}
+</pre>
+<pre><em>// TMF that moves the stop level in a special way</em> 
+int trailStopLong()<br>{<br><em>// adjust the stop only when the trade is in profit.</em><br>  if(TradeIsOpen and TradeProfit &gt; 0)<br><em>// place the stop at the lowest bottom of the last 3 candles</em>
+    TradeStopLimit = max(TradeStopLimit,LL(3));<br><em>// plot a line to make the stop visible in the chart</em><br>  plot(&quot;Stop&quot;,TradeStopLimit,MINV,BLACK);
+<em>// return 0 to let Zorro check the stop/profit limits</em><br>  return 0;<br>}
+
+function run()
+{
+  set(TICKS);  <em>// normally needed for TMF</em>
+  ...
+  enterLong(trailStopLong);
+}</pre>
+<pre><em>// print profit of every trade</em>
+...
+for(open_trades)
+  printf("\n%s profit %.2f",Asset,(var)TradeProfit);
+...</pre>
+<pre><em>// TMF that opens an opposite trade when stopped out,
+// and opens a new trade when profit target is reached (Zorro 1.22 and above)</em>
+int reverseAtStop()
+{
+  if(TradeIsStop) { <em>// stop loss hit?</em>
+    if(TradeIsShort)
+      enterLong(reverseAtStop); <em>// enter opposite trade</em>
+    else 
+      enterShort(reverseAtStop);
+  }
+  if(TradeIsProfit) { <em>// profit target hit?</em>
+    if(TradeIsShort)
+      enterShort(reverseAtStop); <em>// enter same trade again</em>
+    else 
+      enterLong(reverseAtStop);
+  }
+<em>// call the TMF at stop loss / profit target only</em>  
+  return 16;
+}
+
+function run()
+{
+  set(TICKS);  <em>// normally needed for TMF</em>
+  Weekend = 3; <em>// don't run TMF at weekend</em>
+
+  Stop = 100*PIP;
+  TakeProfit = 100*PIP;
+  if(Bar == LookBack) <em>// enter the first trade directly at the first bar</em>
+    enterLong(reverseAtStop);
+}</pre>
+<pre><em>// TMF with parameters, for a Chandelier Stop</em>
+int Chandelier(var TimePeriod,var Factor)
+{
+  if(TradeIsLong)<br>    TradeStopLimit = max(TradeStopLimit,ChandelierLong(TimePeriod,Factor));<br>  else<br>    TradeStopLimit = min(TradeStopLimit,ChandelierShort(TimePeriod,Factor));<br>  return 8; <em>// only update once per bar</em><br>}
+
+function run()
+{
+  ...
+  if(LongSignal) {
+    Stop = ChandelierLong(22,3);
+    enterLong(Chandelier,22,3);
+  }
+  ...
+}</pre>
+<h3>See also:</h3>
+<a href="winloss.htm">trade statistics</a>, <a href="buylong.htm">enterLong</a>/<a href="buylong.htm">Short</a>,
+<a href="stop.htm">Stop</a>, <a href="timewait.htm">LifeTime</a>, <a href="algovar.htm">AlgoVar</a>, <a href="tick.htm">tick()</a>, 
+<a href="fortrades.htm">for(trades)</a>, <a href="funclist.htm">user supplied functions</a>
+<p>&nbsp;</p>
+<a href="javascript:window.location.href = 'https://zorro-project.com/manual/en' + window.location.href.slice(window.location.href.lastIndexOf('/'))" class="button">&#9658; latest version online</a>
+</body>
+</html>
