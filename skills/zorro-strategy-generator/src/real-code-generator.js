@@ -88,14 +88,9 @@ class RealCodeGenerator {
 #include <default.c>
 
 void run() {
-  set(PARAMETER);
-  setf(PlotWidth, 600);
-
   // Asset configuration
   asset("${mapped}");
-  TimeFrame = ${strategy.timeframe}; // minutes
-
-  // Strategy initialization
+  TimeFrame = ${strategy.timeframe};
   BarPeriod = ${strategy.timeframe};
 
   // Risk management

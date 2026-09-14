@@ -1,20 +1,9 @@
-# ZORRO Full Automation - PowerShell Version
+# ZORRO Full Automation - PowerShell Version CORREGIDO
 # Abre ZORRO, carga scripts, da click Test, espera, repite
-# Sin necesidad de instalar nada extra
-
-param(
-    [string]$Mode = "stage-a",  # stage-a o stage-b
-    [int]$Count = 25             # Número de scripts a ejecutar
-)
-
-# ====================================
-# CONFIGURACIÓN
-# ====================================
 
 $zorroPath = "D:\ZORRO\ZORRO.exe"
 $strategyPath = "D:\ZORRO\Strategy"
 $logPath = "D:\ZORRO\Log"
-$manifestPath = "training-results\robustness\MANIFEST.json"
 
 # Scripts para Stage A
 $stageAScripts = @(
@@ -45,104 +34,85 @@ $stageAScripts = @(
     "RB_0273_STRATEGY_RANDOM_273_Base.c"
 )
 
-# ====================================
-# FUNCIONES
-# ====================================
+Clear-Host
+Write-Host "================================" -ForegroundColor Green
+Write-Host "ZORRO FULL AUTOMATION" -ForegroundColor Green
+Write-Host "================================" -ForegroundColor Green
+Write-Host ""
 
-function Write-Progress {
-    param([string]$Message)
-    Write-Host "$(Get-Date -Format 'HH:mm:ss') | $Message" -ForegroundColor Cyan
+# Validar ZORRO
+if (-not (Test-Path $zorroPath)) {
+    Write-Host "ERROR: ZORRO no encontrado en $zorroPath" -ForegroundColor Red
+    exit 1
 }
 
-function Test-ZorroInstallation {
-    if (-not (Test-Path $zorroPath)) {
-        Write-Host "ERROR: ZORRO no encontrado en $zorroPath" -ForegroundColor Red
-        exit 1
-    }
-    Write-Progress "✅ ZORRO encontrado"
-}
+Write-Host "✅ ZORRO encontrado" -ForegroundColor Green
+Write-Host ""
 
-function Open-Zorro {
-    Write-Progress "Abriendo ZORRO..."
-    $zorro = Start-Process -FilePath $zorroPath -PassThru
+# Confirmar inicio
+Read-Host "Presiona ENTER para empezar (todo sera automatico)"
 
-    # Esperar a que cargue
-    Start-Sleep -Seconds 35
+Write-Host ""
+Write-Host "Abriendo ZORRO..." -ForegroundColor Cyan
+$zorro = Start-Process -FilePath $zorroPath -PassThru
 
-    Write-Progress "✅ ZORRO abierto (PID: $($zorro.Id))"
-    return $zorro
-}
+Start-Sleep -Seconds 35
+Write-Host "✅ ZORRO abierto" -ForegroundColor Green
+Write-Host ""
 
-function Load-Script {
-    param(
-        [string]$ScriptFile,
-        [int]$Index,
-        [int]$Total
-    )
+# Procesar scripts
+$completedCount = 0
+$totalScripts = $stageAScripts.Count
 
-    $percent = [math]::Round(($Index / $Total) * 100)
-    Write-Progress "[$percent%] Cargando script $($Index+1)/$Total: $ScriptFile"
+for ($i = 0; $i -lt $totalScripts; $i++) {
+    $scriptFile = $stageAScripts[$i]
+    $percent = [math]::Round(($i / $totalScripts) * 100)
+    $scriptNum = $i + 1
 
-    $fullPath = Join-Path $strategyPath $ScriptFile
+    Write-Host "[$percent%] Script $scriptNum/$totalScripts : $scriptFile" -ForegroundColor Yellow
+
+    $fullPath = Join-Path $strategyPath $scriptFile
 
     if (-not (Test-Path $fullPath)) {
-        Write-Host "ERROR: No encontrado $fullPath" -ForegroundColor Red
-        return $false
+        Write-Host "  ERROR: No encontrado" -ForegroundColor Red
+        continue
     }
 
-    # Enviar comandos a ZORRO via teclado
-    # Alt+S = Menú Strategy
-    # O = Open
+    Write-Host "  → Cargando en ZORRO..." -ForegroundColor Gray
+
+    # Enviar comandos a ZORRO
     [System.Windows.Forms.SendKeys]::SendWait("%s")
     Start-Sleep -Milliseconds 500
     [System.Windows.Forms.SendKeys]::SendWait("o")
     Start-Sleep -Milliseconds 500
 
-    # Escribir ruta del archivo
     [System.Windows.Forms.SendKeys]::SendWait($fullPath)
     Start-Sleep -Milliseconds 300
     [System.Windows.Forms.SendKeys]::SendWait("{ENTER}")
-
     Start-Sleep -Seconds 3
-    Write-Progress "  → Script cargado en ZORRO"
 
-    return $true
-}
-
-function Click-TestButton {
-    Write-Progress "  → Dando click en [Test]..."
-
-    # Simular click en botón Test
-    # Tab para navegar a botón, Enter para hacer click
+    Write-Host "  → Dando click Test..." -ForegroundColor Gray
     [System.Windows.Forms.SendKeys]::SendWait("{TAB}")
     Start-Sleep -Milliseconds 200
     [System.Windows.Forms.SendKeys]::SendWait("{ENTER}")
-
     Start-Sleep -Seconds 2
-}
 
-function Wait-ForCompletion {
-    param(
-        [string]$ScriptFile,
-        [int]$TimeoutSeconds = 600
-    )
+    Write-Host "  → Esperando resultado..." -ForegroundColor Gray
 
-    $logFile = Join-Path $logPath ($ScriptFile -replace '.c$', '.txt')
-
-    Write-Progress "  ⏳ Esperando backtest (máx $TimeoutSeconds segundos)..."
-
+    # Esperar a que termine
+    $logFile = Join-Path $logPath ($scriptFile -replace '.c$', '.txt')
     $startTime = Get-Date
     $completed = $false
 
-    while ((Get-Date) -lt $startTime.AddSeconds($TimeoutSeconds)) {
+    while ((Get-Date) -lt $startTime.AddSeconds(600)) {
         if (Test-Path $logFile) {
             $fileInfo = Get-Item $logFile
             $lastModified = $fileInfo.LastWriteTime
             $timeSinceModified = (Get-Date) - $lastModified
 
-            # Si se modificó hace menos de 30 segundos, el test acaba de terminar
             if ($timeSinceModified.TotalSeconds -lt 30) {
-                Write-Progress "  ✅ Backtest completado!"
+                Write-Host "  ✅ Completado!" -ForegroundColor Green
+                $completedCount++
                 $completed = $true
                 break
             }
@@ -152,83 +122,23 @@ function Wait-ForCompletion {
     }
 
     if (-not $completed) {
-        Write-Host "  ⚠️  Timeout esperando resultado" -ForegroundColor Yellow
+        Write-Host "  ⚠️ Timeout" -ForegroundColor Yellow
     }
 
-    return $completed
-}
-
-function Load-WindowsFormsSendKeys {
-    [void] [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
-}
-
-# ====================================
-# MAIN
-# ====================================
-
-Clear-Host
-Write-Host "╔════════════════════════════════════════════════════════╗" -ForegroundColor Green
-Write-Host "║   ZORRO FULL AUTOMATION - Stage $Mode              ║" -ForegroundColor Green
-Write-Host "║   ¡Completamente automático!                         ║" -ForegroundColor Green
-Write-Host "╚════════════════════════════════════════════════════════╝" -ForegroundColor Green
-Write-Host ""
-
-# Cargar SendKeys
-Load-WindowsFormsSendKeys
-
-# Validar instalación
-Test-ZorroInstallation
-
-# Mostrar inicio
-Read-Host "Presiona ENTER para empezar (esto automatizará TODO)"
-
-# Abrir ZORRO
-$zorroProcess = Open-Zorro
-
-# Procesar scripts
-$scripts = $stageAScripts
-$completedCount = 0
-
-Write-Host ""
-Write-Host "Procesando $($scripts.Count) scripts..." -ForegroundColor Green
-Write-Host ""
-
-for ($i = 0; $i -lt $scripts.Count; $i++) {
-    $script = $scripts[$i]
-
-    # Cargar script
-    $loaded = Load-Script -ScriptFile $script -Index $i -Total $scripts.Count
-
-    if (-not $loaded) {
-        continue
-    }
-
-    # Dar click Test
-    Click-TestButton
-
-    # Esperar a que termine
-    $success = Wait-ForCompletion -ScriptFile $script
-
-    if ($success) {
-        $completedCount++
-    }
-
-    # Pausa entre scripts
     Start-Sleep -Seconds 2
+    Write-Host ""
 }
 
-# Finalización
-Write-Host ""
-Write-Host "════════════════════════════════════════════════════════" -ForegroundColor Green
-Write-Host "✅ ¡COMPLETADO!" -ForegroundColor Green
-Write-Host "════════════════════════════════════════════════════════" -ForegroundColor Green
+Write-Host "================================" -ForegroundColor Green
+Write-Host "COMPLETADO!" -ForegroundColor Green
+Write-Host "================================" -ForegroundColor Green
 Write-Host ""
 Write-Host "Resultados:" -ForegroundColor Cyan
-Write-Host "  Total scripts: $($scripts.Count)"
+Write-Host "  Total: $totalScripts"
 Write-Host "  Completados: $completedCount"
-Write-Host "  Tasa éxito: $([math]::Round(($completedCount/$scripts.Count)*100))%"
+Write-Host "  Porcentaje: $([math]::Round(($completedCount/$totalScripts)*100))%" -ForegroundColor Yellow
 Write-Host ""
-Write-Host "Próximo paso:" -ForegroundColor Yellow
+Write-Host "Proximo paso:" -ForegroundColor Yellow
 Write-Host "  node run-robustness-suite.js parse --stage A"
 Write-Host ""
 
