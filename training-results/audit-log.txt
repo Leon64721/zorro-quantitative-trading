@@ -1,0 +1,8 @@
+[2026-09-14T19:33:45.275Z] Strategy 18: Suspicious: High profit factor but very low Sharpe ratio
+[2026-09-14T19:33:45.276Z] Strategy 23: Unusual: High profit factor with low win rate (possible gap risk)
+[2026-09-14T19:33:45.277Z] Strategy 30: Suspicious: High profit factor but very low Sharpe ratio
+[2026-09-14T19:33:45.277Z] Strategy 34: Unusual: High profit factor with low win rate (possible gap risk)
+[2026-09-14T19:33:52.260Z] Strategy 3: Suspicious: High profit factor but very low Sharpe ratio
+[2026-09-14T19:33:52.261Z] Strategy 8: Unusual: High profit factor with low win rate (possible gap risk)
+[2026-09-14T19:33:52.263Z] Strategy 31: Unusual: High profit factor with low win rate (possible gap risk)
+[2026-09-14T19:33:52.263Z] Strategy 42: Unusual: High profit factor with low win rate (possible gap risk)

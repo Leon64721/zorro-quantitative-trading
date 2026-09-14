@@ -1,0 +1,846 @@
+{
+  "title": "ZORRO Agent Training Report",
+  "generatedAt": "2026-09-14T19:33:52.281Z",
+  "totalStrategies": 46,
+  "overview": {
+    "avgWinRate": "52.16",
+    "avgProfitFactor": "1.95",
+    "avgSharpe": "1.05",
+    "excellentCount": 41,
+    "goodCount": 4,
+    "fairCount": 0,
+    "poorCount": 1
+  },
+  "evolution": {
+    "title": "Agent Learning Evolution Report",
+    "generatedAt": "2026-09-14T19:33:52.281Z",
+    "checkpoints": [
+      {
+        "generation": 100,
+        "timestamp": "2026-09-14T19:33:52.281Z",
+        "metrics": {
+          "avgWinRate": 52.15804347826087,
+          "avgProfitFactor": 1.9532608695652172,
+          "avgSharpe": 1.048695652173913,
+          "avgDrawdown": 21.90434782608696,
+          "avgReturn": 74.52217391304347,
+          "goodCount": 45,
+          "totalCount": 46
+        },
+        "progression": {
+          "winRateProgression": [
+            59.81,
+            45.29,
+            35.21,
+            47.52,
+            63.8,
+            47.63,
+            50.37,
+            52.35,
+            41.74,
+            53.8,
+            41.54,
+            38.6,
+            55.44,
+            50.8,
+            49.5,
+            67.59,
+            40.03,
+            37.75,
+            58.65,
+            52.52,
+            53.8,
+            63.91,
+            45.87,
+            49.49,
+            66.62,
+            57.73,
+            67.33,
+            53.01,
+            61.4,
+            57.38,
+            55.46,
+            45.98,
+            59.67,
+            65.48,
+            45.55,
+            64.3,
+            50.64,
+            40.11,
+            62.23,
+            49.97,
+            35.23,
+            49.12,
+            60.89,
+            56.85,
+            59.51,
+            31.8
+          ],
+          "profitFactorProgression": [
+            1.66,
+            1.43,
+            2.29,
+            1.38,
+            2.15,
+            2.38,
+            1.91,
+            1.73,
+            1.94,
+            2.91,
+            1.62,
+            2.33,
+            2.46,
+            1.58,
+            2.79,
+            1.59,
+            3.02,
+            2.18,
+            1.21,
+            2.36,
+            1.52,
+            1.7,
+            1.72,
+            1.97,
+            2.16,
+            1.38,
+            1.86,
+            1.21,
+            1.35,
+            2.67,
+            2.65,
+            2.07,
+            1.74,
+            1.63,
+            1.99,
+            1.25,
+            2.06,
+            2.15,
+            2.01,
+            3.02,
+            0.8,
+            2.88,
+            2.05,
+            2.44,
+            1.33,
+            1.32
+          ]
+        }
+      },
+      {
+        "generation": 250,
+        "timestamp": "2026-09-14T19:33:52.281Z",
+        "metrics": {
+          "avgWinRate": 52.15804347826087,
+          "avgProfitFactor": 1.9532608695652172,
+          "avgSharpe": 1.048695652173913,
+          "avgDrawdown": 21.90434782608696,
+          "avgReturn": 74.52217391304347,
+          "goodCount": 45,
+          "totalCount": 46
+        },
+        "progression": {
+          "winRateProgression": [
+            59.81,
+            45.29,
+            35.21,
+            47.52,
+            63.8,
+            47.63,
+            50.37,
+            52.35,
+            41.74,
+            53.8,
+            41.54,
+            38.6,
+            55.44,
+            50.8,
+            49.5,
+            67.59,
+            40.03,
+            37.75,
+            58.65,
+            52.52,
+            53.8,
+            63.91,
+            45.87,
+            49.49,
+            66.62,
+            57.73,
+            67.33,
+            53.01,
+            61.4,
+            57.38,
+            55.46,
+            45.98,
+            59.67,
+            65.48,
+            45.55,
+            64.3,
+            50.64,
+            40.11,
+            62.23,
+            49.97,
+            35.23,
+            49.12,
+            60.89,
+            56.85,
+            59.51,
+            31.8
+          ],
+          "profitFactorProgression": [
+            1.66,
+            1.43,
+            2.29,
+            1.38,
+            2.15,
+            2.38,
+            1.91,
+            1.73,
+            1.94,
+            2.91,
+            1.62,
+            2.33,
+            2.46,
+            1.58,
+            2.79,
+            1.59,
+            3.02,
+            2.18,
+            1.21,
+            2.36,
+            1.52,
+            1.7,
+            1.72,
+            1.97,
+            2.16,
+            1.38,
+            1.86,
+            1.21,
+            1.35,
+            2.67,
+            2.65,
+            2.07,
+            1.74,
+            1.63,
+            1.99,
+            1.25,
+            2.06,
+            2.15,
+            2.01,
+            3.02,
+            0.8,
+            2.88,
+            2.05,
+            2.44,
+            1.33,
+            1.32
+          ]
+        }
+      },
+      {
+        "generation": 500,
+        "timestamp": "2026-09-14T19:33:52.281Z",
+        "metrics": {
+          "avgWinRate": 52.15804347826087,
+          "avgProfitFactor": 1.9532608695652172,
+          "avgSharpe": 1.048695652173913,
+          "avgDrawdown": 21.90434782608696,
+          "avgReturn": 74.52217391304347,
+          "goodCount": 45,
+          "totalCount": 46
+        },
+        "progression": {
+          "winRateProgression": [
+            59.81,
+            45.29,
+            35.21,
+            47.52,
+            63.8,
+            47.63,
+            50.37,
+            52.35,
+            41.74,
+            53.8,
+            41.54,
+            38.6,
+            55.44,
+            50.8,
+            49.5,
+            67.59,
+            40.03,
+            37.75,
+            58.65,
+            52.52,
+            53.8,
+            63.91,
+            45.87,
+            49.49,
+            66.62,
+            57.73,
+            67.33,
+            53.01,
+            61.4,
+            57.38,
+            55.46,
+            45.98,
+            59.67,
+            65.48,
+            45.55,
+            64.3,
+            50.64,
+            40.11,
+            62.23,
+            49.97,
+            35.23,
+            49.12,
+            60.89,
+            56.85,
+            59.51,
+            31.8
+          ],
+          "profitFactorProgression": [
+            1.66,
+            1.43,
+            2.29,
+            1.38,
+            2.15,
+            2.38,
+            1.91,
+            1.73,
+            1.94,
+            2.91,
+            1.62,
+            2.33,
+            2.46,
+            1.58,
+            2.79,
+            1.59,
+            3.02,
+            2.18,
+            1.21,
+            2.36,
+            1.52,
+            1.7,
+            1.72,
+            1.97,
+            2.16,
+            1.38,
+            1.86,
+            1.21,
+            1.35,
+            2.67,
+            2.65,
+            2.07,
+            1.74,
+            1.63,
+            1.99,
+            1.25,
+            2.06,
+            2.15,
+            2.01,
+            3.02,
+            0.8,
+            2.88,
+            2.05,
+            2.44,
+            1.33,
+            1.32
+          ]
+        }
+      }
+    ]
+  },
+  "indicatorEffectiveness": {
+    "MACD": {
+      "appearances": 11,
+      "percentage": "23.9",
+      "avgWinRate": "50.10",
+      "avgProfitFactor": "1.86",
+      "avgSharpe": "1.16",
+      "topPerformers": [
+        {
+          "id": 12,
+          "pf": 2.91
+        },
+        {
+          "id": 14,
+          "pf": 2.33
+        },
+        {
+          "id": 20,
+          "pf": 2.18
+        },
+        {
+          "id": 41,
+          "pf": 2.15
+        },
+        {
+          "id": 40,
+          "pf": 2.06
+        }
+      ]
+    },
+    "BBands": {
+      "appearances": 15,
+      "percentage": "32.6",
+      "avgWinRate": "51.41",
+      "avgProfitFactor": "1.86",
+      "avgSharpe": "1.08",
+      "topPerformers": [
+        {
+          "id": 48,
+          "pf": 2.44
+        },
+        {
+          "id": 22,
+          "pf": 2.36
+        },
+        {
+          "id": 14,
+          "pf": 2.33
+        },
+        {
+          "id": 20,
+          "pf": 2.18
+        },
+        {
+          "id": 27,
+          "pf": 2.16
+        }
+      ]
+    },
+    "EMA": {
+      "appearances": 9,
+      "percentage": "19.6",
+      "avgWinRate": "55.86",
+      "avgProfitFactor": "2.03",
+      "avgSharpe": "1.00",
+      "topPerformers": [
+        {
+          "id": 46,
+          "pf": 2.88
+        },
+        {
+          "id": 34,
+          "pf": 2.65
+        },
+        {
+          "id": 36,
+          "pf": 1.74
+        },
+        {
+          "id": 25,
+          "pf": 1.72
+        },
+        {
+          "id": 24,
+          "pf": 1.7
+        }
+      ]
+    },
+    "DEMA": {
+      "appearances": 15,
+      "percentage": "32.6",
+      "avgWinRate": "50.57",
+      "avgProfitFactor": "1.98",
+      "avgSharpe": "1.07",
+      "topPerformers": [
+        {
+          "id": 44,
+          "pf": 3.02
+        },
+        {
+          "id": 17,
+          "pf": 2.79
+        },
+        {
+          "id": 34,
+          "pf": 2.65
+        },
+        {
+          "id": 14,
+          "pf": 2.33
+        },
+        {
+          "id": 41,
+          "pf": 2.15
+        }
+      ]
+    },
+    "ADX": {
+      "appearances": 14,
+      "percentage": "30.4",
+      "avgWinRate": "50.63",
+      "avgProfitFactor": "2.01",
+      "avgSharpe": "0.96",
+      "topPerformers": [
+        {
+          "id": 44,
+          "pf": 3.02
+        },
+        {
+          "id": 19,
+          "pf": 3.02
+        },
+        {
+          "id": 48,
+          "pf": 2.44
+        },
+        {
+          "id": 22,
+          "pf": 2.36
+        },
+        {
+          "id": 9,
+          "pf": 1.91
+        }
+      ]
+    },
+    "SMA": {
+      "appearances": 16,
+      "percentage": "34.8",
+      "avgWinRate": "51.57",
+      "avgProfitFactor": "2.09",
+      "avgSharpe": "1.08",
+      "topPerformers": [
+        {
+          "id": 44,
+          "pf": 3.02
+        },
+        {
+          "id": 19,
+          "pf": 3.02
+        },
+        {
+          "id": 46,
+          "pf": 2.88
+        },
+        {
+          "id": 17,
+          "pf": 2.79
+        },
+        {
+          "id": 33,
+          "pf": 2.67
+        }
+      ]
+    },
+    "RSI": {
+      "appearances": 6,
+      "percentage": "13.0",
+      "avgWinRate": "48.40",
+      "avgProfitFactor": "1.73",
+      "avgSharpe": "0.65",
+      "topPerformers": [
+        {
+          "id": 4,
+          "pf": 2.29
+        },
+        {
+          "id": 26,
+          "pf": 1.97
+        },
+        {
+          "id": 5,
+          "pf": 1.38
+        },
+        {
+          "id": 39,
+          "pf": 1.25
+        },
+        {
+          "id": 21,
+          "pf": 1.21
+        }
+      ]
+    },
+    "ATR": {
+      "appearances": 16,
+      "percentage": "34.8",
+      "avgWinRate": "50.96",
+      "avgProfitFactor": "1.82",
+      "avgSharpe": "1.22",
+      "topPerformers": [
+        {
+          "id": 17,
+          "pf": 2.79
+        },
+        {
+          "id": 34,
+          "pf": 2.65
+        },
+        {
+          "id": 48,
+          "pf": 2.44
+        },
+        {
+          "id": 35,
+          "pf": 2.07
+        },
+        {
+          "id": 40,
+          "pf": 2.06
+        }
+      ]
+    },
+    "Stochastic": {
+      "appearances": 7,
+      "percentage": "15.2",
+      "avgWinRate": "54.65",
+      "avgProfitFactor": "1.87",
+      "avgSharpe": "1.21",
+      "topPerformers": [
+        {
+          "id": 33,
+          "pf": 2.67
+        },
+        {
+          "id": 6,
+          "pf": 2.15
+        },
+        {
+          "id": 11,
+          "pf": 1.94
+        },
+        {
+          "id": 9,
+          "pf": 1.91
+        },
+        {
+          "id": 37,
+          "pf": 1.63
+        }
+      ]
+    },
+    "CCI": {
+      "appearances": 8,
+      "percentage": "17.4",
+      "avgWinRate": "59.12",
+      "avgProfitFactor": "1.87",
+      "avgSharpe": "0.94",
+      "topPerformers": [
+        {
+          "id": 44,
+          "pf": 3.02
+        },
+        {
+          "id": 29,
+          "pf": 1.86
+        },
+        {
+          "id": 36,
+          "pf": 1.74
+        },
+        {
+          "id": 10,
+          "pf": 1.73
+        },
+        {
+          "id": 39,
+          "pf": 1.25
+        }
+      ]
+    },
+    "ROC": {
+      "appearances": 7,
+      "percentage": "15.2",
+      "avgWinRate": "49.16",
+      "avgProfitFactor": "1.93",
+      "avgSharpe": "1.12",
+      "topPerformers": [
+        {
+          "id": 12,
+          "pf": 2.91
+        },
+        {
+          "id": 33,
+          "pf": 2.67
+        },
+        {
+          "id": 14,
+          "pf": 2.33
+        },
+        {
+          "id": 41,
+          "pf": 2.15
+        },
+        {
+          "id": 49,
+          "pf": 1.33
+        }
+      ]
+    },
+    "WMA": {
+      "appearances": 9,
+      "percentage": "19.6",
+      "avgWinRate": "53.76",
+      "avgProfitFactor": "2.04",
+      "avgSharpe": "0.91",
+      "topPerformers": [
+        {
+          "id": 46,
+          "pf": 2.88
+        },
+        {
+          "id": 17,
+          "pf": 2.79
+        },
+        {
+          "id": 22,
+          "pf": 2.36
+        },
+        {
+          "id": 41,
+          "pf": 2.15
+        },
+        {
+          "id": 37,
+          "pf": 1.63
+        }
+      ]
+    }
+  },
+  "top10": [
+    {
+      "rank": 1,
+      "strategyId": 44,
+      "indicators": "ADX+SMA+DEMA+CCI",
+      "asset": "NAS100",
+      "timeframe": "M5",
+      "winRate": "49.97",
+      "profitFactor": "3.02",
+      "sharpeRatio": "0.77",
+      "drawdown": "39.72",
+      "quality": "EXCELLENT"
+    },
+    {
+      "rank": 2,
+      "strategyId": 19,
+      "indicators": "ADX+SMA+ADX",
+      "asset": "GER30",
+      "timeframe": "M5",
+      "winRate": "40.03",
+      "profitFactor": "3.02",
+      "sharpeRatio": "1.29",
+      "drawdown": "13.15",
+      "quality": "EXCELLENT"
+    },
+    {
+      "rank": 3,
+      "strategyId": 12,
+      "indicators": "MACD+ROC",
+      "asset": "UK100",
+      "timeframe": "M15",
+      "winRate": "53.80",
+      "profitFactor": "2.91",
+      "sharpeRatio": "1.13",
+      "drawdown": "11.34",
+      "quality": "EXCELLENT"
+    },
+    {
+      "rank": 4,
+      "strategyId": 46,
+      "indicators": "EMA+SMA+WMA",
+      "asset": "US30",
+      "timeframe": "M60",
+      "winRate": "49.12",
+      "profitFactor": "2.88",
+      "sharpeRatio": "0.63",
+      "drawdown": "29.88",
+      "quality": "EXCELLENT"
+    },
+    {
+      "rank": 5,
+      "strategyId": 17,
+      "indicators": "DEMA+WMA+SMA+ATR",
+      "asset": "GER30",
+      "timeframe": "M60",
+      "winRate": "49.50",
+      "profitFactor": "2.79",
+      "sharpeRatio": "1.36",
+      "drawdown": "19.65",
+      "quality": "EXCELLENT"
+    },
+    {
+      "rank": 6,
+      "strategyId": 33,
+      "indicators": "Stochastic+ROC+SMA",
+      "asset": "SPX500",
+      "timeframe": "M5",
+      "winRate": "57.38",
+      "profitFactor": "2.67",
+      "sharpeRatio": "1.38",
+      "drawdown": "14.53",
+      "quality": "EXCELLENT"
+    },
+    {
+      "rank": 7,
+      "strategyId": 34,
+      "indicators": "EMA+DEMA+ATR+EMA",
+      "asset": "NAS100",
+      "timeframe": "M15",
+      "winRate": "55.46",
+      "profitFactor": "2.65",
+      "sharpeRatio": "1.07",
+      "drawdown": "34.29",
+      "quality": "EXCELLENT"
+    },
+    {
+      "rank": 8,
+      "strategyId": 15,
+      "indicators": "SMA",
+      "asset": "US30",
+      "timeframe": "M15",
+      "winRate": "55.44",
+      "profitFactor": "2.46",
+      "sharpeRatio": "0.32",
+      "drawdown": "7.13",
+      "quality": "EXCELLENT"
+    },
+    {
+      "rank": 9,
+      "strategyId": 48,
+      "indicators": "ADX+BBands+ATR",
+      "asset": "GBP/USD",
+      "timeframe": "M5",
+      "winRate": "56.85",
+      "profitFactor": "2.44",
+      "sharpeRatio": "0.58",
+      "drawdown": "26.74",
+      "quality": "EXCELLENT"
+    },
+    {
+      "rank": 10,
+      "strategyId": 7,
+      "indicators": "SMA",
+      "asset": "NAS100",
+      "timeframe": "M5",
+      "winRate": "47.63",
+      "profitFactor": "2.38",
+      "sharpeRatio": "0.61",
+      "drawdown": "28.59",
+      "quality": "EXCELLENT"
+    }
+  ],
+  "insights": [
+    {
+      "title": "Best Indicator Combinations",
+      "finding": {
+        "combination": "ADX+CCI+DEMA+SMA",
+        "frequency": 1,
+        "avgProfitFactor": "3.02"
+      },
+      "recommendation": "Focus on combinations appearing in top performers"
+    },
+    {
+      "title": "Best Performing Asset",
+      "finding": "GER30",
+      "recommendation": "GER30 shows strongest results - prioritize for deployment"
+    },
+    {
+      "title": "Optimal Timeframe",
+      "finding": "M240",
+      "recommendation": "M240 offers best risk-adjusted returns"
+    }
+  ]
+}

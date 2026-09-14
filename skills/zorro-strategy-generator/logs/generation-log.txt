@@ -499,3 +499,62 @@
 [2026-09-14T18:09:20.369Z] STRATEGY_FAILED: {"id":499,"error":"Validation failed: Deprecated function: Profit. Use Stop/TakeProfit instead."}
 [2026-09-14T18:09:20.369Z] STRATEGY_FAILED: {"id":500,"error":"Validation failed: Deprecated function: Profit. Use Stop/TakeProfit instead."}
 [2026-09-14T18:09:20.370Z] TRAINING_ERROR: {"error":"Reduce of empty array with no initial value"}
+[2026-09-14T18:18:37.725Z] STRATEGY_FAILED: {"id":1,"error":"Validation failed: Deprecated function: MA(. Use SMA( or EMA( instead., Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.725Z] STRATEGY_FAILED: {"id":2,"error":"Validation failed: Deprecated function: MA(. Use SMA( or EMA( instead., Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.725Z] STRATEGY_FAILED: {"id":3,"error":"Validation failed: Deprecated function: MA(. Use SMA( or EMA( instead., Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.726Z] STRATEGY_FAILED: {"id":4,"error":"Validation failed: Deprecated function: MA(. Use SMA( or EMA( instead., Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.726Z] STRATEGY_FAILED: {"id":5,"error":"Validation failed: Deprecated function: MA(. Use SMA( or EMA( instead., Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.726Z] STRATEGY_FAILED: {"id":6,"error":"Validation failed: Deprecated function: MA(. Use SMA( or EMA( instead., Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.726Z] STRATEGY_FAILED: {"id":7,"error":"Validation failed: Deprecated function: MA(. Use SMA( or EMA( instead., Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.726Z] STRATEGY_FAILED: {"id":8,"error":"Validation failed: Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.727Z] STRATEGY_FAILED: {"id":9,"error":"Validation failed: Deprecated function: MA(. Use SMA( or EMA( instead., Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.727Z] STRATEGY_FAILED: {"id":10,"error":"Validation failed: Deprecated function: MA(. Use SMA( or EMA( instead., Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.727Z] STRATEGY_FAILED: {"id":11,"error":"Validation failed: Deprecated function: MA(. Use SMA( or EMA( instead., Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.727Z] STRATEGY_FAILED: {"id":12,"error":"Validation failed: Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.728Z] STRATEGY_FAILED: {"id":13,"error":"Validation failed: Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.728Z] STRATEGY_FAILED: {"id":14,"error":"Validation failed: Deprecated function: MA(. Use SMA( or EMA( instead., Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.728Z] STRATEGY_FAILED: {"id":15,"error":"Validation failed: Deprecated function: MA(. Use SMA( or EMA( instead., Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.728Z] STRATEGY_FAILED: {"id":16,"error":"Validation failed: Deprecated function: MA(. Use SMA( or EMA( instead., Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.728Z] STRATEGY_FAILED: {"id":17,"error":"Validation failed: Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.729Z] STRATEGY_FAILED: {"id":18,"error":"Validation failed: Deprecated function: MA(. Use SMA( or EMA( instead., Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.729Z] STRATEGY_FAILED: {"id":19,"error":"Validation failed: Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.729Z] STRATEGY_FAILED: {"id":20,"error":"Validation failed: Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.730Z] STRATEGY_FAILED: {"id":21,"error":"Validation failed: Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.730Z] STRATEGY_FAILED: {"id":22,"error":"Validation failed: Deprecated function: MA(. Use SMA( or EMA( instead., Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.730Z] STRATEGY_FAILED: {"id":23,"error":"Validation failed: Deprecated function: MA(. Use SMA( or EMA( instead., Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.730Z] STRATEGY_FAILED: {"id":24,"error":"Validation failed: Deprecated function: MA(. Use SMA( or EMA( instead., Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.730Z] STRATEGY_FAILED: {"id":25,"error":"Validation failed: Deprecated function: MA(. Use SMA( or EMA( instead., Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.731Z] STRATEGY_FAILED: {"id":26,"error":"Validation failed: Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.731Z] STRATEGY_FAILED: {"id":27,"error":"Validation failed: Deprecated function: MA(. Use SMA( or EMA( instead., Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.731Z] STRATEGY_FAILED: {"id":28,"error":"Validation failed: Deprecated function: MA(. Use SMA( or EMA( instead., Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.731Z] STRATEGY_FAILED: {"id":29,"error":"Validation failed: Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.731Z] STRATEGY_FAILED: {"id":30,"error":"Validation failed: Deprecated function: MA(. Use SMA( or EMA( instead., Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.732Z] STRATEGY_FAILED: {"id":31,"error":"Validation failed: Deprecated function: MA(. Use SMA( or EMA( instead., Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.732Z] STRATEGY_FAILED: {"id":32,"error":"Validation failed: Deprecated function: MA(. Use SMA( or EMA( instead., Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.732Z] STRATEGY_FAILED: {"id":33,"error":"Validation failed: Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.732Z] STRATEGY_FAILED: {"id":34,"error":"Validation failed: Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.732Z] STRATEGY_FAILED: {"id":35,"error":"Validation failed: Deprecated function: MA(. Use SMA( or EMA( instead., Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.732Z] STRATEGY_FAILED: {"id":36,"error":"Validation failed: Deprecated function: MA(. Use SMA( or EMA( instead., Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.733Z] STRATEGY_FAILED: {"id":37,"error":"Validation failed: Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.733Z] STRATEGY_FAILED: {"id":38,"error":"Validation failed: Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.733Z] STRATEGY_FAILED: {"id":39,"error":"Validation failed: Deprecated function: MA(. Use SMA( or EMA( instead., Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.733Z] STRATEGY_FAILED: {"id":40,"error":"Validation failed: Deprecated function: MA(. Use SMA( or EMA( instead., Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.733Z] STRATEGY_FAILED: {"id":41,"error":"Validation failed: Deprecated function: MA(. Use SMA( or EMA( instead., Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.733Z] STRATEGY_FAILED: {"id":42,"error":"Validation failed: Deprecated function: MA(. Use SMA( or EMA( instead., Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.734Z] STRATEGY_FAILED: {"id":43,"error":"Validation failed: Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.734Z] STRATEGY_FAILED: {"id":44,"error":"Validation failed: Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.734Z] STRATEGY_FAILED: {"id":45,"error":"Validation failed: Deprecated function: MA(. Use SMA( or EMA( instead., Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.734Z] STRATEGY_FAILED: {"id":46,"error":"Validation failed: Deprecated function: MA(. Use SMA( or EMA( instead., Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.734Z] STRATEGY_FAILED: {"id":47,"error":"Validation failed: Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.734Z] STRATEGY_FAILED: {"id":48,"error":"Validation failed: Deprecated function: MA(. Use SMA( or EMA( instead., Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.735Z] STRATEGY_FAILED: {"id":49,"error":"Validation failed: Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.735Z] STRATEGY_FAILED: {"id":50,"error":"Validation failed: Deprecated function: MA(. Use SMA( or EMA( instead., Deprecated function: Profit. Use Stop/TakeProfit instead."}
+[2026-09-14T18:18:37.737Z] TRAINING_ERROR: {"error":"Cannot read properties of undefined (reading 'strategyId')"}
+[2026-09-14T19:33:45.276Z] STRATEGY_FAILED: {"id":18,"error":"Audit failed: Suspicious: High profit factor but very low Sharpe ratio"}
+[2026-09-14T19:33:45.276Z] STRATEGY_FAILED: {"id":23,"error":"Audit failed: Unusual: High profit factor with low win rate (possible gap risk)"}
+[2026-09-14T19:33:45.277Z] STRATEGY_FAILED: {"id":30,"error":"Audit failed: Suspicious: High profit factor but very low Sharpe ratio"}
+[2026-09-14T19:33:45.277Z] STRATEGY_FAILED: {"id":34,"error":"Audit failed: Unusual: High profit factor with low win rate (possible gap risk)"}
+[2026-09-14T19:33:52.260Z] STRATEGY_FAILED: {"id":3,"error":"Audit failed: Suspicious: High profit factor but very low Sharpe ratio"}
+[2026-09-14T19:33:52.261Z] STRATEGY_FAILED: {"id":8,"error":"Audit failed: Unusual: High profit factor with low win rate (possible gap risk)"}
+[2026-09-14T19:33:52.263Z] STRATEGY_FAILED: {"id":31,"error":"Audit failed: Unusual: High profit factor with low win rate (possible gap risk)"}
+[2026-09-14T19:33:52.280Z] STRATEGY_FAILED: {"id":42,"error":"Audit failed: Unusual: High profit factor with low win rate (possible gap risk)"}

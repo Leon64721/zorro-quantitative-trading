@@ -333,7 +333,21 @@ class StrategyValidator {
    * Check for deprecated functions
    */
   validateDeprecated(code, results) {
-    this.deprecatedFunctions.forEach(func => {
+    // Check for MA( function - but not DEMA, TEMA, ARMA, etc
+    if (/\bMA\s*\(/.test(code)) {
+      const replacement = this.getDeprecatedReplacement('MA(');
+      results.errors.push({
+        type: 'DEPRECATED_FUNCTION',
+        message: `Deprecated function: MA(. Use ${replacement} instead.`,
+        deprecated: 'MA(',
+        replacement: replacement,
+        severity: 'error'
+      });
+    }
+
+    // Check for other deprecated: close(), setProfit(, DataVar(, etc
+    const otherDeprecated = ['close()', 'setProfit(', 'DataVar(', 'DataUpdate(', 'DataUpdate2('];
+    otherDeprecated.forEach(func => {
       if (code.includes(func)) {
         const replacement = this.getDeprecatedReplacement(func);
         results.errors.push({
@@ -345,6 +359,20 @@ class StrategyValidator {
         });
       }
     });
+
+    // Check for standalone "Profit" variable - must not be part of TakeProfit or Stop
+    // Only flag if used as "Profit =" (with spaces), not "TakeProfit =" or "StopProfit ="
+    const profitMatch = code.match(/\bProfit\s*=/);
+    if (profitMatch && !code.includes('TakeProfit') && !code.includes('StopProfit')) {
+      const replacement = this.getDeprecatedReplacement('Profit');
+      results.errors.push({
+        type: 'DEPRECATED_FUNCTION',
+        message: `Deprecated function: Profit. Use ${replacement} instead.`,
+        deprecated: 'Profit',
+        replacement: replacement,
+        severity: 'error'
+      });
+    }
   }
 
   /**
