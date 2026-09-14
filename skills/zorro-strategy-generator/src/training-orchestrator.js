@@ -195,10 +195,19 @@ class TrainingOrchestrator {
    * Create mock strategy code for testing
    */
   createMockStrategyCode(strategy) {
-    const indicators = strategy.indicators.map(i => `var ${i.name.toLowerCase()} = ${i.name}(${i.period});`).join('\n    ');
+    const indicators = strategy.indicators.map(i => {
+      const name = i.name.toUpperCase();
+      if (name === 'SMA' || name === 'EMA') {
+        return `var ${name.toLowerCase()} = ${name}(Close, ${i.period});`;
+      } else if (name === 'RSI') {
+        return `var rsi = RSI(Close, ${i.period});`;
+      } else if (name === 'ATR') {
+        return `var atr = ATR(${i.period});`;
+      }
+      return `var ${name.toLowerCase()} = ${name}(${i.period});`;
+    }).join('\n    ');
 
-    return `
-// Strategy ${strategy.id} - Auto-generated
+    return `// Strategy ${strategy.id} - Auto-generated
 function run()
 {
     BarPeriod = ${strategy.timeframe};
@@ -220,8 +229,7 @@ function run()
 
     if(NumOpenLong > 0)
         exitLong();
-}
-    `;
+}`;
   }
 
   /**

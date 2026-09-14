@@ -285,6 +285,10 @@ class LearningTracker {
   generateInsights() {
     const insights = [];
 
+    if (this.metricsHistory.length === 0) {
+      return insights;
+    }
+
     // Insight 1: Best indicator combinations
     const topIndCombos = this.getTopIndicatorCombinations();
     insights.push({
@@ -295,36 +299,42 @@ class LearningTracker {
 
     // Insight 2: Asset performance
     const assetPerf = this.getAssetPerformance();
-    const bestAsset = Object.keys(assetPerf).reduce((a, b) =>
-      assetPerf[a].avgProfitFactor > assetPerf[b].avgProfitFactor ? a : b
-    );
-    insights.push({
-      title: 'Best Performing Asset',
-      finding: bestAsset,
-      recommendation: `${bestAsset} shows strongest results - prioritize for deployment`
-    });
+    if (Object.keys(assetPerf).length > 0) {
+      const bestAsset = Object.keys(assetPerf).reduce((a, b) =>
+        assetPerf[a].avgProfitFactor > assetPerf[b].avgProfitFactor ? a : b
+      );
+      insights.push({
+        title: 'Best Performing Asset',
+        finding: bestAsset,
+        recommendation: `${bestAsset} shows strongest results - prioritize for deployment`
+      });
+    }
 
     // Insight 3: Optimal timeframe
     const tfPerf = this.getTimeframePerformance();
-    const bestTF = Object.keys(tfPerf).reduce((a, b) =>
-      tfPerf[a].avgSharpe > tfPerf[b].avgSharpe ? a : b
-    );
-    insights.push({
-      title: 'Optimal Timeframe',
-      finding: bestTF,
-      recommendation: `${bestTF} offers best risk-adjusted returns`
-    });
+    if (Object.keys(tfPerf).length > 0) {
+      const bestTF = Object.keys(tfPerf).reduce((a, b) =>
+        tfPerf[a].avgSharpe > tfPerf[b].avgSharpe ? a : b
+      );
+      insights.push({
+        title: 'Optimal Timeframe',
+        finding: bestTF,
+        recommendation: `${bestTF} offers best risk-adjusted returns`
+      });
+    }
 
     // Insight 4: Learning rate
-    const earlyAvg = this.average(this.metricsHistory.slice(0, 100).map(r => r.metrics.profitFactor));
-    const lateAvg = this.average(this.metricsHistory.slice(-100).map(r => r.metrics.profitFactor));
-    const improvement = (((lateAvg - earlyAvg) / earlyAvg) * 100).toFixed(1);
+    if (this.metricsHistory.length >= 100) {
+      const earlyAvg = this.average(this.metricsHistory.slice(0, 100).map(r => r.metrics.profitFactor));
+      const lateAvg = this.average(this.metricsHistory.slice(-100).map(r => r.metrics.profitFactor));
+      const improvement = (((lateAvg - earlyAvg) / earlyAvg) * 100).toFixed(1);
 
-    insights.push({
-      title: 'Agent Learning Progress',
-      finding: `${improvement}% improvement in profit factor`,
-      recommendation: 'Agent is learning and improving over time'
-    });
+      insights.push({
+        title: 'Agent Learning Progress',
+        finding: `${improvement}% improvement in profit factor`,
+        recommendation: 'Agent is learning and improving over time'
+      });
+    }
 
     return insights;
   }
@@ -357,6 +367,10 @@ class LearningTracker {
    * Get asset performance metrics
    */
   getAssetPerformance() {
+    if (this.metricsHistory.length === 0) {
+      return {};
+    }
+
     const assetData = {};
 
     this.metricsHistory.forEach(record => {
