@@ -1,0 +1,362 @@
+{
+  "stage": "A",
+  "generatedAt": "2026-09-14T21:16:45.260Z",
+  "candidates": [
+    {
+      "id": 69,
+      "name": "STRATEGY_RANDOM_69",
+      "asset": "XAU/USD",
+      "timeframe": 60,
+      "indicators": [
+        "WMA",
+        "MACD",
+        "EMA",
+        "BBands"
+      ],
+      "baselineFile": "RB_0069_STRATEGY_RANDOM_69_Base.c",
+      "status": "pending",
+      "metrics": null
+    },
+    {
+      "id": 24,
+      "name": "STRATEGY_RANDOM_24",
+      "asset": "SPX500",
+      "timeframe": 60,
+      "indicators": [
+        "WMA",
+        "MACD"
+      ],
+      "baselineFile": "RB_0024_STRATEGY_RANDOM_24_Base.c",
+      "status": "pending",
+      "metrics": null
+    },
+    {
+      "id": 367,
+      "name": "STRATEGY_RANDOM_367",
+      "asset": "NAS100",
+      "timeframe": 60,
+      "indicators": [
+        "WMA",
+        "EMA"
+      ],
+      "baselineFile": "RB_0367_STRATEGY_RANDOM_367_Base.c",
+      "status": "pending",
+      "metrics": null
+    },
+    {
+      "id": 266,
+      "name": "STRATEGY_RANDOM_266",
+      "asset": "EUR/USD",
+      "timeframe": 5,
+      "indicators": [
+        "CCI"
+      ],
+      "baselineFile": "RB_0266_STRATEGY_RANDOM_266_Base.c",
+      "status": "pending",
+      "metrics": null
+    },
+    {
+      "id": 46,
+      "name": "STRATEGY_RANDOM_46",
+      "asset": "UK100",
+      "timeframe": 240,
+      "indicators": [
+        "CCI",
+        "ATR",
+        "RSI"
+      ],
+      "baselineFile": "RB_0046_STRATEGY_RANDOM_46_Base.c",
+      "status": "pending",
+      "metrics": null
+    },
+    {
+      "id": 349,
+      "name": "STRATEGY_RANDOM_349",
+      "asset": "XAU/USD",
+      "timeframe": 240,
+      "indicators": [
+        "CCI"
+      ],
+      "baselineFile": "RB_0349_STRATEGY_RANDOM_349_Base.c",
+      "status": "pending",
+      "metrics": null
+    },
+    {
+      "id": 308,
+      "name": "STRATEGY_RANDOM_308",
+      "asset": "NAS100",
+      "timeframe": 60,
+      "indicators": [
+        "EMA"
+      ],
+      "baselineFile": "RB_0308_STRATEGY_RANDOM_308_Base.c",
+      "status": "pending",
+      "metrics": null
+    },
+    {
+      "id": 472,
+      "name": "STRATEGY_RANDOM_472",
+      "asset": "XAU/USD",
+      "timeframe": 240,
+      "indicators": [
+        "EMA",
+        "Stochastic",
+        "WMA",
+        "MACD"
+      ],
+      "baselineFile": "RB_0472_STRATEGY_RANDOM_472_Base.c",
+      "status": "pending",
+      "metrics": null
+    },
+    {
+      "id": 134,
+      "name": "STRATEGY_RANDOM_134",
+      "asset": "XAU/USD",
+      "timeframe": 60,
+      "indicators": [
+        "EMA",
+        "MACD",
+        "EMA"
+      ],
+      "baselineFile": "RB_0134_STRATEGY_RANDOM_134_Base.c",
+      "status": "pending",
+      "metrics": null
+    },
+    {
+      "id": 309,
+      "name": "STRATEGY_RANDOM_309",
+      "asset": "GBP/USD",
+      "timeframe": 15,
+      "indicators": [
+        "RSI"
+      ],
+      "baselineFile": "RB_0309_STRATEGY_RANDOM_309_Base.c",
+      "status": "pending",
+      "metrics": null
+    },
+    {
+      "id": 36,
+      "name": "STRATEGY_RANDOM_36",
+      "asset": "XAU/USD",
+      "timeframe": 5,
+      "indicators": [
+        "RSI",
+        "DEMA",
+        "BBands",
+        "ADX"
+      ],
+      "baselineFile": "RB_0036_STRATEGY_RANDOM_36_Base.c",
+      "status": "pending",
+      "metrics": null
+    },
+    {
+      "id": 279,
+      "name": "STRATEGY_RANDOM_279",
+      "asset": "UK100",
+      "timeframe": 60,
+      "indicators": [
+        "RSI"
+      ],
+      "baselineFile": "RB_0279_STRATEGY_RANDOM_279_Base.c",
+      "status": "pending",
+      "metrics": null
+    },
+    {
+      "id": 359,
+      "name": "STRATEGY_RANDOM_359",
+      "asset": "US30",
+      "timeframe": 60,
+      "indicators": [
+        "ADX",
+        "Stochastic",
+        "ATR"
+      ],
+      "baselineFile": "RB_0359_STRATEGY_RANDOM_359_Base.c",
+      "status": "pending",
+      "metrics": null
+    },
+    {
+      "id": 35,
+      "name": "STRATEGY_RANDOM_35",
+      "asset": "UK100",
+      "timeframe": 5,
+      "indicators": [
+        "ADX"
+      ],
+      "baselineFile": "RB_0035_STRATEGY_RANDOM_35_Base.c",
+      "status": "pending",
+      "metrics": null
+    },
+    {
+      "id": 318,
+      "name": "STRATEGY_RANDOM_318",
+      "asset": "US30",
+      "timeframe": 60,
+      "indicators": [
+        "ADX",
+        "WMA",
+        "WMA"
+      ],
+      "baselineFile": "RB_0318_STRATEGY_RANDOM_318_Base.c",
+      "status": "pending",
+      "metrics": null
+    },
+    {
+      "id": 85,
+      "name": "STRATEGY_RANDOM_85",
+      "asset": "GER30",
+      "timeframe": 60,
+      "indicators": [
+        "ROC"
+      ],
+      "baselineFile": "RB_0085_STRATEGY_RANDOM_85_Base.c",
+      "status": "pending",
+      "metrics": null
+    },
+    {
+      "id": 71,
+      "name": "STRATEGY_RANDOM_71",
+      "asset": "GBP/USD",
+      "timeframe": 60,
+      "indicators": [
+        "ROC"
+      ],
+      "baselineFile": "RB_0071_STRATEGY_RANDOM_71_Base.c",
+      "status": "pending",
+      "metrics": null
+    },
+    {
+      "id": 203,
+      "name": "STRATEGY_RANDOM_203",
+      "asset": "EUR/USD",
+      "timeframe": 60,
+      "indicators": [
+        "ROC",
+        "BBands"
+      ],
+      "baselineFile": "RB_0203_STRATEGY_RANDOM_203_Base.c",
+      "status": "pending",
+      "metrics": null
+    },
+    {
+      "id": 251,
+      "name": "STRATEGY_RANDOM_251",
+      "asset": "UK100",
+      "timeframe": 5,
+      "indicators": [
+        "ATR",
+        "BBands",
+        "ROC"
+      ],
+      "baselineFile": "RB_0251_STRATEGY_RANDOM_251_Base.c",
+      "status": "pending",
+      "metrics": null
+    },
+    {
+      "id": 233,
+      "name": "STRATEGY_RANDOM_233",
+      "asset": "GBP/USD",
+      "timeframe": 5,
+      "indicators": [
+        "ATR",
+        "BBands"
+      ],
+      "baselineFile": "RB_0233_STRATEGY_RANDOM_233_Base.c",
+      "status": "pending",
+      "metrics": null
+    },
+    {
+      "id": 348,
+      "name": "STRATEGY_RANDOM_348",
+      "asset": "XAU/USD",
+      "timeframe": 5,
+      "indicators": [
+        "ATR",
+        "EMA",
+        "EMA",
+        "SMA"
+      ],
+      "baselineFile": "RB_0348_STRATEGY_RANDOM_348_Base.c",
+      "status": "pending",
+      "metrics": null
+    },
+    {
+      "id": 111,
+      "name": "STRATEGY_RANDOM_111",
+      "asset": "EUR/USD",
+      "timeframe": 240,
+      "indicators": [
+        "MACD"
+      ],
+      "baselineFile": "RB_0111_STRATEGY_RANDOM_111_Base.c",
+      "status": "pending",
+      "metrics": null
+    },
+    {
+      "id": 307,
+      "name": "STRATEGY_RANDOM_307",
+      "asset": "GER30",
+      "timeframe": 15,
+      "indicators": [
+        "MACD",
+        "BBands",
+        "ATR"
+      ],
+      "baselineFile": "RB_0307_STRATEGY_RANDOM_307_Base.c",
+      "status": "pending",
+      "metrics": null
+    },
+    {
+      "id": 135,
+      "name": "STRATEGY_RANDOM_135",
+      "asset": "NAS100",
+      "timeframe": 240,
+      "indicators": [
+        "MACD"
+      ],
+      "baselineFile": "RB_0135_STRATEGY_RANDOM_135_Base.c",
+      "status": "pending",
+      "metrics": null
+    },
+    {
+      "id": 273,
+      "name": "STRATEGY_RANDOM_273",
+      "asset": "XAU/USD",
+      "timeframe": 240,
+      "indicators": [
+        "BBands"
+      ],
+      "baselineFile": "RB_0273_STRATEGY_RANDOM_273_Base.c",
+      "status": "pending",
+      "metrics": null
+    }
+  ],
+  "stats": {
+    "totalStrategies": 500,
+    "selected": 25,
+    "indicatorDistribution": {
+      "WMA": 6,
+      "MACD": 7,
+      "EMA": 8,
+      "BBands": 7,
+      "CCI": 3,
+      "ATR": 6,
+      "RSI": 4,
+      "Stochastic": 2,
+      "DEMA": 1,
+      "ADX": 4,
+      "ROC": 4,
+      "SMA": 1
+    },
+    "assetDistribution": {
+      "XAU/USD": 7,
+      "SPX500": 1,
+      "NAS100": 3,
+      "EUR/USD": 3,
+      "UK100": 4,
+      "GBP/USD": 3,
+      "US30": 2,
+      "GER30": 2
+    }
+  }
+}
