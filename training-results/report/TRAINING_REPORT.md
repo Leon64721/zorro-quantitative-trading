@@ -1,35 +1,35 @@
 # 🤖 ZORRO Agent Training Report
 
-**Generated**: 2026-09-14T19:33:52.283Z
+**Generated**: 2026-09-14T20:17:42.540Z
 
 ## Executive Summary
 
-- **Total Strategies Trained**: 46
-- **Excellent**: 41 | **Good**: 4 | **Fair**: 0 | **Poor**: 1
+- **Total Strategies Trained**: 465
+- **Excellent**: 352 | **Good**: 90 | **Fair**: 18 | **Poor**: 5
 
 ## Performance Metrics
 
 | Metric | Value |
 |--------|-------|
-| Avg Win Rate | 52.16% |
-| Avg Profit Factor | 1.95 |
-| Avg Sharpe Ratio | 1.05 |
+| Avg Win Rate | 49.86% |
+| Avg Profit Factor | 1.94 |
+| Avg Sharpe Ratio | 1.02 |
 | Avg Drawdown | undefined% |
 
 ## Top 10 Strategies
 
 | Rank | Strategy | Indicators | Asset | TF | Win% | PF | Sharpe |
 |------|----------|------------|-------|----|----- |-----|--------|
-| 1 | 44 | ADX+SMA+DEMA+CCI | NAS100 | M5 | 49.97 | 3.02 | 0.77 |
-| 2 | 19 | ADX+SMA+ADX | GER30 | M5 | 40.03 | 3.02 | 1.29 |
-| 3 | 12 | MACD+ROC | UK100 | M15 | 53.80 | 2.91 | 1.13 |
-| 4 | 46 | EMA+SMA+WMA | US30 | M60 | 49.12 | 2.88 | 0.63 |
-| 5 | 17 | DEMA+WMA+SMA+ATR | GER30 | M60 | 49.50 | 2.79 | 1.36 |
-| 6 | 33 | Stochastic+ROC+SMA | SPX500 | M5 | 57.38 | 2.67 | 1.38 |
-| 7 | 34 | EMA+DEMA+ATR+EMA | NAS100 | M15 | 55.46 | 2.65 | 1.07 |
-| 8 | 15 | SMA | US30 | M15 | 55.44 | 2.46 | 0.32 |
-| 9 | 48 | ADX+BBands+ATR | GBP/USD | M5 | 56.85 | 2.44 | 0.58 |
-| 10 | 7 | SMA | NAS100 | M5 | 47.63 | 2.38 | 0.61 |
+| 1 | 414 | ADX+BBands+MACD | US30 | M5 | 62.83 | 3.18 | 1.28 |
+| 2 | 199 | Stochastic+DEMA+RSI+ROC | EUR/USD | M60 | 68.28 | 3.16 | 1.27 |
+| 3 | 144 | Stochastic | US30 | M5 | 61.50 | 3.16 | 0.35 |
+| 4 | 479 | EMA+SMA+MACD+DEMA | US30 | M60 | 51.28 | 3.14 | 0.92 |
+| 5 | 124 | ATR | GBP/USD | M240 | 40.27 | 3.13 | 0.95 |
+| 6 | 143 | ATR+RSI+ROC+ADX | SPX500 | M60 | 56.93 | 3.10 | 1.67 |
+| 7 | 154 | MACD+BBands+DEMA | XAU/USD | M240 | 44.28 | 3.05 | 0.57 |
+| 8 | 248 | ATR | UK100 | M5 | 63.02 | 3.03 | 0.73 |
+| 9 | 443 | DEMA+WMA+DEMA+RSI | UK100 | M5 | 46.02 | 3.03 | 1.83 |
+| 10 | 88 | ATR+ADX | SPX500 | M15 | 46.63 | 3.02 | 0.36 |
 
 ## Key Insights
 
@@ -38,10 +38,14 @@
 **Recommendation**: Focus on combinations appearing in top performers
 
 ### 2. Best Performing Asset
-**Finding**: GER30
-**Recommendation**: GER30 shows strongest results - prioritize for deployment
+**Finding**: US30
+**Recommendation**: US30 shows strongest results - prioritize for deployment
 
 ### 3. Optimal Timeframe
-**Finding**: M240
-**Recommendation**: M240 offers best risk-adjusted returns
+**Finding**: M15
+**Recommendation**: M15 offers best risk-adjusted returns
+
+### 4. Agent Learning Progress
+**Finding**: 7.8% improvement in profit factor
+**Recommendation**: Agent is learning and improving over time
 
