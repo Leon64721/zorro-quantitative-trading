@@ -1,0 +1,270 @@
+{
+  "generation": 100,
+  "timestamp": "2026-09-14T20:17:42.511Z",
+  "stats": {
+    "processed": 100,
+    "valid": 93,
+    "invalid": 7
+  },
+  "summary": {
+    "title": "Audit Report",
+    "generatedAt": "2026-09-14T20:17:42.511Z",
+    "totalProcessed": 100,
+    "validStrategies": 93,
+    "invalidStrategies": 7,
+    "validityRate": "93.00%",
+    "totalAlerts": 7,
+    "issues": [
+      {
+        "strategyId": 9,
+        "timestamp": "2026-09-14T20:17:42.503Z",
+        "checks": [
+          {
+            "name": "Data Integrity",
+            "passed": true,
+            "message": "All required fields present"
+          },
+          {
+            "name": "Result Validity",
+            "passed": true,
+            "message": "All values in valid ranges"
+          },
+          {
+            "name": "Metric Consistency",
+            "passed": false,
+            "message": "Suspicious: High profit factor but very low Sharpe ratio"
+          },
+          {
+            "name": "Risk Management",
+            "passed": true,
+            "message": "Risk parameters acceptable"
+          },
+          {
+            "name": "Anomaly Detection",
+            "passed": true,
+            "alerts": []
+          }
+        ],
+        "valid": false,
+        "issues": [
+          "Suspicious: High profit factor but very low Sharpe ratio"
+        ]
+      },
+      {
+        "strategyId": 26,
+        "timestamp": "2026-09-14T20:17:42.505Z",
+        "checks": [
+          {
+            "name": "Data Integrity",
+            "passed": true,
+            "message": "All required fields present"
+          },
+          {
+            "name": "Result Validity",
+            "passed": true,
+            "message": "All values in valid ranges"
+          },
+          {
+            "name": "Metric Consistency",
+            "passed": false,
+            "message": "Unusual: High profit factor with low win rate (possible gap risk)"
+          },
+          {
+            "name": "Risk Management",
+            "passed": true,
+            "message": "Risk parameters acceptable"
+          },
+          {
+            "name": "Anomaly Detection",
+            "passed": true,
+            "alerts": []
+          }
+        ],
+        "valid": false,
+        "issues": [
+          "Unusual: High profit factor with low win rate (possible gap risk)"
+        ]
+      },
+      {
+        "strategyId": 43,
+        "timestamp": "2026-09-14T20:17:42.506Z",
+        "checks": [
+          {
+            "name": "Data Integrity",
+            "passed": true,
+            "message": "All required fields present"
+          },
+          {
+            "name": "Result Validity",
+            "passed": true,
+            "message": "All values in valid ranges"
+          },
+          {
+            "name": "Metric Consistency",
+            "passed": false,
+            "message": "Unusual: High profit factor with low win rate (possible gap risk)"
+          },
+          {
+            "name": "Risk Management",
+            "passed": true,
+            "message": "Risk parameters acceptable"
+          },
+          {
+            "name": "Anomaly Detection",
+            "passed": true,
+            "alerts": []
+          }
+        ],
+        "valid": false,
+        "issues": [
+          "Unusual: High profit factor with low win rate (possible gap risk)"
+        ]
+      },
+      {
+        "strategyId": 63,
+        "timestamp": "2026-09-14T20:17:42.507Z",
+        "checks": [
+          {
+            "name": "Data Integrity",
+            "passed": true,
+            "message": "All required fields present"
+          },
+          {
+            "name": "Result Validity",
+            "passed": true,
+            "message": "All values in valid ranges"
+          },
+          {
+            "name": "Metric Consistency",
+            "passed": false,
+            "message": "Suspicious: High profit factor but very low Sharpe ratio"
+          },
+          {
+            "name": "Risk Management",
+            "passed": true,
+            "message": "Risk parameters acceptable"
+          },
+          {
+            "name": "Anomaly Detection",
+            "passed": true,
+            "alerts": []
+          }
+        ],
+        "valid": false,
+        "issues": [
+          "Suspicious: High profit factor but very low Sharpe ratio"
+        ]
+      },
+      {
+        "strategyId": 73,
+        "timestamp": "2026-09-14T20:17:42.508Z",
+        "checks": [
+          {
+            "name": "Data Integrity",
+            "passed": true,
+            "message": "All required fields present"
+          },
+          {
+            "name": "Result Validity",
+            "passed": true,
+            "message": "All values in valid ranges"
+          },
+          {
+            "name": "Metric Consistency",
+            "passed": false,
+            "message": "Suspicious: High profit factor but very low Sharpe ratio"
+          },
+          {
+            "name": "Risk Management",
+            "passed": true,
+            "message": "Risk parameters acceptable"
+          },
+          {
+            "name": "Anomaly Detection",
+            "passed": true,
+            "alerts": []
+          }
+        ],
+        "valid": false,
+        "issues": [
+          "Suspicious: High profit factor but very low Sharpe ratio"
+        ]
+      },
+      {
+        "strategyId": 78,
+        "timestamp": "2026-09-14T20:17:42.509Z",
+        "checks": [
+          {
+            "name": "Data Integrity",
+            "passed": true,
+            "message": "All required fields present"
+          },
+          {
+            "name": "Result Validity",
+            "passed": true,
+            "message": "All values in valid ranges"
+          },
+          {
+            "name": "Metric Consistency",
+            "passed": false,
+            "message": "Suspicious: High profit factor but very low Sharpe ratio"
+          },
+          {
+            "name": "Risk Management",
+            "passed": true,
+            "message": "Risk parameters acceptable"
+          },
+          {
+            "name": "Anomaly Detection",
+            "passed": true,
+            "alerts": []
+          }
+        ],
+        "valid": false,
+        "issues": [
+          "Suspicious: High profit factor but very low Sharpe ratio"
+        ]
+      },
+      {
+        "strategyId": 84,
+        "timestamp": "2026-09-14T20:17:42.509Z",
+        "checks": [
+          {
+            "name": "Data Integrity",
+            "passed": true,
+            "message": "All required fields present"
+          },
+          {
+            "name": "Result Validity",
+            "passed": true,
+            "message": "All values in valid ranges"
+          },
+          {
+            "name": "Metric Consistency",
+            "passed": false,
+            "message": "Unusual: High profit factor with low win rate (possible gap risk); Suspicious: High profit factor but very low Sharpe ratio"
+          },
+          {
+            "name": "Risk Management",
+            "passed": true,
+            "message": "Risk parameters acceptable"
+          },
+          {
+            "name": "Anomaly Detection",
+            "passed": true,
+            "alerts": []
+          }
+        ],
+        "valid": false,
+        "issues": [
+          "Unusual: High profit factor with low win rate (possible gap risk); Suspicious: High profit factor but very low Sharpe ratio"
+        ]
+      }
+    ],
+    "qualityScore": 96.5,
+    "recommendations": [
+      "✅ Excellent data quality - results are reliable",
+      "Continue monitoring quality during training"
+    ]
+  }
+}

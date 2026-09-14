@@ -558,3 +558,59 @@
 [2026-09-14T19:33:52.261Z] STRATEGY_FAILED: {"id":8,"error":"Audit failed: Unusual: High profit factor with low win rate (possible gap risk)"}
 [2026-09-14T19:33:52.263Z] STRATEGY_FAILED: {"id":31,"error":"Audit failed: Unusual: High profit factor with low win rate (possible gap risk)"}
 [2026-09-14T19:33:52.280Z] STRATEGY_FAILED: {"id":42,"error":"Audit failed: Unusual: High profit factor with low win rate (possible gap risk)"}
+[2026-09-14T19:35:08.182Z] STRATEGY_FAILED: {"id":14,"error":"Audit failed: Unusual: High profit factor with low win rate (possible gap risk)"}
+[2026-09-14T19:35:08.182Z] STRATEGY_FAILED: {"id":16,"error":"Audit failed: Suspicious: High profit factor but very low Sharpe ratio"}
+[2026-09-14T19:35:08.184Z] STRATEGY_FAILED: {"id":27,"error":"Audit failed: Suspicious: High profit factor but very low Sharpe ratio"}
+[2026-09-14T19:35:08.185Z] STRATEGY_FAILED: {"id":48,"error":"Audit failed: Suspicious: High profit factor but very low Sharpe ratio"}
+[2026-09-14T19:35:08.185Z] STRATEGY_FAILED: {"id":51,"error":"Audit failed: Unusual: High profit factor with low win rate (possible gap risk); Suspicious: High profit factor but very low Sharpe ratio"}
+[2026-09-14T19:35:08.186Z] STRATEGY_FAILED: {"id":60,"error":"Audit failed: Unusual: High profit factor with low win rate (possible gap risk)"}
+[2026-09-14T19:35:08.187Z] STRATEGY_FAILED: {"id":88,"error":"Audit failed: Suspicious: High profit factor but very low Sharpe ratio"}
+[2026-09-14T19:35:08.189Z] STRATEGY_FAILED: {"id":112,"error":"Audit failed: Suspicious: High profit factor but very low Sharpe ratio"}
+[2026-09-14T19:35:08.189Z] STRATEGY_FAILED: {"id":114,"error":"Audit failed: Suspicious: High profit factor but very low Sharpe ratio"}
+[2026-09-14T19:35:08.190Z] STRATEGY_FAILED: {"id":121,"error":"Audit failed: Unusual: High profit factor with low win rate (possible gap risk)"}
+[2026-09-14T19:35:08.191Z] STRATEGY_FAILED: {"id":150,"error":"Audit failed: Suspicious: High profit factor but very low Sharpe ratio"}
+[2026-09-14T19:35:08.193Z] STRATEGY_FAILED: {"id":174,"error":"Audit failed: Suspicious: High profit factor but very low Sharpe ratio"}
+[2026-09-14T19:35:08.194Z] STRATEGY_FAILED: {"id":185,"error":"Audit failed: Unusual: High profit factor with low win rate (possible gap risk)"}
+[2026-09-14T19:35:08.195Z] STRATEGY_FAILED: {"id":202,"error":"Audit failed: Unusual: High profit factor with low win rate (possible gap risk)"}
+[2026-09-14T19:35:08.196Z] STRATEGY_FAILED: {"id":207,"error":"Audit failed: Suspicious: High profit factor but very low Sharpe ratio"}
+[2026-09-14T19:35:08.196Z] STRATEGY_FAILED: {"id":216,"error":"Audit failed: Suspicious: High profit factor but very low Sharpe ratio"}
+[2026-09-14T19:35:08.197Z] STRATEGY_FAILED: {"id":243,"error":"Audit failed: Unusual: High profit factor with low win rate (possible gap risk)"}
+[2026-09-14T19:35:08.198Z] STRATEGY_FAILED: {"id":251,"error":"Audit failed: Unusual: High profit factor with low win rate (possible gap risk)"}
+[2026-09-14T19:35:08.198Z] STRATEGY_FAILED: {"id":255,"error":"Audit failed: Suspicious: High profit factor but very low Sharpe ratio"}
+[2026-09-14T19:35:08.199Z] STRATEGY_FAILED: {"id":273,"error":"Audit failed: Suspicious: High profit factor but very low Sharpe ratio"}
+[2026-09-14T19:35:08.239Z] STRATEGY_FAILED: {"id":285,"error":"Audit failed: Suspicious: High profit factor but very low Sharpe ratio"}
+[2026-09-14T20:17:42.503Z] STRATEGY_FAILED: {"id":9,"error":"Audit failed: Suspicious: High profit factor but very low Sharpe ratio"}
+[2026-09-14T20:17:42.505Z] STRATEGY_FAILED: {"id":26,"error":"Audit failed: Unusual: High profit factor with low win rate (possible gap risk)"}
+[2026-09-14T20:17:42.506Z] STRATEGY_FAILED: {"id":43,"error":"Audit failed: Unusual: High profit factor with low win rate (possible gap risk)"}
+[2026-09-14T20:17:42.508Z] STRATEGY_FAILED: {"id":63,"error":"Audit failed: Suspicious: High profit factor but very low Sharpe ratio"}
+[2026-09-14T20:17:42.508Z] STRATEGY_FAILED: {"id":73,"error":"Audit failed: Suspicious: High profit factor but very low Sharpe ratio"}
+[2026-09-14T20:17:42.509Z] STRATEGY_FAILED: {"id":78,"error":"Audit failed: Suspicious: High profit factor but very low Sharpe ratio"}
+[2026-09-14T20:17:42.509Z] STRATEGY_FAILED: {"id":84,"error":"Audit failed: Unusual: High profit factor with low win rate (possible gap risk); Suspicious: High profit factor but very low Sharpe ratio"}
+[2026-09-14T20:17:42.512Z] STRATEGY_FAILED: {"id":106,"error":"Audit failed: Suspicious: High profit factor but very low Sharpe ratio"}
+[2026-09-14T20:17:42.513Z] STRATEGY_FAILED: {"id":120,"error":"Audit failed: Unusual: High profit factor with low win rate (possible gap risk)"}
+[2026-09-14T20:17:42.514Z] STRATEGY_FAILED: {"id":152,"error":"Audit failed: Unusual: High profit factor with low win rate (possible gap risk)"}
+[2026-09-14T20:17:42.515Z] STRATEGY_FAILED: {"id":159,"error":"Audit failed: Suspicious: High profit factor but very low Sharpe ratio"}
+[2026-09-14T20:17:42.516Z] STRATEGY_FAILED: {"id":171,"error":"Audit failed: Unusual: High profit factor with low win rate (possible gap risk); Suspicious: High profit factor but very low Sharpe ratio"}
+[2026-09-14T20:17:42.516Z] STRATEGY_FAILED: {"id":181,"error":"Audit failed: Unusual: High profit factor with low win rate (possible gap risk)"}
+[2026-09-14T20:17:42.517Z] STRATEGY_FAILED: {"id":195,"error":"Audit failed: Unusual: High profit factor with low win rate (possible gap risk)"}
+[2026-09-14T20:17:42.519Z] STRATEGY_FAILED: {"id":226,"error":"Audit failed: Unusual: High profit factor with low win rate (possible gap risk)"}
+[2026-09-14T20:17:42.520Z] STRATEGY_FAILED: {"id":240,"error":"Audit failed: Unusual: High profit factor with low win rate (possible gap risk)"}
+[2026-09-14T20:17:42.520Z] STRATEGY_FAILED: {"id":241,"error":"Audit failed: Unusual: High profit factor with low win rate (possible gap risk)"}
+[2026-09-14T20:17:42.521Z] STRATEGY_FAILED: {"id":246,"error":"Audit failed: Suspicious: High profit factor but very low Sharpe ratio"}
+[2026-09-14T20:17:42.521Z] STRATEGY_FAILED: {"id":261,"error":"Audit failed: Suspicious: High profit factor but very low Sharpe ratio"}
+[2026-09-14T20:17:42.523Z] STRATEGY_FAILED: {"id":276,"error":"Audit failed: Unusual: High profit factor with low win rate (possible gap risk)"}
+[2026-09-14T20:17:42.523Z] STRATEGY_FAILED: {"id":281,"error":"Audit failed: Unusual: High profit factor with low win rate (possible gap risk)"}
+[2026-09-14T20:17:42.523Z] STRATEGY_FAILED: {"id":285,"error":"Audit failed: Suspicious: High profit factor but very low Sharpe ratio"}
+[2026-09-14T20:17:42.525Z] STRATEGY_FAILED: {"id":327,"error":"Audit failed: Suspicious: High profit factor but very low Sharpe ratio"}
+[2026-09-14T20:17:42.526Z] STRATEGY_FAILED: {"id":335,"error":"Audit failed: Unusual: High profit factor with low win rate (possible gap risk)"}
+[2026-09-14T20:17:42.527Z] STRATEGY_FAILED: {"id":336,"error":"Audit failed: Suspicious: High profit factor but very low Sharpe ratio"}
+[2026-09-14T20:17:42.528Z] STRATEGY_FAILED: {"id":354,"error":"Audit failed: Suspicious: High profit factor but very low Sharpe ratio"}
+[2026-09-14T20:17:42.529Z] STRATEGY_FAILED: {"id":366,"error":"Audit failed: Suspicious: High profit factor but very low Sharpe ratio"}
+[2026-09-14T20:17:42.530Z] STRATEGY_FAILED: {"id":390,"error":"Audit failed: Suspicious: High profit factor but very low Sharpe ratio"}
+[2026-09-14T20:17:42.530Z] STRATEGY_FAILED: {"id":400,"error":"Audit failed: Suspicious: High profit factor but very low Sharpe ratio"}
+[2026-09-14T20:17:42.532Z] STRATEGY_FAILED: {"id":431,"error":"Audit failed: Unusual: High profit factor with low win rate (possible gap risk)"}
+[2026-09-14T20:17:42.533Z] STRATEGY_FAILED: {"id":433,"error":"Audit failed: Suspicious: High profit factor but very low Sharpe ratio"}
+[2026-09-14T20:17:42.534Z] STRATEGY_FAILED: {"id":466,"error":"Audit failed: Suspicious: High profit factor but very low Sharpe ratio"}
+[2026-09-14T20:17:42.535Z] STRATEGY_FAILED: {"id":474,"error":"Audit failed: Unusual: High profit factor with low win rate (possible gap risk)"}
+[2026-09-14T20:17:42.535Z] STRATEGY_FAILED: {"id":487,"error":"Audit failed: Suspicious: High profit factor but very low Sharpe ratio"}
+[2026-09-14T20:17:42.536Z] STRATEGY_FAILED: {"id":493,"error":"Audit failed: Unusual: High profit factor with low win rate (possible gap risk)"}

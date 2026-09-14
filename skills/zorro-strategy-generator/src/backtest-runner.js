@@ -206,31 +206,47 @@ class BacktestRunner {
 
   /**
    * Parse backtest results from ZORRO log file
+   * Supports: basic metrics, WFO cycles, Monte Carlo, Confidence levels
    */
-  async parseBacktestResults(strategyFilename) {
-    const logFilePath = path.join(this.logPath, 'Strategy.txt');
+  async parseBacktestResults(strategyFilename, logFilename = null) {
+    // Determine log file name (default to script name, fallback to 'Strategy.txt')
+    const logName = logFilename || strategyFilename.replace('.c', '.txt');
+    const logFilePath = path.join(this.logPath, logName);
 
     try {
       if (!fs.existsSync(logFilePath)) {
         return {
           status: 'LOG_NOT_FOUND',
-          instruction: 'Run backtest in ZORRO first'
+          instruction: `Run backtest in ZORRO first. Expected log: ${logName}`,
+          searchedPath: logFilePath
         };
       }
 
       const logContent = fs.readFileSync(logFilePath, 'utf8');
 
-      // Parse metrics from log file
+      // Parse basic metrics from log file
       const metrics = {
-        totalTrades: this.parseMetric(logContent, /Total Trades:\s*(\d+)/),
-        winRate: this.parseMetric(logContent, /Win Rate:\s*([\d.]+)%/),
-        profitFactor: this.parseMetric(logContent, /Profit Factor:\s*([\d.]+)/),
-        sharpeRatio: this.parseMetric(logContent, /Sharpe Ratio:\s*([\d.]+)/),
-        maxDrawdown: this.parseMetric(logContent, /Max Drawdown:\s*([\d.]+)%/),
-        returnPercent: this.parseMetric(logContent, /Return:\s*([\d.]+)%/),
-        profit: this.parseMetric(logContent, /Profit\/Loss:\s*\$?([\d.,]+)/),
-        avgTrade: this.parseMetric(logContent, /Average Trade:\s*\$?([\d.,]+)/),
-        payoffRatio: this.parseMetric(logContent, /Payoff Ratio:\s*([\d.]+)/)
+        // Core metrics
+        totalTrades: this.parseMetric(logContent, /Total Trades:\s*(\d+)/i),
+        winRate: this.parseMetric(logContent, /Win Rate:\s*([\d.]+)%/i),
+        profitFactor: this.parseMetric(logContent, /Profit Factor:\s*([\d.]+)/i),
+        sharpeRatio: this.parseMetric(logContent, /Sharpe Ratio:\s*([\d.]+)/i),
+        maxDrawdown: this.parseMetric(logContent, /Max Drawdown:\s*([\d.]+)%/i),
+        returnPercent: this.parseMetric(logContent, /Return:\s*([\d.]+)%/i),
+        profit: this.parseMetric(logContent, /Profit\/Loss:\s*\$?([\d.,]+)/i),
+        avgTrade: this.parseMetric(logContent, /Average Trade:\s*\$?([\d.,]+)/i),
+        payoffRatio: this.parseMetric(logContent, /Payoff Ratio:\s*([\d.]+)/i),
+
+        // Extended metrics (WFO/Monte Carlo)
+        rSquared: this.parseMetric(logContent, /R\s*2\s*(?:coefficient)?:\s*([\d.]+)/i),
+        ulcerIndex: this.parseMetric(logContent, /Ulcer Index:\s*([\d.]+)/i),
+        pValue: this.parseMetric(logContent, /P-Value:\s*([\d.]+)%?/i),
+
+        // WFO cycle statistics
+        wfoMetrics: this.parseWFOTable(logContent),
+
+        // Monte Carlo confidence levels
+        confidenceMetrics: this.parseConfidenceTable(logContent)
       };
 
       return metrics;
@@ -239,6 +255,69 @@ class BacktestRunner {
       console.warn(`Failed to parse results: ${error.message}`);
       return { error: error.message };
     }
+  }
+
+  /**
+   * Parse WFO Cycles table from log
+   * Format: "WFO Cycles: Best | Worst | Avg | StdDev"
+   */
+  parseWFOTable(content) {
+    const wfoMetrics = {};
+
+    // Look for WFO Cycles section
+    const wfoMatch = content.match(/WFO\s+Cycles.*?(?=\n\n|$)/is);
+    if (!wfoMatch) return null;
+
+    const wfoContent = wfoMatch[0];
+
+    // Extract Best/Worst/Avg/StdDev for key metrics
+    const profitMatch = wfoContent.match(/Net Profit.*?Best:\s*([\d.-]+).*?Worst:\s*([\d.-]+).*?Avg:\s*([\d.-]+).*?StdDev:\s*([\d.-]+)/is);
+    if (profitMatch) {
+      wfoMetrics.netProfit = {
+        best: parseFloat(profitMatch[1]),
+        worst: parseFloat(profitMatch[2]),
+        avg: parseFloat(profitMatch[3]),
+        stdDev: parseFloat(profitMatch[4])
+      };
+    }
+
+    const pfMatch = wfoContent.match(/Profit Factor.*?Best:\s*([\d.-]+).*?Worst:\s*([\d.-]+).*?Avg:\s*([\d.-]+).*?StdDev:\s*([\d.-]+)/is);
+    if (pfMatch) {
+      wfoMetrics.profitFactor = {
+        best: parseFloat(pfMatch[1]),
+        worst: parseFloat(pfMatch[2]),
+        avg: parseFloat(pfMatch[3]),
+        stdDev: parseFloat(pfMatch[4])
+      };
+    }
+
+    return Object.keys(wfoMetrics).length > 0 ? wfoMetrics : null;
+  }
+
+  /**
+   * Parse Confidence levels table (from Monte Carlo)
+   * Format: "Confidence level: AR | DDMax | Capital"
+   */
+  parseConfidenceTable(content) {
+    const confMetrics = {};
+
+    // Look for Confidence section
+    const confMatch = content.match(/Confidence.*?(?=\n\n|$)/is);
+    if (!confMatch) return null;
+
+    const confContent = confMatch[0];
+
+    // Extract AR (Annual Return), DDMax, Capital
+    const arMatch = confContent.match(/AR:\s*([\d.]+)%/i);
+    if (arMatch) confMetrics.annualReturn = parseFloat(arMatch[1]);
+
+    const ddMatch = confContent.match(/DDMax:\s*([\d.]+)%/i);
+    if (ddMatch) confMetrics.maxDrawdown = parseFloat(ddMatch[1]);
+
+    const capMatch = confContent.match(/Capital:\s*\$?([\d.,]+)/i);
+    if (capMatch) confMetrics.capital = parseFloat(capMatch[1].replace(/,/g, ''));
+
+    return Object.keys(confMetrics).length > 0 ? confMetrics : null;
   }
 
   /**
